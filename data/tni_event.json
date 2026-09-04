@@ -1,6 +1,34 @@
 {
   "guests": [
     {
+      "nrp": "117507",
+      "nama": "Tri Nugroho",
+      "gelar_depan": "Dr.",
+      "gelar_belakang": "S.T., M.Si.",
+      "matra": "AD",
+      "pangkat": "Kolonel (AD)",
+      "pangkat_level": 5,
+      "jabatan": "Dandim 0501/Jakarta Pusat",
+      "satker": "Kodam Jaya / Jayakarta",
+      "satuan": "Makodam Jaya",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "081233445566",
+      "email": "tri.nugroho@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "catatan_khusus": "Alergi makanan laut (seafood)",
+      "id": "guest_1788531847559_kdun",
+      "qr_token": "e48db23a-be58-40e9-9edc-240efe98cd6d",
+      "token_hash": "c52fd7f7b5aed993265d39db0a96e7765f0cc6eb4ab7281ce3aa3abcf373cd14",
+      "status_kehadiran": "HADIR",
+      "created_at": "2026-09-04T14:24:07.558Z",
+      "updated_at": "2026-09-04T14:24:07.706Z",
+      "waktu_kehadiran_pertama": "2026-09-04T14:24:07.697Z",
+      "seat_group_id": "grp_d",
+      "seat_number": "D-04"
+    },
+    {
       "nrp": "113686",
       "nama": "Tri Nugroho",
       "gelar_depan": "Dr.",
@@ -173,12 +201,12 @@
       "butuh_akomodasi": 0,
       "qr_token": "ab44db05-619e-4b06-b076-2cb02500bf13",
       "token_hash": "6dacf5c984da9d234eed184637e9a5e3c603dbfdd934b95f9816316990bd0549",
-      "seat_group_id": "grp_a",
-      "seat_number": "A-05",
       "status_kehadiran": "HADIR",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-05"
     },
     {
       "id": "guest_524901",
@@ -1258,7 +1286,12 @@
       "seat_number": "D-04",
       "row_num": 1,
       "col_num": 4,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788531847559_kdun",
+      "guest_name": "Tri Nugroho",
+      "guest_rank": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
     },
     {
       "id": "seat_d_5",
@@ -2794,6 +2827,34 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788531847706_ulmrt",
+      "guest_id": "guest_1788531847559_kdun",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "117507",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T14:24:07.706Z",
+      "ip_address": "::1"
+    },
+    {
+      "id": "chk_1788531847697_a6jjh",
+      "guest_id": "guest_1788531847559_kdun",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "117507",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T14:24:07.697Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788531324098_jbs3t",
       "guest_id": "guest_1788531323959_993f",
       "guest_nama": "Tri Nugroho",
@@ -2973,6 +3034,78 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788531847724_b6vl",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "AUTO_ASSIGN_SEATS",
+      "details": "Penetapan kursi otomatis berbasis senioritas pangkat untuk 2 prajurit/tamu",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:24:07.724Z"
+    },
+    {
+      "id": "aud_1788531847710_or6y",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 117507) di GATE_UTAMA - RE-SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:24:07.710Z"
+    },
+    {
+      "id": "aud_1788531847699_66g5",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 117507) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:24:07.699Z"
+    },
+    {
+      "id": "aud_1788531847682_nnci",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:24:07.682Z"
+    },
+    {
+      "id": "aud_1788531536572_w968",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "ASSIGN_SEAT",
+      "details": "Penetapan kursi A-05 untuk guest_id: KOSONG",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:18:56.572Z"
+    },
+    {
+      "id": "aud_1788531530584_r25s",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "ASSIGN_SEAT",
+      "details": "Penetapan kursi A-06 untuk guest_id: KOSONG",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:18:50.584Z"
+    },
+    {
+      "id": "aud_1788531528504_ich2",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "ASSIGN_SEAT",
+      "details": "Penetapan kursi A-06 untuk guest_id: KOSONG",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:18:48.504Z"
+    },
+    {
+      "id": "aud_1788531490510_5nk9",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:18:10.510Z"
+    },
     {
       "id": "aud_1788531324112_veyv",
       "admin_id": "admin_super",

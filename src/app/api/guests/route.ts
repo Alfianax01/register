@@ -18,6 +18,9 @@ export async function GET(req: NextRequest) {
       guests = guests.filter(g =>
         g.nama.toLowerCase().includes(search) ||
         g.nrp.toLowerCase().includes(search) ||
+        (g.no_hp && g.no_hp.toLowerCase().includes(search)) ||
+        (g.email && g.email.toLowerCase().includes(search)) ||
+        (g.qr_token && g.qr_token.toLowerCase().includes(search)) ||
         g.satker.toLowerCase().includes(search) ||
         g.jabatan.toLowerCase().includes(search)
       );

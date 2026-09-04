@@ -24,8 +24,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
 
   const menuItems = [
     {
-      href: '/admin/checkin',
-      label: 'Scanner Check-In',
+      href: '/admin/scanner',
+      label: 'Scanner Gate',
       icon: QrCode,
       allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE']
     },
@@ -74,7 +74,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
 
         {menuItems.map(item => {
           const Icon = item.icon;
-          const active = pathname === item.href;
+          const active = pathname === item.href || (item.href === '/admin/scanner' && pathname === '/admin/checkin');
           const isAllowed = !userRole || item.allowedRoles.includes(userRole);
 
           if (!isAllowed) return null;

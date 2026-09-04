@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
@@ -24,18 +24,15 @@ import {
   Eye,
   ArrowRight,
   ChevronRight,
-  Sparkles,
-  QrCode
+  Sparkles
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface ModernRegistrationFormProps {
-  scannedData?: any | null;
   onSuccess?: (token: string, guest: any) => void;
 }
 
 export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
-  scannedData,
   onSuccess
 }) => {
   const { showToast } = useToast();
@@ -64,32 +61,6 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     tgl_checkout: '2026-09-06',
     catatan_khusus: ''
   });
-
-  // Watch scannedData: when user scans a QR, populate the form instantly!
-  useEffect(() => {
-    if (scannedData) {
-      setFormData(prev => ({
-        ...prev,
-        nama: scannedData.nama || prev.nama,
-        gelar_depan: scannedData.gelar_depan || prev.gelar_depan,
-        gelar_belakang: scannedData.gelar_belakang || prev.gelar_belakang,
-        matra: scannedData.matra || prev.matra,
-        pangkat: scannedData.pangkat || prev.pangkat,
-        nrp: scannedData.nrp || prev.nrp,
-        jabatan: scannedData.jabatan || prev.jabatan,
-        satker: scannedData.satker || prev.satker,
-        satuan: scannedData.satuan || prev.satuan,
-        no_hp: scannedData.no_hp || prev.no_hp,
-        email: scannedData.email || prev.email,
-        butuh_akomodasi: scannedData.butuh_akomodasi ? true : prev.butuh_akomodasi
-      }));
-
-      showToast('Data QR Berhasil Diisi', {
-        type: 'success',
-        message: `Formulir telah otomatis terisi untuk ${scannedData.nama} (${scannedData.nrp || ''}).`
-      });
-    }
-  }, [scannedData, showToast]);
 
   const availableRanks = useMemo(() => {
     return getRanksByMatra(formData.matra);
