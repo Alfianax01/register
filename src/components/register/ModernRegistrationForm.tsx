@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useRouter } from 'next/navigation';
+
+const DRAFT_STORAGE_KEY = 'tni_registration_draft';
 
 interface ModernRegistrationFormProps {
   onSuccess?: (token: string, guest: any, fullData?: any) => void;
@@ -63,6 +65,39 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     tgl_checkout: '2026-09-06',
     catatan_khusus: ''
   });
+
+  // Hydrate draft from sessionStorage
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const savedDraft = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          if (parsed && typeof parsed === 'object') {
+            setFormData(prev => ({
+              ...prev,
+              ...parsed
+            }));
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Gagal memuat draf formulir dari sessionStorage', err);
+    }
+  }, []);
+
+  // Auto-save draft to sessionStorage
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        if (formData.nama || formData.no_hp || formData.nrp || formData.jabatan) {
+          sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
+        }
+      }
+    } catch (err) {
+      console.warn('Gagal menyimpan draf formulir ke sessionStorage', err);
+    }
+  }, [formData]);
 
   const availableRanks = useMemo(() => {
     return getRanksByMatra(formData.matra);
@@ -187,6 +222,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       // Checklist #8: State persistence across sessions
       try {
         if (typeof window !== 'undefined') {
+          sessionStorage.removeItem(DRAFT_STORAGE_KEY);
           sessionStorage.setItem('tni_registration_success', JSON.stringify({
             token: data.token,
             participant: data.participant || data.guest,
@@ -588,6 +624,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 size="md"
                 onClick={handleSubmit}
                 isLoading={isSubmitting}
+                loadingText="Memproses Pendaftaran..."
                 className="w-full sm:w-auto font-semibold"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
@@ -660,6 +697,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               size="md"
               onClick={handleSubmit}
               isLoading={isSubmitting}
+              loadingText="Memproses..."
             >
               <span>Konfirmasi & Terbitkan</span>
             </Button>

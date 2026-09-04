@@ -12,29 +12,16 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status') || '';
     const group = searchParams.get('group') || '';
 
-    let guests = db.getGuests();
+    let guests = search ? await db.searchGuestsAsync(search) : db.getGuests();
 
-    if (search) {
-      const searchClean = search.replace(/[\s\-\(\)\+]/g, '');
-      const searchPhone = searchClean.startsWith('62') ? '0' + searchClean.slice(2) : searchClean;
-
-      guests = guests.filter(g => {
-        const guestPhoneClean = (g.no_hp || '').replace(/[\s\-\(\)\+]/g, '');
-        const guestPhoneNorm = guestPhoneClean.startsWith('62') ? '0' + guestPhoneClean.slice(2) : guestPhoneClean;
-
-        return (
-          g.nama.toLowerCase().includes(search) ||
-          g.nrp.toLowerCase().includes(search) ||
-          (g.no_hp && g.no_hp.toLowerCase().includes(search)) ||
-          (guestPhoneNorm && searchPhone && guestPhoneNorm.includes(searchPhone)) ||
-          (g.email && g.email.toLowerCase().includes(search)) ||
-          (g.registration_id && g.registration_id.toLowerCase().includes(search)) ||
-          (g.ticket_id && g.ticket_id.toLowerCase().includes(search)) ||
-          (g.qr_token && g.qr_token.toLowerCase().includes(search)) ||
-          g.satker.toLowerCase().includes(search) ||
-          g.jabatan.toLowerCase().includes(search)
-        );
-      });
+    if (search && guests.length === 0) {
+      // Direct exact match check as fallback
+      const byNrp = await db.findGuestByNRPAsync(search);
+      if (byNrp) guests = [byNrp];
+      else {
+        const byToken = await db.findGuestByTokenAsync(search);
+        if (byToken) guests = [byToken];
+      }
     }
 
     if (matra) {

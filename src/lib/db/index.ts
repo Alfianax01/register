@@ -863,7 +863,7 @@ class DatabaseManager {
     this.data!.guests.unshift(newGuest);
     this.persist();
 
-    // Persist to Postgres database if configured
+    // Persist to Postgres database if configured (async background)
     if (postgresAdapter.isAvailable()) {
       postgresAdapter.saveGuest(newGuest).catch(err => {
         console.error('[PostgreSQL] DATA ERROR simpan ke postgres:', err);
@@ -881,6 +881,152 @@ class DatabaseManager {
     });
 
     return newGuest;
+  }
+
+  public async createGuestAsync(guestData: Omit<Guest, 'id' | 'qr_token' | 'token_hash' | 'status_kehadiran' | 'created_at' | 'updated_at'>): Promise<Guest> {
+    this.ensureInitialized();
+    const now = new Date().toISOString();
+    const token = generateSecureToken();
+    const token_hash = hashToken(token);
+
+    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' 
+      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}`
+      : `REG-2026-${Date.now().toString().slice(-6)}`);
+    const ticketId = guestData.ticket_id || `TCK-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    const newGuest: Guest = {
+      ...guestData,
+      id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      registration_id: regId,
+      ticket_id: ticketId,
+      qr_token: token,
+      token_hash: token_hash,
+      status_kehadiran: 'BELUM_HADIR',
+      created_at: now,
+      updated_at: now
+    };
+
+    // 1. Save locally to in-memory & atomic JSON file
+    this.data!.guests.unshift(newGuest);
+    this.persist();
+
+    // 2. Persist to PostgreSQL if configured (with transactions & retries)
+    if (postgresAdapter.isAvailable()) {
+      const saved = await postgresAdapter.saveGuest(newGuest, 3);
+      if (!saved) {
+        console.warn('[PostgreSQL] Peringatan: Gagal menyimpan ke PostgreSQL setelah 3 percobaan. Data tetap tersimpan di file lokal.');
+      } else {
+        const verified = await postgresAdapter.verifyGuestSaved(newGuest.id);
+        console.log('[PostgreSQL] POST-INSERT VERIFIED:', {
+          id: newGuest.id,
+          verified,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+
+    console.log("DATA TERSIMPAN:", {
+      id: newGuest.id,
+      registration_id: newGuest.registration_id,
+      ticket_id: newGuest.ticket_id,
+      nama: newGuest.nama,
+      nrp: newGuest.nrp,
+      token: newGuest.qr_token,
+      created_at: newGuest.created_at
+    });
+
+    return newGuest;
+  }
+
+  public async findGuestByTokenAsync(token: string): Promise<Guest | undefined> {
+    const local = this.findGuestByToken(token);
+    if (local) return local;
+
+    // Fallback: check PostgreSQL cloud database
+    if (postgresAdapter.isAvailable()) {
+      const pgGuest = await postgresAdapter.findGuestByToken(token);
+      if (pgGuest) {
+        // Hydrate into local container memory
+        this.data!.guests.unshift(pgGuest);
+        this.persist();
+        console.log('DATA DITEMUKAN DARI CLOUD POSTGRESQL:', {
+          id: pgGuest.id,
+          nama: pgGuest.nama,
+          token: pgGuest.qr_token
+        });
+        return pgGuest;
+      }
+    }
+    return undefined;
+  }
+
+  public async findGuestByNRPAsync(nrp: string): Promise<Guest | undefined> {
+    const local = this.findGuestByNRP(nrp);
+    if (local) return local;
+
+    if (postgresAdapter.isAvailable()) {
+      const pgGuest = await postgresAdapter.findGuestByNRP(nrp);
+      if (pgGuest) {
+        this.data!.guests.unshift(pgGuest);
+        this.persist();
+        return pgGuest;
+      }
+    }
+    return undefined;
+  }
+
+  public async findGuestByPhoneAsync(phone: string): Promise<Guest | undefined> {
+    const local = this.findGuestByPhone(phone);
+    if (local) return local;
+
+    if (postgresAdapter.isAvailable()) {
+      const pgGuest = await postgresAdapter.findGuestByPhone(phone);
+      if (pgGuest) {
+        this.data!.guests.unshift(pgGuest);
+        this.persist();
+        return pgGuest;
+      }
+    }
+    return undefined;
+  }
+
+  public async findGuestByEmailAsync(email: string): Promise<Guest | undefined> {
+    const local = this.findGuestByEmail(email);
+    if (local) return local;
+
+    if (postgresAdapter.isAvailable()) {
+      const pgGuest = await postgresAdapter.findGuestByEmail(email);
+      if (pgGuest) {
+        this.data!.guests.unshift(pgGuest);
+        this.persist();
+        return pgGuest;
+      }
+    }
+    return undefined;
+  }
+
+  public async searchGuestsAsync(query: string): Promise<Guest[]> {
+    this.ensureInitialized();
+    const clean = query.trim().toLowerCase();
+    if (!clean) return this.data!.guests.slice(0, 50);
+
+    // If Postgres is available, combine or query Postgres
+    if (postgresAdapter.isAvailable()) {
+      const pgResults = await postgresAdapter.searchGuests(clean);
+      if (pgResults.length > 0) {
+        return pgResults;
+      }
+    }
+
+    return this.data!.guests.filter(g =>
+      (g.nama && g.nama.toLowerCase().includes(clean)) ||
+      (g.nrp && g.nrp.toLowerCase().includes(clean)) ||
+      (g.no_hp && g.no_hp.includes(clean)) ||
+      (g.email && g.email.toLowerCase().includes(clean)) ||
+      (g.ticket_id && g.ticket_id.toLowerCase().includes(clean)) ||
+      (g.registration_id && g.registration_id.toLowerCase().includes(clean)) ||
+      (g.qr_token && g.qr_token.toLowerCase().includes(clean))
+    );
   }
 
   public updateGuest(id: string, updates: Partial<Guest>): Guest | null {

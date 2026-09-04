@@ -91,7 +91,7 @@ export default function HomePage() {
       {/* =========================================================================
           1. HERO EVENT SECTION (Compact & Above the Fold)
           ========================================================================= */}
-      <section className="relative pt-8 pb-10 sm:pt-12 sm:pb-14 border-b border-slate-200/80 bg-gradient-to-b from-white to-[#f8fafc]">
+      <section className="relative pt-10 pb-12 sm:pt-16 sm:pb-20 border-b border-slate-200/80 bg-gradient-to-b from-white to-[#f8fafc]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-5">
           {/* Official Institution Badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-blue-50 border border-blue-200 text-[#1E40AF] text-[12px] sm:text-[13px] font-medium tracking-wide">

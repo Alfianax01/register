@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
 
     // Check duplicate NRP
     if (nrp && String(nrp).trim()) {
-      const existing = db.findGuestByNRP(String(nrp).trim());
+      const existing = await db.findGuestByNRPAsync(String(nrp).trim());
       if (existing) {
         return NextResponse.json(
           {
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
 
     // Check duplicate Phone Number
     if (no_hp && String(no_hp).trim()) {
-      const existingPhone = db.findGuestByPhone(String(no_hp).trim());
+      const existingPhone = await db.findGuestByPhoneAsync(String(no_hp).trim());
       if (existingPhone) {
         return NextResponse.json(
           {
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
 
     // Check duplicate Email (if email is provided)
     if (email && String(email).trim()) {
-      const existingEmail = db.findGuestByEmail(String(email).trim());
+      const existingEmail = await db.findGuestByEmailAsync(String(email).trim());
       if (existingEmail) {
         return NextResponse.json(
           {
@@ -169,8 +169,8 @@ export async function POST(req: NextRequest) {
     const rankObj = TNI_RANKS.find(r => r.name === pangkat);
     const pangkat_level = rankObj ? rankObj.level : (matra === 'NON_TNI' ? 8 : 10);
 
-    // Sanitize user inputs safely
-    const newGuest = db.createGuest({
+    // Sanitize user inputs safely and persist atomically with retry & post-insert verification
+    const newGuest = await db.createGuestAsync({
       nrp: escapeHtml(nrp || '-'),
       nama: escapeHtml(nama),
       gelar_depan: escapeHtml(gelar_depan || ''),

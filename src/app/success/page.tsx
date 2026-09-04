@@ -81,7 +81,7 @@ function SuccessContent() {
             </p>
           </div>
           <div className="pt-2 flex flex-col gap-2">
-            <Link href="/ticket/my-ticket">
+            <Link href="/ticket">
               <Button variant="primary" size="md" className="w-full text-xs">
                 Cari E-Ticket
               </Button>

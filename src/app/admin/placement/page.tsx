@@ -141,11 +141,11 @@ export default function PlacementPage() {
         {/* Sub-Header & Controls */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {/* View Mode Toggle */}
-          <div className="p-1 rounded-lg bg-slate-200/70 border border-slate-200 flex items-center gap-1">
+          <div className="p-1 rounded-lg bg-slate-200/70 border border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-1 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setActiveTab('seats')}
-              className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
+              className={`px-3.5 py-2 sm:py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'seats'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -158,7 +158,7 @@ export default function PlacementPage() {
             <button
               type="button"
               onClick={() => setActiveTab('rooms')}
-              className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
+              className={`px-3.5 py-2 sm:py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'rooms'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -170,14 +170,15 @@ export default function PlacementPage() {
           </div>
 
           {/* Actions: Auto-Assign & Refresh */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             {activeTab === 'seats' && (
               <Button
                 variant="primary"
                 size="md"
                 onClick={handleAutoAssign}
                 isLoading={autoAssignLoading}
-                className="text-xs font-semibold h-[38px]"
+                loadingText="Mengalokasikan..."
+                className="text-xs font-semibold h-[40px] sm:h-[38px] w-full sm:w-auto"
               >
                 <Wand2 className="w-3.5 h-3.5 mr-1.5" />
                 <span>Auto-Assign Kursi (By Pangkat)</span>
@@ -188,7 +189,7 @@ export default function PlacementPage() {
               variant="outline"
               size="md"
               onClick={fetchData}
-              className="text-xs h-[38px]"
+              className="text-xs h-[40px] sm:h-[38px] w-full sm:w-auto"
             >
               <RotateCw className="w-3.5 h-3.5 mr-1" />
               <span>Segarkan</span>

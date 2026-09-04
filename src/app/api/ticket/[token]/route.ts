@@ -14,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: 'Token tidak valid' }, { status: 400 });
     }
 
-    const guest = db.findGuestByToken(token);
+    const guest = await db.findGuestByTokenAsync(token);
     if (!guest) {
       console.error("DATA ERROR: Undangan tidak ditemukan untuk token/ID:", token);
       return NextResponse.json({ error: 'Data undangan atau e-ticket tidak ditemukan' }, { status: 404 });
