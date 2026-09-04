@@ -18,49 +18,49 @@ interface StatOverviewProps {
 export const StatOverviewCards: React.FC<StatOverviewProps> = ({ stats }) => {
   const cards = [
     {
-      title: 'Total Tamu Terdaftar',
+      title: 'Total Tamu',
       value: stats.totalGuests,
       subtext: 'Prajurit & Delegasi',
       icon: Users,
-      color: 'text-slate-200',
-      borderColor: 'border-[#1E3B2F]',
-      bgColor: 'bg-[#0E2019]'
+      iconColor: 'text-slate-600',
+      iconBg: 'bg-slate-100',
+      valueColor: 'text-slate-900'
     },
     {
-      title: 'Telah Hadir (Presensi)',
+      title: 'Telah Hadir',
       value: stats.presentGuests,
       subtext: `${stats.percentagePresent}% Tingkat Kehadiran`,
       icon: CheckCircle2,
-      color: 'text-emerald-400',
-      borderColor: 'border-emerald-600/50',
-      bgColor: 'bg-emerald-950/40'
+      iconColor: 'text-emerald-600',
+      iconBg: 'bg-emerald-50',
+      valueColor: 'text-emerald-700'
     },
     {
       title: 'Belum Check-In',
       value: stats.absentGuests,
       subtext: 'Dalam Perjalanan / Belum Tiba',
       icon: Clock,
-      color: 'text-amber-400',
-      borderColor: 'border-amber-600/50',
-      bgColor: 'bg-amber-950/40'
+      iconColor: 'text-amber-600',
+      iconBg: 'bg-amber-50',
+      valueColor: 'text-amber-700'
     },
     {
-      title: 'Kursi Paripurna Dialokasikan',
+      title: 'Kursi Terisi',
       value: `${stats.occupiedSeats} / ${stats.totalSeats}`,
-      subtext: `${stats.totalSeats > 0 ? Math.round((stats.occupiedSeats / stats.totalSeats) * 100) : 0}% Terisi`,
+      subtext: `${stats.totalSeats > 0 ? Math.round((stats.occupiedSeats / stats.totalSeats) * 100) : 0}% Kapasitas Sidang`,
       icon: Armchair,
-      color: 'text-[#F5E296]',
-      borderColor: 'border-amber-500/50',
-      bgColor: 'bg-amber-950/30'
+      iconColor: 'text-blue-600',
+      iconBg: 'bg-blue-50',
+      valueColor: 'text-blue-700'
     },
     {
-      title: 'Kamar Wisma Terisi',
+      title: 'Kamar Terisi',
       value: `${stats.accommodationAssigned} / ${stats.accommodationNeeded}`,
       subtext: 'Dari Permintaan Menginap',
       icon: Bed,
-      color: 'text-cyan-300',
-      borderColor: 'border-cyan-600/50',
-      bgColor: 'bg-cyan-950/40'
+      iconColor: 'text-indigo-600',
+      iconBg: 'bg-indigo-50',
+      valueColor: 'text-indigo-700'
     }
   ];
 
@@ -71,18 +71,20 @@ export const StatOverviewCards: React.FC<StatOverviewProps> = ({ stats }) => {
         return (
           <Card
             key={card.title}
-            className={`p-4 ${card.bgColor} ${card.borderColor} transition-all hover:scale-[1.01]`}
+            className="p-4 bg-white border border-slate-200 shadow-xs hover:border-slate-300 transition-colors"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide truncate">
+              <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide truncate">
                 {card.title}
               </span>
-              <Icon className={`w-4 h-4 ${card.color}`} />
+              <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center`}>
+                <Icon className={`w-3.5 h-3.5 ${card.iconColor}`} />
+              </div>
             </div>
-            <div className={`text-2xl font-serif font-bold ${card.color}`}>
+            <div className={`text-2xl font-bold font-mono ${card.valueColor}`}>
               {card.value}
             </div>
-            <span className="text-[10px] text-slate-400 font-mono mt-1 block">
+            <span className="text-[11px] text-slate-500 mt-1 block">
               {card.subtext}
             </span>
           </Card>
@@ -91,4 +93,3 @@ export const StatOverviewCards: React.FC<StatOverviewProps> = ({ stats }) => {
     </div>
   );
 };
-

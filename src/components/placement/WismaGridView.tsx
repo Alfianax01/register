@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import { AccommodationRoom, Guest } from '@/types';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { Bed, UserPlus, UserX, Building2, Check } from 'lucide-react';
+import { UserPlus, UserX, Building2 } from 'lucide-react';
 
 interface WismaGridViewProps {
   rooms: AccommodationRoom[];
@@ -43,7 +42,7 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
   return (
     <div className="space-y-6">
       {/* Wisma Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-[#1E3B2F] pb-3">
+      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
         {wismaNames.map(name => {
           const isSelected = selectedWisma === name;
           const count = rooms.filter(r => r.wisma_name === name).length;
@@ -53,15 +52,17 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
               key={name}
               type="button"
               onClick={() => setSelectedWisma(name)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-serif font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 py-2 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 ${
                 isSelected
-                  ? 'bg-[#143B2A] text-[#F5E296] border border-[#D4AF37] shadow-lg shadow-black/40'
-                  : 'bg-[#0A1711] text-slate-300 border border-[#173325] hover:border-slate-500'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
               }`}
             >
-              <Building2 className="w-4 h-4 text-[#D4AF37]" />
+              <Building2 className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-slate-500'}`} />
               <span>{name}</span>
-              <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-black/40 text-slate-400">
+              <span className={`text-[10px] px-1.5 py-0.2 rounded ${
+                isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+              }`}>
                 {count} Kamar
               </span>
             </button>
@@ -80,36 +81,36 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
           return (
             <div
               key={room.id}
-              className={`rounded-xl border p-4 transition-all ${
+              className={`rounded-xl border p-4 bg-white shadow-xs transition-all ${
                 isFull
-                  ? 'bg-[#0A1D15] border-emerald-700/60 shadow-md'
+                  ? 'border-emerald-200 bg-emerald-50/10'
                   : isEmpty
-                  ? 'bg-[#081510] border-[#163324]'
-                  : 'bg-[#0C2219] border-amber-600/60 shadow-md'
+                  ? 'border-slate-200'
+                  : 'border-blue-200 bg-blue-50/10'
               }`}
             >
-              <div className="flex items-center justify-between border-b border-[#1A382A] pb-2 mb-3">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-serif font-bold text-slate-100">
+                  <span className="text-sm font-semibold text-slate-900">
                     Kamar {room.room_number}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    Lantai {room.floor}
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    Lt. {room.floor}
                   </span>
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                   isFull
-                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-600'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                     : isEmpty
-                    ? 'bg-slate-900 text-slate-400 border border-slate-700'
-                    : 'bg-amber-950 text-amber-300 border border-amber-600'
+                    ? 'bg-slate-100 text-slate-600 border border-slate-200'
+                    : 'bg-blue-50 text-blue-700 border border-blue-200'
                 }`}>
                   {isFull ? 'Penuh' : isEmpty ? 'Kosong' : '1 Terisi'}
                 </span>
               </div>
 
               {room.notes && (
-                <p className="text-[10px] text-[#D4AF37] mb-3 italic">
+                <p className="text-[11px] text-slate-500 mb-3 italic">
                   {room.notes}
                 </p>
               )}
@@ -117,29 +118,29 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
               {/* Slots A & B */}
               <div className="space-y-2">
                 {/* Slot A */}
-                <div className="p-2 rounded-lg bg-[#07110C] border border-[#173022] flex items-center justify-between text-xs">
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs">
                   <div className="min-w-0 pr-2">
-                    <span className="text-[9px] font-bold text-[#D4AF37] uppercase block">
+                    <span className="text-[10px] font-semibold text-blue-600 uppercase block">
                       BED A
                     </span>
                     {room.slot_a_guest_name ? (
-                      <div className="truncate">
-                        <span className="font-semibold text-slate-100 truncate block">
+                      <div className="truncate mt-0.5">
+                        <span className="font-medium text-slate-900 truncate block">
                           {room.slot_a_guest_name}
                         </span>
-                        <span className="text-[10px] text-slate-400 block">
+                        <span className="text-[11px] text-slate-500 block">
                           {room.slot_a_guest_rank}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-[11px] text-slate-500 italic">Slot Kosong</span>
+                      <span className="text-[11px] text-slate-400 italic">Slot Kosong</span>
                     )}
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => openAssign(room.id, 'A', room.slot_a_guest_id)}
-                    className="text-xs p-1.5 h-auto text-slate-400 hover:text-[#F5E296]"
+                    className="text-xs h-7 px-2 text-slate-600 hover:text-blue-600"
                   >
                     {room.slot_a_guest_id ? 'Ubah' : <UserPlus className="w-3.5 h-3.5" />}
                   </Button>
@@ -147,29 +148,29 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
 
                 {/* Slot B (if capacity > 1) */}
                 {room.capacity > 1 && (
-                  <div className="p-2 rounded-lg bg-[#07110C] border border-[#173022] flex items-center justify-between text-xs">
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs">
                     <div className="min-w-0 pr-2">
-                      <span className="text-[9px] font-bold text-cyan-400 uppercase block">
+                      <span className="text-[10px] font-semibold text-indigo-600 uppercase block">
                         BED B
                       </span>
                       {room.slot_b_guest_name ? (
-                        <div className="truncate">
-                          <span className="font-semibold text-slate-100 truncate block">
+                        <div className="truncate mt-0.5">
+                          <span className="font-medium text-slate-900 truncate block">
                             {room.slot_b_guest_name}
                           </span>
-                          <span className="text-[10px] text-slate-400 block">
+                          <span className="text-[11px] text-slate-500 block">
                             {room.slot_b_guest_rank}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-[11px] text-slate-500 italic">Slot Kosong</span>
+                        <span className="text-[11px] text-slate-400 italic">Slot Kosong</span>
                       )}
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => openAssign(room.id, 'B', room.slot_b_guest_id)}
-                      className="text-xs p-1.5 h-auto text-slate-400 hover:text-cyan-300"
+                      className="text-xs h-7 px-2 text-slate-600 hover:text-indigo-600"
                     >
                       {room.slot_b_guest_id ? 'Ubah' : <UserPlus className="w-3.5 h-3.5" />}
                     </Button>
@@ -183,36 +184,35 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
 
       {/* Assign Room Modal Drawer */}
       {assignModal && (
-        <div className="p-5 rounded-xl bg-[#0F261C] border-2 border-[#D4AF37]/70 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-150">
-          <div className="flex items-center justify-between border-b border-[#1E4333] pb-3">
+        <div className="p-5 rounded-xl bg-white border border-slate-200 shadow-md space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <span className="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider">
-                PENETAPAN PENGINAPAN WISMA
+              <span className="text-[10px] text-blue-600 font-semibold uppercase tracking-wider">
+                Alokasi Wisma Penginapan
               </span>
-              <h4 className="text-base font-serif font-bold text-slate-100">
+              <h4 className="text-sm font-semibold text-slate-900">
                 Alokasi Kamar: Bed {assignModal.slot}
               </h4>
             </div>
             <button
               onClick={() => setAssignModal(null)}
-              className="text-xs text-slate-400 hover:text-slate-200"
+              className="text-xs text-slate-400 hover:text-slate-600"
             >
               Batal
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
             <div className="sm:col-span-8">
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
                 Pilih Tamu yang Memerlukan Akomodasi:
               </label>
               <select
                 value={targetGuestId}
                 onChange={(e) => setTargetGuestId(e.target.value)}
-                className="w-full rounded-lg bg-[#070E0B] text-slate-100 border border-[#1E3B2F] text-xs p-3 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                className="w-full rounded-lg bg-white text-slate-900 border border-slate-200 text-xs h-[42px] px-3 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
               >
                 <option value="">-- Kosongkan Slot Bed Ini --</option>
-                {/* Current occupant */}
                 {assignModal.currentGuestId && (
                   <option value={assignModal.currentGuestId}>
                     (Penghuni Saat Ini)
@@ -228,10 +228,10 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
 
             <div className="sm:col-span-4 flex gap-2">
               <Button
-                variant="gold"
+                variant="primary"
                 size="md"
                 onClick={handleSave}
-                className="flex-1 text-xs font-bold"
+                className="flex-1 text-xs font-semibold h-[42px]"
               >
                 <span>Simpan Kamar</span>
               </Button>
@@ -240,7 +240,8 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                   variant="ghost"
                   size="md"
                   onClick={handleClear}
-                  className="text-xs text-red-400 border border-red-800/60 hover:bg-red-950/40"
+                  className="text-xs text-rose-600 hover:bg-rose-50 border border-rose-200 h-[42px] px-3"
+                  title="Kosongkan kamar"
                 >
                   <UserX className="w-4 h-4" />
                 </Button>
@@ -252,4 +253,3 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
     </div>
   );
 };
-

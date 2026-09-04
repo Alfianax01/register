@@ -24,7 +24,7 @@ async function runTests() {
     gelar_depan: 'Dr.',
     gelar_belakang: 'S.T., M.Si.',
     matra: 'AD',
-    nrp: '1105999',
+    nrp: '11' + Math.floor(1000 + Math.random() * 9000),
     pangkat: 'Kolonel (AD)',
     jabatan: 'Dandim 0501/Jakarta Pusat',
     satker: 'Kodam Jaya / Jayakarta',

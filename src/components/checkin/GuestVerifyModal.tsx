@@ -4,16 +4,12 @@ import React from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { TniEmblem } from '@/components/emblems/TniEmblem';
-import { getMatraBadgeInfo, formatDateTimeID } from '@/lib/utils/formatters';
+import { formatDateTimeID } from '@/lib/utils/formatters';
 import {
   CheckCircle2,
   AlertTriangle,
   Armchair,
-  Bed,
-  Building,
-  User,
-  Clock
+  Bed
 } from 'lucide-react';
 
 interface GuestVerifyModalProps {
@@ -35,119 +31,118 @@ export const GuestVerifyModal: React.FC<GuestVerifyModalProps> = ({
   if (!result) return null;
 
   const { guest, alreadyCheckedIn, previousTimestamp, log } = result;
-  const matraInfo = getMatraBadgeInfo(guest.matra);
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={alreadyCheckedIn ? 'Peringatan: Verifikasi Ulang (Re-Scan)' : 'Verifikasi Kehadiran Berhasil!'}
+      title={alreadyCheckedIn ? 'Verifikasi Ulang Kehadiran' : 'Verifikasi Kehadiran Sukses'}
       maxWidth="md"
     >
-      <div className="space-y-5">
+      <div className="space-y-4">
         {/* Status Alert Banner */}
         {alreadyCheckedIn ? (
-          <div className="p-3.5 rounded-xl bg-amber-950/80 border border-amber-500 text-amber-200 text-xs flex items-start gap-2.5">
-            <AlertTriangle className="w-5 h-5 flex-shrink-0 text-amber-400 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
             <div>
-              <strong className="block font-bold">Prajurit / Tamu Sudah Tercatat Hadir Sebelumnya!</strong>
-              <span>
-                Telah di-scan pada {formatDateTimeID(previousTimestamp)} di checkpoint ini. Presensi ganda tercatat dalam log audit.
+              <strong className="block font-semibold">Tamu Sudah Terverifikasi Hadir Sebelumnya</strong>
+              <span className="text-amber-700">
+                Tercatat pada {formatDateTimeID(previousTimestamp)}. Pemindaian ganda telah ditambahkan ke log audit.
               </span>
             </div>
           </div>
         ) : (
-          <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-200 text-xs flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
             <div>
-              <strong className="block font-bold">Presensi Berhasil Diterima</strong>
-              <span>Tercatat di {log.checkpoint_name} pada {formatDateTimeID(log.scanned_at)}</span>
+              <strong className="block font-semibold">Presensi Berhasil Dikonfirmasi</strong>
+              <span className="text-emerald-700">Tercatat di {log.checkpoint_name} pada {formatDateTimeID(log.scanned_at)}</span>
             </div>
           </div>
         )}
 
         {/* Guest Identity Card */}
-        <div className="p-4 rounded-xl bg-[#091811] border border-[#1E3B2F] space-y-3">
-          <div className="flex items-start gap-3.5">
-            <TniEmblem matra={guest.matra} size="md" className="flex-shrink-0" />
+        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <Badge variant={guest.matra === 'AD' ? 'ad' : guest.matra === 'AL' ? 'al' : guest.matra === 'AU' ? 'au' : 'gold'} size="sm">
-                {matraInfo.label}
-              </Badge>
-              <h4 className="text-base font-serif font-bold text-slate-100 mt-1">
+              <div className="flex items-center gap-2">
+                <Badge variant={guest.matra === 'AD' ? 'ad' : guest.matra === 'AL' ? 'al' : guest.matra === 'AU' ? 'au' : 'slate'} size="sm">
+                  {guest.matra}
+                </Badge>
+                <span className="text-xs font-semibold text-slate-700">
+                  {guest.pangkat} &bull; <span className="font-mono text-slate-500">NRP {guest.nrp}</span>
+                </span>
+              </div>
+              <h4 className="text-base font-semibold text-slate-900 mt-1">
                 {guest.gelar_depan ? `${guest.gelar_depan} ` : ''}
                 {guest.nama}
                 {guest.gelar_belakang ? `, ${guest.gelar_belakang}` : ''}
               </h4>
-              <p className="text-xs font-semibold text-[#F5E296]">
-                {guest.pangkat} &bull; <span className="font-mono">NRP {guest.nrp}</span>
-              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-2 border-t border-[#163124]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-2.5 border-t border-slate-200">
             <div>
-              <span className="text-slate-400 block text-[10px]">Jabatan Kedinasan:</span>
-              <span className="text-slate-200 font-medium">{guest.jabatan}</span>
+              <span className="text-slate-500 block text-[11px]">Jabatan Kedinasan:</span>
+              <span className="text-slate-800 font-medium">{guest.jabatan}</span>
             </div>
             <div>
-              <span className="text-slate-400 block text-[10px]">Satuan / Kesatuan:</span>
-              <span className="text-slate-200 font-medium">{guest.satuan} ({guest.satker})</span>
+              <span className="text-slate-500 block text-[11px]">Satuan / Satker:</span>
+              <span className="text-slate-800 font-medium">{guest.satuan} ({guest.satker})</span>
             </div>
           </div>
         </div>
 
-        {/* Tactical Guidance (Kursi & Kamar Langsung Mengarahkan Tamu) */}
+        {/* Direction Cards: Seating & Room */}
         <div className="grid grid-cols-2 gap-3">
           {/* Seating Direction */}
-          <div className="p-3.5 rounded-xl bg-[#0B2117] border border-[#235840]">
-            <div className="flex items-center gap-2 text-xs text-[#D4AF37] font-semibold mb-1">
+          <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
+            <div className="flex items-center gap-1.5 text-xs text-blue-700 font-medium mb-1">
               <Armchair className="w-4 h-4" />
-              <span>Arahkan ke Kursi</span>
+              <span>Nomor Kursi</span>
             </div>
             {guest.seat_number ? (
               <div>
-                <span className="text-lg font-serif font-bold text-[#F5E296] block">
+                <span className="text-xl font-bold font-mono text-blue-900 block">
                   {guest.seat_number}
                 </span>
-                <span className="text-[10px] text-slate-300">
+                <span className="text-[11px] text-blue-700">
                   {guest.seat_details?.group_code ? `Grup ${guest.seat_details.group_code}` : 'Sidang Pleno'}
                 </span>
               </div>
             ) : (
-              <span className="text-xs text-slate-400 italic">Belum ditentukan panitia</span>
+              <span className="text-xs text-slate-400 italic">Belum ditentukan</span>
             )}
           </div>
 
           {/* Wisma Direction */}
-          <div className="p-3.5 rounded-xl bg-[#0B1E2E] border border-[#1E4369]">
-            <div className="flex items-center gap-2 text-xs text-cyan-300 font-semibold mb-1">
-              <Bed className="w-4 h-4" />
-              <span>Kamar Penginapan</span>
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="flex items-center gap-1.5 text-xs text-slate-700 font-medium mb-1">
+              <Bed className="w-4 h-4 text-slate-500" />
+              <span>Akomodasi Wisma</span>
             </div>
             {guest.room_details ? (
               <div>
-                <span className="text-sm font-bold text-cyan-200 block">
+                <span className="text-sm font-semibold text-slate-900 block">
                   Kamar {guest.room_details.room_number} (Bed {guest.room_details.slot})
                 </span>
-                <span className="text-[10px] text-slate-300 truncate block">
+                <span className="text-[11px] text-slate-500 truncate block">
                   {guest.room_details.wisma_name}
                 </span>
               </div>
             ) : guest.butuh_akomodasi ? (
-              <span className="text-xs text-amber-300">Konfirmasi Panitia Wisma</span>
+              <span className="text-xs text-amber-600 font-medium">Perlu Konfirmasi Wisma</span>
             ) : (
-              <span className="text-xs text-slate-400">Tidak Menginap</span>
+              <span className="text-xs text-slate-500">Tidak Menginap</span>
             )}
           </div>
         </div>
 
         {/* Action button */}
-        <Button variant="gold" size="lg" onClick={onClose} className="w-full text-xs font-bold shadow-lg">
-          <span>Tutup & Siap Scan Tamu Berikutnya</span>
+        <Button variant="primary" size="md" onClick={onClose} className="w-full text-xs font-semibold h-[42px]">
+          <span>Selesai & Scan Tamu Berikutnya</span>
         </Button>
       </div>
     </Modal>
   );
 };
-

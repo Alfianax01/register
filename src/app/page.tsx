@@ -1,222 +1,216 @@
-import React from 'react';
-import Link from 'next/link';
-import { TniEmblem } from '@/components/emblems/TniEmblem';
-import { Button } from '@/components/ui/Button';
+'use client';
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ModernScanner } from '@/components/scanner/ModernScanner';
+import { ModernRegistrationForm } from '@/components/register/ModernRegistrationForm';
 import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { useToast } from '@/components/ui/Toast';
 import {
+  QrCode,
+  Sparkles,
+  ArrowRight,
+  Shield,
   Calendar,
   MapPin,
-  Shield,
-  QrCode,
-  Users,
   CheckCircle2,
-  ArrowRight,
-  Sparkles,
-  Bed,
-  Lock
+  ExternalLink
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomePage() {
+  const router = useRouter();
+  const { showToast } = useToast();
+
+  const [scannedGuestData, setScannedGuestData] = useState<any>(null);
+  const [isVerifyingScan, setIsVerifyingScan] = useState<boolean>(false);
+  const [registeredGuest, setRegisteredGuest] = useState<{ token: string; guest: any } | null>(null);
+
+  // When scanner detects a QR code
+  const handleScanResult = async (decodedText: string) => {
+    setIsVerifyingScan(true);
+    const trimmed = decodedText.trim();
+
+    try {
+      // 1. Try resolving token against existing guests in DB
+      const res = await fetch(`/api/ticket/${encodeURIComponent(trimmed)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setScannedGuestData(data.guest);
+        showToast('Tamu Ditemukan', {
+          type: 'success',
+          message: `${data.guest.pangkat} ${data.guest.nama} terverifikasi dalam basis data.`
+        });
+        setIsVerifyingScan(false);
+        return;
+      }
+
+      // 2. Try searching by NRP or ID
+      const searchRes = await fetch(`/api/guests?q=${encodeURIComponent(trimmed)}`);
+      if (searchRes.ok) {
+        const searchData = await searchRes.json();
+        if (searchData.guests && searchData.guests.length > 0) {
+          const guest = searchData.guests[0];
+          setScannedGuestData(guest);
+          showToast('Data NRP Ditemukan', {
+            type: 'success',
+            message: `Data untuk NRP ${guest.nrp} dimuat ke formulir.`
+          });
+          setIsVerifyingScan(false);
+          return;
+        }
+      }
+
+      // 3. Fallback: treat as raw NRP/code to prefill form
+      setScannedGuestData({ nrp: trimmed });
+      showToast('Kode QR Terbaca', {
+        type: 'info',
+        message: `Nilai "${trimmed}" telah diisikan ke kolom NRP/Identitas.`
+      });
+    } catch {
+      setScannedGuestData({ nrp: trimmed });
+    } finally {
+      setIsVerifyingScan(false);
+    }
+  };
+
+  const handleRegistrationSuccess = (token: string, guest: any) => {
+    setRegisteredGuest({ token, guest });
+  };
+
   return (
-    <div className="relative overflow-hidden">
-      {/* Background Decorative Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] pointer-events-none opacity-20">
-        <div className="absolute top-10 left-1/4 w-96 h-96 bg-emerald-600 rounded-full blur-[140px]" />
-        <div className="absolute top-20 right-1/4 w-96 h-96 bg-amber-500 rounded-full blur-[160px]" />
-      </div>
-
-      {/* HERO SECTION */}
-      <section className="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
-        {/* Tri-Matra Emblem Cluster */}
-        <div className="flex items-center justify-center gap-4 mb-6">
-          <TniEmblem matra="AD" size="md" className="hidden sm:flex hover:scale-110 transition-transform" />
-          <TniEmblem matra="MABES" size="xl" className="scale-110 drop-shadow-[0_4px_25px_rgba(212,175,55,0.4)]" />
-          <TniEmblem matra="AL" size="md" className="hidden sm:flex hover:scale-110 transition-transform" />
-          <TniEmblem matra="AU" size="md" className="hidden sm:flex hover:scale-110 transition-transform" />
-        </div>
-
-        {/* Institution Badges */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#133023] border border-[#D4AF37]/50 text-[#F5E296] text-xs font-semibold tracking-widest uppercase mb-4 shadow-lg shadow-amber-950/20">
-          <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
-          <span>MARKAS BESAR TENTARA NASIONAL INDONESIA</span>
-        </div>
-
-        {/* Title */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-slate-100 max-w-4xl mx-auto leading-tight">
-          RAPAT PIMPINAN TNI <br />
-          <span className="text-gold-gradient">TAHUN 2026</span>
-        </h1>
-
-        {/* Theme */}
-        <div className="mt-6 max-w-3xl mx-auto p-4 rounded-xl bg-[#0C1E17]/90 border border-[#1E4334] shadow-inner">
-          <p className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold mb-1">
-            TEMA RAPIM TNI 2026
-          </p>
-          <p className="text-sm sm:text-base font-serif italic text-slate-200">
-            &ldquo;TNI PRIMA: Profesional, Responsif, Integratif, Modern, dan Adaptif Siap Mendukung Stabilitas Pertahanan Nasional Menuju Indonesia Maju&rdquo;
-          </p>
-        </div>
-
-        {/* Key Event Badges */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-300">
-          <div className="flex items-center gap-2 bg-[#0F261D] px-3.5 py-2 rounded-lg border border-[#1D4736]">
-            <Calendar className="w-4 h-4 text-[#D4AF37]" />
-            <span>4 – 6 September 2026</span>
-          </div>
-          <div className="flex items-center gap-2 bg-[#0F261D] px-3.5 py-2 rounded-lg border border-[#1D4736]">
-            <MapPin className="w-4 h-4 text-[#D4AF37]" />
-            <span>Gedung Ahmad Yani, Mabes TNI Cilangkap</span>
-          </div>
-          <div className="flex items-center gap-2 bg-[#0F261D] px-3.5 py-2 rounded-lg border border-[#1D4736]">
-            <Shield className="w-4 h-4 text-[#D4AF37]" />
-            <span>PDU I / PDH / PSL</span>
-          </div>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
-          <Link href="/register" className="w-full sm:w-auto">
-            <Button variant="gold" size="lg" className="w-full sm:w-auto shadow-xl">
-              <span>Registrasi Undangan</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-          <Link href="/ticket/my-ticket" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              <QrCode className="w-4 h-4 mr-2 text-[#D4AF37]" />
-              <span>Cek E-Ticket Saya</span>
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* SYSTEM FLOW (ALUR PENGGUNA) */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#163124]">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-100">
-            Alur E-Registrasi & Presensi Hari-H
-          </h2>
-          <p className="text-slate-400 text-sm mt-2 max-w-xl mx-auto">
-            Mekanisme digital satu pintu untuk memudahkan kehadiran prajurit dan tamu kehormatan
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Step 1 */}
-          <Card className="p-6 relative group hover:border-[#D4AF37]/60 transition-all">
-            <div className="w-10 h-10 rounded-lg bg-emerald-950 border border-emerald-600 text-emerald-300 font-bold flex items-center justify-center text-sm mb-4">
-              01
+    <div className="w-full py-8 sm:py-10">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
+        {/* Top Header & Context */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200/80 pb-6">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Badge variant="primary" size="sm">
+                Sistem Terpadu 2026
+              </Badge>
+              <span className="text-xs text-slate-400">&bull;</span>
+              <span className="text-xs text-slate-500 font-medium">
+                Gedung Ahmad Yani, Mabes TNI Cilangkap
+              </span>
             </div>
-            <h3 className="font-serif font-bold text-base text-slate-100 mb-2">
-              Isi Data Registrasi
-            </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Tamu mengisi formulir online resmi dengan NRP, Matra (AD, AL, AU, Kemhan/Sipil), Pangkat, Satuan, dan kebutuhan akomodasi.
-            </p>
-          </Card>
-
-          {/* Step 2 */}
-          <Card className="p-6 relative group hover:border-[#D4AF37]/60 transition-all">
-            <div className="w-10 h-10 rounded-lg bg-amber-950 border border-amber-600 text-amber-300 font-bold flex items-center justify-center text-sm mb-4">
-              02
-            </div>
-            <h3 className="font-serif font-bold text-base text-slate-100 mb-2">
-              Terbitkan E-Ticket QR
-            </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Sistem men-generate token acak terenkripsi (UUID v4) dan kartu identitas digital yang dapat diunduh atau disimpan ke ponsel.
-            </p>
-          </Card>
-
-          {/* Step 3 */}
-          <Card className="p-6 relative group hover:border-[#D4AF37]/60 transition-all">
-            <div className="w-10 h-10 rounded-lg bg-blue-950 border border-blue-600 text-blue-300 font-bold flex items-center justify-center text-sm mb-4">
-              03
-            </div>
-            <h3 className="font-serif font-bold text-base text-slate-100 mb-2">
-              Check-In Hari-H
-            </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Tiba di Gedung Ahmad Yani, panitia gate memindai QR Code di gerbang masuk, ruang pleno VIP, sesi tertutup, dan konsumsi.
-            </p>
-          </Card>
-
-          {/* Step 4 */}
-          <Card className="p-6 relative group hover:border-[#D4AF37]/60 transition-all">
-            <div className="w-10 h-10 rounded-lg bg-cyan-950 border border-cyan-600 text-cyan-300 font-bold flex items-center justify-center text-sm mb-4">
-              04
-            </div>
-            <h3 className="font-serif font-bold text-base text-slate-100 mb-2">
-              Penempatan Kursi & Wisma
-            </h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Nomor kursi sidang paripurna (Grup A-F) dan alokasi kamar wisma penginapan diperbarui otomatis dan dapat dilihat langsung di e-ticket.
-            </p>
-          </Card>
-        </div>
-      </section>
-
-      {/* MATRA IDENTITY HIGHLIGHTS */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#163124]">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* AD */}
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#0F2A1C] to-[#08170F] border border-emerald-700/50 shadow-lg flex flex-col items-center text-center">
-            <TniEmblem matra="AD" size="lg" className="mb-3" />
-            <h4 className="font-serif font-bold text-emerald-300 text-lg">TNI ANGKATAN DARAT</h4>
-            <p className="text-[11px] font-mono text-[#D4AF37] mb-2 tracking-widest">KARTIKA EKA PAKSI</p>
-            <p className="text-xs text-slate-300">
-              Kostrad, Kopassus, Kodam I s/d XVIII, dan Badan Pelaksana Pusat TNI AD.
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">
+              Registrasi & Check-In Mandiri
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-2xl">
+              Pindai kartu QR Code Anda pada pemindai di sebelah kiri atau lengkapi formulir registrasi online di sebelah kanan.
             </p>
           </div>
 
-          {/* AL */}
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#0E2442] to-[#071324] border border-blue-700/50 shadow-lg flex flex-col items-center text-center">
-            <TniEmblem matra="AL" size="lg" className="mb-3" />
-            <h4 className="font-serif font-bold text-blue-300 text-lg">TNI ANGKATAN LAUT</h4>
-            <p className="text-[11px] font-mono text-[#D4AF37] mb-2 tracking-widest">JALESVEVA JAYAMAHE</p>
-            <p className="text-xs text-slate-300">
-              Koarmada RI (I, II, III), Korps Marinir, Kolinlamil, dan Balakpus TNI AL.
-            </p>
-          </div>
-
-          {/* AU */}
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#11354A] to-[#081B26] border border-sky-600/50 shadow-lg flex flex-col items-center text-center">
-            <TniEmblem matra="AU" size="lg" className="mb-3" />
-            <h4 className="font-serif font-bold text-sky-300 text-lg">TNI ANGKATAN UDARA</h4>
-            <p className="text-[11px] font-mono text-[#D4AF37] mb-2 tracking-widest">SWA BHUWANA PAKSA</p>
-            <p className="text-xs text-slate-300">
-              Koopsudnas, Wing Udara, Kopasgat, Koharmatau, dan Jajaran Pangkalan Udara.
-            </p>
+          <div className="flex items-center gap-3 text-xs text-slate-500 flex-shrink-0">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-200 shadow-xs">
+              <Calendar className="w-3.5 h-3.5 text-blue-600" />
+              <span>4 – 6 September 2026</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-200 shadow-xs">
+              <Shield className="w-3.5 h-3.5 text-emerald-600" />
+              <span>TNI PRIMA</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* QUICK ACTIONS & ADMIN PORTAL ENTRY */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="rounded-2xl bg-gradient-to-r from-[#0C1E17] via-[#10291F] to-[#0C1E17] border border-[#D4AF37]/50 p-8 sm:p-10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center md:text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-950/70 border border-amber-500/50 text-amber-300 text-xs font-semibold">
-              <Lock className="w-3.5 h-3.5" />
-              <span>Akses Khusus Panitia & Petugas Lapangan</span>
+        {/* Success Banner if newly registered */}
+        {registeredGuest && (
+          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-emerald-950">
+                  Registrasi Selesai: E-Ticket Diterbitkan
+                </p>
+                <p className="text-[11px] text-emerald-700">
+                  Kartu tanda peserta atas nama {registeredGuest.guest?.nama || 'Prajurit'} siap digunakan untuk absensi hari-H.
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl sm:text-2xl font-serif font-bold text-slate-100">
-              Portal Manajemen Acara & Scanner Gate
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-              Masuk ke dashboard panitia untuk melakukan pemindaian QR Code di meja registrasi, pengaturan denah kursi paripurna, dan alokasi kamar wisma.
-            </p>
-          </div>
-          <div className="flex-shrink-0">
-            <Link href="/admin/login">
-              <Button variant="gold" size="lg" className="shadow-lg">
-                <Lock className="w-4 h-4 mr-2" />
-                <span>Masuk Dashboard Admin</span>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => router.push(`/ticket/${registeredGuest.token}`)}
+                className="w-full sm:w-auto text-xs font-semibold"
+              >
+                <span>Buka E-Ticket Digital</span>
+                <ExternalLink className="w-3.5 h-3.5 ml-1" />
               </Button>
-            </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        )}
+
+        {/* MAIN 2-COLUMN SPLIT LAYOUT (Max 1200px) */}
+        <section aria-label="Sistem Pemindaian dan Pendaftaran" className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+          {/* LEFT COLUMN: Modern Scanner (5 Cols on Desktop) */}
+          <div className="lg:col-span-5 space-y-4">
+            <Card className="p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-md bg-blue-50 text-blue-600">
+                    <QrCode className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-xs font-semibold text-slate-900 uppercase tracking-wide">
+                      Pemindai QR & Barcode
+                    </h2>
+                    <p className="text-[11px] text-slate-500">
+                      Deteksi otomatis kamera ponsel atau webcam
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* The high-precision scanner */}
+              <ModernScanner
+                onScanResult={handleScanResult}
+                isProcessing={isVerifyingScan}
+              />
+            </Card>
+
+            {/* Quick Helper Card */}
+            <Card variant="subtle" className="p-4 space-y-2">
+              <p className="text-xs font-semibold text-slate-800">
+                Punya Kartu Undangan Fisik?
+              </p>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Arahkan QR code cetak ke kamera di atas. Sistem akan membaca nomor identitas Anda dan langsung mengisikan data dinas ke formulir.
+              </p>
+            </Card>
+          </div>
+
+          {/* RIGHT COLUMN: Registration Form (7 Cols on Desktop) */}
+          <div className="lg:col-span-7">
+            <Card className="p-6 sm:p-7 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-sm font-semibold text-slate-900">
+                    Formulir Registrasi Tamu Undangan
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Lengkapi identitas kedinasan untuk alokasi tempat duduk dan wisma.
+                  </p>
+                </div>
+                <Badge variant="neutral" size="sm">
+                  Online
+                </Badge>
+              </div>
+
+              {/* Registration Form with auto-fill hook */}
+              <ModernRegistrationForm
+                scannedData={scannedGuestData}
+                onSuccess={handleRegistrationSuccess}
+              />
+            </Card>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
-

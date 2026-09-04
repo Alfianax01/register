@@ -147,7 +147,7 @@ export const QrScannerView: React.FC<QrScannerViewProps> = ({ onScan, isProcessi
       {/* Camera Controls */}
       <div className="mt-4 w-full flex items-center justify-between gap-3 max-w-sm">
         {!cameraActive ? (
-          <Button variant="gold" size="md" onClick={startCamera} className="flex-1 text-xs font-bold">
+          <Button variant="primary" size="md" onClick={startCamera} className="flex-1 text-xs font-bold">
             <Camera className="w-4 h-4 mr-1.5" />
             <span>Aktifkan Kamera Scanner</span>
           </Button>

@@ -1,8 +1,7 @@
 import React from 'react';
-import { TniEmblem } from '@/components/emblems/TniEmblem';
 import { Badge } from '@/components/ui/Badge';
-import { getMatraBadgeInfo, formatDateID } from '@/lib/utils/formatters';
-import { Shield, Armchair, Bed, CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { formatDateID, formatTimeID } from '@/lib/utils/formatters';
+import { Shield, Armchair, Bed, CheckCircle2, Clock } from 'lucide-react';
 
 interface MilitaryIdCardProps {
   guest: any;
@@ -11,159 +10,137 @@ interface MilitaryIdCardProps {
 }
 
 export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl, cardRef }) => {
-  const matraInfo = getMatraBadgeInfo(guest.matra || 'AD');
-
   return (
     <div
       ref={cardRef}
-      className="relative w-full max-w-sm mx-auto rounded-3xl bg-gradient-to-b from-[#0F261C] via-[#091711] to-[#040A07] border-2 border-[#D4AF37] shadow-2xl shadow-black overflow-hidden select-none id-hologram"
+      className="w-full max-w-md mx-auto rounded-2xl bg-white border border-slate-200 shadow-card overflow-hidden select-none"
     >
-      {/* Top Lanyard Punch Hole Slot Effect */}
-      <div className="w-full pt-4 pb-2 flex justify-center">
-        <div className="w-16 h-3 rounded-full bg-[#040806] border border-[#D4AF37]/50 shadow-inner flex items-center justify-center">
-          <div className="w-12 h-1 rounded-full bg-black/80" />
-        </div>
-      </div>
-
-      {/* Red & White Ribbon Header */}
-      <div className="w-full h-2 flex">
-        <div className="h-full w-1/2 bg-[#B91C1C]" />
-        <div className="h-full w-1/2 bg-[#FFFFFF]" />
-      </div>
-
-      {/* Header Emblem & Event Name */}
-      <div className="p-5 text-center border-b border-[#1E3B2F] bg-[#07130D]">
-        <div className="flex justify-center mb-2">
-          <TniEmblem matra={guest.matra} size="md" />
-        </div>
-        <span className="text-[9px] tracking-widest text-[#D4AF37] font-bold uppercase block">
-          TENTARA NASIONAL INDONESIA
-        </span>
-        <h2 className="text-base font-serif font-black tracking-wide text-slate-100">
-          RAPAT PIMPINAN TNI 2026
-        </h2>
-        <span className="text-[10px] font-mono text-slate-400">
-          TANDA PESERTA / E-TICKET RESMI
-        </span>
-      </div>
-
-      {/* Body: Guest Name & Rank */}
-      <div className="p-5 text-center">
-        <div className="inline-block mb-2">
-          <Badge variant={guest.matra === 'AD' ? 'ad' : guest.matra === 'AL' ? 'al' : guest.matra === 'AU' ? 'au' : 'gold'} size="sm">
-            {matraInfo.label} &bull; {matraInfo.motto}
-          </Badge>
-        </div>
-
-        <h3 className="text-lg font-serif font-bold text-slate-100 leading-snug">
-          {guest.gelar_depan ? `${guest.gelar_depan} ` : ''}
-          {guest.nama}
-          {guest.gelar_belakang ? `, ${guest.gelar_belakang}` : ''}
-        </h3>
-
-        <div className="mt-1 flex items-center justify-center gap-2 text-xs font-semibold text-[#F5E296]">
-          <span>{guest.pangkat}</span>
-          <span>&bull;</span>
-          <span className="font-mono">NRP {guest.nrp}</span>
-        </div>
-
-        <p className="text-[11px] text-slate-300 mt-1 max-w-[260px] mx-auto truncate font-sans">
-          {guest.jabatan}
-        </p>
-        <p className="text-[10px] text-slate-400 truncate max-w-[260px] mx-auto">
-          {guest.satker} - {guest.satuan}
-        </p>
-
-        {/* QR Code Container */}
-        <div className="mt-5 flex justify-center">
-          <div className="p-3 rounded-2xl bg-white border-2 border-[#D4AF37] shadow-xl relative group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={qrCodeUrl}
-              alt={`QR Code Tanda Peserta ${guest.nama}`}
-              className="w-44 h-44 object-contain rounded-lg"
-            />
-            <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-[#0B1812] border border-[#D4AF37] text-[9px] font-mono text-[#F5E296] tracking-wider whitespace-nowrap shadow-md">
-              PASS: {guest.qr_token.substring(0, 8).toUpperCase()}
-            </div>
+      {/* Top Header Strip */}
+      <div className="p-6 border-b border-slate-100 flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+            <Shield className="w-5 h-5 stroke-[2.5]" />
           </div>
-        </div>
-
-        <p className="text-[9px] text-slate-400 mt-4">
-          Tunjukkan QR Code ini kepada panitia di Gate Pintu Masuk
-        </p>
-      </div>
-
-      {/* Placement Details (Kursi & Wisma) */}
-      <div className="px-5 pb-5 space-y-2.5">
-        {/* Seating Placement Box */}
-        <div className="p-2.5 rounded-xl bg-[#091811] border border-[#1E3B2F] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-amber-950/60 text-[#D4AF37] border border-amber-600/40">
-              <Armchair className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-[10px] text-slate-400 block uppercase font-semibold">Alokasi Kursi Acara</span>
-              <span className="text-xs font-bold text-slate-100 font-serif">
-                {guest.seat?.seat_number ? (
-                  <span className="text-[#F5E296] font-bold text-sm">
-                    {guest.seat.seat_number} ({guest.seat.group_name})
-                  </span>
-                ) : (
-                  <span className="text-slate-500 font-normal italic">Menunggu Alokasi Panitia</span>
-                )}
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">
+                TNI EVENT PASS
               </span>
+              <Badge variant="primary" size="sm">
+                RAPIM 2026
+              </Badge>
             </div>
+            <h2 className="text-sm font-semibold text-slate-900 mt-0.5">
+              Kartu Tanda Peserta Resmi
+            </h2>
           </div>
         </div>
 
-        {/* Wisma Lodging Box */}
-        <div className="p-2.5 rounded-xl bg-[#091811] border border-[#1E3B2F] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-blue-950/60 text-blue-300 border border-blue-600/40">
-              <Bed className="w-4 h-4" />
-            </div>
-            <div>
-              <span className="text-[10px] text-slate-400 block uppercase font-semibold">Akomodasi Wisma</span>
-              <span className="text-xs font-semibold text-slate-100">
-                {guest.room ? (
-                  <span className="text-cyan-300">
-                    {guest.room.wisma_name} - Kamar {guest.room.room_number} (Bed {guest.room.slot})
-                  </span>
-                ) : guest.butuh_akomodasi ? (
-                  <span className="text-amber-400">Dalam Proses Penempatan</span>
-                ) : (
-                  <span className="text-slate-500 font-normal">Tidak Menginap</span>
-                )}
-              </span>
-            </div>
-          </div>
+        <span className="font-mono text-[11px] text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-200/80">
+          NRP {guest.nrp}
+        </span>
+      </div>
+
+      {/* Guest Name & Details */}
+      <div className="p-6 border-b border-slate-100 space-y-4">
+        <div>
+          <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">
+            Nama Prajurit / Tamu Undangan
+          </span>
+          <h3 className="text-lg font-semibold text-slate-900 mt-0.5">
+            {guest.gelar_depan ? `${guest.gelar_depan} ` : ''}
+            {guest.nama}
+            {guest.gelar_belakang ? `, ${guest.gelar_belakang}` : ''}
+          </h3>
+          <p className="text-xs font-medium text-blue-600 mt-0.5">
+            {guest.pangkat} &bull; {guest.matra === 'NON_TNI' ? 'Tamu Non-TNI' : `Matra ${guest.matra}`}
+          </p>
         </div>
 
-        {/* Attendance Status Badge */}
-        <div className="pt-2 flex items-center justify-between text-xs border-t border-[#163124]">
-          <span className="text-[10px] text-slate-400 font-semibold uppercase">Status Kehadiran:</span>
-          {guest.status_kehadiran === 'HADIR' ? (
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-500">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Hadir di Lokasi</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-300 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/50">
-              <Clock className="w-3.5 h-3.5" />
-              <span>Terdaftar (Belum Check-In)</span>
-            </span>
-          )}
+        <div className="grid grid-cols-2 gap-3 text-xs pt-1">
+          <div>
+            <span className="text-slate-400 block text-[10px] font-medium uppercase">Jabatan Dinas</span>
+            <span className="text-slate-800 font-medium block truncate">{guest.jabatan}</span>
+          </div>
+          <div>
+            <span className="text-slate-400 block text-[10px] font-medium uppercase">Satker & Kesatuan</span>
+            <span className="text-slate-800 font-medium block truncate">{guest.satuan}</span>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Bar Official Seal */}
-      <div className="py-2.5 px-4 bg-[#030705] border-t border-[#132B20] text-center">
-        <span className="text-[9px] text-slate-500 tracking-wider">
-          MABES TNI CILANGKAP &bull; VERIFIKASI KEAMANAN DIGITAL
-        </span>
+      {/* QR Code Center Section */}
+      <div className="p-6 bg-slate-50/50 flex flex-col items-center justify-center text-center space-y-3 border-b border-slate-100">
+        <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={qrCodeUrl}
+            alt={`QR Code ${guest.nama}`}
+            className="w-44 h-44 object-contain"
+          />
+        </div>
+        <div className="space-y-0.5">
+          <span className="font-mono text-[11px] font-semibold text-slate-700 bg-white px-2.5 py-1 rounded border border-slate-200">
+            TOKEN: {guest.qr_token?.substring(0, 8).toUpperCase()}
+          </span>
+          <p className="text-[10px] text-slate-400 pt-1">
+            Tunjukkan kode QR ini pada petugas check-in di gate venue.
+          </p>
+        </div>
+      </div>
+
+      {/* Seating & Wisma Badges */}
+      <div className="p-5 grid grid-cols-2 gap-3 bg-white">
+        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 uppercase">
+            <Armchair className="w-3.5 h-3.5 text-blue-600" />
+            <span>Kursi Acara</span>
+          </div>
+          <p className="text-xs font-semibold text-slate-900">
+            {guest.seat?.seat_number ? (
+              <span className="text-blue-700 font-mono font-bold">
+                {guest.seat.seat_number}
+              </span>
+            ) : (
+              <span className="text-slate-400 font-normal italic">Proses Alokasi</span>
+            )}
+          </p>
+        </div>
+
+        <div className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 uppercase">
+            <Bed className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Akomodasi Wisma</span>
+          </div>
+          <p className="text-xs font-semibold text-slate-900">
+            {guest.room ? (
+              <span className="text-emerald-700 font-medium truncate block">
+                Kamar {guest.room.room_number} ({guest.room.slot})
+              </span>
+            ) : guest.butuh_akomodasi ? (
+              <span className="text-amber-600 font-normal">Menunggu Kamar</span>
+            ) : (
+              <span className="text-slate-400 font-normal">Tidak Menginap</span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      {/* Bottom Status Bar */}
+      <div className="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs">
+        <span className="text-[11px] text-slate-500 font-medium">Status Kehadiran</span>
+        {guest.status_kehadiran === 'HADIR' ? (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>Telah Hadir di Lokasi</span>
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+            <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <span>Terdaftar (Belum Check-In)</span>
+          </span>
+        )}
       </div>
     </div>
   );
 };
-

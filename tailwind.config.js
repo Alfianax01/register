@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import('next').Config} */
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,52 +8,40 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        tni: {
-          dark: "#0B1611",
-          darker: "#070E0B",
-          surface: "#10221B",
-          border: "#1D3B2F",
-          ad: {
-            DEFAULT: "#1B5E39",
-            dark: "#0F3B23",
-            light: "#2B8754"
-          },
-          al: {
-            DEFAULT: "#153E75",
-            dark: "#0C274C",
-            light: "#2058A3"
-          },
-          au: {
-            DEFAULT: "#1B6B93",
-            dark: "#10435C",
-            light: "#288FC4"
-          },
-          gold: {
-            300: "#F5E296",
-            400: "#E9CD64",
-            500: "#D4AF37",
-            600: "#B99427",
-            700: "#917319"
-          },
-          crimson: {
-            DEFAULT: "#9B111E",
-            dark: "#700B15"
-          }
+        background: "#f8fafc",
+        surface: "#ffffff",
+        primary: {
+          DEFAULT: "#2563eb",
+          hover: "#1d4ed8",
+          light: "#eff6ff",
+        },
+        slate: {
+          50: "#f8fafc",
+          100: "#f1f5f9",
+          200: "#e2e8f0",
+          300: "#cbd5e1",
+          400: "#94a3b8",
+          500: "#64748b",
+          600: "#475569",
+          700: "#334155",
+          800: "#1e293b",
+          900: "#0f172a",
+          950: "#020617",
         }
       },
       fontFamily: {
-        serif: ["Georgia", "Cambria", "Times New Roman", "serif"],
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"]
+        sans: ["Inter", "Plus Jakarta Sans", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["JetBrains Mono", "SF Mono", "Menlo", "Consolas", "monospace"]
       },
-      backgroundImage: {
-        'military-gradient': 'linear-gradient(135deg, #070E0B 0%, #10221B 50%, #0B1611 100%)',
-        'gold-gradient': 'linear-gradient(135deg, #F5E296 0%, #D4AF37 50%, #917319 100%)',
-        'ad-gradient': 'linear-gradient(135deg, #1B5E39 0%, #0F3B23 100%)',
-        'al-gradient': 'linear-gradient(135deg, #153E75 0%, #0C274C 100%)',
-        'au-gradient': 'linear-gradient(135deg, #1B6B93 0%, #10435C 100%)',
+      maxWidth: {
+        container: "1200px"
+      },
+      boxShadow: {
+        subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        card: "0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)",
+        popover: "0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04)",
       }
     },
   },
   plugins: [],
 };
-

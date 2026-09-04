@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { AdminHeader } from '@/components/layout/AdminHeader';
 import { SeatingGridView } from '@/components/placement/SeatingGridView';
 import { WismaGridView } from '@/components/placement/WismaGridView';
-import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { SeatGroup, Seat, AccommodationRoom, Guest } from '@/types';
 import {
@@ -134,7 +133,7 @@ export default function PlacementPage() {
     <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
       <AdminHeader
         user={currentUser}
-        title="Manajemen Penempatan Kursi & Wisma (Dinamis)"
+        title="Penempatan Kursi & Wisma"
         subtitle="Alokasi tata letak kursi sidang paripurna dan kamar penginapan prajurit tamu"
       />
 
@@ -142,45 +141,45 @@ export default function PlacementPage() {
         {/* Sub-Header & Controls */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {/* View Mode Toggle */}
-          <div className="p-1 rounded-xl bg-[#091811] border border-[#1E3B2F] flex items-center gap-1">
+          <div className="p-1 rounded-lg bg-slate-200/70 border border-slate-200 flex items-center gap-1">
             <button
               type="button"
               onClick={() => setActiveTab('seats')}
-              className={`px-4 py-2 rounded-lg text-xs font-serif font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeTab === 'seats'
-                  ? 'bg-[#153D2B] text-[#F5E296] border border-[#D4AF37]/50 shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Armchair className="w-4 h-4 text-[#D4AF37]" />
+              <Armchair className={`w-3.5 h-3.5 ${activeTab === 'seats' ? 'text-blue-600' : 'text-slate-500'}`} />
               <span>Denah Kursi Paripurna</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab('rooms')}
-              className={`px-4 py-2 rounded-lg text-xs font-serif font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeTab === 'rooms'
-                  ? 'bg-[#153D2B] text-[#F5E296] border border-[#D4AF37]/50 shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Bed className="w-4 h-4 text-cyan-400" />
+              <Bed className={`w-3.5 h-3.5 ${activeTab === 'rooms' ? 'text-blue-600' : 'text-slate-500'}`} />
               <span>Denah Wisma Penginapan</span>
             </button>
           </div>
 
           {/* Actions: Auto-Assign & Refresh */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {activeTab === 'seats' && (
               <Button
-                variant="gold"
+                variant="primary"
                 size="md"
                 onClick={handleAutoAssign}
                 isLoading={autoAssignLoading}
-                className="text-xs font-bold shadow-lg"
+                className="text-xs font-semibold h-[38px]"
               >
-                <Wand2 className="w-4 h-4 mr-1.5" />
+                <Wand2 className="w-3.5 h-3.5 mr-1.5" />
                 <span>Auto-Assign Kursi (By Pangkat)</span>
               </Button>
             )}
@@ -189,7 +188,7 @@ export default function PlacementPage() {
               variant="outline"
               size="md"
               onClick={fetchData}
-              className="text-xs"
+              className="text-xs h-[38px]"
             >
               <RotateCw className="w-3.5 h-3.5 mr-1" />
               <span>Segarkan</span>
@@ -200,17 +199,17 @@ export default function PlacementPage() {
         {/* Notifications */}
         {notification && (
           <div
-            className={`p-3.5 rounded-xl border text-xs flex items-center justify-between gap-3 ${
+            className={`p-3 rounded-lg border text-xs flex items-center justify-between gap-3 ${
               notification.type === 'success'
-                ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200'
-                : 'bg-red-950/80 border-red-500 text-red-200'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-rose-50 border-rose-200 text-rose-800'
             }`}
           >
             <div className="flex items-center gap-2">
               {notification.type === 'success' ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
               ) : (
-                <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
               )}
               <span>{notification.message}</span>
             </div>
@@ -226,8 +225,8 @@ export default function PlacementPage() {
         {/* Main Content Area */}
         {loading ? (
           <div className="py-24 text-center space-y-3">
-            <div className="w-8 h-8 rounded-full border-3 border-[#D4AF37] border-t-transparent animate-spin mx-auto" />
-            <p className="text-xs text-slate-400 font-mono">Memuat denah tata letak...</p>
+            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-slate-500">Memuat denah tata letak...</p>
           </div>
         ) : activeTab === 'seats' ? (
           <SeatingGridView
@@ -247,4 +246,3 @@ export default function PlacementPage() {
     </div>
   );
 }
-

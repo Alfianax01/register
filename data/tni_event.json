@@ -1,6 +1,34 @@
 {
   "guests": [
     {
+      "nrp": "113686",
+      "nama": "Tri Nugroho",
+      "gelar_depan": "Dr.",
+      "gelar_belakang": "S.T., M.Si.",
+      "matra": "AD",
+      "pangkat": "Kolonel (AD)",
+      "pangkat_level": 5,
+      "jabatan": "Dandim 0501/Jakarta Pusat",
+      "satker": "Kodam Jaya / Jayakarta",
+      "satuan": "Makodam Jaya",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "081233445566",
+      "email": "tri.nugroho@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "catatan_khusus": "Alergi makanan laut (seafood)",
+      "id": "guest_1788531323959_993f",
+      "qr_token": "4ba66742-ea67-4ff1-8b2c-5cf9cc532891",
+      "token_hash": "097c81ad6e1bede27a943eb27618fd87e3ae9668d275d56c87196a231478ec15",
+      "status_kehadiran": "HADIR",
+      "created_at": "2026-09-04T14:15:23.959Z",
+      "updated_at": "2026-09-04T14:15:24.098Z",
+      "waktu_kehadiran_pertama": "2026-09-04T14:15:24.089Z",
+      "seat_group_id": "grp_d",
+      "seat_number": "D-03"
+    },
+    {
       "nrp": "1105999",
       "nama": "Tri Nugroho",
       "gelar_depan": "Dr.",
@@ -1216,7 +1244,12 @@
       "seat_number": "D-03",
       "row_num": 1,
       "col_num": 3,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788531323959_993f",
+      "guest_name": "Tri Nugroho",
+      "guest_rank": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
     },
     {
       "id": "seat_d_4",
@@ -2761,6 +2794,34 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788531324098_jbs3t",
+      "guest_id": "guest_1788531323959_993f",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "113686",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T14:15:24.098Z",
+      "ip_address": "::1"
+    },
+    {
+      "id": "chk_1788531324089_kvonf",
+      "guest_id": "guest_1788531323959_993f",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "113686",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T14:15:24.089Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788529980864_bqqqn",
       "guest_id": "guest_1788529980717_zpbh",
       "guest_nama": "Tri Nugroho",
@@ -2912,6 +2973,42 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788531324112_veyv",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "AUTO_ASSIGN_SEATS",
+      "details": "Penetapan kursi otomatis berbasis senioritas pangkat untuk 1 prajurit/tamu",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:15:24.112Z"
+    },
+    {
+      "id": "aud_1788531324100_hnfo",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 113686) di GATE_UTAMA - RE-SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:15:24.100Z"
+    },
+    {
+      "id": "aud_1788531324090_yks1",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 113686) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:15:24.090Z"
+    },
+    {
+      "id": "aud_1788531324077_pkx1",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T14:15:24.077Z"
+    },
     {
       "id": "aud_1788530060476_4fyw",
       "admin_id": "admin_super",

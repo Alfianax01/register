@@ -54,15 +54,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070E0B] flex flex-col items-center justify-center space-y-4">
-        <div className="w-10 h-10 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin" />
-        <p className="text-xs text-slate-400 font-mono">Memverifikasi kredensial otoritas militer...</p>
+      <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
+        <p className="text-xs text-slate-500 font-medium">Memverifikasi sesi panitia...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-[#070E0B] text-slate-100">
+    <div className="flex min-h-screen bg-[#f8fafc] text-slate-900">
       <AdminSidebar userRole={currentUser?.role} onLogout={handleLogout} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {children}
@@ -70,4 +70,3 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
-

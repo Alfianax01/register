@@ -7,6 +7,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  description?: string;
   children: React.ReactNode;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
@@ -15,6 +16,7 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   title,
+  description,
   children,
   maxWidth = 'lg'
 }) => {
@@ -44,40 +46,47 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] transition-opacity duration-150"
         onClick={onClose}
         aria-hidden="true"
       />
 
+      {/* Dialog Surface */}
       <div
-        className={`relative w-full ${maxWidths[maxWidth]} rounded-2xl bg-[#0C1A14] border border-[#D4AF37]/40 shadow-2xl shadow-black/80 overflow-hidden z-10 transition-transform`}
+        className={`relative w-full ${maxWidths[maxWidth]} rounded-xl bg-white border border-slate-200 shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-150`}
         role="dialog"
         aria-modal="true"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E3B2F] bg-gradient-to-r from-[#0F261C] to-[#0A1812]">
-          {title && (
-            <h3 className="text-lg font-bold text-slate-100 font-serif tracking-wide flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#D4AF37]"></span>
-              {title}
-            </h3>
-          )}
+        <div className="flex items-start justify-between px-6 py-4 border-b border-slate-100 bg-white">
+          <div>
+            {title && (
+              <h3 className="text-sm font-semibold text-slate-900">
+                {title}
+              </h3>
+            )}
+            {description && (
+              <p className="text-xs text-slate-500 mt-0.5">
+                {description}
+              </p>
+            )}
+          </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-auto"
+            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors ml-auto"
             aria-label="Tutup dialog"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
+        <div className="p-6 max-h-[82vh] overflow-y-auto">
           {children}
         </div>
       </div>
     </div>
   );
 };
-

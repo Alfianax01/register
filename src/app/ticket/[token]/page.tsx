@@ -25,12 +25,12 @@ export default function TicketPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'E-Ticket tidak ditemukan atau tautan salah.');
+        setError(data.error || 'E-Ticket tidak ditemukan.');
         setTicketData(null);
       } else {
         setTicketData(data);
       }
-    } catch (err) {
+    } catch {
       setError('Gagal memuat data E-Ticket.');
     } finally {
       setLoading(false);
@@ -45,9 +45,9 @@ export default function TicketPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 space-y-4">
-        <div className="w-12 h-12 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin" />
-        <p className="text-sm font-serif text-slate-300">Memuat data e-ticket kedinasan...</p>
+      <div className="min-h-[65vh] flex flex-col items-center justify-center p-6 space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
+        <p className="text-xs text-slate-500 font-medium">Memuat kartu tanda peserta...</p>
       </div>
     );
   }
@@ -55,24 +55,26 @@ export default function TicketPage() {
   if (error || !ticketData) {
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center">
-        <Card className="p-8 border-red-700/60 bg-red-950/20 space-y-4">
-          <div className="w-12 h-12 rounded-full bg-red-950 border border-red-600 flex items-center justify-center mx-auto text-red-400">
-            <AlertTriangle className="w-6 h-6" />
+        <Card className="p-8 space-y-4">
+          <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600">
+            <AlertTriangle className="w-5 h-5" />
           </div>
-          <h2 className="text-lg font-serif font-bold text-slate-100">
-            E-Ticket Tidak Ditemukan
-          </h2>
-          <p className="text-xs text-slate-300">
-            {error || 'Token tautan undangan tidak valid dalam sistem.'}
-          </p>
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">
+              E-Ticket Tidak Ditemukan
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              {error || 'Tautan atau token tiket yang Anda buka tidak valid.'}
+            </p>
+          </div>
           <div className="pt-2 flex flex-col gap-2">
             <Link href="/ticket/my-ticket">
-              <Button variant="gold" size="md" className="w-full text-xs">
-                Cari Berdasarkan NRP / Identitas
+              <Button variant="primary" size="md" className="w-full text-xs">
+                Cari Berdasarkan NRP
               </Button>
             </Link>
             <Link href="/">
-              <Button variant="ghost" size="md" className="w-full text-xs">
+              <Button variant="secondary" size="md" className="w-full text-xs">
                 Kembali ke Beranda
               </Button>
             </Link>
@@ -85,42 +87,27 @@ export default function TicketPage() {
   const { guest, qr_code } = ticketData;
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 space-y-6">
       {/* Header Bar */}
-      <div className="flex items-center justify-between no-print">
-        <Link href="/" className="inline-flex items-center text-xs text-slate-400 hover:text-slate-200">
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          <span>Beranda Acara</span>
+      <div className="max-w-md mx-auto flex items-center justify-between no-print">
+        <Link href="/" className="inline-flex items-center text-xs text-slate-500 hover:text-slate-900 font-medium">
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+          <span>Kembali</span>
         </Link>
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={fetchTicket}
-          className="text-xs text-[#D4AF37]"
+          className="inline-flex items-center text-xs text-blue-600 hover:text-blue-700 font-medium"
         >
-          <RotateCw className="w-3.5 h-3.5 mr-1.5" />
+          <RotateCw className="w-3 h-3 mr-1" />
           <span>Segarkan Status</span>
-        </Button>
+        </button>
       </div>
 
       {/* ID Card Display */}
       <MilitaryIdCard guest={guest} qrCodeUrl={qr_code} />
 
-      {/* Actions (Download, Print, WhatsApp) */}
+      {/* Actions */}
       <TicketActions guest={guest} qrCodeUrl={qr_code} />
-
-      {/* Instructions */}
-      <div className="p-4 rounded-xl bg-[#0C1A14] border border-[#1E3B2F] text-xs text-slate-400 space-y-2 no-print">
-        <h5 className="font-semibold text-slate-200 uppercase tracking-wide text-[11px] text-[#D4AF37]">
-          Petunjuk Kehadiran Hari-H:
-        </h5>
-        <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-300">
-          <li>Harap tiba di Gedung Ahmad Yani 30 menit sebelum sesi dimulai.</li>
-          <li>Tunjukkan QR Code di atas kepada petugas scan di lobi utama atau gerbang gate.</li>
-          <li>Nomor kursi Anda akan muncul secara otomatis saat pemindaian berhasil.</li>
-        </ul>
-      </div>
     </div>
   );
 }
-

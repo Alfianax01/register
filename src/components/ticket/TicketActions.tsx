@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Download, Printer, Share2, Copy, Check, MessageSquare } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { Download, Printer, Copy, Check, MessageSquare } from 'lucide-react';
 
 interface TicketActionsProps {
   guest: any;
@@ -10,6 +11,7 @@ interface TicketActionsProps {
 }
 
 export const TicketActions: React.FC<TicketActionsProps> = ({ guest, qrCodeUrl }) => {
+  const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
 
   const handlePrint = () => {
@@ -20,60 +22,66 @@ export const TicketActions: React.FC<TicketActionsProps> = ({ guest, qrCodeUrl }
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    showToast('Tautan Tersalin', {
+      type: 'info',
+      message: 'Link personal E-Ticket berhasil disalin ke clipboard.'
+    });
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleDownloadQr = () => {
     const link = document.createElement('a');
     link.href = qrCodeUrl;
-    link.download = `QR_Ticket_RAPIM_TNI_${guest.nrp || guest.nama}.png`;
+    link.download = `QR_Pass_TNI_${guest.nrp || guest.nama}.png`;
     link.click();
+    showToast('Mengunduh QR Pass', {
+      type: 'success',
+      message: 'Berkas QR Code PNG berhasil diunduh.'
+    });
   };
 
   const handleWhatsAppShare = () => {
     const url = window.location.href;
     const text = encodeURIComponent(
-      `*E-TICKET RAPIM TNI 2026*\n` +
+      `E-TICKET RESMI RAPIM TNI 2026\n` +
       `Nama: ${guest.nama}\n` +
-      `Pangkat/NRP: ${guest.pangkat} / ${guest.nrp}\n` +
-      `Satuan: ${guest.satuan}\n` +
-      `Status: ${guest.status_kehadiran}\n` +
-      `Kursi: ${guest.seat?.seat_number || 'Dalam Proses'}\n\n` +
-      `Buka E-Ticket & QR Code resmi:\n${url}`
+      `Pangkat: ${guest.pangkat} (NRP ${guest.nrp})\n` +
+      `Kursi: ${guest.seat?.seat_number || 'Sedang Dialokasikan'}\n\n` +
+      `Buka E-Ticket Digital:\n${url}`
     );
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto space-y-3 no-print">
-      <div className="grid grid-cols-2 gap-2.5">
-        <Button variant="gold" size="md" onClick={handleDownloadQr} className="text-xs">
-          <Download className="w-4 h-4 mr-1.5" />
+    <div className="w-full max-w-md mx-auto space-y-2.5 no-print">
+      <div className="grid grid-cols-2 gap-2">
+        <Button variant="primary" size="md" onClick={handleDownloadQr} className="text-xs">
+          <Download className="w-3.5 h-3.5 mr-1.5" />
           <span>Unduh QR Pass</span>
         </Button>
 
         <Button variant="outline" size="md" onClick={handlePrint} className="text-xs">
-          <Printer className="w-4 h-4 mr-1.5" />
+          <Printer className="w-3.5 h-3.5 mr-1.5" />
           <span>Cetak ID Card</span>
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
-        <Button variant="ghost" size="md" onClick={handleWhatsAppShare} className="text-xs border border-[#1E3B2F] hover:bg-[#122A1E]">
-          <MessageSquare className="w-4 h-4 mr-1.5 text-emerald-400" />
+      <div className="grid grid-cols-2 gap-2">
+        <Button variant="outline" size="md" onClick={handleWhatsAppShare} className="text-xs">
+          <MessageSquare className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
           <span>Kirim WhatsApp</span>
         </Button>
 
-        <Button variant="ghost" size="md" onClick={handleCopyLink} className="text-xs border border-[#1E3B2F] hover:bg-[#122A1E]">
+        <Button variant="secondary" size="md" onClick={handleCopyLink} className="text-xs">
           {copied ? (
             <>
-              <Check className="w-4 h-4 mr-1.5 text-emerald-400" />
-              <span className="text-emerald-400">Tersalin!</span>
+              <Check className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+              <span>Tersalin!</span>
             </>
           ) : (
             <>
-              <Copy className="w-4 h-4 mr-1.5 text-[#D4AF37]" />
-              <span>Salin Tautan</span>
+              <Copy className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
+              <span>Salin Link</span>
             </>
           )}
         </Button>
@@ -81,4 +89,3 @@ export const TicketActions: React.FC<TicketActionsProps> = ({ guest, qrCodeUrl }
     </div>
   );
 };
-

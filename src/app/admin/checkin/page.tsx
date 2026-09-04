@@ -2,20 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { AdminHeader } from '@/components/layout/AdminHeader';
-import { QrScannerView } from '@/components/checkin/QrScannerView';
+import { ModernScanner } from '@/components/scanner/ModernScanner';
 import { ManualSearchForm } from '@/components/checkin/ManualSearchForm';
 import { GuestVerifyModal } from '@/components/checkin/GuestVerifyModal';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
-import { formatTimeID, getMatraBadgeInfo } from '@/lib/utils/formatters';
-import { Checkpoint, CheckinLog } from '@/types';
+import { formatTimeID } from '@/lib/utils/formatters';
+import { CheckinLog } from '@/types';
 import {
   MapPin,
   Clock,
-  CheckCircle2,
-  Users,
   AlertCircle,
   RotateCw
 } from 'lucide-react';
@@ -104,53 +102,53 @@ export default function CheckinPage() {
     <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
       <AdminHeader
         user={currentUser}
-        title="Scanner & Presensi Check-In Hari-H"
-        subtitle="Pemindaian identitas QR Code dan validasi kehadiran multi-checkpoint"
+        title="Scanner & Presensi Check-In"
+        subtitle="Pemindaian identitas QR Code dan validasi kehadiran per checkpoint"
       />
 
       <div className="p-6 max-w-7xl mx-auto w-full space-y-6">
         {/* Top Summary Bar & Checkpoint Selector */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Checkpoint Dropdown Selector */}
-          <Card className="lg:col-span-8 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-[#D4AF37]/30">
+          <Card className="lg:col-span-8 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-950/70 border border-amber-500/50 text-[#D4AF37]">
+              <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                  Lokasi Pemindaian Aktif:
+                <span className="text-[11px] text-slate-500 font-medium block">
+                  Lokasi Checkpoint Aktif:
                 </span>
                 <select
                   value={selectedCheckpoint}
                   onChange={(e) => setSelectedCheckpoint(e.target.value)}
-                  className="bg-[#0A1711] text-[#F5E296] font-serif font-bold text-sm border border-[#1E3B2F] rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#D4AF37] cursor-pointer"
+                  className="bg-white text-slate-900 font-semibold text-sm border border-slate-200 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer mt-0.5"
                 >
                   {OFFICIAL_CHECKPOINTS.map(cp => (
-                    <option key={cp.code} value={cp.code} className="bg-[#0A1711] text-slate-100">
+                    <option key={cp.code} value={cp.code}>
                       {cp.name}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-            <p className="text-xs text-slate-400 max-w-xs text-right hidden sm:block">
+            <p className="text-xs text-slate-500 max-w-xs text-right hidden sm:block">
               {activeCheckpointObj.location}
             </p>
           </Card>
 
           {/* Quick Counter */}
-          <Card className="lg:col-span-4 p-4 flex items-center justify-around border-emerald-700/40 bg-emerald-950/20">
+          <Card className="lg:col-span-4 p-4 flex items-center justify-around">
             <div className="text-center">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold">Telah Hadir</span>
-              <span className="text-xl font-serif font-bold text-emerald-400 block">
+              <span className="text-[11px] text-slate-500 font-medium block">Telah Hadir</span>
+              <span className="text-xl font-bold font-mono text-emerald-600 block">
                 {stats.present} <span className="text-xs text-slate-400 font-normal">/ {stats.total}</span>
               </span>
             </div>
-            <div className="h-8 w-px bg-[#1E3B2F]" />
+            <div className="h-8 w-px bg-slate-200" />
             <div className="text-center">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold">Persentase</span>
-              <span className="text-xl font-serif font-bold text-[#F5E296] block">
+              <span className="text-[11px] text-slate-500 font-medium block">Persentase</span>
+              <span className="text-xl font-bold font-mono text-slate-900 block">
                 {stats.total > 0 ? Math.round((stats.present / stats.total) * 100) : 0}%
               </span>
             </div>
@@ -158,8 +156,8 @@ export default function CheckinPage() {
         </div>
 
         {errorMsg && (
-          <div className="p-4 rounded-xl bg-red-950/80 border border-red-600 text-red-200 text-xs flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
@@ -168,22 +166,22 @@ export default function CheckinPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Camera Scanner */}
           <div className="lg:col-span-6 space-y-4">
-            <Card className="p-5">
-              <div className="flex items-center justify-between mb-3 border-b border-[#1E3B2F] pb-2">
-                <h3 className="text-sm font-serif font-bold text-slate-100">
-                  Pemindai Kamera QR Code
+            <Card className="p-5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Pemindai Kamera QR
                 </h3>
-                <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                  SISTEM SIAGA
+                <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Sistem Siaga
                 </span>
               </div>
-              <QrScannerView onScan={handleProcessScan} isProcessing={isProcessing} />
+              <ModernScanner onScanResult={handleProcessScan} isProcessing={isProcessing} />
             </Card>
 
             {/* Manual NRP Search Alternative */}
             <Card className="p-5">
-              <h4 className="text-xs font-serif font-bold text-slate-200 mb-2 uppercase tracking-wide">
+              <h4 className="text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wide">
                 Pencarian Manual (Alternatif Tanpa QR)
               </h4>
               <ManualSearchForm onManualCheckin={handleProcessScan} isProcessing={isProcessing} />
@@ -193,56 +191,53 @@ export default function CheckinPage() {
           {/* Right: Live Log Stream Ticker */}
           <div className="lg:col-span-6">
             <Card className="p-5 h-full flex flex-col">
-              <div className="flex items-center justify-between mb-4 border-b border-[#1E3B2F] pb-2">
-                <h3 className="text-sm font-serif font-bold text-slate-100 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#D4AF37]" />
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-slate-500" />
                   <span>Aktivitas Kehadiran Terkini</span>
                 </h3>
-                <Button variant="ghost" size="sm" onClick={fetchLogsAndStats} className="text-xs text-slate-400">
+                <Button variant="ghost" size="sm" onClick={fetchLogsAndStats} className="text-xs text-slate-500 hover:text-slate-800 h-7 px-2">
                   <RotateCw className="w-3.5 h-3.5 mr-1" />
                   <span>Refresh</span>
                 </Button>
               </div>
 
-              <div className="space-y-2.5 flex-1 overflow-y-auto max-h-[520px] custom-scrollbar pr-1">
+              <div className="space-y-2 flex-1 overflow-y-auto max-h-[500px] pr-1">
                 {recentLogs.length === 0 ? (
-                  <p className="text-xs text-slate-500 text-center py-12">
+                  <p className="text-xs text-slate-400 text-center py-16">
                     Belum ada riwayat check-in yang tercatat hari ini.
                   </p>
                 ) : (
-                  recentLogs.map((log) => {
-                    const badge = getMatraBadgeInfo(log.guest_matra);
-                    return (
-                      <div
-                        key={log.id}
-                        className="p-3 rounded-xl bg-[#091711] border border-[#173325] hover:border-[#2D5A47] transition-all flex items-center justify-between gap-3 text-xs"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <strong className="text-slate-100 font-semibold">{log.guest_nama}</strong>
-                              <Badge variant={log.guest_matra === 'AD' ? 'ad' : log.guest_matra === 'AL' ? 'al' : log.guest_matra === 'AU' ? 'au' : 'gold'} size="sm">
-                                {log.guest_matra}
-                              </Badge>
-                            </div>
-                            <p className="text-[11px] text-[#D4AF37]">
-                              {log.guest_pangkat} &bull; <span className="font-mono">NRP {log.guest_nrp}</span>
-                            </p>
+                  recentLogs.map((log) => (
+                    <div
+                      key={log.id}
+                      className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 hover:border-slate-300 transition-colors flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <strong className="text-slate-900 font-semibold">{log.guest_nama}</strong>
+                            <Badge variant={log.guest_matra === 'AD' ? 'ad' : log.guest_matra === 'AL' ? 'al' : log.guest_matra === 'AU' ? 'au' : 'slate'} size="sm">
+                              {log.guest_matra}
+                            </Badge>
                           </div>
-                        </div>
-
-                        <div className="text-right flex-shrink-0">
-                          <span className="font-mono text-[10px] text-slate-400 block">
-                            {formatTimeID(log.scanned_at)} WIB
-                          </span>
-                          <span className="text-[10px] text-emerald-400 font-medium">
-                            {log.checkpoint_code}
-                          </span>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            {log.guest_pangkat} &bull; <span className="font-mono">NRP {log.guest_nrp}</span>
+                          </p>
                         </div>
                       </div>
-                    );
-                  })
+
+                      <div className="text-right flex-shrink-0">
+                        <span className="font-mono text-[10px] text-slate-500 block">
+                          {formatTimeID(log.scanned_at)} WIB
+                        </span>
+                        <span className="text-[10px] text-slate-600 font-medium">
+                          {log.checkpoint_code}
+                        </span>
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             </Card>
@@ -259,4 +254,3 @@ export default function CheckinPage() {
     </div>
   );
 }
-
