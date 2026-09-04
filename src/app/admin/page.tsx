@@ -264,6 +264,65 @@ export default function AdminDashboardPage() {
               </h3>
               <ManualSearchForm onManualCheckin={handleProcessScan} isProcessing={isProcessing} />
             </Card>
+
+            {/* 3. Hasil Scan: Kartu Verifikasi Tamu Terakhir */}
+            {verifyResult && verifyResult.guest && (
+              <Card className="p-4 sm:p-5 border-2 border-emerald-500/80 bg-emerald-50/40 shadow-sm animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-center justify-between pb-3 border-b border-emerald-200/80">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-950">
+                        Hasil Scan: {verifyResult.alreadyCheckedIn ? 'Sudah Pernah Hadir' : 'Berhasil Diverifikasi'}
+                      </h3>
+                      <span className="text-[11px] text-emerald-700">
+                        {verifyResult.alreadyCheckedIn
+                          ? `Tamu telah check-in sebelumnya pada ${verifyResult.previousTimestamp ? formatTimeID(verifyResult.previousTimestamp) + ' WIB' : 'hari ini'}`
+                          : 'Kehadiran berhasil dicatat ke sistem database'}
+                      </span>
+                    </div>
+                  </div>
+                  <Badge variant={verifyResult.guest.matra === 'AD' ? 'ad' : verifyResult.guest.matra === 'AL' ? 'al' : verifyResult.guest.matra === 'AU' ? 'au' : 'success'} size="sm">
+                    {verifyResult.guest.matra || 'TNI'}
+                  </Badge>
+                </div>
+
+                <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Nama Lengkap & Pangkat</span>
+                    <strong className="text-slate-900 font-semibold text-sm block">
+                      {verifyResult.guest.gelar_depan ? `${verifyResult.guest.gelar_depan} ` : ''}
+                      {verifyResult.guest.nama}
+                      {verifyResult.guest.gelar_belakang ? `, ${verifyResult.guest.gelar_belakang}` : ''}
+                    </strong>
+                    <span className="text-slate-600 text-xs">{verifyResult.guest.pangkat} &bull; NRP {verifyResult.guest.nrp}</span>
+                  </div>
+
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Jabatan & Instansi</span>
+                    <strong className="text-slate-900 font-medium block truncate">
+                      {verifyResult.guest.jabatan}
+                    </strong>
+                    <span className="text-slate-600 text-xs block truncate">{verifyResult.guest.satker || verifyResult.guest.satuan}</span>
+                  </div>
+
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Alokasi Kursi Sidang</span>
+                    <span className="font-mono font-bold text-slate-900 text-sm">
+                      {verifyResult.guest.seat_number || 'Belum Ditentukan'}
+                    </span>
+                  </div>
+
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Status Validasi</span>
+                    <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      HADIR &bull; Checkpoint {selectedCheckpoint}
+                    </span>
+                  </div>
+                </div>
+              </Card>
+            )}
           </div>
 
           {/* Kolom Aktivitas Real-Time (Diletakkan di bawah scanner pada mobile) */}

@@ -16,8 +16,18 @@ export async function GET(
 
     const guest = db.findGuestByToken(token);
     if (!guest) {
+      console.error("DATA ERROR: Undangan tidak ditemukan untuk token/ID:", token);
       return NextResponse.json({ error: 'Data undangan atau e-ticket tidak ditemukan' }, { status: 404 });
     }
+
+    console.log("DATA DITEMUKAN:", {
+      id: guest.id,
+      registrationId: guest.registration_id,
+      ticketId: guest.ticket_id,
+      nama: guest.nama,
+      nrp: guest.nrp,
+      token: guest.qr_token
+    });
 
     // Get assigned seat details if any
     let seatInfo = null;
@@ -66,6 +76,8 @@ export async function GET(
       success: true,
       guest: {
         id: guest.id,
+        registration_id: guest.registration_id,
+        ticket_id: guest.ticket_id,
         nrp: guest.nrp,
         nama: guest.nama,
         gelar_depan: guest.gelar_depan,
@@ -92,7 +104,7 @@ export async function GET(
     });
 
   } catch (err: any) {
-    console.error('Ticket fetch error:', err);
+    console.error("DATA ERROR:", err);
     return NextResponse.json({ error: 'Gagal memuat data e-ticket' }, { status: 500 });
   }
 }

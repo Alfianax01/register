@@ -103,7 +103,10 @@ export const Navbar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-slate-200 bg-white/98 backdrop-blur-lg px-4 py-4 space-y-2 shadow-lg animate-in slide-in-from-top-2 duration-150">
           <nav className="flex flex-col space-y-1">
-            {publicLinks.map(link => {
+            {[
+              { href: '/register', label: 'Registrasi' },
+              { href: '/ticket', label: 'Cari E-Ticket' },
+            ].map(link => {
               const active = pathname === link.href;
               return (
                 <Link

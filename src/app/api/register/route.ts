@@ -227,6 +227,15 @@ export async function POST(req: NextRequest) {
       created_at: newGuest.created_at
     };
 
+    console.log("DATA TERSIMPAN:", {
+      id: newGuest.id,
+      registrationId: newGuest.registration_id,
+      ticketId: newGuest.ticket_id,
+      nama: newGuest.nama,
+      nrp: newGuest.nrp,
+      token: newGuest.qr_token
+    });
+
     return NextResponse.json({
       success: true,
       message: 'Registrasi berhasil. E-Ticket telah diterbitkan.',
@@ -243,7 +252,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (err: any) {
-    console.error('Registration error:', err);
+    console.error("DATA ERROR:", err);
     const errorMessage = err?.message || 'Terjadi kesalahan sistem saat memproses registrasi.';
     return NextResponse.json(
       { 

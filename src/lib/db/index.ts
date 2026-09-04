@@ -14,21 +14,26 @@ import {
 } from '@/types';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
+import { postgresAdapter } from './postgres';
 
-function resolveDbPaths(): { dataDir: string; dbFile: string } {
+function resolveDbPaths(): { dataDir: string; dbFile: string; backupFile: string } {
   // If running in Vercel or read-only serverless environment
   if (process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME) {
     const tmpDataDir = path.join('/tmp', 'data');
     const tmpDbFile = path.join(tmpDataDir, 'tni_event.json');
-    return { dataDir: tmpDataDir, dbFile: tmpDbFile };
+    return { dataDir: tmpDataDir, dbFile: tmpDbFile, backupFile: path.join(tmpDataDir, 'tni_event.json.backup') };
   }
 
   const defaultDataDir = path.join(process.cwd(), 'data');
   const defaultDbFile = path.join(defaultDataDir, 'tni_event.json');
-  return { dataDir: defaultDataDir, dbFile: defaultDbFile };
+  return { dataDir: defaultDataDir, dbFile: defaultDbFile, backupFile: path.join(defaultDataDir, 'tni_event.json.backup') };
 }
 
-const { dataDir: DATA_DIR, dbFile: DB_FILE } = resolveDbPaths();
+const { dataDir: DATA_DIR, dbFile: DB_FILE, backupFile: BACKUP_FILE } = resolveDbPaths();
+
+const globalForDb = globalThis as unknown as {
+  __TNI_EVENT_DB__?: DatabaseSchema | null;
+};
 
 interface DatabaseSchema {
   guests: Guest[];
@@ -519,6 +524,17 @@ class DatabaseManager {
   }
 
   private ensureInitialized() {
+    // 1. In-memory check for current instance
+    if (this.data && Array.isArray(this.data.guests) && this.data.guests.length > 0) {
+      return;
+    }
+
+    // 2. Global process memory cache (preserves state across hot serverless function invocations)
+    if (globalForDb.__TNI_EVENT_DB__ && Array.isArray(globalForDb.__TNI_EVENT_DB__.guests) && globalForDb.__TNI_EVENT_DB__.guests.length > 0) {
+      this.data = globalForDb.__TNI_EVENT_DB__;
+      return;
+    }
+
     if (!fs.existsSync(DATA_DIR)) {
       try {
         fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -527,38 +543,101 @@ class DatabaseManager {
       }
     }
 
-    if (!fs.existsSync(DB_FILE)) {
-      // Check if fallback root seed exists
-      const rootSeedFile = path.join(process.cwd(), 'data', 'tni_event.json');
-      if (fs.existsSync(rootSeedFile) && DB_FILE !== rootSeedFile) {
-        try {
-          const content = fs.readFileSync(rootSeedFile, 'utf-8');
-          fs.writeFileSync(DB_FILE, content, 'utf-8');
-          this.data = JSON.parse(content);
-          return;
-        } catch (copyErr) {
-          console.warn('Could not copy seed file, generating default data:', copyErr);
-        }
-      }
-      this.initDefaultData();
-    } else {
+    // 3. Try reading from main database file
+    if (fs.existsSync(DB_FILE)) {
       try {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
-        this.data = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.guests) && parsed.guests.length > 0) {
+          this.data = parsed;
+          globalForDb.__TNI_EVENT_DB__ = this.data;
+          this.syncPostgresBackground();
+          return;
+        }
       } catch (err) {
-        console.error('Error reading DB file, reinitializing...', err);
-        this.initDefaultData();
+        console.error('Error reading primary DB file, checking backup:', err);
       }
     }
+
+    // 4. Try restoring from backup database file
+    if (fs.existsSync(BACKUP_FILE)) {
+      try {
+        const rawBackup = fs.readFileSync(BACKUP_FILE, 'utf-8');
+        const parsedBackup = JSON.parse(rawBackup);
+        if (parsedBackup && Array.isArray(parsedBackup.guests) && parsedBackup.guests.length > 0) {
+          console.log('[DATABASE] Data dipulihkan dari file cadangan (backup).');
+          this.data = parsedBackup;
+          globalForDb.__TNI_EVENT_DB__ = this.data;
+          this.persist();
+          this.syncPostgresBackground();
+          return;
+        }
+      } catch (backupErr) {
+        console.error('Error reading backup file:', backupErr);
+      }
+    }
+
+    // 5. Check if initial seed exists in process.cwd()/data/tni_event.json
+    const rootSeedFile = path.join(process.cwd(), 'data', 'tni_event.json');
+    if (fs.existsSync(rootSeedFile) && DB_FILE !== rootSeedFile) {
+      try {
+        const content = fs.readFileSync(rootSeedFile, 'utf-8');
+        const parsedSeed = JSON.parse(content);
+        if (parsedSeed && Array.isArray(parsedSeed.guests) && parsedSeed.guests.length > 0) {
+          this.data = parsedSeed;
+          globalForDb.__TNI_EVENT_DB__ = this.data;
+          this.persist();
+          this.syncPostgresBackground();
+          return;
+        }
+      } catch (copyErr) {
+        console.warn('Could not load seed file:', copyErr);
+      }
+    }
+
+    // 6. If no file exists or readable, initialize default data
+    this.initDefaultData();
+  }
+
+  private syncPostgresBackground() {
+    if (!postgresAdapter.isAvailable()) return;
+    postgresAdapter.getAllGuests().then(pgGuests => {
+      if (pgGuests && pgGuests.length > 0 && this.data) {
+        let updated = false;
+        for (const pgG of pgGuests) {
+          const idx = this.data.guests.findIndex(g => g.id === pgG.id || g.qr_token === pgG.qr_token);
+          if (idx >= 0) {
+            this.data.guests[idx] = { ...this.data.guests[idx], ...pgG };
+          } else {
+            this.data.guests.unshift(pgG);
+            updated = true;
+          }
+        }
+        if (updated) {
+          this.persist();
+        }
+      }
+    }).catch(err => {
+      console.warn('[PostgreSQL] Background sync notice:', err);
+    });
   }
 
   private initDefaultData() {
     const seat_groups = DEFAULT_SEAT_GROUPS;
     const seats = generateSeatsForGroups(seat_groups);
     const accommodations = generateDefaultRooms();
-    const guests = generateSeedGuests();
+    const defaultGuests = generateSeedGuests();
     const checkpoints = OFFICIAL_CHECKPOINTS;
     const admins = generateDefaultAdmins();
+
+    // Anti-wipe: merge existing registered guests so registrations are NEVER lost
+    let guests = defaultGuests;
+    if (this.data && Array.isArray(this.data.guests) && this.data.guests.length > 0) {
+      const mergedMap = new Map<string, Guest>();
+      for (const g of defaultGuests) mergedMap.set(g.id, g);
+      for (const g of this.data.guests) mergedMap.set(g.id, g);
+      guests = Array.from(mergedMap.values());
+    }
 
     // Map initial assigned seats
     for (const g of guests) {
@@ -630,19 +709,39 @@ class DatabaseManager {
       audit_logs
     };
 
+    globalForDb.__TNI_EVENT_DB__ = this.data;
     this.persist();
   }
 
   private persist() {
     if (!this.data) return;
+    // Always sync into process global memory
+    globalForDb.__TNI_EVENT_DB__ = this.data;
+
     try {
       if (!fs.existsSync(DATA_DIR)) {
         fs.mkdirSync(DATA_DIR, { recursive: true });
       }
-      fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
+      const jsonStr = JSON.stringify(this.data, null, 2);
+
+      // Atomic file write using a temporary file in same folder
+      const tmpFile = path.join(DATA_DIR, `.tni_event_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.tmp`);
+      fs.writeFileSync(tmpFile, jsonStr, 'utf-8');
+
+      try {
+        fs.renameSync(tmpFile, DB_FILE);
+      } catch (renameErr) {
+        fs.copyFileSync(tmpFile, DB_FILE);
+        try { fs.unlinkSync(tmpFile); } catch {}
+      }
+
+      // Always maintain backup copy
+      try {
+        fs.copyFileSync(DB_FILE, BACKUP_FILE);
+      } catch {}
+
     } catch (err: any) {
       console.error("Database persist error:", err);
-      throw new Error(`Koneksi database gagal: tidak dapat menulis ke media penyimpanan (${err.message})`);
     }
   }
 
@@ -662,27 +761,56 @@ class DatabaseManager {
     const tokenTrimmed = token.trim();
     // Compare directly with token, token_hash, ticket_id, or registration_id
     const hashed = hashToken(tokenTrimmed);
-    return this.data!.guests.find(g => 
+    const guest = this.data!.guests.find(g => 
       g.qr_token === tokenTrimmed || 
       g.token_hash === hashed ||
       g.id === tokenTrimmed ||
       (g.ticket_id && g.ticket_id.toUpperCase() === tokenTrimmed.toUpperCase()) ||
       (g.registration_id && g.registration_id.toUpperCase() === tokenTrimmed.toUpperCase())
     );
+
+    if (guest) {
+      console.log("DATA DITEMUKAN:", {
+        id: guest.id,
+        nama: guest.nama,
+        nrp: guest.nrp,
+        token: guest.qr_token,
+        ticket_id: guest.ticket_id,
+        registration_id: guest.registration_id
+      });
+    }
+
+    return guest;
   }
 
   public findGuestByNRP(nrp: string): Guest | undefined {
     this.ensureInitialized();
     if (!nrp) return undefined;
     const clean = String(nrp).trim().toLowerCase().replace(/[\s\-\.]/g, '');
-    return this.data!.guests.find(g => String(g.nrp || '').toLowerCase().replace(/[\s\-\.]/g, '') === clean);
+    const guest = this.data!.guests.find(g => String(g.nrp || '').toLowerCase().replace(/[\s\-\.]/g, '') === clean);
+    if (guest) {
+      console.log("DATA DITEMUKAN:", {
+        id: guest.id,
+        nama: guest.nama,
+        nrp: guest.nrp
+      });
+    }
+    return guest;
   }
 
   public findGuestByEmail(email: string): Guest | undefined {
     this.ensureInitialized();
     if (!email || !String(email).trim()) return undefined;
     const clean = String(email).trim().toLowerCase();
-    return this.data!.guests.find(g => g.email && String(g.email).trim().toLowerCase() === clean);
+    const guest = this.data!.guests.find(g => g.email && String(g.email).trim().toLowerCase() === clean);
+    if (guest) {
+      console.log("DATA DITEMUKAN:", {
+        id: guest.id,
+        nama: guest.nama,
+        email: guest.email
+      });
+    }
+    return guest;
   }
 
   public findGuestByPhone(phone: string): Guest | undefined {
@@ -691,12 +819,22 @@ class DatabaseManager {
     let clean = String(phone).trim().replace(/[\s\-\(\)\+]/g, '');
     if (clean.startsWith('62')) clean = '0' + clean.slice(2);
 
-    return this.data!.guests.find(g => {
+    const guest = this.data!.guests.find(g => {
       if (!g.no_hp) return false;
       let guestPhone = String(g.no_hp).trim().replace(/[\s\-\(\)\+]/g, '');
       if (guestPhone.startsWith('62')) guestPhone = '0' + guestPhone.slice(2);
       return guestPhone === clean;
     });
+
+    if (guest) {
+      console.log("DATA DITEMUKAN:", {
+        id: guest.id,
+        nama: guest.nama,
+        phone: guest.no_hp
+      });
+    }
+
+    return guest;
   }
 
   public createGuest(guestData: Omit<Guest, 'id' | 'qr_token' | 'token_hash' | 'status_kehadiran' | 'created_at' | 'updated_at'>): Guest {
@@ -724,7 +862,24 @@ class DatabaseManager {
 
     this.data!.guests.unshift(newGuest);
     this.persist();
-    console.log("Insert berhasil:", { id: newGuest.id, registrationId: newGuest.registration_id, ticketId: newGuest.ticket_id, nama: newGuest.nama, nrp: newGuest.nrp, token: newGuest.qr_token });
+
+    // Persist to Postgres database if configured
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveGuest(newGuest).catch(err => {
+        console.error('[PostgreSQL] DATA ERROR simpan ke postgres:', err);
+      });
+    }
+
+    console.log("DATA TERSIMPAN:", {
+      id: newGuest.id,
+      registration_id: newGuest.registration_id,
+      ticket_id: newGuest.ticket_id,
+      nama: newGuest.nama,
+      nrp: newGuest.nrp,
+      token: newGuest.qr_token,
+      created_at: newGuest.created_at
+    });
+
     return newGuest;
   }
 
@@ -749,6 +904,18 @@ class DatabaseManager {
     }
 
     this.persist();
+
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveGuest(updated).catch(console.error);
+    }
+
+    console.log("DATA TERSIMPAN:", {
+      action: "UPDATE_GUEST",
+      id: updated.id,
+      nama: updated.nama,
+      status: updated.status_kehadiran
+    });
+
     return updated;
   }
 
@@ -985,6 +1152,19 @@ class DatabaseManager {
     }
 
     this.persist();
+
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveCheckinLog(log).catch(console.error);
+      postgresAdapter.saveGuest(guest).catch(console.error);
+    }
+
+    console.log("DATA TERSIMPAN:", {
+      type: "CHECKIN_LOG",
+      id: log.id,
+      guest_id: log.guest_id,
+      checkpoint: log.checkpoint_name,
+      timestamp: log.scanned_at
+    });
 
     return {
       success: true,

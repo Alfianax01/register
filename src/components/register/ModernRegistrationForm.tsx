@@ -260,8 +260,8 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       {/* Step 1: Identitas Pribadi */}
       {activeStep === 1 && (
         <div className="space-y-4 animate-in fade-in duration-150">
-          <div className="grid grid-cols-12 gap-3">
-            <div className="col-span-3">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+            <div className="sm:col-span-3">
               <Input
                 label="Gelar Depan"
                 name="gelar_depan"
@@ -270,7 +270,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 onChange={handleInputChange}
               />
             </div>
-            <div className="col-span-6">
+            <div className="sm:col-span-6">
               <Input
                 label="Nama Lengkap"
                 name="nama"
@@ -282,7 +282,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 autoComplete="name"
               />
             </div>
-            <div className="col-span-3">
+            <div className="sm:col-span-3">
               <Input
                 label="Gelar Belakang"
                 name="gelar_belakang"
@@ -353,7 +353,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1.5 select-none">
               Pilih Matra / Kesatuan Induk <span className="text-blue-600 font-bold">*</span>
             </label>
-            <div className="grid grid-cols-5 gap-1.5 p-1 bg-slate-100 rounded-lg border border-slate-200/80">
+            <div className="grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-slate-100 rounded-lg border border-slate-200/80">
               {(['AD', 'AL', 'AU', 'MABES', 'NON_TNI'] as MatraType[]).map((m) => {
                 const labels: Record<string, string> = {
                   AD: 'TNI AD',
@@ -368,7 +368,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                     key={m}
                     type="button"
                     onClick={() => handleMatraChange(m)}
-                    className={`py-1.5 text-xs font-medium rounded-md transition-all ${
+                    className={`py-2 px-0.5 sm:px-1 text-[11px] sm:text-xs font-medium rounded-md transition-all text-center truncate ${
                       isSelected
                         ? 'bg-white text-blue-700 font-semibold shadow-xs border border-slate-200/80'
                         : 'text-slate-600 hover:text-slate-900'
@@ -518,7 +518,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           </div>
 
           {formData.butuh_akomodasi && (
-            <div className="grid grid-cols-2 gap-3 p-3.5 rounded-lg bg-slate-50 border border-slate-200 animate-in fade-in duration-150">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-lg bg-slate-50 border border-slate-200 animate-in fade-in duration-150">
               <Input
                 label="Tanggal Check-In"
                 name="tgl_checkin"
@@ -551,17 +551,18 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           </div>
 
           {/* Action Row */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <div className="pt-3 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
             <Button
               type="button"
               variant="secondary"
               size="md"
               onClick={() => setActiveStep(2)}
+              className="w-full sm:w-auto"
             >
               Kembali
             </Button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -575,6 +576,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                     });
                   }
                 }}
+                className="w-full sm:w-auto"
               >
                 <Eye className="w-3.5 h-3.5 mr-1" />
                 <span>Preview Data</span>
@@ -586,7 +588,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 size="md"
                 onClick={handleSubmit}
                 isLoading={isSubmitting}
-                className="font-semibold"
+                className="w-full sm:w-auto font-semibold"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
                 <span>Kirim Registrasi</span>
