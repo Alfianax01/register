@@ -31,6 +31,8 @@ export interface Guest {
   catatan_khusus?: string;
   qr_token: string;
   token_hash: string;
+  registration_id?: string;
+  ticket_id?: string;
   seat_group_id?: string;
   seat_number?: string;
   room_id?: string;

@@ -27,14 +27,16 @@ import {
   Sparkles
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useRouter } from 'next/navigation';
 
 interface ModernRegistrationFormProps {
-  onSuccess?: (token: string, guest: any) => void;
+  onSuccess?: (token: string, guest: any, fullData?: any) => void;
 }
 
 export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
   onSuccess
 }) => {
+  const router = useRouter();
   const { showToast } = useToast();
 
   const [activeStep, setActiveStep] = useState<number>(1);
@@ -182,12 +184,32 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         });
       } catch {}
 
+      // Checklist #8: State persistence across sessions
+      try {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('tni_registration_success', JSON.stringify({
+            token: data.token,
+            participant: data.participant || data.guest,
+            qrCode: data.qrCode
+          }));
+          localStorage.setItem('tni_ticket_' + data.token, JSON.stringify(data.participant || data.guest));
+          localStorage.setItem('latest_registered_token', data.token);
+        }
+      } catch (storageErr) {
+        console.warn('Storage error:', storageErr);
+      }
+
       showToast('Registrasi Berhasil', {
         type: 'success',
-        message: 'E-Ticket & QR Code resmi telah diterbitkan.'
+        message: 'E-Ticket & QR Code resmi telah diterbitkan. Mengalihkan ke tiket...'
       });
 
-      onSuccess?.(data.token, data.guest);
+      // Checklist #4: Automatic redirect to ticket page
+      if (onSuccess) {
+        onSuccess(data.token, data.guest, data);
+      } else {
+        router.push(`/ticket/${data.token}`);
+      }
 
     } catch (err: any) {
       // Checklist #7: Error logging

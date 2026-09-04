@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, escapeHtml, isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import { TNI_RANKS } from '@/lib/constants/ranks';
+import QRCode from 'qrcode';
 
 export const dynamic = 'force-dynamic';
 
@@ -189,16 +190,55 @@ export async function POST(req: NextRequest) {
       catatan_khusus: catatan_khusus ? escapeHtml(catatan_khusus) : undefined
     });
 
+    // Generate high resolution QR Code image for immediate client rendering
+    let qrDataUrl = '';
+    try {
+      qrDataUrl = await QRCode.toDataURL(newGuest.qr_token, {
+        errorCorrectionLevel: 'H',
+        margin: 2,
+        width: 400,
+        color: {
+          dark: '#07160F',
+          light: '#FFFFFF'
+        }
+      });
+    } catch (qrErr) {
+      console.warn('QR Code generation warning:', qrErr);
+    }
+
+    const participantData = {
+      id: newGuest.id,
+      registrationId: newGuest.registration_id,
+      ticketId: newGuest.ticket_id,
+      nama: newGuest.nama,
+      gelar_depan: newGuest.gelar_depan,
+      gelar_belakang: newGuest.gelar_belakang,
+      pangkat: newGuest.pangkat,
+      matra: newGuest.matra,
+      jabatan: newGuest.jabatan,
+      instansi: newGuest.negara_instansi || newGuest.satker,
+      satker: newGuest.satker,
+      satuan: newGuest.satuan,
+      nrp: newGuest.nrp,
+      email: newGuest.email,
+      no_hp: newGuest.no_hp,
+      status: newGuest.status_kehadiran,
+      qr_token: newGuest.qr_token,
+      created_at: newGuest.created_at
+    };
+
     return NextResponse.json({
       success: true,
       message: 'Registrasi berhasil. E-Ticket telah diterbitkan.',
+      registrationId: newGuest.registration_id,
+      ticketId: newGuest.ticket_id,
       token: newGuest.qr_token,
+      qrCode: qrDataUrl,
+      participant: participantData,
       guest: {
-        id: newGuest.id,
-        nama: newGuest.nama,
-        pangkat: newGuest.pangkat,
-        matra: newGuest.matra,
-        qr_token: newGuest.qr_token
+        ...newGuest,
+        registration_id: newGuest.registration_id,
+        ticket_id: newGuest.ticket_id
       }
     });
 

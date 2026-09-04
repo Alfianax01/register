@@ -660,9 +660,15 @@ class DatabaseManager {
   public findGuestByToken(token: string): Guest | undefined {
     this.ensureInitialized();
     const tokenTrimmed = token.trim();
-    // Compare directly with token or token_hash
+    // Compare directly with token, token_hash, ticket_id, or registration_id
     const hashed = hashToken(tokenTrimmed);
-    return this.data!.guests.find(g => g.qr_token === tokenTrimmed || g.token_hash === hashed);
+    return this.data!.guests.find(g => 
+      g.qr_token === tokenTrimmed || 
+      g.token_hash === hashed ||
+      g.id === tokenTrimmed ||
+      (g.ticket_id && g.ticket_id.toUpperCase() === tokenTrimmed.toUpperCase()) ||
+      (g.registration_id && g.registration_id.toUpperCase() === tokenTrimmed.toUpperCase())
+    );
   }
 
   public findGuestByNRP(nrp: string): Guest | undefined {
@@ -699,9 +705,16 @@ class DatabaseManager {
     const token = generateSecureToken();
     const token_hash = hashToken(token);
 
+    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' 
+      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}`
+      : `REG-2026-${Date.now().toString().slice(-6)}`);
+    const ticketId = guestData.ticket_id || `TCK-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
     const newGuest: Guest = {
       ...guestData,
       id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      registration_id: regId,
+      ticket_id: ticketId,
       qr_token: token,
       token_hash: token_hash,
       status_kehadiran: 'BELUM_HADIR',
@@ -711,7 +724,7 @@ class DatabaseManager {
 
     this.data!.guests.unshift(newGuest);
     this.persist();
-    console.log("Insert berhasil:", { id: newGuest.id, nama: newGuest.nama, nrp: newGuest.nrp, token: newGuest.qr_token });
+    console.log("Insert berhasil:", { id: newGuest.id, registrationId: newGuest.registration_id, ticketId: newGuest.ticket_id, nama: newGuest.nama, nrp: newGuest.nrp, token: newGuest.qr_token });
     return newGuest;
   }
 

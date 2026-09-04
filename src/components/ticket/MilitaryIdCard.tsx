@@ -35,9 +35,14 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
           </div>
         </div>
 
-        <span className="font-mono text-[12px] font-semibold text-slate-700 bg-slate-50 px-2.5 py-1 rounded-sm border border-slate-200">
-          NRP {guest.nrp}
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-50 px-2.5 py-0.5 rounded-sm border border-slate-200">
+            {guest.registration_id || (guest.nrp ? `REG-${guest.nrp}` : 'REG-2026')}
+          </span>
+          <span className="font-mono text-[10px] text-slate-400">
+            {guest.ticket_id || (guest.id ? `TCK-${guest.id.slice(-6).toUpperCase()}` : 'TCK-2026')}
+          </span>
+        </div>
       </div>
 
       {/* Guest Name & Details */}
@@ -62,8 +67,8 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
             <span className="text-[#0F172A] font-medium block truncate">{guest.jabatan}</span>
           </div>
           <div>
-            <span className="text-[#64748B] block text-[11px] uppercase font-medium">Satuan / Satker</span>
-            <span className="text-[#0F172A] font-medium block truncate">{guest.satuan}</span>
+            <span className="text-[#64748B] block text-[11px] uppercase font-medium">Instansi / Satuan</span>
+            <span className="text-[#0F172A] font-medium block truncate">{guest.negara_instansi || guest.satuan || guest.satker}</span>
           </div>
         </div>
       </div>
@@ -125,20 +130,27 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
         </div>
       </div>
 
-      {/* Bottom Status Bar */}
-      <div className="px-6 py-3.5 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-[13px]">
-        <span className="text-[12px] text-[#64748B] font-medium">Status Kehadiran:</span>
-        {guest.status_kehadiran === 'HADIR' ? (
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-sm border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A]" />
-            <span>Telah Hadir di Lokasi</span>
+      {/* Bottom Status & Timestamp Bar */}
+      <div className="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-[12px]">
+        <div>
+          <span className="text-[#64748B] block text-[10px] uppercase font-medium">Waktu Registrasi</span>
+          <span className="font-mono text-slate-700 text-[11px]">
+            {guest.created_at ? new Date(guest.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '4 Sep 2026'}
           </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-sm border border-slate-200">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Terdaftar (Belum Check-In)</span>
-          </span>
-        )}
+        </div>
+        <div>
+          {guest.status_kehadiran === 'HADIR' ? (
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-200">
+              <CheckCircle2 className="w-3 h-3 text-[#16A34A]" />
+              <span>Telah Hadir</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-600 bg-white px-2 py-0.5 rounded-sm border border-slate-200">
+              <Clock className="w-3 h-3 text-slate-400" />
+              <span>Resmi Terdaftar</span>
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

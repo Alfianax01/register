@@ -30,8 +30,8 @@ export default function HomePage() {
 
   const handleRegistrationSuccess = (token: string, guest: any) => {
     setRegisteredGuest({ token, guest });
-    // Smooth scroll to top of page so success alert is prominent
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Checklist #4: Immediate redirect to official ticket & participant credentials
+    router.push(`/ticket/${token}`);
   };
 
   const toggleFaq = (index: number) => {
