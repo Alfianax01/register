@@ -57,8 +57,8 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-1.5">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white mb-2 shadow-xs">
-            <Shield className="w-5 h-5 stroke-[2.5]" />
+          <div className="inline-flex items-center justify-center w-11 h-11 rounded-md bg-[#1E40AF] text-white mb-2 shadow-sm">
+            <Shield className="w-5 h-5 stroke-[2.2]" />
           </div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Portal Panitia RAPIM TNI 2026

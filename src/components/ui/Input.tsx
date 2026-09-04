@@ -15,15 +15,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || props.name || Math.random().toString(36).substring(2, 8);
 
     return (
-      <div className="w-full">
+      <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-xs font-semibold text-slate-700 mb-1.5 select-none">
-            {label} {required && <span className="text-blue-600 font-bold">*</span>}
+          <label htmlFor={inputId} className="block text-[14px] font-medium text-slate-700 select-none">
+            {label} {required && <span className="text-[#1E40AF] font-bold">*</span>}
           </label>
         )}
-        <div className="relative rounded-lg">
+        <div className="relative rounded-md">
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               {leftIcon}
             </div>
           )}
@@ -33,11 +33,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             required={required}
             className={twMerge(
               clsx(
-                'block w-full rounded-lg bg-white text-slate-900 border text-xs h-[42px] transition-colors',
+                'block w-full rounded-md bg-white text-slate-900 border text-[15px] h-[50px] transition-colors',
                 'placeholder:text-slate-400',
-                'focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15',
-                leftIcon ? 'pl-9' : 'pl-3',
-                rightIcon ? 'pr-9' : 'pr-3',
+                'focus:outline-none focus:border-[#1E40AF] focus:ring-2 focus:ring-[#1E40AF]/15 shadow-sm',
+                leftIcon ? 'pl-10' : 'pl-3.5',
+                rightIcon ? 'pr-10' : 'pr-3.5',
                 error
                   ? 'border-rose-500 text-rose-900 focus:border-rose-600 focus:ring-rose-500/15'
                   : 'border-slate-200 hover:border-slate-300',
@@ -49,17 +49,17 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
+            <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400">
               {rightIcon}
             </div>
           )}
         </div>
         {error ? (
-          <p id={`${inputId}-error`} className="mt-1 text-[11px] font-medium text-rose-600 animate-in fade-in duration-150">
+          <p id={`${inputId}-error`} className="text-[13px] text-rose-600 font-medium animate-in fade-in duration-150">
             {error}
           </p>
         ) : helperText ? (
-          <p id={`${inputId}-desc`} className="mt-1 text-[11px] text-slate-500">
+          <p id={`${inputId}-desc`} className="text-[13px] text-slate-500">
             {helperText}
           </p>
         ) : null}

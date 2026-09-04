@@ -53,8 +53,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
     <aside className="w-60 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 min-h-screen">
       {/* Brand */}
       <div className="p-4 border-b border-slate-100 flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-          <Shield className="w-4 h-4 stroke-[2.5]" />
+        <div className="w-8 h-8 rounded-sm bg-[#1E40AF] flex items-center justify-center text-white">
+          <Shield className="w-4 h-4 stroke-[2.2]" />
         </div>
         <div>
           <span className="text-xs font-semibold text-slate-900 block leading-tight">

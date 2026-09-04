@@ -2,10 +2,13 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+export type BadgeVariant = 'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'ad' | 'al' | 'au' | 'gold' | 'slate';
+export type BadgeSize = 'sm' | 'md';
+
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'ad' | 'al' | 'au' | 'gold' | 'slate';
-  size?: 'sm' | 'md';
+  variant?: BadgeVariant;
+  size?: BadgeSize;
   className?: string;
 }
 
@@ -15,29 +18,29 @@ export const Badge: React.FC<BadgeProps> = ({
   size = 'md',
   className
 }) => {
-  const base = 'inline-flex items-center font-medium rounded-full border tracking-wide select-none';
+  const base = 'inline-flex items-center font-medium rounded-sm border select-none';
 
-  const variants = {
-    neutral: 'bg-slate-100 text-slate-700 border-slate-200/80',
-    primary: 'bg-blue-50 text-blue-700 border-blue-200',
-    success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    warning: 'bg-amber-50 text-amber-700 border-amber-200',
+  const variants: Record<BadgeVariant, string> = {
+    neutral: 'bg-slate-100 text-[#64748B] border-slate-200/80',
+    primary: 'bg-blue-50 text-[#1E40AF] border-blue-200',
+    accent: 'bg-blue-50 text-[#2563EB] border-blue-200',
+    success: 'bg-emerald-50 text-[#16A34A] border-emerald-200',
+    warning: 'bg-amber-50 text-amber-800 border-amber-200',
     danger: 'bg-rose-50 text-rose-700 border-rose-200',
-    // Branch accents kept clean and subtle
-    ad: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-    al: 'bg-blue-50 text-blue-800 border-blue-200',
+    ad: 'bg-emerald-50 text-[#16A34A] border-emerald-200',
+    al: 'bg-blue-50 text-[#1E40AF] border-blue-200',
     au: 'bg-sky-50 text-sky-800 border-sky-200',
-    gold: 'bg-amber-50 text-amber-900 border-amber-200',
-    slate: 'bg-slate-100 text-slate-600 border-slate-200'
+    gold: 'bg-blue-50 text-[#1E40AF] border-blue-200',
+    slate: 'bg-slate-100 text-[#0F172A] border-slate-200'
   };
 
-  const sizes = {
-    sm: 'text-[10px] px-2 py-0.5',
-    md: 'text-[11px] px-2.5 py-0.5'
+  const sizes: Record<BadgeSize, string> = {
+    sm: 'text-[12px] px-2 py-0.5',
+    md: 'text-[13px] px-2.5 py-1'
   };
 
   return (
-    <span className={twMerge(clsx(base, variants[variant], sizes[size], className))}>
+    <span className={twMerge(clsx(base, variants[variant] || variants.neutral, sizes[size], className))}>
       {children}
     </span>
   );

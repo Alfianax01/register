@@ -1,4 +1,4 @@
-/** @type {import('next').Config} */
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,10 +11,14 @@ module.exports = {
         background: "#f8fafc",
         surface: "#ffffff",
         primary: {
-          DEFAULT: "#2563eb",
-          hover: "#1d4ed8",
+          DEFAULT: "#1E40AF", // Deep government navy blue
+          hover: "#1e3a8a",
           light: "#eff6ff",
         },
+        dark: "#0F172A", // Dark Slate 900
+        accent: "#2563EB", // Accent Blue 600
+        success: "#16A34A", // Success Green 600
+        neutral: "#64748B", // Neutral Slate 500
         slate: {
           50: "#f8fafc",
           100: "#f1f5f9",
@@ -30,16 +34,21 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ["Inter", "Plus Jakarta Sans", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["JetBrains Mono", "SF Mono", "Menlo", "Consolas", "monospace"]
+        sans: ["'IBM Plex Sans'", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["'JetBrains Mono'", "SF Mono", "Menlo", "Consolas", "monospace"]
       },
-      maxWidth: {
-        container: "1200px"
+      borderRadius: {
+        sm: "8px",
+        DEFAULT: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "16px",
+        '2xl': "16px",
       },
       boxShadow: {
-        subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        card: "0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02)",
-        popover: "0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04)",
+        sm: "0 1px 2px 0 rgba(15, 23, 42, 0.05)",
+        md: "0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05)",
+        card: "0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03)",
       }
     },
   },

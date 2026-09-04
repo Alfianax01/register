@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,10 +7,11 @@
 :root {
   --bg-main: #f8fafc;
   --surface: #ffffff;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  --primary: #1E40AF;
+  --dark: #0F172A;
+  --accent: #2563EB;
+  --success: #16A34A;
+  --neutral: #64748B;
   --border-color: #e2e8f0;
 }
 
@@ -19,18 +22,58 @@
   
   html {
     color-scheme: light;
+    scroll-behavior: smooth;
   }
 
   body {
     background-color: var(--bg-main);
-    color: var(--text-main);
-    font-family: Inter, "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    font-family: 'IBM Plex Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Strict Typography Scale */
+  h1, .text-h1 {
+    font-size: clamp(32px, 4vw, 44px);
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    color: var(--dark);
+  }
+
+  h2, .text-h2 {
+    font-size: clamp(24px, 3vw, 32px);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  h3, .text-h3 {
+    font-size: 24px;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  p, .text-body {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #334155;
+  }
+
+  .text-small {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--neutral);
+  }
 }
 
-/* Micro-transitions: max 200ms as requested */
+/* Micro-transitions */
 button, a, input, select, textarea {
   transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
