@@ -1,6 +1,36 @@
 {
   "guests": [
     {
+      "nrp": "113599",
+      "nama": "Tri Nugroho",
+      "gelar_depan": "Dr.",
+      "gelar_belakang": "S.T., M.Si.",
+      "matra": "AD",
+      "pangkat": "Kolonel (AD)",
+      "pangkat_level": 5,
+      "jabatan": "Dandim 0501/Jakarta Pusat",
+      "satker": "Kodam Jaya / Jayakarta",
+      "satuan": "Makodam Jaya",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "0812254048",
+      "email": "tri.25404@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "catatan_khusus": "Alergi makanan laut (seafood)",
+      "id": "guest_1788536275005_olc1",
+      "registration_id": "REG-2026-113599",
+      "ticket_id": "TCK-275005-92PS",
+      "qr_token": "309d2bac-98d0-437b-ba8e-f6ccad146820",
+      "token_hash": "8873d91e12725b01f4c2201471cf381d4450198d4dbee0847ecb5a481b8598df",
+      "status_kehadiran": "HADIR",
+      "created_at": "2026-09-04T15:37:55.005Z",
+      "updated_at": "2026-09-04T15:37:55.174Z",
+      "waktu_kehadiran_pertama": "2026-09-04T15:37:55.164Z",
+      "seat_group_id": "grp_d",
+      "seat_number": "D-06"
+    },
+    {
       "nrp": "668935",
       "nama": "Kurniawan Pratama",
       "gelar_depan": "Letkol",
@@ -24,7 +54,9 @@
       "token_hash": "45564778baeaea7f4fbe39a161f97b9e0e1a174eef33d7073e7756f5cdbcf2e2",
       "status_kehadiran": "BELUM_HADIR",
       "created_at": "2026-09-04T15:04:50.052Z",
-      "updated_at": "2026-09-04T15:04:50.052Z"
+      "updated_at": "2026-09-04T15:04:50.052Z",
+      "seat_group_id": "grp_e",
+      "seat_number": "E-03"
     },
     {
       "nrp": "888313",
@@ -48,7 +80,9 @@
       "token_hash": "00ad3403621e70ab8d58201490269eb5a35ec3b06acd834a9d37d53cc8d63db7",
       "status_kehadiran": "BELUM_HADIR",
       "created_at": "2026-09-04T14:55:39.967Z",
-      "updated_at": "2026-09-04T14:55:39.967Z"
+      "updated_at": "2026-09-04T14:55:39.967Z",
+      "seat_group_id": "grp_d",
+      "seat_number": "D-07"
     },
     {
       "nrp": "991161",
@@ -70,7 +104,9 @@
       "token_hash": "f7e8278aabac72d0ca41cf4e96ec30997cebf40565df6ec332e6d393b83bd11b",
       "status_kehadiran": "BELUM_HADIR",
       "created_at": "2026-09-04T14:54:26.602Z",
-      "updated_at": "2026-09-04T14:54:26.602Z"
+      "updated_at": "2026-09-04T14:54:26.602Z",
+      "seat_group_id": "grp_f",
+      "seat_number": "F-02"
     },
     {
       "nrp": "115417",
@@ -1414,7 +1450,12 @@
       "seat_number": "D-06",
       "row_num": 1,
       "col_num": 6,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788536275005_olc1",
+      "guest_name": "Tri Nugroho",
+      "guest_rank": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
     },
     {
       "id": "seat_d_7",
@@ -1423,7 +1464,12 @@
       "seat_number": "D-07",
       "row_num": 1,
       "col_num": 7,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788533739968_0r4b",
+      "guest_name": "Hendra Gunawan",
+      "guest_rank": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "BELUM_HADIR"
     },
     {
       "id": "seat_d_8",
@@ -1757,7 +1803,12 @@
       "seat_number": "E-03",
       "row_num": 1,
       "col_num": 3,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788534290056_opo9",
+      "guest_name": "Kurniawan Pratama",
+      "guest_rank": "Letnan Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "BELUM_HADIR"
     },
     {
       "id": "seat_e_4",
@@ -2113,7 +2164,12 @@
       "seat_number": "F-02",
       "row_num": 1,
       "col_num": 2,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788533666602_nlbz",
+      "guest_name": "Perwira Baru",
+      "guest_rank": "Kapten (AD)",
+      "guest_matra": "AD",
+      "guest_status": "BELUM_HADIR"
     },
     {
       "id": "seat_f_3",
@@ -2932,6 +2988,34 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788536275175_newho",
+      "guest_id": "guest_1788536275005_olc1",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "113599",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T15:37:55.174Z",
+      "ip_address": "::1"
+    },
+    {
+      "id": "chk_1788536275164_3pw36",
+      "guest_id": "guest_1788536275005_olc1",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "113599",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T15:37:55.164Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788532925892_mzkcf",
       "guest_id": "guest_1788532925759_s7xf",
       "guest_nama": "Tri Nugroho",
@@ -3167,6 +3251,42 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788536275195_h5cw",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "AUTO_ASSIGN_SEATS",
+      "details": "Penetapan kursi otomatis berbasis senioritas pangkat untuk 4 prajurit/tamu",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T15:37:55.195Z"
+    },
+    {
+      "id": "aud_1788536275176_i7rt",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 113599) di GATE_UTAMA - RE-SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T15:37:55.176Z"
+    },
+    {
+      "id": "aud_1788536275166_dbnz",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 113599) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T15:37:55.166Z"
+    },
+    {
+      "id": "aud_1788536275148_wsc2",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T15:37:55.148Z"
+    },
     {
       "id": "aud_1788532925906_hzy9",
       "admin_id": "admin_super",
