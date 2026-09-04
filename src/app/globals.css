@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#070E0B] text-slate-100 font-sans antialiased selection:bg-[#D4AF37] selection:text-black;
+  }
+}
+
+/* Gold foil gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FFF0B3 0%, #D4AF37 50%, #907218 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Military badge border */
+.border-military-gold {
+  border-color: #D4AF37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+/* Card with military subtle pattern */
+.bg-military-card {
+  background: linear-gradient(145deg, rgba(16, 34, 27, 0.95) 0%, rgba(11, 22, 17, 0.98) 100%);
+  backdrop-filter: blur(8px);
+}
+
+/* Hologram watermark for ID card */
+.id-hologram {
+  background-image: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
+}
+
+/* Scanline effect for QR scanner */
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(220px); }
+  100% { transform: translateY(0); }
+}
+
+.animate-scanline {
+  animation: scanline 2.5s ease-in-out infinite;
+}
+
+/* Print optimizations for official TNI attendance list */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
+

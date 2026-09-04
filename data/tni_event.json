@@ -1,0 +1,2969 @@
+{
+  "guests": [
+    {
+      "nrp": "1105999",
+      "nama": "Tri Nugroho",
+      "gelar_depan": "Dr.",
+      "gelar_belakang": "S.T., M.Si.",
+      "matra": "AD",
+      "pangkat": "Kolonel (AD)",
+      "pangkat_level": 5,
+      "jabatan": "Dandim 0501/Jakarta Pusat",
+      "satker": "Kodam Jaya / Jayakarta",
+      "satuan": "Makodam Jaya",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "081233445566",
+      "email": "tri.nugroho@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "catatan_khusus": "Alergi makanan laut (seafood)",
+      "id": "guest_1788529980717_zpbh",
+      "qr_token": "d19b9cc9-e35e-42f4-ad6e-7b969f64f030",
+      "token_hash": "0ac22264e4c258bba1eddb22dde2e9e9b82df42f92c1c142a9a280853f0f93b4",
+      "status_kehadiran": "HADIR",
+      "created_at": "2026-09-04T13:53:00.716Z",
+      "updated_at": "2026-09-04T13:53:00.864Z",
+      "waktu_kehadiran_pertama": "2026-09-04T13:53:00.851Z",
+      "seat_group_id": "grp_d",
+      "seat_number": "D-02"
+    },
+    {
+      "id": "guest_519284",
+      "nrp": "519284",
+      "nama": "Agus Subiyanto",
+      "gelar_depan": "Jenderal TNI",
+      "gelar_belakang": "S.E., M.Si.",
+      "matra": "AD",
+      "pangkat": "Jenderal TNI",
+      "pangkat_level": 1,
+      "jabatan": "Panglima Tentara Nasional Indonesia",
+      "satker": "Mabes TNI (Cilangkap)",
+      "satuan": "Mabes TNI",
+      "negara_instansi": "Indonesia / Mabes TNI",
+      "no_hp": "08111945001",
+      "email": "panglima@tni.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "f0a7b0ab-6140-48f2-854a-df59501ee113",
+      "token_hash": "4a05058e24e403818025844650868c8e0bca46da5464ef8f27317ee85e3c4f72",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-01",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_520193",
+      "nrp": "520193",
+      "nama": "Maruli Simanjuntak",
+      "gelar_depan": "Jenderal TNI",
+      "gelar_belakang": "M.Sc.",
+      "matra": "AD",
+      "pangkat": "Jenderal TNI",
+      "pangkat_level": 1,
+      "jabatan": "Kepala Staf Angkatan Darat (Kasad)",
+      "satker": "Mabes TNI AD (Jakarta Pusat)",
+      "satuan": "Staf Umum Kasad",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "08129876002",
+      "email": "kasad@tni-ad.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "00396ce4-b56f-4feb-bd52-167e16b91af5",
+      "token_hash": "b9b424514531a35605786cf3653f5168ec118c169013d13417d9d39e14fdb463",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-02",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_521876",
+      "nrp": "521876",
+      "nama": "Muhammad Ali",
+      "gelar_depan": "Laksamana TNI",
+      "gelar_belakang": "S.E., M.M.",
+      "matra": "AL",
+      "pangkat": "Laksamana TNI",
+      "pangkat_level": 1,
+      "jabatan": "Kepala Staf Angkatan Laut (Kasal)",
+      "satker": "Mabes TNI AL (Cilangkap)",
+      "satuan": "Staf Umum Kasal",
+      "negara_instansi": "Indonesia / TNI AL",
+      "no_hp": "08137788003",
+      "email": "kasal@tni-al.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "d695c631-1b23-4d75-9904-269e212c9a94",
+      "token_hash": "79f15880ad2e7742b0fb381afca7e7be0d7fd1df7825d9ea318f73f5654a51e6",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-03",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_522431",
+      "nrp": "522431",
+      "nama": "M. Tonny Harjono",
+      "gelar_depan": "Marsekal TNI",
+      "gelar_belakang": "S.E., M.M.",
+      "matra": "AU",
+      "pangkat": "Marsekal TNI",
+      "pangkat_level": 1,
+      "jabatan": "Kepala Staf Angkatan Udara (Kasau)",
+      "satker": "Mabes TNI AU (Cilangkap)",
+      "satuan": "Staf Umum Kasau",
+      "negara_instansi": "Indonesia / TNI AU",
+      "no_hp": "08151234004",
+      "email": "kasau@tni-au.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "e92e8ec1-04a6-4efc-be03-b9855504f94c",
+      "token_hash": "d13b663cb0ff5885796632db81837df725a25d035a75f0ea983979be65b82d5a",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-04",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_1965010190",
+      "nrp": "1965010190",
+      "nama": "Sjafrie Sjamsoeddin",
+      "gelar_depan": "",
+      "gelar_belakang": "",
+      "matra": "NON_TNI",
+      "pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "pangkat_level": 1,
+      "jabatan": "Menteri Pertahanan Republik Indonesia",
+      "satker": "Kementerian Pertahanan RI (Kemhan)",
+      "satuan": "Setjen Kemhan",
+      "negara_instansi": "Indonesia / Kemhan RI",
+      "no_hp": "08111900005",
+      "email": "menhan@kemhan.go.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "ab44db05-619e-4b06-b076-2cb02500bf13",
+      "token_hash": "6dacf5c984da9d234eed184637e9a5e3c603dbfdd934b95f9816316990bd0549",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-05",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_524901",
+      "nrp": "524901",
+      "nama": "Bambang Trisnohadi",
+      "gelar_depan": "Letjen TNI",
+      "gelar_belakang": "",
+      "matra": "AD",
+      "pangkat": "Letnan Jenderal TNI",
+      "pangkat_level": 2,
+      "jabatan": "Pangkostrad",
+      "satker": "Komando Cadangan Strategis AD (Kostrad)",
+      "satuan": "Makostrad",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "08129000101",
+      "email": "pangkostrad@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "7f47b466-5881-4482-8cc6-ba34dac8669a",
+      "token_hash": "8acc6a2e72a477fcbd2d624c30d142cd827c30a2677eb0ecd450e1923b2c498d",
+      "seat_group_id": "grp_b",
+      "seat_number": "B-01",
+      "room_id": "room_soedirman_201",
+      "room_slot": "A",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_525112",
+      "nrp": "525112",
+      "nama": "Dedy Suryadi",
+      "gelar_depan": "Mayor Jenderal TNI",
+      "gelar_belakang": "S.I.P.",
+      "matra": "AD",
+      "pangkat": "Mayor Jenderal TNI",
+      "pangkat_level": 3,
+      "jabatan": "Danjen Kopassus",
+      "satker": "Komando Pasukan Khusus (Kopassus)",
+      "satuan": "Makopassus (Cijantung)",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "08139988102",
+      "email": "danjen.kopassus@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "ea5afa0a-64c1-42b0-b78f-767b4805506b",
+      "token_hash": "9dbd1eb114ae1e39d5d5bcbd05d590ca38a4a9371e76984d0136a943e102c9ad",
+      "seat_group_id": "grp_b",
+      "seat_number": "B-02",
+      "room_id": "room_soedirman_201",
+      "room_slot": "B",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_526330",
+      "nrp": "526330",
+      "nama": "Endi Supardi",
+      "gelar_depan": "Mayor Jenderal TNI (Mar)",
+      "gelar_belakang": "S.E., M.Tr.Opsla.",
+      "matra": "AL",
+      "pangkat": "Mayor Jenderal TNI",
+      "pangkat_level": 3,
+      "jabatan": "Komandan Korps Marinir (Dankormar)",
+      "satker": "Korps Marinir TNI AL",
+      "satuan": "Mako Korps Marinir (Jakarta)",
+      "negara_instansi": "Indonesia / TNI AL",
+      "no_hp": "08128899103",
+      "email": "dankormar@tni-al.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "23bcff01-465e-4232-b6fa-326a1e84475e",
+      "token_hash": "3a75bde70f802802a8a65397cc0858c5dd3eb0d8845dfae7b1a15a09819d209e",
+      "seat_group_id": "grp_b",
+      "seat_number": "B-03",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_527441",
+      "nrp": "527441",
+      "nama": "Yudi Bustami",
+      "gelar_depan": "Mayor Jenderal TNI",
+      "gelar_belakang": "S.Sos.",
+      "matra": "AU",
+      "pangkat": "Mayor Jenderal TNI",
+      "pangkat_level": 3,
+      "jabatan": "Dankopasgat",
+      "satker": "Kopasgat TNI AU",
+      "satuan": "Mako Kopasgat (Bandung)",
+      "negara_instansi": "Indonesia / TNI AU",
+      "no_hp": "08127766104",
+      "email": "dankopasgat@tni-au.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "28873b1b-a5b7-4d84-b41b-358bb68324bc",
+      "token_hash": "2385709b985b195b59d64632ebf77eb5afec673e08829065824055276df0edf3",
+      "seat_group_id": "grp_b",
+      "seat_number": "B-04",
+      "room_id": "room_soedirman_202",
+      "room_slot": "A",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_531024",
+      "nrp": "531024",
+      "nama": "Achiruddin",
+      "gelar_depan": "Brigadir Jenderal TNI",
+      "gelar_belakang": "S.E., M.Han.",
+      "matra": "AD",
+      "pangkat": "Brigadir Jenderal TNI",
+      "pangkat_level": 4,
+      "jabatan": "Komandan Paspampres (Danpaspampres)",
+      "satker": "Mabes TNI (Cilangkap)",
+      "satuan": "Paspampres",
+      "negara_instansi": "Indonesia / Mabes TNI",
+      "no_hp": "08136655105",
+      "email": "danpaspampres@tni.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "88f4dddb-89fb-44e8-96aa-3de14c87a72f",
+      "token_hash": "ca3353286deb41dba8168b717b45fa58c058c7d0ebd91a76ac6a27a355846694",
+      "seat_group_id": "grp_c",
+      "seat_number": "C-01",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.417Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_1102941",
+      "nrp": "1102941",
+      "nama": "Rizky Prakoso",
+      "gelar_depan": "",
+      "gelar_belakang": "S.T.",
+      "matra": "AD",
+      "pangkat": "Kolonel (AD)",
+      "pangkat_level": 5,
+      "jabatan": "Asintel Kasdam Jaya",
+      "satker": "Kodam Jaya / Jayakarta",
+      "satuan": "Makodam Jaya",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "08123456789",
+      "email": "rizky.prakoso@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "33bd4281-9070-45d8-9731-e9b18044dd5c",
+      "token_hash": "9026215a805e85bc5c26aef5b38aa350b094335f41792ce200d5df2c09419f26",
+      "seat_group_id": "grp_d",
+      "seat_number": "D-01",
+      "room_id": "room_kartika_101",
+      "room_slot": "A",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_1103852",
+      "nrp": "1103852",
+      "nama": "Budi Hartono",
+      "gelar_depan": "",
+      "gelar_belakang": "M.Tr.Han.",
+      "matra": "AL",
+      "pangkat": "Letnan Kolonel (AL)",
+      "pangkat_level": 6,
+      "jabatan": "Komandan KRI I Gusti Ngurah Rai-332",
+      "satker": "Komando Armada RI (Koarmada RI)",
+      "satuan": "Koarmada II (Surabaya)",
+      "negara_instansi": "Indonesia / TNI AL",
+      "no_hp": "08129812345",
+      "email": "budi.hartono@tni-al.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "1a18a8a9-dcdc-4377-94ae-e3218021161f",
+      "token_hash": "d1a218e2c0d7b1b3145d76980612cbaf129ed218dd4a0185c97823a7ae5c6fce",
+      "seat_group_id": "grp_e",
+      "seat_number": "E-01",
+      "room_id": "room_kartika_101",
+      "room_slot": "B",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    },
+    {
+      "id": "guest_1104921",
+      "nrp": "1104921",
+      "nama": "Ferry Hendrawan",
+      "gelar_depan": "",
+      "gelar_belakang": "",
+      "matra": "AU",
+      "pangkat": "Mayor (AU)",
+      "pangkat_level": 7,
+      "jabatan": "Komandan Skadron Udara 3 (F-16)",
+      "satker": "Koopsudnas",
+      "satuan": "Koopsud II (Makassar)",
+      "negara_instansi": "Indonesia / TNI AU",
+      "no_hp": "08125544332",
+      "email": "ferry.f16@tni-au.mil.id",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "19e651e6-4fc5-4c2b-ba40-494eaf90c8e6",
+      "token_hash": "21761062ae4f475b34d8308f4bd73c71419d2bc65487ab0b4ef08f154d08a37c",
+      "room_id": "room_mess_101",
+      "room_slot": "A",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_group_id": "grp_e",
+      "seat_number": "E-02"
+    },
+    {
+      "id": "guest_1105819",
+      "nrp": "1105819",
+      "nama": "Dian Permana",
+      "gelar_depan": "",
+      "gelar_belakang": "S.Sos.",
+      "matra": "AD",
+      "pangkat": "Kapten (AD)",
+      "pangkat_level": 8,
+      "jabatan": "Danki Den 81 Gultor Kopassus",
+      "satker": "Komando Pasukan Khusus (Kopassus)",
+      "satuan": "Sat-81 Gultor Kopassus",
+      "negara_instansi": "Indonesia / TNI AD",
+      "no_hp": "08124433221",
+      "email": "dian.gultor@tni.mil.id",
+      "butuh_akomodasi": 0,
+      "qr_token": "ba99e85e-f8b7-4803-a925-270056e853f0",
+      "token_hash": "68900e1d0e9deaf3fae5cf447c2d7cdbf45eea1bffb4e6ea91fd0e6ca5cd66b8",
+      "status_kehadiran": "BELUM_HADIR",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_group_id": "grp_f",
+      "seat_number": "F-01"
+    },
+    {
+      "id": "guest_defus091",
+      "nrp": "DEF-US-091",
+      "nama": "Col. Michael Vance",
+      "gelar_depan": "Colonel",
+      "gelar_belakang": "USAF",
+      "matra": "NON_TNI",
+      "pangkat": "Atase Pertahanan (Military Attaché)",
+      "pangkat_level": 4,
+      "jabatan": "Senior Defense Official / Defense Attaché",
+      "satker": "Korps Diplomatik / Kedutaan Besar Asing",
+      "satuan": "Kedutaan Besar Negara Sahabat (Atase Pertahanan)",
+      "negara_instansi": "United States Embassy / DoD",
+      "no_hp": "+62811880099",
+      "email": "michael.vance@state.gov",
+      "butuh_akomodasi": 0,
+      "qr_token": "78a9a35a-70ad-4346-90cf-c75400c00449",
+      "token_hash": "f4dce658a79e5e9c2e97ad5bda9f21bf435a01bbf0aefbb349ddde0420ecdfb8",
+      "seat_group_id": "grp_c",
+      "seat_number": "C-02",
+      "status_kehadiran": "HADIR",
+      "waktu_kehadiran_pertama": "2026-09-04T12:50:47.417Z",
+      "created_at": "2026-09-04T13:50:47.358Z",
+      "updated_at": "2026-09-04T13:50:47.358Z"
+    }
+  ],
+  "seat_groups": [
+    {
+      "id": "grp_a",
+      "code": "A",
+      "name": "Grup A - VVIP (Bintang 4 & Tamu Negara)",
+      "description": "Baris paling depan ruang sidang pleno",
+      "capacity": 16,
+      "color_code": "#D4AF37",
+      "sort_order": 1
+    },
+    {
+      "id": "grp_b",
+      "code": "B",
+      "name": "Grup B - VIP (Pati Bintang 3 & 2)",
+      "description": "Baris kehormatan tengah depan",
+      "capacity": 24,
+      "color_code": "#B89325",
+      "sort_order": 2
+    },
+    {
+      "id": "grp_c",
+      "code": "C",
+      "name": "Grup C - Pati Bintang 1 (Brigjen/Laksma/Marsma)",
+      "description": "Sektor tengah ruang sidang",
+      "capacity": 32,
+      "color_code": "#2B8754",
+      "sort_order": 3
+    },
+    {
+      "id": "grp_d",
+      "code": "D",
+      "name": "Grup D - Pamen Kolonel",
+      "description": "Sayap kiri dan kanan sektor perwira menengah",
+      "capacity": 40,
+      "color_code": "#2058A3",
+      "sort_order": 4
+    },
+    {
+      "id": "grp_e",
+      "code": "E",
+      "name": "Grup E - Pamen Letkol & Mayor",
+      "description": "Sektor belakang perwira menengah",
+      "capacity": 40,
+      "color_code": "#288FC4",
+      "sort_order": 5
+    },
+    {
+      "id": "grp_f",
+      "code": "F",
+      "name": "Grup F - Pama, Tamtama & Tamu Undangan",
+      "description": "Area pendukung & atase",
+      "capacity": 40,
+      "color_code": "#700B15",
+      "sort_order": 6
+    }
+  ],
+  "seats": [
+    {
+      "id": "seat_a_1",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-01",
+      "row_num": 1,
+      "col_num": 1,
+      "is_reserved": 0,
+      "guest_id": "guest_519284",
+      "guest_name": "Agus Subiyanto",
+      "guest_rank": "Jenderal TNI",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_a_2",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-02",
+      "row_num": 1,
+      "col_num": 2,
+      "is_reserved": 0,
+      "guest_id": "guest_520193",
+      "guest_name": "Maruli Simanjuntak",
+      "guest_rank": "Jenderal TNI",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_a_3",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-03",
+      "row_num": 1,
+      "col_num": 3,
+      "is_reserved": 0,
+      "guest_id": "guest_521876",
+      "guest_name": "Muhammad Ali",
+      "guest_rank": "Laksamana TNI",
+      "guest_matra": "AL",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_a_4",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-04",
+      "row_num": 1,
+      "col_num": 4,
+      "is_reserved": 0,
+      "guest_id": "guest_522431",
+      "guest_name": "M. Tonny Harjono",
+      "guest_rank": "Marsekal TNI",
+      "guest_matra": "AU",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_a_5",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-05",
+      "row_num": 1,
+      "col_num": 5,
+      "is_reserved": 0,
+      "guest_id": "guest_1965010190",
+      "guest_name": "Sjafrie Sjamsoeddin",
+      "guest_rank": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_a_6",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-06",
+      "row_num": 1,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_7",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-07",
+      "row_num": 1,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_8",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-08",
+      "row_num": 1,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_9",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-09",
+      "row_num": 2,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_10",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-10",
+      "row_num": 2,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_11",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-11",
+      "row_num": 2,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_12",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-12",
+      "row_num": 2,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_13",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-13",
+      "row_num": 2,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_14",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-14",
+      "row_num": 2,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_15",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-15",
+      "row_num": 2,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_a_16",
+      "group_id": "grp_a",
+      "group_code": "A",
+      "seat_number": "A-16",
+      "row_num": 2,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_1",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-01",
+      "row_num": 1,
+      "col_num": 1,
+      "is_reserved": 0,
+      "guest_id": "guest_524901",
+      "guest_name": "Bambang Trisnohadi",
+      "guest_rank": "Letnan Jenderal TNI",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_b_2",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-02",
+      "row_num": 1,
+      "col_num": 2,
+      "is_reserved": 0,
+      "guest_id": "guest_525112",
+      "guest_name": "Dedy Suryadi",
+      "guest_rank": "Mayor Jenderal TNI",
+      "guest_matra": "AD",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_b_3",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-03",
+      "row_num": 1,
+      "col_num": 3,
+      "is_reserved": 0,
+      "guest_id": "guest_526330",
+      "guest_name": "Endi Supardi",
+      "guest_rank": "Mayor Jenderal TNI",
+      "guest_matra": "AL",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_b_4",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-04",
+      "row_num": 1,
+      "col_num": 4,
+      "is_reserved": 0,
+      "guest_id": "guest_527441",
+      "guest_name": "Yudi Bustami",
+      "guest_rank": "Mayor Jenderal TNI",
+      "guest_matra": "AU",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_b_5",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-05",
+      "row_num": 1,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_6",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-06",
+      "row_num": 1,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_7",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-07",
+      "row_num": 1,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_8",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-08",
+      "row_num": 1,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_9",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-09",
+      "row_num": 2,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_10",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-10",
+      "row_num": 2,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_11",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-11",
+      "row_num": 2,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_12",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-12",
+      "row_num": 2,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_13",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-13",
+      "row_num": 2,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_14",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-14",
+      "row_num": 2,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_15",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-15",
+      "row_num": 2,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_16",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-16",
+      "row_num": 2,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_17",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-17",
+      "row_num": 3,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_18",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-18",
+      "row_num": 3,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_19",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-19",
+      "row_num": 3,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_20",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-20",
+      "row_num": 3,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_21",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-21",
+      "row_num": 3,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_22",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-22",
+      "row_num": 3,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_23",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-23",
+      "row_num": 3,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_b_24",
+      "group_id": "grp_b",
+      "group_code": "B",
+      "seat_number": "B-24",
+      "row_num": 3,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_1",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-01",
+      "row_num": 1,
+      "col_num": 1,
+      "is_reserved": 0,
+      "guest_id": "guest_531024",
+      "guest_name": "Achiruddin",
+      "guest_rank": "Brigadir Jenderal TNI",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_c_2",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-02",
+      "row_num": 1,
+      "col_num": 2,
+      "is_reserved": 0,
+      "guest_id": "guest_defus091",
+      "guest_name": "Col. Michael Vance",
+      "guest_rank": "Atase Pertahanan (Military Attaché)",
+      "guest_matra": "NON_TNI",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_c_3",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-03",
+      "row_num": 1,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_4",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-04",
+      "row_num": 1,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_5",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-05",
+      "row_num": 1,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_6",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-06",
+      "row_num": 1,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_7",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-07",
+      "row_num": 1,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_8",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-08",
+      "row_num": 1,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_9",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-09",
+      "row_num": 2,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_10",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-10",
+      "row_num": 2,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_11",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-11",
+      "row_num": 2,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_12",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-12",
+      "row_num": 2,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_13",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-13",
+      "row_num": 2,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_14",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-14",
+      "row_num": 2,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_15",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-15",
+      "row_num": 2,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_16",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-16",
+      "row_num": 2,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_17",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-17",
+      "row_num": 3,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_18",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-18",
+      "row_num": 3,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_19",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-19",
+      "row_num": 3,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_20",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-20",
+      "row_num": 3,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_21",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-21",
+      "row_num": 3,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_22",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-22",
+      "row_num": 3,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_23",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-23",
+      "row_num": 3,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_24",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-24",
+      "row_num": 3,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_25",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-25",
+      "row_num": 4,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_26",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-26",
+      "row_num": 4,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_27",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-27",
+      "row_num": 4,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_28",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-28",
+      "row_num": 4,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_29",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-29",
+      "row_num": 4,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_30",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-30",
+      "row_num": 4,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_31",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-31",
+      "row_num": 4,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_c_32",
+      "group_id": "grp_c",
+      "group_code": "C",
+      "seat_number": "C-32",
+      "row_num": 4,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_1",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-01",
+      "row_num": 1,
+      "col_num": 1,
+      "is_reserved": 0,
+      "guest_id": "guest_1102941",
+      "guest_name": "Rizky Prakoso",
+      "guest_rank": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_d_2",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-02",
+      "row_num": 1,
+      "col_num": 2,
+      "is_reserved": 0,
+      "guest_id": "guest_1788529980717_zpbh",
+      "guest_name": "Tri Nugroho",
+      "guest_rank": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "guest_status": "HADIR"
+    },
+    {
+      "id": "seat_d_3",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-03",
+      "row_num": 1,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_4",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-04",
+      "row_num": 1,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_5",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-05",
+      "row_num": 1,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_6",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-06",
+      "row_num": 1,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_7",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-07",
+      "row_num": 1,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_8",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-08",
+      "row_num": 1,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_9",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-09",
+      "row_num": 2,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_10",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-10",
+      "row_num": 2,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_11",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-11",
+      "row_num": 2,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_12",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-12",
+      "row_num": 2,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_13",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-13",
+      "row_num": 2,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_14",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-14",
+      "row_num": 2,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_15",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-15",
+      "row_num": 2,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_16",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-16",
+      "row_num": 2,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_17",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-17",
+      "row_num": 3,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_18",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-18",
+      "row_num": 3,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_19",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-19",
+      "row_num": 3,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_20",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-20",
+      "row_num": 3,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_21",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-21",
+      "row_num": 3,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_22",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-22",
+      "row_num": 3,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_23",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-23",
+      "row_num": 3,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_24",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-24",
+      "row_num": 3,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_25",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-25",
+      "row_num": 4,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_26",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-26",
+      "row_num": 4,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_27",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-27",
+      "row_num": 4,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_28",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-28",
+      "row_num": 4,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_29",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-29",
+      "row_num": 4,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_30",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-30",
+      "row_num": 4,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_31",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-31",
+      "row_num": 4,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_32",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-32",
+      "row_num": 4,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_33",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-33",
+      "row_num": 5,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_34",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-34",
+      "row_num": 5,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_35",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-35",
+      "row_num": 5,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_36",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-36",
+      "row_num": 5,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_37",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-37",
+      "row_num": 5,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_38",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-38",
+      "row_num": 5,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_39",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-39",
+      "row_num": 5,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_d_40",
+      "group_id": "grp_d",
+      "group_code": "D",
+      "seat_number": "D-40",
+      "row_num": 5,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_1",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-01",
+      "row_num": 1,
+      "col_num": 1,
+      "is_reserved": 0,
+      "guest_id": "guest_1103852",
+      "guest_name": "Budi Hartono",
+      "guest_rank": "Letnan Kolonel (AL)",
+      "guest_matra": "AL",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_e_2",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-02",
+      "row_num": 1,
+      "col_num": 2,
+      "is_reserved": 0,
+      "guest_id": "guest_1104921",
+      "guest_name": "Ferry Hendrawan",
+      "guest_rank": "Mayor (AU)",
+      "guest_matra": "AU",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_e_3",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-03",
+      "row_num": 1,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_4",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-04",
+      "row_num": 1,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_5",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-05",
+      "row_num": 1,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_6",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-06",
+      "row_num": 1,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_7",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-07",
+      "row_num": 1,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_8",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-08",
+      "row_num": 1,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_9",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-09",
+      "row_num": 2,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_10",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-10",
+      "row_num": 2,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_11",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-11",
+      "row_num": 2,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_12",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-12",
+      "row_num": 2,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_13",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-13",
+      "row_num": 2,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_14",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-14",
+      "row_num": 2,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_15",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-15",
+      "row_num": 2,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_16",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-16",
+      "row_num": 2,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_17",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-17",
+      "row_num": 3,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_18",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-18",
+      "row_num": 3,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_19",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-19",
+      "row_num": 3,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_20",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-20",
+      "row_num": 3,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_21",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-21",
+      "row_num": 3,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_22",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-22",
+      "row_num": 3,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_23",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-23",
+      "row_num": 3,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_24",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-24",
+      "row_num": 3,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_25",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-25",
+      "row_num": 4,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_26",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-26",
+      "row_num": 4,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_27",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-27",
+      "row_num": 4,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_28",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-28",
+      "row_num": 4,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_29",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-29",
+      "row_num": 4,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_30",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-30",
+      "row_num": 4,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_31",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-31",
+      "row_num": 4,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_32",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-32",
+      "row_num": 4,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_33",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-33",
+      "row_num": 5,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_34",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-34",
+      "row_num": 5,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_35",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-35",
+      "row_num": 5,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_36",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-36",
+      "row_num": 5,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_37",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-37",
+      "row_num": 5,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_38",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-38",
+      "row_num": 5,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_39",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-39",
+      "row_num": 5,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_e_40",
+      "group_id": "grp_e",
+      "group_code": "E",
+      "seat_number": "E-40",
+      "row_num": 5,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_1",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-01",
+      "row_num": 1,
+      "col_num": 1,
+      "is_reserved": 0,
+      "guest_id": "guest_1105819",
+      "guest_name": "Dian Permana",
+      "guest_rank": "Kapten (AD)",
+      "guest_matra": "AD",
+      "guest_status": "BELUM_HADIR"
+    },
+    {
+      "id": "seat_f_2",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-02",
+      "row_num": 1,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_3",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-03",
+      "row_num": 1,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_4",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-04",
+      "row_num": 1,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_5",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-05",
+      "row_num": 1,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_6",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-06",
+      "row_num": 1,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_7",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-07",
+      "row_num": 1,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_8",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-08",
+      "row_num": 1,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_9",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-09",
+      "row_num": 2,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_10",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-10",
+      "row_num": 2,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_11",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-11",
+      "row_num": 2,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_12",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-12",
+      "row_num": 2,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_13",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-13",
+      "row_num": 2,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_14",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-14",
+      "row_num": 2,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_15",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-15",
+      "row_num": 2,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_16",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-16",
+      "row_num": 2,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_17",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-17",
+      "row_num": 3,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_18",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-18",
+      "row_num": 3,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_19",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-19",
+      "row_num": 3,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_20",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-20",
+      "row_num": 3,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_21",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-21",
+      "row_num": 3,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_22",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-22",
+      "row_num": 3,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_23",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-23",
+      "row_num": 3,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_24",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-24",
+      "row_num": 3,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_25",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-25",
+      "row_num": 4,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_26",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-26",
+      "row_num": 4,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_27",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-27",
+      "row_num": 4,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_28",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-28",
+      "row_num": 4,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_29",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-29",
+      "row_num": 4,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_30",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-30",
+      "row_num": 4,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_31",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-31",
+      "row_num": 4,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_32",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-32",
+      "row_num": 4,
+      "col_num": 8,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_33",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-33",
+      "row_num": 5,
+      "col_num": 1,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_34",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-34",
+      "row_num": 5,
+      "col_num": 2,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_35",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-35",
+      "row_num": 5,
+      "col_num": 3,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_36",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-36",
+      "row_num": 5,
+      "col_num": 4,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_37",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-37",
+      "row_num": 5,
+      "col_num": 5,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_38",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-38",
+      "row_num": 5,
+      "col_num": 6,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_39",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-39",
+      "row_num": 5,
+      "col_num": 7,
+      "is_reserved": 0
+    },
+    {
+      "id": "seat_f_40",
+      "group_id": "grp_f",
+      "group_code": "F",
+      "seat_number": "F-40",
+      "row_num": 5,
+      "col_num": 8,
+      "is_reserved": 0
+    }
+  ],
+  "accommodations": [
+    {
+      "id": "room_soedirman_101",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 1,
+      "room_number": "101",
+      "capacity": 1,
+      "notes": "Suite VVIP Bintang 4"
+    },
+    {
+      "id": "room_soedirman_102",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 1,
+      "room_number": "102",
+      "capacity": 1,
+      "notes": "Suite VVIP Bintang 4"
+    },
+    {
+      "id": "room_soedirman_103",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 1,
+      "room_number": "103",
+      "capacity": 1,
+      "notes": "Suite VVIP Bintang 4"
+    },
+    {
+      "id": "room_soedirman_104",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 1,
+      "room_number": "104",
+      "capacity": 1,
+      "notes": "Suite VVIP Bintang 4"
+    },
+    {
+      "id": "room_soedirman_105",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 1,
+      "room_number": "105",
+      "capacity": 1,
+      "notes": "Suite VVIP Bintang 4"
+    },
+    {
+      "id": "room_soedirman_106",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 1,
+      "room_number": "106",
+      "capacity": 1,
+      "notes": "Suite VVIP Bintang 4"
+    },
+    {
+      "id": "room_soedirman_201",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 2,
+      "room_number": "201",
+      "capacity": 2,
+      "notes": "Deluxe Twin Pati",
+      "slot_a_guest_id": "guest_524901",
+      "slot_a_guest_name": "Bambang Trisnohadi",
+      "slot_a_guest_rank": "Letnan Jenderal TNI",
+      "slot_a_guest_matra": "AD",
+      "slot_b_guest_id": "guest_525112",
+      "slot_b_guest_name": "Dedy Suryadi",
+      "slot_b_guest_rank": "Mayor Jenderal TNI",
+      "slot_b_guest_matra": "AD"
+    },
+    {
+      "id": "room_soedirman_202",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 2,
+      "room_number": "202",
+      "capacity": 2,
+      "notes": "Deluxe Twin Pati",
+      "slot_a_guest_id": "guest_527441",
+      "slot_a_guest_name": "Yudi Bustami",
+      "slot_a_guest_rank": "Mayor Jenderal TNI",
+      "slot_a_guest_matra": "AU"
+    },
+    {
+      "id": "room_soedirman_203",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 2,
+      "room_number": "203",
+      "capacity": 2,
+      "notes": "Deluxe Twin Pati"
+    },
+    {
+      "id": "room_soedirman_204",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 2,
+      "room_number": "204",
+      "capacity": 2,
+      "notes": "Deluxe Twin Pati"
+    },
+    {
+      "id": "room_soedirman_205",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 2,
+      "room_number": "205",
+      "capacity": 2,
+      "notes": "Deluxe Twin Pati"
+    },
+    {
+      "id": "room_soedirman_206",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "floor": 2,
+      "room_number": "206",
+      "capacity": 2,
+      "notes": "Deluxe Twin Pati"
+    },
+    {
+      "id": "room_kartika_101",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "101",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol",
+      "slot_a_guest_id": "guest_1102941",
+      "slot_a_guest_name": "Rizky Prakoso",
+      "slot_a_guest_rank": "Kolonel (AD)",
+      "slot_a_guest_matra": "AD",
+      "slot_b_guest_id": "guest_1103852",
+      "slot_b_guest_name": "Budi Hartono",
+      "slot_b_guest_rank": "Letnan Kolonel (AL)",
+      "slot_b_guest_matra": "AL"
+    },
+    {
+      "id": "room_kartika_102",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "102",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_103",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "103",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_104",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "104",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_105",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "105",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_106",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "106",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_107",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "107",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_108",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 1,
+      "room_number": "108",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_201",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "201",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_202",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "202",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_203",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "203",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_204",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "204",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_205",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "205",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_206",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "206",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_207",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "207",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_kartika_208",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "floor": 2,
+      "room_number": "208",
+      "capacity": 2,
+      "notes": "Twin Bed Pamen Kolonel / Letkol"
+    },
+    {
+      "id": "room_mess_101",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "101",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler",
+      "slot_a_guest_id": "guest_1104921",
+      "slot_a_guest_name": "Ferry Hendrawan",
+      "slot_a_guest_rank": "Mayor (AU)",
+      "slot_a_guest_matra": "AU"
+    },
+    {
+      "id": "room_mess_102",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "102",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_103",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "103",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_104",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "104",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_105",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "105",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_106",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "106",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_107",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "107",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_108",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 1,
+      "room_number": "108",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_201",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "201",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_202",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "202",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_203",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "203",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_204",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "204",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_205",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "205",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_206",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "206",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_207",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "207",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_208",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 2,
+      "room_number": "208",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_301",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "301",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_302",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "302",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_303",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "303",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_304",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "304",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_305",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "305",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_306",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "306",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_307",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "307",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    },
+    {
+      "id": "room_mess_308",
+      "wisma_name": "Mess Perwira Utama",
+      "floor": 3,
+      "room_number": "308",
+      "capacity": 2,
+      "notes": "Twin Bed Reguler"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "cp_gate_utama",
+      "code": "GATE_UTAMA",
+      "name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "description": "Pemeriksaan identitas dan pencatatan kehadiran pertama di gerbang venue",
+      "location": "Lobi Utama Gedung Ahmad Yani"
+    },
+    {
+      "id": "cp_pleno_vip",
+      "code": "PLENO_VIP",
+      "name": "Gate 2: Ruang Sidang Pleno & Jalur VIP/VVIP",
+      "description": "Verifikasi akses masuk ke dalam ruang sidang paripurna / aula kehormatan",
+      "location": "Pintu Masuk Ruang Sidang Paripurna"
+    },
+    {
+      "id": "cp_sesi_khusus",
+      "code": "SESI_KHUSUS",
+      "name": "Gate 3: Sesi Tertutup / Paparan Khusus",
+      "description": "Pemeriksaan prajurit dan perwira untuk sesi materi strategis berklasifikasi rahasia",
+      "location": "Ruang Rapat Graha Purna Yudha"
+    },
+    {
+      "id": "cp_konsumsi",
+      "code": "KONSUMSI",
+      "name": "Gate 4: Jamuan Makan & Pengambilan Goodie Bag",
+      "description": "Pencatatan pengambilan jatah jamuan resmi dan kelengkapan materi rapim",
+      "location": "Area Dining Hall & Logistik"
+    }
+  ],
+  "checkin_logs": [
+    {
+      "id": "chk_1788529980864_bqqqn",
+      "guest_id": "guest_1788529980717_zpbh",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "1105999",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T13:53:00.864Z",
+      "ip_address": "::1"
+    },
+    {
+      "id": "chk_1788529980851_x6rth",
+      "guest_id": "guest_1788529980717_zpbh",
+      "guest_nama": "Tri Nugroho",
+      "guest_nrp": "1105999",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-04T13:53:00.851Z",
+      "ip_address": "::1"
+    },
+    {
+      "id": "chk_1788529847745_4lg3m",
+      "guest_id": "guest_519284",
+      "guest_nama": "Agus Subiyanto",
+      "guest_nrp": "519284",
+      "guest_pangkat": "Jenderal TNI",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.416Z"
+    },
+    {
+      "id": "chk_1788529847745_4nwhf",
+      "guest_id": "guest_520193",
+      "guest_nama": "Maruli Simanjuntak",
+      "guest_nrp": "520193",
+      "guest_pangkat": "Jenderal TNI",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.416Z"
+    },
+    {
+      "id": "chk_1788529847745_5kase",
+      "guest_id": "guest_521876",
+      "guest_nama": "Muhammad Ali",
+      "guest_nrp": "521876",
+      "guest_pangkat": "Laksamana TNI",
+      "guest_matra": "AL",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.416Z"
+    },
+    {
+      "id": "chk_1788529847745_d62ru",
+      "guest_id": "guest_1965010190",
+      "guest_nama": "Sjafrie Sjamsoeddin",
+      "guest_nrp": "1965010190",
+      "guest_pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.416Z"
+    },
+    {
+      "id": "chk_1788529847745_cs9nm",
+      "guest_id": "guest_524901",
+      "guest_nama": "Bambang Trisnohadi",
+      "guest_nrp": "524901",
+      "guest_pangkat": "Letnan Jenderal TNI",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.416Z"
+    },
+    {
+      "id": "chk_1788529847745_9sy4k",
+      "guest_id": "guest_526330",
+      "guest_nama": "Endi Supardi",
+      "guest_nrp": "526330",
+      "guest_pangkat": "Mayor Jenderal TNI",
+      "guest_matra": "AL",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.416Z"
+    },
+    {
+      "id": "chk_1788529847745_irrmp",
+      "guest_id": "guest_531024",
+      "guest_nama": "Achiruddin",
+      "guest_nrp": "531024",
+      "guest_pangkat": "Brigadir Jenderal TNI",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.417Z"
+    },
+    {
+      "id": "chk_1788529847745_1obei",
+      "guest_id": "guest_defus091",
+      "guest_nama": "Col. Michael Vance",
+      "guest_nrp": "DEF-US-091",
+      "guest_pangkat": "Atase Pertahanan (Military Attaché)",
+      "guest_matra": "NON_TNI",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_name": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "scanned_at": "2026-09-04T12:50:47.417Z"
+    }
+  ],
+  "admins": [
+    {
+      "id": "admin_super",
+      "username": "superadmin",
+      "nama": "Letkol Chb Radityo (Super Admin IT)",
+      "role": "SUPER_ADMIN",
+      "password_hash": "$2a$10$l.EvaBoa6pgu0POoduPOuO.NfrKH1iA2uEATKLacb2JhLqc34YDWC",
+      "created_at": "2026-09-04T13:50:47.417Z"
+    },
+    {
+      "id": "admin_gate",
+      "username": "panitiagate",
+      "nama": "Kapten Inf Hendro (Koordinator Gate 1)",
+      "role": "PANITIA_GATE",
+      "password_hash": "$2a$10$l.EvaBoa6pgu0POoduPOuOe3q2vzTuPHaxYMPctWjmpTx3rUh51dC",
+      "created_at": "2026-09-04T13:50:47.417Z"
+    },
+    {
+      "id": "admin_wisma",
+      "username": "panitiawisma",
+      "nama": "Mayor Laut (K) Anita (Koordinator Wisma)",
+      "role": "PANITIA_AKOMODASI",
+      "password_hash": "$2a$10$l.EvaBoa6pgu0POoduPOuO3RURtphDAl8HVoRvAhDcCAv9lxL7wHS",
+      "created_at": "2026-09-04T13:50:47.417Z"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "aud_1788530060476_4fyw",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T13:54:20.476Z"
+    },
+    {
+      "id": "aud_1788529980882_46l6",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "AUTO_ASSIGN_SEATS",
+      "details": "Penetapan kursi otomatis berbasis senioritas pangkat untuk 3 prajurit/tamu",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T13:53:00.883Z"
+    },
+    {
+      "id": "aud_1788529980867_gkkq",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 1105999) di GATE_UTAMA - RE-SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T13:53:00.867Z"
+    },
+    {
+      "id": "aud_1788529980854_7dyl",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Tri Nugroho (Kolonel (AD) / NRP 1105999) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T13:53:00.854Z"
+    },
+    {
+      "id": "aud_1788529980837_55yh",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-04T13:53:00.837Z"
+    },
+    {
+      "id": "aud_1788529847745",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "INITIALIZE_SYSTEM",
+      "details": "Sistem diinisialisasi dengan data pejabat TNI dan tata letak ruang",
+      "created_at": "2026-09-04T13:50:47.745Z"
+    }
+  ]
+}
