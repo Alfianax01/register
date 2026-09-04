@@ -19,6 +19,7 @@ async function runTests() {
 
   // 3. Test Registration
   console.log('\n3. Menguji Registrasi Tamu Baru (POST /api/register)...');
+  const randomSuffix = Math.floor(10000 + Math.random() * 90000);
   const regPayload = {
     nama: 'Tri Nugroho',
     gelar_depan: 'Dr.',
@@ -30,8 +31,8 @@ async function runTests() {
     satker: 'Kodam Jaya / Jayakarta',
     satuan: 'Makodam Jaya',
     negara_instansi: 'Indonesia / TNI AD',
-    no_hp: '081233445566',
-    email: 'tri.nugroho@tni.mil.id',
+    no_hp: '0812' + randomSuffix + '8',
+    email: `tri.${randomSuffix}@tni.mil.id`,
     butuh_akomodasi: true,
     tgl_checkin: '2026-09-04',
     tgl_checkout: '2026-09-06',
