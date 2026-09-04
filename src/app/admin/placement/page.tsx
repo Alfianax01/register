@@ -5,6 +5,7 @@ import { AdminHeader } from '@/components/layout/AdminHeader';
 import { SeatingGridView } from '@/components/placement/SeatingGridView';
 import { WismaGridView } from '@/components/placement/WismaGridView';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/components/ui/Toast';
 import { SeatGroup, Seat, AccommodationRoom, Guest } from '@/types';
 import {
   Armchair,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function PlacementPage() {
+  const { showToast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'seats' | 'rooms'>('seats');
   const [groups, setGroups] = useState<SeatGroup[]>([]);
@@ -26,9 +28,9 @@ export default function PlacementPage() {
   const [autoAssignLoading, setAutoAssignLoading] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (showLoadingSpinner: boolean = true) => {
     try {
-      setLoading(true);
+      if (showLoadingSpinner) setLoading(true);
       const [seatsRes, roomsRes, guestsRes, meRes] = await Promise.all([
         fetch('/api/placement/seats'),
         fetch('/api/placement/rooms'),
@@ -56,7 +58,7 @@ export default function PlacementPage() {
     } catch {
       setNotification({ type: 'error', message: 'Gagal memuat data penempatan' });
     } finally {
-      setLoading(false);
+      if (showLoadingSpinner) setLoading(false);
     }
   };
 
@@ -65,6 +67,58 @@ export default function PlacementPage() {
   }, []);
 
   const handleAssignSeat = async (seatNumber: string, guestId: string | null) => {
+    const assignedGuest = guestId ? guests.find(g => g.id === guestId) : null;
+
+    // 1. Optimistic Realtime Update on Seat Grid & Guests
+    setSeats(prevSeats =>
+      prevSeats.map(s => {
+        if (s.seat_number === seatNumber) {
+          if (!guestId) {
+            return {
+              ...s,
+              guest_id: undefined,
+              guest_name: undefined,
+              guest_rank: undefined,
+              guest_matra: undefined,
+              guest_status: undefined
+            };
+          }
+          return {
+            ...s,
+            guest_id: guestId,
+            guest_name: assignedGuest?.nama,
+            guest_rank: assignedGuest?.pangkat,
+            guest_matra: assignedGuest?.matra,
+            guest_status: assignedGuest?.status_kehadiran
+          };
+        }
+        // If this guest was previously on another seat, unassign that seat
+        if (guestId && s.guest_id === guestId && s.seat_number !== seatNumber) {
+          return {
+            ...s,
+            guest_id: undefined,
+            guest_name: undefined,
+            guest_rank: undefined,
+            guest_matra: undefined,
+            guest_status: undefined
+          };
+        }
+        return s;
+      })
+    );
+
+    setGuests(prevGuests =>
+      prevGuests.map(g => {
+        if (g.id === guestId) {
+          return { ...g, seat_number: seatNumber };
+        }
+        if (!guestId && g.seat_number === seatNumber) {
+          return { ...g, seat_number: undefined };
+        }
+        return g;
+      })
+    );
+
     try {
       const res = await fetch('/api/placement/seats', {
         method: 'POST',
@@ -74,14 +128,29 @@ export default function PlacementPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setNotification({ type: 'error', message: data.error || 'Gagal mengubah kursi' });
+        showToast('Gagal Mengubah Kursi', {
+          type: 'error',
+          message: data.error || 'Gagal mengubah alokasi kursi.'
+        });
+        fetchData(false); // Rollback to server state
         return;
       }
 
-      setNotification({ type: 'success', message: 'Alokasi kursi berhasil diperbarui.' });
-      fetchData();
+      showToast('Alokasi Kursi Berhasil', {
+        type: 'success',
+        message: guestId
+          ? `Kursi ${seatNumber} berhasil dialokasikan untuk ${assignedGuest ? `${assignedGuest.pangkat} ${assignedGuest.nama}` : 'prajurit'}.`
+          : `Alokasi kursi ${seatNumber} telah dikosongkan.`
+      });
+
+      // Background silent sync
+      fetchData(false);
     } catch {
-      setNotification({ type: 'error', message: 'Gagal menghubungi server penempatan kursi.' });
+      showToast('Koneksi Terputus', {
+        type: 'error',
+        message: 'Gagal menghubungi server penempatan kursi.'
+      });
+      fetchData(false); // Rollback
     }
   };
 
@@ -95,14 +164,14 @@ export default function PlacementPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setNotification({ type: 'error', message: data.error || 'Gagal mengubah kamar' });
+        showToast('Gagal Menetapkan Kamar', { type: 'error', message: data.error || 'Gagal mengubah kamar' });
         return;
       }
 
-      setNotification({ type: 'success', message: 'Alokasi kamar penginapan berhasil diperbarui.' });
-      fetchData();
+      showToast('Alokasi Wisma Berhasil', { type: 'success', message: 'Alokasi kamar penginapan berhasil diperbarui.' });
+      fetchData(false);
     } catch {
-      setNotification({ type: 'error', message: 'Gagal menghubungi server wisma.' });
+      showToast('Koneksi Terputus', { type: 'error', message: 'Gagal menghubungi server wisma.' });
     }
   };
 
@@ -117,13 +186,16 @@ export default function PlacementPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setNotification({ type: 'error', message: data.error || 'Gagal auto-assign' });
+        showToast('Auto-Assign Gagal', { type: 'error', message: data.error || 'Gagal auto-assign' });
       } else {
-        setNotification({ type: 'success', message: data.message });
-        fetchData();
+        showToast('Auto-Assign Berhasil', {
+          type: 'success',
+          message: data.message || `Berhasil menempatkan ${data.assignedCount || 0} prajurit.`
+        });
+        fetchData(false);
       }
     } catch {
-      setNotification({ type: 'error', message: 'Gagal menjalankan alokasi otomatis.' });
+      showToast('Koneksi Terputus', { type: 'error', message: 'Gagal menjalankan alokasi otomatis.' });
     } finally {
       setAutoAssignLoading(false);
     }
@@ -188,7 +260,7 @@ export default function PlacementPage() {
             <Button
               variant="outline"
               size="md"
-              onClick={fetchData}
+              onClick={() => fetchData()}
               className="text-xs h-[40px] sm:h-[38px] w-full sm:w-auto"
             >
               <RotateCw className="w-3.5 h-3.5 mr-1" />
