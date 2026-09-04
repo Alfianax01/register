@@ -78,7 +78,7 @@ export default function MonitoringPage() {
         />
       </div>
 
-      <div className="p-6 max-w-7xl mx-auto w-full space-y-6 no-print">
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6 no-print">
         {/* Action Controls & Live Status */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 font-medium">

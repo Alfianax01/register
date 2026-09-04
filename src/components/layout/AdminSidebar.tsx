@@ -4,25 +4,45 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  LayoutDashboard,
   QrCode,
   Armchair,
   BarChart3,
   Users,
   LogOut,
   ExternalLink,
-  Shield
+  Shield,
+  X
 } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
+import { useAdmin } from './AdminContext';
 
 interface AdminSidebarProps {
   userRole?: string;
   onLogout?: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }) => {
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({
+  userRole,
+  onLogout,
+  isOpen: propIsOpen,
+  onClose: propOnClose
+}) => {
   const pathname = usePathname();
+  const adminCtx = useAdmin();
+
+  const isOpen = propIsOpen !== undefined ? propIsOpen : adminCtx?.isDrawerOpen ?? false;
+  const handleClose = propOnClose || adminCtx?.closeDrawer || (() => {});
+  const effectiveRole = userRole || adminCtx?.currentUser?.role;
 
   const menuItems = [
+    {
+      href: '/admin',
+      label: 'Dashboard',
+      icon: LayoutDashboard,
+      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
+    },
     {
       href: '/admin/scanner',
       label: 'Scanner Gate',
@@ -31,7 +51,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
     },
     {
       href: '/admin/placement',
-      label: 'Penempatan Kursi & Wisma',
+      label: 'Penempatan Kursi',
       icon: Armchair,
       allowedRoles: ['SUPER_ADMIN', 'PANITIA_AKOMODASI']
     },
@@ -49,43 +69,62 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
     }
   ];
 
-  return (
-    <aside className="w-60 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 min-h-screen">
-      {/* Brand */}
-      <div className="p-4 border-b border-slate-100 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-sm bg-[#1E40AF] flex items-center justify-center text-white">
-          <Shield className="w-4 h-4 stroke-[2.2]" />
+  const renderSidebarContent = (isMobile: boolean) => (
+    <div className="flex flex-col h-full">
+      {/* Brand Header */}
+      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#1E40AF] flex items-center justify-center text-white shadow-xs">
+            <Shield className="w-4 h-4 stroke-[2.2]" />
+          </div>
+          <div>
+            <span className="text-xs font-semibold text-slate-900 block leading-tight">
+              Portal Panitia
+            </span>
+            <span className="text-[10px] text-slate-500 font-medium">
+              RAPIM TNI 2026
+            </span>
+          </div>
         </div>
-        <div>
-          <span className="text-xs font-semibold text-slate-900 block leading-tight">
-            Portal Panitia
-          </span>
-          <span className="text-[10px] text-slate-400 font-medium">
-            RAPIM TNI 2026
-          </span>
-        </div>
+
+        {isMobile && (
+          <button
+            type="button"
+            onClick={handleClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            aria-label="Tutup menu sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav aria-label="Menu Admin" className="p-3 space-y-1 flex-1">
+      <nav aria-label="Menu Admin" className="p-3 space-y-1 flex-1 overflow-y-auto">
         <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-3 pt-2 pb-1 block">
           Menu Operasional
         </span>
 
         {menuItems.map(item => {
           const Icon = item.icon;
-          const active = pathname === item.href || (item.href === '/admin/scanner' && pathname === '/admin/checkin');
-          const isAllowed = !userRole || item.allowedRoles.includes(userRole);
+          const active =
+            item.href === '/admin'
+              ? pathname === '/admin'
+              : pathname === item.href || (item.href === '/admin/scanner' && pathname === '/admin/checkin');
 
+          const isAllowed = !effectiveRole || item.allowedRoles.includes(effectiveRole);
           if (!isAllowed) return null;
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+              onClick={() => {
+                if (isMobile) handleClose();
+              }}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${
                 active
-                  ? 'bg-slate-100 text-blue-700 font-semibold shadow-xs'
+                  ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-100/80 shadow-xs'
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
@@ -111,7 +150,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
 
         {onLogout && (
           <button
-            onClick={onLogout}
+            onClick={() => {
+              if (isMobile) handleClose();
+              onLogout();
+            }}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-rose-600 hover:bg-rose-50 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
@@ -119,6 +161,32 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ userRole, onLogout }
           </button>
         )}
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar: Permanent w-64 */}
+      <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 flex-col flex-shrink-0 min-h-screen sticky top-0 h-screen">
+        {renderSidebarContent(false)}
+      </aside>
+
+      {/* Mobile Drawer */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop overlay */}
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            onClick={handleClose}
+            aria-hidden="true"
+          />
+
+          {/* Off-canvas panel */}
+          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
+            {renderSidebarContent(true)}
+          </aside>
+        </div>
+      )}
+    </>
   );
 };

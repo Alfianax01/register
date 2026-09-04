@@ -88,7 +88,7 @@ export default function GuestsPage() {
         subtitle="Kelola seluruh direktori peserta, penempatan kursi, dan pencetakan ID Card"
       />
 
-      <div className="p-6 max-w-7xl mx-auto w-full space-y-6">
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6">
         {/* Filters & Actions Bar */}
         <Card className="p-4 space-y-3 bg-white border border-slate-200 shadow-xs">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">

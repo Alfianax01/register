@@ -36,9 +36,9 @@ export const StatOverviewCards: React.FC<StatOverviewProps> = ({ stats }) => {
       valueColor: 'text-emerald-700'
     },
     {
-      title: 'Belum Check-In',
+      title: 'Belum Hadir',
       value: stats.absentGuests,
-      subtext: 'Dalam Perjalanan / Belum Tiba',
+      subtext: 'Menunggu Kehadiran',
       icon: Clock,
       iconColor: 'text-amber-600',
       iconBg: 'bg-amber-50',
@@ -65,26 +65,29 @@ export const StatOverviewCards: React.FC<StatOverviewProps> = ({ stats }) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-      {cards.map(card => {
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+      {cards.map((card, idx) => {
         const Icon = card.icon;
+        const isLastOdd = idx === cards.length - 1 && cards.length % 2 !== 0;
         return (
           <Card
             key={card.title}
-            className="p-4 bg-white border border-slate-200 shadow-xs hover:border-slate-300 transition-colors"
+            className={`p-3 sm:p-4 bg-white border border-slate-200 shadow-xs hover:border-slate-300 transition-colors ${
+              isLastOdd ? 'col-span-2 lg:col-span-1' : ''
+            }`}
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide truncate">
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 uppercase tracking-wide truncate">
                 {card.title}
               </span>
-              <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center`}>
-                <Icon className={`w-3.5 h-3.5 ${card.iconColor}`} />
+              <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg ${card.iconBg} flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${card.iconColor}`} />
               </div>
             </div>
-            <div className={`text-2xl font-bold font-mono ${card.valueColor}`}>
+            <div className={`text-xl sm:text-2xl font-bold font-mono ${card.valueColor}`}>
               {card.value}
             </div>
-            <span className="text-[11px] text-slate-500 mt-1 block">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
               {card.subtext}
             </span>
           </Card>

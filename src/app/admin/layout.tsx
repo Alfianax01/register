@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AdminSidebar } from '@/components/layout/AdminSidebar';
+import { AdminProvider } from '@/components/layout/AdminContext';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -62,11 +63,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafc] text-slate-900">
-      <AdminSidebar userRole={currentUser?.role} onLogout={handleLogout} />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {children}
+    <AdminProvider initialUser={currentUser}>
+      <div className="flex min-h-screen bg-[#f8fafc] text-slate-900 overflow-x-hidden">
+        <AdminSidebar userRole={currentUser?.role} onLogout={handleLogout} />
+        <div className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
+          {children}
+        </div>
       </div>
-    </div>
+    </AdminProvider>
   );
 }
