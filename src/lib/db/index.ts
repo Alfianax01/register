@@ -15,8 +15,20 @@ import {
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const DB_FILE = path.join(DATA_DIR, 'tni_event.json');
+function resolveDbPaths(): { dataDir: string; dbFile: string } {
+  // If running in Vercel or read-only serverless environment
+  if (process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    const tmpDataDir = path.join('/tmp', 'data');
+    const tmpDbFile = path.join(tmpDataDir, 'tni_event.json');
+    return { dataDir: tmpDataDir, dbFile: tmpDbFile };
+  }
+
+  const defaultDataDir = path.join(process.cwd(), 'data');
+  const defaultDbFile = path.join(defaultDataDir, 'tni_event.json');
+  return { dataDir: defaultDataDir, dbFile: defaultDbFile };
+}
+
+const { dataDir: DATA_DIR, dbFile: DB_FILE } = resolveDbPaths();
 
 interface DatabaseSchema {
   guests: Guest[];
@@ -508,10 +520,26 @@ class DatabaseManager {
 
   private ensureInitialized() {
     if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+      try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      } catch (err) {
+        console.error('Failed to create DATA_DIR:', err);
+      }
     }
 
     if (!fs.existsSync(DB_FILE)) {
+      // Check if fallback root seed exists
+      const rootSeedFile = path.join(process.cwd(), 'data', 'tni_event.json');
+      if (fs.existsSync(rootSeedFile) && DB_FILE !== rootSeedFile) {
+        try {
+          const content = fs.readFileSync(rootSeedFile, 'utf-8');
+          fs.writeFileSync(DB_FILE, content, 'utf-8');
+          this.data = JSON.parse(content);
+          return;
+        } catch (copyErr) {
+          console.warn('Could not copy seed file, generating default data:', copyErr);
+        }
+      }
       this.initDefaultData();
     } else {
       try {
@@ -607,10 +635,15 @@ class DatabaseManager {
 
   private persist() {
     if (!this.data) return;
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+      fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
+    } catch (err: any) {
+      console.error("Database persist error:", err);
+      throw new Error(`Koneksi database gagal: tidak dapat menulis ke media penyimpanan (${err.message})`);
     }
-    fs.writeFileSync(DB_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
   }
 
   // GUESTS
@@ -634,8 +667,30 @@ class DatabaseManager {
 
   public findGuestByNRP(nrp: string): Guest | undefined {
     this.ensureInitialized();
-    const clean = nrp.trim().toLowerCase().replace(/[\s\-\.]/g, '');
-    return this.data!.guests.find(g => g.nrp.toLowerCase().replace(/[\s\-\.]/g, '') === clean);
+    if (!nrp) return undefined;
+    const clean = String(nrp).trim().toLowerCase().replace(/[\s\-\.]/g, '');
+    return this.data!.guests.find(g => String(g.nrp || '').toLowerCase().replace(/[\s\-\.]/g, '') === clean);
+  }
+
+  public findGuestByEmail(email: string): Guest | undefined {
+    this.ensureInitialized();
+    if (!email || !String(email).trim()) return undefined;
+    const clean = String(email).trim().toLowerCase();
+    return this.data!.guests.find(g => g.email && String(g.email).trim().toLowerCase() === clean);
+  }
+
+  public findGuestByPhone(phone: string): Guest | undefined {
+    this.ensureInitialized();
+    if (!phone || !String(phone).trim()) return undefined;
+    let clean = String(phone).trim().replace(/[\s\-\(\)\+]/g, '');
+    if (clean.startsWith('62')) clean = '0' + clean.slice(2);
+
+    return this.data!.guests.find(g => {
+      if (!g.no_hp) return false;
+      let guestPhone = String(g.no_hp).trim().replace(/[\s\-\(\)\+]/g, '');
+      if (guestPhone.startsWith('62')) guestPhone = '0' + guestPhone.slice(2);
+      return guestPhone === clean;
+    });
   }
 
   public createGuest(guestData: Omit<Guest, 'id' | 'qr_token' | 'token_hash' | 'status_kehadiran' | 'created_at' | 'updated_at'>): Guest {
@@ -656,6 +711,7 @@ class DatabaseManager {
 
     this.data!.guests.unshift(newGuest);
     this.persist();
+    console.log("Insert berhasil:", { id: newGuest.id, nama: newGuest.nama, nrp: newGuest.nrp, token: newGuest.qr_token });
     return newGuest;
   }
 

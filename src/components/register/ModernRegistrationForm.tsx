@@ -142,6 +142,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     setIsPreviewOpen(false);
 
     try {
+      // Checklist #7: Frontend Logging
+      console.log("Payload Registrasi:", formData);
+
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -149,19 +152,22 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       });
 
       const data = await res.json();
+      console.log("Response Registrasi:", data);
 
       if (!res.ok) {
         if (res.status === 409 && data.existingToken) {
           showToast('Prajurit Sudah Terdaftar', {
             type: 'info',
-            message: 'Membuka E-Ticket yang sudah ada...'
+            message: data.error || 'Membuka E-Ticket yang sudah ada...'
           });
           onSuccess?.(data.existingToken, data.guest);
           return;
         }
+
+        // Checklist #6: Real error message from backend
         showToast('Pendaftaran Gagal', {
           type: 'error',
-          message: data.error || 'Terjadi kesalahan sistem.'
+          message: data.error || data.message || `Kode respon ${res.status}: Gagal memproses pendaftaran.`
         });
         setIsSubmitting(false);
         return;
@@ -183,10 +189,12 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
 
       onSuccess?.(data.token, data.guest);
 
-    } catch (err) {
+    } catch (err: any) {
+      // Checklist #7: Error logging
+      console.error("Submit Error:", err);
       showToast('Koneksi Terputus', {
         type: 'error',
-        message: 'Gagal menghubungi server. Periksa jaringan Anda.'
+        message: err?.message || 'Gagal menghubungi server. Periksa jaringan Anda.'
       });
     } finally {
       setIsSubmitting(false);
@@ -194,7 +202,13 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+      className="w-full flex flex-col space-y-6"
+    >
       {/* Step Pills Navigation (Linear Style) */}
       <nav aria-label="Tahap Pendaftaran" className="flex items-center gap-1 border-b border-slate-100 pb-3">
         {[
@@ -628,7 +642,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           </div>
         </div>
       </Modal>
-    </div>
+    </form>
   );
 };
 

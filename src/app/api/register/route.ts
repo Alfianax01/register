@@ -3,12 +3,14 @@ import { db } from '@/lib/db';
 import { checkRateLimit, escapeHtml, isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import { TNI_RANKS } from '@/lib/constants/ranks';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
     
-    // Rate limit: max 5 submissions per minute per IP (OWASP 9.2)
-    const rateCheck = checkRateLimit(`reg_${ip}`, 5, 60000);
+    // Rate limit: max 30 submissions per minute per IP
+    const rateCheck = checkRateLimit(`reg_${ip}`, 30, 60000);
     if (!rateCheck.allowed) {
       return NextResponse.json(
         { error: 'Terlalu banyak permintaan pendaftaran. Silakan tunggu 1 menit.' },
@@ -16,7 +18,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    let body: any;
+    try {
+      body = await req.json();
+    } catch (parseErr) {
+      return NextResponse.json(
+        { error: 'Format data tidak valid (JSON parse error).' },
+        { status: 400 }
+      );
+    }
+
+    // Checklist #7: Backend Logging
+    console.log("Request Registrasi:", body);
+
     const {
       nrp,
       nama,
@@ -36,20 +50,55 @@ export async function POST(req: NextRequest) {
       catatan_khusus,
       captcha_answer,
       captcha_expected
-    } = body;
+    } = body || {};
 
-    // Validate CAPTCHA
-    if (captcha_expected && String(captcha_answer).trim() !== String(captcha_expected).trim()) {
+    // Validate required fields
+    if (!nama || !String(nama).trim()) {
       return NextResponse.json(
-        { error: 'Jawaban verifikasi keamanan (CAPTCHA) tidak sesuai.' },
+        { error: 'Nama lengkap wajib diisi.' },
         { status: 400 }
       );
     }
 
-    // Validate required fields
-    if (!nama || !matra || !pangkat || !jabatan || !satker || !no_hp) {
+    if (!matra) {
       return NextResponse.json(
-        { error: 'Mohon lengkapi seluruh isian wajib pada formulir.' },
+        { error: 'Matra kedinasan wajib dipilih.' },
+        { status: 400 }
+      );
+    }
+
+    if (!pangkat) {
+      return NextResponse.json(
+        { error: 'Pangkat / Golongan kedinasan wajib dipilih.' },
+        { status: 400 }
+      );
+    }
+
+    if (!jabatan || !String(jabatan).trim()) {
+      return NextResponse.json(
+        { error: 'Jabatan kedinasan wajib diisi.' },
+        { status: 400 }
+      );
+    }
+
+    if (!satker) {
+      return NextResponse.json(
+        { error: 'Satuan kerja (Satker) wajib dipilih.' },
+        { status: 400 }
+      );
+    }
+
+    if (!no_hp || !String(no_hp).trim()) {
+      return NextResponse.json(
+        { error: 'Nomor WhatsApp / HP wajib diisi.' },
+        { status: 400 }
+      );
+    }
+
+    // Validate phone number format
+    if (!isValidPhone(no_hp)) {
+      return NextResponse.json(
+        { error: 'Format nomor HP tidak valid. Gunakan format nomor Indonesia (contoh: 0812xxxxxxxx atau 62812xxxxxxxx).' },
         { status: 400 }
       );
     }
@@ -57,30 +106,69 @@ export async function POST(req: NextRequest) {
     // Validate NRP for military members
     if (matra !== 'NON_TNI' && !isValidNRP(nrp)) {
       return NextResponse.json(
-        { error: 'Format NRP tidak valid. Gunakan 5-18 karakter angka/huruf resmi prajurit.' },
+        { error: 'Format NRP tidak valid. Gunakan 5-20 karakter angka/huruf resmi prajurit.' },
         { status: 400 }
       );
     }
 
     // Check duplicate NRP
-    if (nrp) {
-      const existing = db.findGuestByNRP(nrp);
+    if (nrp && String(nrp).trim()) {
+      const existing = db.findGuestByNRP(String(nrp).trim());
       if (existing) {
         return NextResponse.json(
           {
-            error: `NRP / Identitas ${nrp} sudah terdaftar atas nama ${existing.nama}. Anda dapat langsung melihat e-ticket Anda.`,
-            existingToken: existing.qr_token
+            error: `NRP / Identitas ${nrp} sudah terdaftar atas nama ${existing.nama}. Anda dapat langsung melihat E-Ticket Anda.`,
+            existingToken: existing.qr_token,
+            guest: existing
           },
           { status: 409 }
         );
       }
     }
 
+    // Check duplicate Phone Number
+    if (no_hp && String(no_hp).trim()) {
+      const existingPhone = db.findGuestByPhone(String(no_hp).trim());
+      if (existingPhone) {
+        return NextResponse.json(
+          {
+            error: `Nomor HP ${no_hp} sudah terdaftar atas nama ${existingPhone.nama}.`,
+            existingToken: existingPhone.qr_token,
+            guest: existingPhone
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    // Check duplicate Email (if email is provided)
+    if (email && String(email).trim()) {
+      const existingEmail = db.findGuestByEmail(String(email).trim());
+      if (existingEmail) {
+        return NextResponse.json(
+          {
+            error: `Email ${email} sudah terdaftar atas nama ${existingEmail.nama}.`,
+            existingToken: existingEmail.qr_token,
+            guest: existingEmail
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    // Validate CAPTCHA if expected
+    if (captcha_expected && String(captcha_answer || '').trim() !== String(captcha_expected).trim()) {
+      return NextResponse.json(
+        { error: 'Jawaban verifikasi keamanan (CAPTCHA) tidak sesuai.' },
+        { status: 400 }
+      );
+    }
+
     // Find rank level
     const rankObj = TNI_RANKS.find(r => r.name === pangkat);
     const pangkat_level = rankObj ? rankObj.level : (matra === 'NON_TNI' ? 8 : 10);
 
-    // Sanitize user inputs (OWASP 9.2 XSS Prevention)
+    // Sanitize user inputs safely
     const newGuest = db.createGuest({
       nrp: escapeHtml(nrp || '-'),
       nama: escapeHtml(nama),
@@ -116,8 +204,13 @@ export async function POST(req: NextRequest) {
 
   } catch (err: any) {
     console.error('Registration error:', err);
+    const errorMessage = err?.message || 'Terjadi kesalahan sistem saat memproses registrasi.';
     return NextResponse.json(
-      { error: 'Terjadi kesalahan sistem saat memproses registrasi.' },
+      { 
+        error: errorMessage,
+        message: errorMessage,
+        details: process.env.NODE_ENV !== 'production' ? err?.stack : undefined
+      },
       { status: 500 }
     );
   }

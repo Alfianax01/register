@@ -1,9 +1,9 @@
 /**
  * Escape HTML special characters to prevent XSS attacks (OWASP 9.2)
  */
-export function escapeHtml(str: string): string {
-  if (!str) return '';
-  return str
+export function escapeHtml(str: any): string {
+  if (str === null || str === undefined) return '';
+  return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -15,19 +15,19 @@ export function escapeHtml(str: string): string {
  * Validate military NRP or official employee ID
  * Allows 5-18 digits / alphanumeric for TNI officers, enlisted, and civilian defense personnel
  */
-export function isValidNRP(nrp: string): boolean {
-  if (!nrp) return false;
-  const clean = nrp.trim().replace(/[\s\-\.]/g, '');
+export function isValidNRP(nrp: any): boolean {
+  if (nrp === null || nrp === undefined) return false;
+  const clean = String(nrp).trim().replace(/[\s\-\.]/g, '');
   return /^[0-9A-Za-z]{5,20}$/.test(clean);
 }
 
 /**
  * Validate Indonesian phone number format (starts with 08 or +62)
  */
-export function isValidPhone(phone: string): boolean {
-  if (!phone) return false;
-  const clean = phone.trim().replace(/[\s\-\(\)]/g, '');
-  return /^(\+62|62|08)[0-9]{8,13}$/.test(clean);
+export function isValidPhone(phone: any): boolean {
+  if (phone === null || phone === undefined) return false;
+  const clean = String(phone).trim().replace(/[\s\-\(\)\+]/g, '');
+  return /^(62|08)[0-9]{8,14}$/.test(clean);
 }
 
 /**
