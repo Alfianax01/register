@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
-import { Download, Printer, Copy, Check, MessageSquare } from 'lucide-react';
+import { Download, Printer, Copy, Check, MessageSquare, FileText } from 'lucide-react';
 
 interface TicketActionsProps {
   guest: any;
@@ -40,6 +40,19 @@ export const TicketActions: React.FC<TicketActionsProps> = ({ guest, qrCodeUrl }
     });
   };
 
+  const handleDownloadPdf = () => {
+    const token = guest.qr_token;
+    if (token) {
+      window.open(`/api/ticket/${token}/pdf`, '_blank');
+      showToast('Mengunduh Berkas PDF', {
+        type: 'info',
+        message: 'Membuka berkas E-Ticket PDF resmi format cetak A4.'
+      });
+    } else {
+      showToast('Token tidak ditemukan', { type: 'error' });
+    }
+  };
+
   const handleWhatsAppShare = () => {
     const url = window.location.href;
     const text = encodeURIComponent(
@@ -54,8 +67,19 @@ export const TicketActions: React.FC<TicketActionsProps> = ({ guest, qrCodeUrl }
 
   return (
     <div className="w-full max-w-md mx-auto space-y-2.5 no-print">
+      {/* Primary PDF Download Action */}
+      <Button
+        variant="primary"
+        size="lg"
+        onClick={handleDownloadPdf}
+        className="w-full text-xs font-semibold bg-blue-700 hover:bg-blue-800 text-white shadow-sm flex items-center justify-center gap-2 py-3 rounded-lg"
+      >
+        <FileText className="w-4 h-4 text-blue-200" />
+        <span>Unduh E-Ticket PDF Resmi (Format A4)</span>
+      </Button>
+
       <div className="grid grid-cols-2 gap-2">
-        <Button variant="primary" size="md" onClick={handleDownloadQr} className="text-xs">
+        <Button variant="outline" size="md" onClick={handleDownloadQr} className="text-xs">
           <Download className="w-3.5 h-3.5 mr-1.5" />
           <span>Unduh QR Pass</span>
         </Button>

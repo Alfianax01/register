@@ -15,6 +15,7 @@ import {
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
 import { postgresAdapter } from './postgres';
+import { mysqlAdapter } from './mysql';
 
 function resolveDbPaths(): { dataDir: string; dbFile: string; backupFile: string } {
   // If running in Vercel or read-only serverless environment
@@ -1055,6 +1056,20 @@ class DatabaseManager {
       postgresAdapter.saveGuest(updated).catch(console.error);
     }
 
+    if (mysqlAdapter.isConfigured()) {
+      mysqlAdapter.updatePeserta(id, {
+        nama_lengkap: updated.nama,
+        pangkat: updated.pangkat,
+        jabatan: updated.jabatan,
+        instansi: updated.negara_instansi || updated.satker,
+        email: updated.email,
+        no_hp: updated.no_hp,
+        matra: updated.matra,
+        seat_number: updated.seat_number,
+        status_hadir: updated.status_kehadiran === 'HADIR' ? 'HADIR' : 'BELUM_HADIR',
+      }).catch(err => console.error('[MySQL] updatePeserta error:', err));
+    }
+
     console.log("DATA TERSIMPAN:", {
       action: "UPDATE_GUEST",
       id: updated.id,
@@ -1063,6 +1078,42 @@ class DatabaseManager {
     });
 
     return updated;
+  }
+
+  public deleteGuest(id: string): boolean {
+    this.ensureInitialized();
+    const idx = this.data!.guests.findIndex(g => g.id === id);
+    if (idx === -1) return false;
+
+    const guest = this.data!.guests[idx];
+    this.data!.guests.splice(idx, 1);
+
+    // Free any seat
+    const seat = this.data!.seats.find(s => s.guest_id === id);
+    if (seat) {
+      seat.guest_id = undefined;
+      seat.guest_name = undefined;
+      seat.guest_rank = undefined;
+      seat.guest_matra = undefined;
+      seat.guest_status = undefined;
+    }
+
+    // Clean checkin logs
+    this.data!.checkin_logs = this.data!.checkin_logs.filter(l => l.guest_id !== id);
+
+    this.persist();
+
+    if (mysqlAdapter.isConfigured()) {
+      mysqlAdapter.deletePeserta(id).catch(err => console.error('[MySQL] deletePeserta error:', err));
+    }
+
+    console.log("DATA TERHAPUS:", {
+      action: "DELETE_GUEST",
+      id,
+      nama: guest.nama,
+    });
+
+    return true;
   }
 
   // SEATING

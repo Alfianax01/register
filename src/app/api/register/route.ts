@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { mysqlAdapter } from '@/lib/db/mysql';
+import { generateTicketPdf } from '@/lib/pdf/ticketPdf';
+import { sendTicketEmail } from '@/lib/email/mailer';
 import { checkRateLimit, escapeHtml, isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import { TNI_RANKS } from '@/lib/constants/ranks';
 import QRCode from 'qrcode';
@@ -206,6 +209,73 @@ export async function POST(req: NextRequest) {
       console.warn('QR Code generation warning:', qrErr);
     }
 
+    // Generate PDF E-Ticket Buffer
+    const pdfPath = `/api/ticket/${newGuest.qr_token}/pdf`;
+    let pdfBuffer: Buffer | undefined;
+    try {
+      pdfBuffer = await generateTicketPdf({
+        nama: newGuest.nama,
+        gelar_depan: newGuest.gelar_depan,
+        gelar_belakang: newGuest.gelar_belakang,
+        pangkat: newGuest.pangkat,
+        nrp: newGuest.nrp,
+        jabatan: newGuest.jabatan,
+        instansi: newGuest.negara_instansi || newGuest.satker,
+        kategori_tamu: newGuest.matra === 'NON_TNI' ? 'Undangan Sipil' : 'Prajurit TNI',
+        matra: newGuest.matra,
+        seat_number: newGuest.seat_number,
+        registration_id: newGuest.registration_id,
+        qr_token: newGuest.qr_token,
+        created_at: newGuest.created_at
+      });
+      console.log(`[PDF] Berhasil generate PDF E-Ticket untuk ${newGuest.nama}`);
+    } catch (pdfErr) {
+      console.error('[PDF] Error generating PDF E-Ticket:', pdfErr);
+    }
+
+    // Save to MySQL Database
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        await mysqlAdapter.savePeserta({
+          id: newGuest.id,
+          nama_lengkap: [newGuest.gelar_depan, newGuest.nama, newGuest.gelar_belakang].filter(Boolean).join(' ') || newGuest.nama,
+          pangkat: newGuest.pangkat,
+          jabatan: newGuest.jabatan,
+          instansi: newGuest.negara_instansi || newGuest.satker,
+          email: newGuest.email,
+          no_hp: newGuest.no_hp,
+          kategori_tamu: newGuest.matra === 'NON_TNI' ? 'SIPIL' : 'TNI',
+          nrp: newGuest.nrp || null,
+          matra: newGuest.matra,
+          qr_token: newGuest.qr_token,
+          seat_number: newGuest.seat_number || null,
+          status_hadir: 'BELUM_HADIR',
+          pdf_path: pdfPath
+        });
+        console.log(`[MySQL] Data peserta tersimpan permanen di database: ${newGuest.id}`);
+      } catch (mysqlErr) {
+        console.error('[MySQL Error] Gagal menyimpan peserta ke MySQL:', mysqlErr);
+      }
+    }
+
+    // Dispatch Email with E-Ticket PDF Attachment
+    if (newGuest.email) {
+      sendTicketEmail({
+        to: newGuest.email,
+        nama: [newGuest.gelar_depan, newGuest.nama, newGuest.gelar_belakang].filter(Boolean).join(' ') || newGuest.nama,
+        pangkat: newGuest.pangkat,
+        nrp: newGuest.nrp,
+        jabatan: newGuest.jabatan,
+        instansi: newGuest.negara_instansi || newGuest.satker,
+        seat_number: newGuest.seat_number,
+        registration_id: newGuest.registration_id,
+        qr_token: newGuest.qr_token,
+        pdfBuffer
+      }).catch(mailErr => {
+        console.error('[Nodemailer Background Notice]:', mailErr);
+      });
+    }
+
     const participantData = {
       id: newGuest.id,
       registrationId: newGuest.registration_id,
@@ -224,6 +294,7 @@ export async function POST(req: NextRequest) {
       no_hp: newGuest.no_hp,
       status: newGuest.status_kehadiran,
       qr_token: newGuest.qr_token,
+      pdf_path: pdfPath,
       created_at: newGuest.created_at
     };
 
@@ -233,21 +304,24 @@ export async function POST(req: NextRequest) {
       ticketId: newGuest.ticket_id,
       nama: newGuest.nama,
       nrp: newGuest.nrp,
-      token: newGuest.qr_token
+      token: newGuest.qr_token,
+      pdfPath
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Registrasi berhasil. E-Ticket telah diterbitkan.',
+      message: 'Registrasi berhasil. E-Ticket & PDF telah diterbitkan.',
       registrationId: newGuest.registration_id,
       ticketId: newGuest.ticket_id,
       token: newGuest.qr_token,
       qrCode: qrDataUrl,
+      pdfUrl: pdfPath,
       participant: participantData,
       guest: {
         ...newGuest,
         registration_id: newGuest.registration_id,
-        ticket_id: newGuest.ticket_id
+        ticket_id: newGuest.ticket_id,
+        pdf_path: pdfPath
       }
     });
 

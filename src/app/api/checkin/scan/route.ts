@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { mysqlAdapter } from '@/lib/db/mysql';
 import { verifySessionToken } from '@/lib/security/auth';
 
 export const dynamic = 'force-dynamic';
@@ -42,6 +43,15 @@ export async function POST(req: NextRequest) {
     const adminUser = session ? { id: session.userId, nama: session.nama } : { id: 'admin_gate', nama: 'Petugas Lapangan' };
 
     const result = db.recordCheckin(guest.id, checkpoint, adminUser, ip);
+
+    // Sync to MySQL
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        await mysqlAdapter.recordCheckin(guest.id, adminUser.nama, checkpoint);
+      } catch (mysqlErr) {
+        console.error('[MySQL Checkin Error]:', mysqlErr);
+      }
+    }
 
     // Record audit log
     db.recordAuditLog(

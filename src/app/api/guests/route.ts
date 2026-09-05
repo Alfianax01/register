@@ -74,3 +74,48 @@ export async function PUT(req: NextRequest) {
   }
 }
 
+export async function DELETE(req: NextRequest) {
+  try {
+    const sessionCookie = req.cookies.get('tni_session')?.value;
+    const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
+    const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
+
+    const { searchParams } = new URL(req.url);
+    let id = searchParams.get('id');
+
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch (_) {
+        // no json body
+      }
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID tamu wajib disertakan' }, { status: 400 });
+    }
+
+    const guest = db.findGuestById(id);
+    const guestName = guest ? `${guest.nama} (${guest.nrp || '-'})` : id;
+
+    const deleted = db.deleteGuest(id);
+    if (!deleted) {
+      return NextResponse.json({ error: 'Data tamu tidak ditemukan' }, { status: 404 });
+    }
+
+    db.recordAuditLog(
+      session?.userId || 'admin',
+      session?.username || 'admin',
+      'DELETE_GUEST',
+      `Penghapusan data peserta ${guestName}`,
+      ip
+    );
+
+    return NextResponse.json({ success: true, message: `Peserta ${guestName} berhasil dihapus` });
+  } catch (err: any) {
+    console.error('Error deleting guest:', err);
+    return NextResponse.json({ error: 'Gagal menghapus data tamu' }, { status: 500 });
+  }
+}
+
