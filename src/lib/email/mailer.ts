@@ -42,6 +42,7 @@ export function getEmailTransporter() {
 
 /**
  * Send official E-Ticket email with inline QR code and optional PDF attachment.
+ * IMPORTANT: guest.qr_token (or guest.token) is taken directly from the database record and NEVER regenerated.
  * Supports standard Nodemailer SMTP and Resend HTTPS REST API.
  * Detailed step-by-step logging for Vercel Function Logs diagnostics.
  */

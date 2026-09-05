@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find guest (query database cloud asynchronously to support multi-container serverless)
-    let guest: any = null;
+    let guest = null;
     if (token) {
       guest = (await db.findGuestByTokenAsync(token)) || db.findGuestByToken(token);
     }
@@ -99,4 +99,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

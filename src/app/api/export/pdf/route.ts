@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (guests.length === 0) {
+      guests = db.getGuests();
       guests = await db.getGuestsAsync();
     }
 

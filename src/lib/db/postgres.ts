@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { Guest, Seat, AccommodationRoom, CheckinLog, AdminUser, AuditLog, SeatGroup } from '@/types';
+import { Guest, Seat, AccommodationRoom, CheckinLog } from '@/types';
 
 class PostgresAdapter {
   private pool: Pool | null = null;
@@ -68,15 +68,15 @@ class PostgresAdapter {
               satuan VARCHAR(255),
               negara_instansi VARCHAR(255),
               no_hp VARCHAR(50) NOT NULL,
-              email VARCHAR(100),
+              email VARCHAR(255),
               email_sent BOOLEAN DEFAULT FALSE,
               butuh_akomodasi INT DEFAULT 0,
-              tgl_checkin VARCHAR(20),
-              tgl_checkout VARCHAR(20),
+              tgl_checkin VARCHAR(50),
+              tgl_checkout VARCHAR(50),
               catatan_khusus TEXT,
               seat_group_id VARCHAR(50),
               seat_number VARCHAR(50),
-              room_id VARCHAR(100),
+              room_id VARCHAR(50),
               room_slot VARCHAR(10),
               qr_token VARCHAR(100) UNIQUE NOT NULL,
               token_hash VARCHAR(100),
@@ -111,10 +111,14 @@ class PostgresAdapter {
             );
 
             CREATE INDEX IF NOT EXISTS idx_tni_guests_token ON tni_guests(qr_token);
+            CREATE INDEX IF NOT EXISTS idx_tni_guests_ticket ON tni_guests(ticket_id);
+            CREATE INDEX IF NOT EXISTS idx_tni_guests_reg_id ON tni_guests(registration_id);
             CREATE INDEX IF NOT EXISTS idx_tni_guests_nrp ON tni_guests(nrp);
             CREATE INDEX IF NOT EXISTS idx_tni_guests_phone ON tni_guests(no_hp);
             CREATE INDEX IF NOT EXISTS idx_tni_guests_email ON tni_guests(email);
             CREATE INDEX IF NOT EXISTS idx_tni_guests_status ON tni_guests(status_kehadiran);
+            CREATE INDEX IF NOT EXISTS idx_tni_checkin_guest_id ON tni_checkin_logs(guest_id);
+            CREATE INDEX IF NOT EXISTS idx_tni_checkin_scanned_at ON tni_checkin_logs(scanned_at);
           `);
           this.isConnected = true;
           console.log('[PostgreSQL] Database persistence tables verified & connected successfully.');
@@ -149,7 +153,7 @@ class PostgresAdapter {
       negara_instansi: r.negara_instansi,
       no_hp: r.no_hp,
       email: r.email,
-      emailSent: r.email_sent === true || r.email_sent === 'true' || r.email_sent === 1,
+      emailSent: r.email_sent === true,
       butuh_akomodasi: r.butuh_akomodasi ? 1 : 0,
       tgl_checkin: r.tgl_checkin,
       tgl_checkout: r.tgl_checkout,
@@ -171,22 +175,20 @@ class PostgresAdapter {
     const pool = this.getPool();
     if (!pool) return false;
 
-    let attempt = 0;
-    while (attempt < maxRetries) {
-      attempt++;
-      let client;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      let client = null;
       try {
         await this.ensureTables();
         client = await pool.connect();
-
         await client.query('BEGIN');
 
         const query = `
           INSERT INTO tni_guests (
             id, registration_id, ticket_id, nrp, nama, gelar_depan, gelar_belakang,
             matra, pangkat, pangkat_level, jabatan, satker, satuan, negara_instansi,
-            no_hp, email, email_sent, butuh_akomodasi, tgl_checkin, tgl_checkout, catatan_khusus,
-            seat_group_id, seat_number, room_id, room_slot, qr_token, token_hash,
+            no_hp, email, email_sent, butuh_akomodasi, tgl_checkin, tgl_checkout,
+            catatan_khusus, seat_group_id, seat_number, room_id, room_slot,
+            qr_token, token_hash,
             status_kehadiran, waktu_kehadiran_pertama, created_at, updated_at
           ) VALUES (
             $1, $2, $3, $4, $5, $6, $7,
@@ -207,6 +209,7 @@ class PostgresAdapter {
             email = EXCLUDED.email,
             email_sent = EXCLUDED.email_sent,
             seat_number = EXCLUDED.seat_number,
+            seat_group_id = EXCLUDED.seat_group_id,
             room_id = EXCLUDED.room_id,
             room_slot = EXCLUDED.room_slot,
             status_kehadiran = EXCLUDED.status_kehadiran,
@@ -359,6 +362,22 @@ class PostgresAdapter {
     }
   }
 
+  public async findGuestById(id: string): Promise<Guest | null> {
+    const pool = this.getPool();
+    if (!pool || !id) return null;
+    try {
+      await this.ensureTables();
+      const res = await pool.query('SELECT * FROM tni_guests WHERE id = $1 LIMIT 1', [id.trim()]);
+      if (res.rows.length > 0) {
+        return this.mapRowToGuest(res.rows[0]);
+      }
+      return null;
+    } catch (err) {
+      console.warn('[PostgreSQL] Query findGuestById notice:', err);
+      return null;
+    }
+  }
+
   public async findGuestByToken(token: string): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool || !token) return null;
@@ -375,22 +394,6 @@ class PostgresAdapter {
       return null;
     } catch (err) {
       console.warn('[PostgreSQL] Query findGuestByToken notice:', err);
-      return null;
-    }
-  }
-
-  public async findGuestById(id: string): Promise<Guest | null> {
-    const pool = this.getPool();
-    if (!pool || !id) return null;
-    try {
-      await this.ensureTables();
-      const res = await pool.query('SELECT * FROM tni_guests WHERE id = $1 LIMIT 1', [id.trim()]);
-      if (res.rows.length > 0) {
-        return this.mapRowToGuest(res.rows[0]);
-      }
-      return null;
-    } catch (err) {
-      console.warn('[PostgreSQL] Query findGuestById notice:', err);
       return null;
     }
   }

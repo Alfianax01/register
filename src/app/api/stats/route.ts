@@ -11,4 +11,3 @@ export async function GET() {
     return NextResponse.json({ error: 'Gagal memuat analitik sistem' }, { status: 500 });
   }
 }
-

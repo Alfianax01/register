@@ -118,4 +118,3 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Gagal menghapus data tamu' }, { status: 500 });
   }
 }
-

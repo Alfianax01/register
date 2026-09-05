@@ -602,6 +602,7 @@ class DatabaseManager {
 
   private syncPostgresBackground() {
     if (!postgresAdapter.isAvailable()) return;
+
     postgresAdapter.ensureTables().then(() => {
       postgresAdapter.getAllGuests().then(pgGuests => {
         if (pgGuests && pgGuests.length > 0 && this.data) {
@@ -628,7 +629,9 @@ class DatabaseManager {
           if (sr.seats && Array.isArray(sr.seats)) this.data.seats = sr.seats;
           if (sr.rooms && Array.isArray(sr.rooms)) this.data.accommodations = sr.rooms;
         }
-      }).catch(() => {});
+      }).catch(err => {
+        console.warn('[PostgreSQL] Background sync seats/rooms notice:', err);
+      });
     }).catch(err => {
       console.warn('[PostgreSQL] ensureTables error during background sync:', err);
     });
