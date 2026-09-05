@@ -244,10 +244,22 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         console.warn('Storage error:', storageErr);
       }
 
-      showToast('Registrasi Berhasil', {
-        type: 'success',
-        message: 'E-Ticket & QR Code resmi telah diterbitkan. Mengalihkan ke tiket...'
-      });
+      if (formData.email && data.emailStatus === 'failed') {
+        showToast('Registrasi Berhasil (Email Belum Terkirim)', {
+          type: 'info',
+          message: 'E-Ticket & QR Code resmi tersimpan, tetapi email belum terkirim karena SMTP belum dikonfigurasi di .env.local.'
+        });
+      } else if (formData.email && data.emailStatus === 'sent') {
+        showToast('Registrasi & Email Terkirim', {
+          type: 'success',
+          message: 'E-Ticket resmi telah dikirim ke email Anda. Mengalihkan ke tiket...'
+        });
+      } else {
+        showToast('Registrasi Berhasil', {
+          type: 'success',
+          message: 'E-Ticket & QR Code resmi telah diterbitkan. Mengalihkan ke tiket...'
+        });
+      }
 
       // Checklist #4: Automatic redirect to ticket page
       if (onSuccess) {
