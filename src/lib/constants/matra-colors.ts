@@ -24,38 +24,38 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   ANGKATAN_DARAT: {
     alias: 'green',
     label: 'TNI Angkatan Darat',
-    bgHex: '#1B5E39',
-    borderHex: '#14462a',
+    bgHex: '#1F7A3E',
+    borderHex: '#176131',
     textHex: '#FFFFFF',
-    badgeClass: 'bg-emerald-900 text-emerald-200 border-emerald-700',
-    cardClass: 'bg-[#1B5E39] text-white border-[#14462a]'
+    badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold',
+    cardClass: 'bg-[#1F7A3E] text-white border-[#176131]'
   },
   ANGKATAN_UDARA: {
     alias: 'blue',
     label: 'TNI Angkatan Udara',
-    bgHex: '#1B6B93',
-    borderHex: '#144f6d',
+    bgHex: '#2563EB',
+    borderHex: '#1d4ed8',
     textHex: '#FFFFFF',
-    badgeClass: 'bg-sky-900 text-sky-200 border-sky-700',
-    cardClass: 'bg-[#1B6B93] text-white border-[#144f6d]'
+    badgeClass: 'bg-blue-50 text-blue-800 border-blue-300 font-semibold',
+    cardClass: 'bg-[#2563EB] text-white border-[#1d4ed8]'
   },
   ANGKATAN_LAUT: {
     alias: 'gray',
     label: 'TNI Angkatan Laut',
-    bgHex: '#6B7280',
-    borderHex: '#4b5563',
+    bgHex: '#64748B',
+    borderHex: '#475569',
     textHex: '#FFFFFF',
-    badgeClass: 'bg-slate-700 text-slate-200 border-slate-600',
-    cardClass: 'bg-[#6B7280] text-white border-[#4b5563]'
+    badgeClass: 'bg-slate-100 text-slate-800 border-slate-300 font-semibold',
+    cardClass: 'bg-[#64748B] text-white border-[#475569]'
   },
   KEMENTERIAN: {
     alias: 'white',
     label: 'Kementerian / Lembaga',
     bgHex: '#FFFFFF',
-    borderHex: '#94A3B8',
+    borderHex: '#CBD5E1',
     textHex: '#0F172A',
-    badgeClass: 'bg-slate-100 text-slate-800 border-slate-400',
-    cardClass: 'bg-white text-slate-900 border-slate-400 font-semibold shadow-xs'
+    badgeClass: 'bg-white text-slate-800 border-slate-300 font-semibold shadow-2xs',
+    cardClass: 'bg-white text-slate-900 border-slate-300 font-semibold shadow-xs'
   }
 };
 

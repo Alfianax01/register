@@ -227,7 +227,7 @@ export default function PlacementPage() {
         subtitle="Alokasi tata letak kursi sidang paripurna dan kamar penginapan prajurit tamu"
       />
 
-      <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[1700px] mx-auto w-full space-y-6">
         {/* Sub-Header & Controls */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {/* View Mode Toggle */}
