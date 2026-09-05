@@ -291,16 +291,20 @@ export async function POST(req: NextRequest) {
     let emailStatus: 'sent' | 'failed' = 'failed';
     if (newGuest.email) {
       try {
+        console.log(`Sending ticket email to ${newGuest.email}...`);
         const mailResult = await sendTicketEmail(newGuest, ticketUrl, qrCodeBuffer, pdfBuffer);
         if (mailResult.success) {
+          console.log(`Email sent successfully`);
           emailStatus = 'sent';
           db.updateGuest(newGuest.id, { emailSent: true });
         } else {
-          console.error('[Nodemailer Dispatch Notice]:', mailResult.error);
+          console.error(`Email failed: ${mailResult.error || 'Unknown error'}`);
+          emailStatus = 'failed';
           db.updateGuest(newGuest.id, { emailSent: false });
         }
-      } catch (mailErr) {
-        console.error('[Nodemailer Dispatch Error]:', mailErr);
+      } catch (mailErr: any) {
+        console.error(`Email failed: ${mailErr?.message || mailErr}`);
+        emailStatus = 'failed';
         db.updateGuest(newGuest.id, { emailSent: false });
       }
     }
