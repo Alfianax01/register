@@ -66,7 +66,7 @@ export async function GET(
 
     const filename = `ETicket_RAPIM_TNI_2026_${(guest.nrp || guest.nama).replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
 
-    return new Response(pdfBuffer, {
+    return new Response(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

@@ -44,9 +44,9 @@ export async function generateTicketPdf(data: TicketPdfData): Promise<Buffer> {
     });
 
     const chunks: Buffer[] = [];
-    doc.on('data', chunk => chunks.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', err => reject(err));
+    (doc as any).on('data', (chunk: Buffer) => chunks.push(chunk));
+    (doc as any).on('end', () => resolve(Buffer.concat(chunks)));
+    (doc as any).on('error', (err: any) => reject(err));
 
     const pageWidth = 595.28;
     const pageHeight = 841.89;

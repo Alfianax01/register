@@ -117,6 +117,14 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     let err = '';
     if (field === 'nama' && !val.trim()) err = 'Nama lengkap wajib diisi.';
     if (field === 'no_hp' && !val.trim()) err = 'Nomor WhatsApp / HP wajib diisi.';
+    if (field === 'email') {
+      if (val && typeof val === 'string' && val.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(val.trim())) {
+          err = 'Format alamat email tidak valid (contoh: nama@domain.com).';
+        }
+      }
+    }
     if (field === 'nrp') {
       if (!val.trim()) {
         err = 'NRP / NIP wajib diisi.';
@@ -162,8 +170,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     const isNrpValid = validateField('nrp', formData.nrp);
     const isJabatanValid = validateField('jabatan', formData.jabatan);
     const isPhoneValid = validateField('no_hp', formData.no_hp);
+    const isEmailValid = validateField('email', formData.email);
 
-    return isNamaValid && isNrpValid && isJabatanValid && isPhoneValid;
+    return isNamaValid && isNrpValid && isJabatanValid && isPhoneValid && isEmailValid;
   };
 
   const handleSubmit = async () => {
@@ -351,7 +360,8 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               placeholder="nama@tni.mil.id"
               value={formData.email}
               onChange={handleInputChange}
-              helperText="Opsional untuk salinan kartu tanda peserta."
+              error={errors.email}
+              helperText="E-Ticket resmi dan QR Code akan dikirim otomatis ke email ini."
               leftIcon={<Mail className="w-3.5 h-3.5" />}
               autoComplete="email"
             />
@@ -372,7 +382,19 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               type="button"
               variant="primary"
               size="md"
-              onClick={() => setActiveStep(2)}
+              onClick={() => {
+                const isNamaValid = validateField('nama', formData.nama);
+                const isPhoneValid = validateField('no_hp', formData.no_hp);
+                const isEmailValid = validateField('email', formData.email);
+                if (isNamaValid && isPhoneValid && isEmailValid) {
+                  setActiveStep(2);
+                } else {
+                  showToast('Periksa Isian', {
+                    type: 'error',
+                    message: 'Mohon lengkapi data identitas dengan benar sebelum melanjutkan.'
+                  });
+                }
+              }}
             >
               <span>Lanjut ke Data Dinas</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1" />

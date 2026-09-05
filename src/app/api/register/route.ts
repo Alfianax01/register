@@ -145,9 +145,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check duplicate Email (if email is provided)
+    // Validate and check duplicate Email (if email is provided)
     if (email && String(email).trim()) {
-      const existingEmail = await db.findGuestByEmailAsync(String(email).trim());
+      const cleanEmail = String(email).trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(cleanEmail)) {
+        return NextResponse.json(
+          { error: 'Format alamat email tidak valid (contoh: nama@domain.com).' },
+          { status: 400 }
+        );
+      }
+
+      const existingEmail = await db.findGuestByEmailAsync(cleanEmail);
       if (existingEmail) {
         return NextResponse.json(
           {
@@ -258,22 +267,42 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Dispatch Email with E-Ticket PDF Attachment
-    if (newGuest.email) {
-      sendTicketEmail({
-        to: newGuest.email,
-        nama: [newGuest.gelar_depan, newGuest.nama, newGuest.gelar_belakang].filter(Boolean).join(' ') || newGuest.nama,
-        pangkat: newGuest.pangkat,
-        nrp: newGuest.nrp,
-        jabatan: newGuest.jabatan,
-        instansi: newGuest.negara_instansi || newGuest.satker,
-        seat_number: newGuest.seat_number,
-        registration_id: newGuest.registration_id,
-        qr_token: newGuest.qr_token,
-        pdfBuffer
-      }).catch(mailErr => {
-        console.error('[Nodemailer Background Notice]:', mailErr);
+    // Generate QR Code PNG Buffer for Email CID embedding (USES newGuest.qr_token FROM DB ONLY, NEVER REGENERATED)
+    let qrCodeBuffer: Buffer = Buffer.alloc(0);
+    try {
+      qrCodeBuffer = await QRCode.toBuffer(newGuest.qr_token, {
+        errorCorrectionLevel: 'H',
+        margin: 1,
+        width: 280,
+        color: {
+          dark: '#0F172A',
+          light: '#FFFFFF'
+        }
       });
+    } catch (qrBufErr) {
+      console.warn('QR Code buffer generation warning:', qrBufErr);
+    }
+
+    // Determine Base URL for Ticket link
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const ticketUrl = `${baseUrl.replace(/\/$/, '')}/ticket/${newGuest.qr_token}`;
+
+    // Dispatch Email with E-Ticket & QR Code CID (separate try/catch, non-blocking)
+    let emailStatus: 'sent' | 'failed' = 'failed';
+    if (newGuest.email) {
+      try {
+        const mailResult = await sendTicketEmail(newGuest, ticketUrl, qrCodeBuffer, pdfBuffer);
+        if (mailResult.success) {
+          emailStatus = 'sent';
+          db.updateGuest(newGuest.id, { emailSent: true });
+        } else {
+          console.error('[Nodemailer Dispatch Notice]:', mailResult.error);
+          db.updateGuest(newGuest.id, { emailSent: false });
+        }
+      } catch (mailErr) {
+        console.error('[Nodemailer Dispatch Error]:', mailErr);
+        db.updateGuest(newGuest.id, { emailSent: false });
+      }
     }
 
     const participantData = {
@@ -294,6 +323,7 @@ export async function POST(req: NextRequest) {
       no_hp: newGuest.no_hp,
       status: newGuest.status_kehadiran,
       qr_token: newGuest.qr_token,
+      emailSent: emailStatus === 'sent',
       pdf_path: pdfPath,
       created_at: newGuest.created_at
     };
@@ -305,6 +335,7 @@ export async function POST(req: NextRequest) {
       nama: newGuest.nama,
       nrp: newGuest.nrp,
       token: newGuest.qr_token,
+      emailStatus,
       pdfPath
     });
 
@@ -314,11 +345,13 @@ export async function POST(req: NextRequest) {
       registrationId: newGuest.registration_id,
       ticketId: newGuest.ticket_id,
       token: newGuest.qr_token,
+      emailStatus,
       qrCode: qrDataUrl,
       pdfUrl: pdfPath,
       participant: participantData,
       guest: {
         ...newGuest,
+        emailSent: emailStatus === 'sent',
         registration_id: newGuest.registration_id,
         ticket_id: newGuest.ticket_id,
         pdf_path: pdfPath

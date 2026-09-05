@@ -39,11 +39,11 @@ export async function GET(req: NextRequest) {
     });
 
     const chunks: Buffer[] = [];
-    doc.on('data', chunk => chunks.push(chunk));
+    (doc as any).on('data', (chunk: Buffer) => chunks.push(chunk));
 
     const pdfBufferPromise = new Promise<Buffer>((resolve, reject) => {
-      doc.on('end', () => resolve(Buffer.concat(chunks)));
-      doc.on('error', reject);
+      (doc as any).on('end', () => resolve(Buffer.concat(chunks)));
+      (doc as any).on('error', reject);
     });
 
     const pageWidth = 595.28;
@@ -163,7 +163,7 @@ export async function GET(req: NextRequest) {
 
     const finalBuffer = await pdfBufferPromise;
 
-    return new Response(finalBuffer, {
+    return new Response(new Uint8Array(finalBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

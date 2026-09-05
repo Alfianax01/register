@@ -39,6 +39,8 @@ export interface Guest {
   room_slot?: 'A' | 'B';
   status_kehadiran: 'BELUM_HADIR' | 'HADIR';
   waktu_kehadiran_pertama?: string;
+  token?: string;
+  emailSent?: boolean;
   created_at: string;
   updated_at: string;
 }

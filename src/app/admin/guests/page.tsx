@@ -378,6 +378,11 @@ export default function GuestsPage() {
                             <Badge variant={g.matra === 'AD' ? 'ad' : g.matra === 'AL' ? 'al' : g.matra === 'AU' ? 'au' : 'slate'} size="sm">
                               {g.matra}
                             </Badge>
+                            {g.emailSent && (
+                              <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200" title="E-Ticket telah dikirim via email">
+                                <Mail className="w-2.5 h-2.5" /> Terkirim
+                              </span>
+                            )}
                           </div>
                           <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono mt-0.5">
                             <span>{g.no_hp}</span>
