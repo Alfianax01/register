@@ -109,6 +109,38 @@ button, a, input, select, textarea {
   animation: modern-scanline 2s ease-in-out infinite;
 }
 
+/* Modal and Bottom Sheet Animations */
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sheetSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-modal-scale {
+  animation: modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-sheet-slide {
+  animation: sheetSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
 /* Print utilities */
 @media print {
   .no-print {

@@ -173,6 +173,55 @@ export default function PlacementPage() {
   };
 
   const handleAssignRoom = async (roomId: string, slot: 'A' | 'B', guestId: string | null) => {
+    const assignedGuest = guestId ? guests.find(g => g.id === guestId) : null;
+
+    // Optimistic local update
+    setRooms(prevRooms =>
+      prevRooms.map(r => {
+        const updated = { ...r };
+        if (guestId) {
+          if (updated.slot_a_guest_id === guestId && (updated.id !== roomId || slot !== 'A')) {
+            updated.slot_a_guest_id = undefined;
+            updated.slot_a_guest_name = undefined;
+            updated.slot_a_guest_rank = undefined;
+            updated.slot_a_guest_matra = undefined;
+          }
+          if (updated.slot_b_guest_id === guestId && (updated.id !== roomId || slot !== 'B')) {
+            updated.slot_b_guest_id = undefined;
+            updated.slot_b_guest_name = undefined;
+            updated.slot_b_guest_rank = undefined;
+            updated.slot_b_guest_matra = undefined;
+          }
+        }
+        if (updated.id === roomId) {
+          if (slot === 'A') {
+            updated.slot_a_guest_id = guestId || undefined;
+            updated.slot_a_guest_name = assignedGuest?.nama;
+            updated.slot_a_guest_rank = assignedGuest?.pangkat;
+            updated.slot_a_guest_matra = assignedGuest?.matra;
+          } else {
+            updated.slot_b_guest_id = guestId || undefined;
+            updated.slot_b_guest_name = assignedGuest?.nama;
+            updated.slot_b_guest_rank = assignedGuest?.pangkat;
+            updated.slot_b_guest_matra = assignedGuest?.matra;
+          }
+        }
+        return updated;
+      })
+    );
+
+    setGuests(prevGuests =>
+      prevGuests.map(g => {
+        if (g.id === guestId) {
+          return { ...g, room_id: roomId, room_slot: slot };
+        }
+        if (!guestId && g.room_id === roomId && g.room_slot === slot) {
+          return { ...g, room_id: undefined, room_slot: undefined };
+        }
+        return g;
+      })
+    );
+
     try {
       const res = await fetch('/api/placement/rooms', {
         method: 'POST',
@@ -183,13 +232,20 @@ export default function PlacementPage() {
       const data = await res.json();
       if (!res.ok) {
         showToast('Gagal Menetapkan Kamar', { type: 'error', message: data.error || 'Gagal mengubah kamar' });
+        fetchData(false);
         return;
       }
 
-      showToast('Alokasi Wisma Berhasil', { type: 'success', message: 'Alokasi kamar penginapan berhasil diperbarui.' });
+      showToast('Alokasi Wisma Berhasil', {
+        type: 'success',
+        message: guestId
+          ? `Kamar berhasil dialokasikan untuk ${assignedGuest ? `${assignedGuest.pangkat} ${assignedGuest.nama}` : 'prajurit'}.`
+          : 'Alokasi slot kamar telah dikosongkan.'
+      });
       fetchData(false);
     } catch {
       showToast('Koneksi Terputus', { type: 'error', message: 'Gagal menghubungi server wisma.' });
+      fetchData(false);
     }
   };
 
