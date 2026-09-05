@@ -36,7 +36,11 @@ export async function GET(req: NextRequest) {
       guests = guests.filter(g => g.seat_group_id === group);
     }
 
-    return NextResponse.json({ success: true, guests });
+    return NextResponse.json({ success: true, guests }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+      }
+    });
   } catch (err) {
     return NextResponse.json({ error: 'Gagal memuat daftar tamu' }, { status: 500 });
   }

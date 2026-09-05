@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Checklist #7: Backend Logging
-    console.log("Request Registrasi:", body);
+    console.log("API Request:", body);
 
     const {
       nrp,
@@ -61,42 +61,42 @@ export async function POST(req: NextRequest) {
     if (!nama || !String(nama).trim()) {
       return NextResponse.json(
         { error: 'Nama lengkap wajib diisi.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
     if (!matra) {
       return NextResponse.json(
         { error: 'Matra kedinasan wajib dipilih.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
     if (!pangkat) {
       return NextResponse.json(
         { error: 'Pangkat / Golongan kedinasan wajib dipilih.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
     if (!jabatan || !String(jabatan).trim()) {
       return NextResponse.json(
         { error: 'Jabatan kedinasan wajib diisi.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
     if (!satker) {
       return NextResponse.json(
         { error: 'Satuan kerja (Satker) wajib dipilih.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
     if (!no_hp || !String(no_hp).trim()) {
       return NextResponse.json(
         { error: 'Nomor WhatsApp / HP wajib diisi.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
     if (!isValidPhone(no_hp)) {
       return NextResponse.json(
         { error: 'Format nomor HP tidak valid. Gunakan format nomor Indonesia (contoh: 0812xxxxxxxx atau 62812xxxxxxxx).' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
@@ -112,21 +112,21 @@ export async function POST(req: NextRequest) {
     if (matra !== 'NON_TNI' && !isValidNRP(nrp)) {
       return NextResponse.json(
         { error: 'Format NRP tidak valid. Gunakan 5-20 karakter angka/huruf resmi prajurit.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
-    // Check duplicate NRP
-    if (nrp && String(nrp).trim()) {
-      const existing = await db.findGuestByNRPAsync(String(nrp).trim());
+    // Check duplicate NRP - ONLY for military with valid NRP (never for civilian/placeholder)
+    const cleanNrp = nrp ? String(nrp).trim() : '';
+    if (matra !== 'NON_TNI' && cleanNrp && cleanNrp !== '-' && cleanNrp.toUpperCase() !== 'NON-TNI') {
+      const existing = await db.findGuestByNRPAsync(cleanNrp);
       if (existing) {
         return NextResponse.json(
           {
-            error: `NRP / Identitas ${nrp} sudah terdaftar atas nama ${existing.nama}. Anda dapat langsung melihat E-Ticket Anda.`,
-            existingToken: existing.qr_token,
-            guest: existing
+            error: `NRP ${cleanNrp} sudah terdaftar atas nama ${existing.nama}. Silakan periksa kembali NRP Anda atau cek tiket Anda.`,
+            isDuplicate: true
           },
-          { status: 409 }
+          { status: 409, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
         );
       }
     }
@@ -137,11 +137,10 @@ export async function POST(req: NextRequest) {
       if (existingPhone) {
         return NextResponse.json(
           {
-            error: `Nomor HP ${no_hp} sudah terdaftar atas nama ${existingPhone.nama}.`,
-            existingToken: existingPhone.qr_token,
-            guest: existingPhone
+            error: `Nomor HP ${no_hp} sudah terdaftar atas nama ${existingPhone.nama}. Silakan gunakan nomor HP yang berbeda.`,
+            isDuplicate: true
           },
-          { status: 409 }
+          { status: 409, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
         );
       }
     }
@@ -153,7 +152,7 @@ export async function POST(req: NextRequest) {
       if (!emailRegex.test(cleanEmail)) {
         return NextResponse.json(
           { error: 'Format alamat email tidak valid (contoh: nama@domain.com).' },
-          { status: 400 }
+          { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
         );
       }
 
@@ -161,11 +160,10 @@ export async function POST(req: NextRequest) {
       if (existingEmail) {
         return NextResponse.json(
           {
-            error: `Email ${email} sudah terdaftar atas nama ${existingEmail.nama}.`,
-            existingToken: existingEmail.qr_token,
-            guest: existingEmail
+            error: `Email ${email} sudah terdaftar atas nama ${existingEmail.nama}. Silakan gunakan alamat email yang berbeda.`,
+            isDuplicate: true
           },
-          { status: 409 }
+          { status: 409, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
         );
       }
     }
@@ -174,7 +172,7 @@ export async function POST(req: NextRequest) {
     if (captcha_expected && String(captcha_answer || '').trim() !== String(captcha_expected).trim()) {
       return NextResponse.json(
         { error: 'Jawaban verifikasi keamanan (CAPTCHA) tidak sesuai.' },
-        { status: 400 }
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
@@ -209,6 +207,8 @@ export async function POST(req: NextRequest) {
       warna_kursi,
       seatColorAlias: warna_kursi
     });
+
+    console.log("Database Result:", newGuest);
 
     // Generate high resolution QR Code image for immediate client rendering
     let qrDataUrl = '';
@@ -367,6 +367,10 @@ export async function POST(req: NextRequest) {
         registration_id: newGuest.registration_id,
         ticket_id: newGuest.ticket_id,
         pdf_path: pdfPath
+      }
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
       }
     });
 

@@ -101,6 +101,10 @@ export async function GET(
         room: roomInfo
       },
       qr_code: qrDataUrl
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+      }
     });
 
   } catch (err: any) {

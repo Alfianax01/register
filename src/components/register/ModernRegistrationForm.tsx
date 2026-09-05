@@ -31,6 +31,25 @@ import { useRouter } from 'next/navigation';
 
 const DRAFT_STORAGE_KEY = 'tni_registration_draft';
 
+const INITIAL_FORM_DATA = {
+  nama: '',
+  gelar_depan: '',
+  gelar_belakang: '',
+  no_hp: '',
+  email: '',
+  negara_instansi: 'Indonesia / TNI - Kemhan RI',
+  matra: 'AD' as MatraType,
+  nrp: '',
+  pangkat: 'Jenderal TNI',
+  jabatan: '',
+  satker: 'Mabes TNI AD (Jakarta Pusat)',
+  satuan: 'Staf Umum Kasad',
+  butuh_akomodasi: false,
+  tgl_checkin: '2026-09-04',
+  tgl_checkout: '2026-09-06',
+  catatan_khusus: ''
+};
+
 interface ModernRegistrationFormProps {
   onSuccess?: (token: string, guest: any, fullData?: any) => void;
 }
@@ -46,58 +65,17 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Form State
-  const [formData, setFormData] = useState({
-    nama: '',
-    gelar_depan: '',
-    gelar_belakang: '',
-    no_hp: '',
-    email: '',
-    negara_instansi: 'Indonesia / TNI - Kemhan RI',
-    matra: 'AD' as MatraType,
-    nrp: '',
-    pangkat: 'Jenderal TNI',
-    jabatan: '',
-    satker: 'Mabes TNI AD (Jakarta Pusat)',
-    satuan: 'Staf Umum Kasad',
-    butuh_akomodasi: false,
-    tgl_checkin: '2026-09-04',
-    tgl_checkout: '2026-09-06',
-    catatan_khusus: ''
-  });
+  // Form State: Always start fresh with clean fields
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
-  // Hydrate draft from sessionStorage
+  // Clear any residual session draft on mount to prevent old data from reappearing
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
-        const savedDraft = sessionStorage.getItem(DRAFT_STORAGE_KEY);
-        if (savedDraft) {
-          const parsed = JSON.parse(savedDraft);
-          if (parsed && typeof parsed === 'object') {
-            setFormData(prev => ({
-              ...prev,
-              ...parsed
-            }));
-          }
-        }
+        sessionStorage.removeItem(DRAFT_STORAGE_KEY);
       }
-    } catch (err) {
-      console.warn('Gagal memuat draf formulir dari sessionStorage', err);
-    }
+    } catch {}
   }, []);
-
-  // Auto-save draft to sessionStorage
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        if (formData.nama || formData.no_hp || formData.nrp || formData.jabatan) {
-          sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formData));
-        }
-      }
-    } catch (err) {
-      console.warn('Gagal menyimpan draf formulir ke sessionStorage', err);
-    }
-  }, [formData]);
 
   const availableRanks = useMemo(() => {
     return getRanksByMatra(formData.matra);
@@ -161,7 +139,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       pangkat: ranks[0]?.name || '',
       satker: firstSatker?.name || '',
       satuan: firstSatker?.satuans[0] || '',
-      nrp: matra === 'NON_TNI' ? (prev.nrp || 'NON-TNI') : prev.nrp
+      nrp: matra === 'NON_TNI' ? (prev.nrp === 'NON-TNI' ? '' : prev.nrp) : (prev.nrp === 'NON-TNI' ? '' : prev.nrp)
     }));
   };
 
@@ -188,30 +166,41 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     setIsPreviewOpen(false);
 
     try {
+      // Build fresh payload directly from current state
+      const payload = {
+        nama: formData.nama.trim(),
+        gelar_depan: formData.gelar_depan.trim(),
+        gelar_belakang: formData.gelar_belakang.trim(),
+        no_hp: formData.no_hp.trim(),
+        email: formData.email.trim(),
+        negara_instansi: formData.negara_instansi.trim(),
+        matra: formData.matra,
+        pangkat: formData.pangkat.trim(),
+        nrp: formData.nrp.trim(),
+        jabatan: formData.jabatan.trim(),
+        satker: formData.satker.trim(),
+        satuan: formData.satuan.trim(),
+        butuh_akomodasi: formData.butuh_akomodasi,
+        tgl_checkin: formData.tgl_checkin,
+        tgl_checkout: formData.tgl_checkout,
+        catatan_khusus: formData.catatan_khusus.trim()
+      };
+
       // Checklist #7: Frontend Logging
-      console.log("Payload Registrasi:", formData);
+      console.log("Frontend Payload:", payload);
 
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload),
+        cache: 'no-store'
       });
 
       const data = await res.json();
       console.log("Response Registrasi:", data);
 
       if (!res.ok) {
-        if (res.status === 409 && data.existingToken) {
-          showToast('Prajurit Sudah Terdaftar', {
-            type: 'info',
-            message: data.error || 'Membuka E-Ticket yang sudah ada...'
-          });
-          onSuccess?.(data.existingToken, data.guest);
-          return;
-        }
-
-        // Checklist #6: Real error message from backend
-        showToast('Pendaftaran Gagal', {
+        showToast('Pendaftaran Ditolak', {
           type: 'error',
           message: data.error || data.message || `Kode respon ${res.status}: Gagal memproses pendaftaran.`
         });
@@ -228,28 +217,24 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         });
       } catch {}
 
-      // Checklist #8: State persistence across sessions
-      try {
-        if (typeof window !== 'undefined') {
+      // Reset form completely so no stale participant data lingers
+      setFormData(INITIAL_FORM_DATA);
+      setErrors({});
+      setActiveStep(1);
+      setIsPreviewOpen(false);
+      if (typeof window !== 'undefined') {
+        try {
           sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-          sessionStorage.setItem('tni_registration_success', JSON.stringify({
-            token: data.token,
-            participant: data.participant || data.guest,
-            qrCode: data.qrCode
-          }));
-          localStorage.setItem('tni_ticket_' + data.token, JSON.stringify(data.participant || data.guest));
-          localStorage.setItem('latest_registered_token', data.token);
-        }
-      } catch (storageErr) {
-        console.warn('Storage error:', storageErr);
+          sessionStorage.removeItem('tni_registration_success');
+        } catch {}
       }
 
-      if (formData.email && data.emailStatus === 'failed') {
+      if (payload.email && data.emailStatus === 'failed') {
         showToast('Registrasi Berhasil (Email Belum Terkirim)', {
           type: 'info',
           message: 'E-Ticket & QR Code resmi tersimpan, tetapi email belum terkirim karena SMTP belum dikonfigurasi di .env.local.'
         });
-      } else if (formData.email && data.emailStatus === 'sent') {
+      } else if (payload.email && data.emailStatus === 'sent') {
         showToast('Registrasi & Email Terkirim', {
           type: 'success',
           message: 'E-Ticket resmi telah dikirim ke email Anda. Mengalihkan ke tiket...'
@@ -261,7 +246,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         });
       }
 
-      // Checklist #4: Automatic redirect to ticket page
+      // Automatic redirect to newly generated ticket
       if (onSuccess) {
         onSuccess(data.token, data.guest, data);
       } else {

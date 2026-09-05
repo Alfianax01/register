@@ -837,9 +837,16 @@ class DatabaseManager {
     this.ensureInitialized();
     if (!nrp) return undefined;
     const clean = String(nrp).trim().toLowerCase().replace(/[\s\-\.]/g, '');
-    const guest = this.data!.guests.find(g => String(g.nrp || '').toLowerCase().replace(/[\s\-\.]/g, '') === clean);
+    // Do not match empty, dash, or generic non-tni strings
+    if (!clean || clean === 'nontni' || clean === 'sipil' || clean.length < 3) {
+      return undefined;
+    }
+    const guest = this.data!.guests.find(g => {
+      const gClean = String(g.nrp || '').toLowerCase().replace(/[\s\-\.]/g, '');
+      return gClean && gClean !== 'nontni' && gClean !== 'sipil' && gClean === clean;
+    });
     if (guest) {
-      console.log("DATA DITEMUKAN:", {
+      console.log("DATA DITEMUKAN BERDASARKAN NRP:", {
         id: guest.id,
         nama: guest.nama,
         nrp: guest.nrp
@@ -893,17 +900,18 @@ class DatabaseManager {
     const token = generateSecureToken();
     const token_hash = hashToken(token);
 
-    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' 
-      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}`
-      : `REG-2026-${Date.now().toString().slice(-6)}`);
-    const ticketId = guestData.ticket_id || `TCK-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const randSuffix = Math.floor(100000 + Math.random() * 900000);
+    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' && guestData.nrp.toUpperCase() !== 'NON-TNI'
+      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}-${randSuffix}`
+      : `REG-2026-${Date.now().toString().slice(-4)}-${randSuffix}`);
+    const ticketId = guestData.ticket_id || `TCK-2026-${Date.now().toString().slice(-4)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     const katInstansi = guestData.kategori_instansi || getInstansiCategory(guestData.matra || guestData.satker);
     const warnaKursi = guestData.warna_kursi || getSeatColorAlias(katInstansi);
 
     const newGuest: Guest = {
       ...guestData,
-      id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       registration_id: regId,
       ticket_id: ticketId,
       qr_token: token,
@@ -926,7 +934,7 @@ class DatabaseManager {
       });
     }
 
-    console.log("DATA TERSIMPAN:", {
+    console.log("Database Result (insertResult):", {
       id: newGuest.id,
       registration_id: newGuest.registration_id,
       ticket_id: newGuest.ticket_id,
@@ -945,17 +953,18 @@ class DatabaseManager {
     const token = generateSecureToken();
     const token_hash = hashToken(token);
 
-    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' 
-      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}`
-      : `REG-2026-${Date.now().toString().slice(-6)}`);
-    const ticketId = guestData.ticket_id || `TCK-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const randSuffix = Math.floor(100000 + Math.random() * 900000);
+    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' && guestData.nrp.toUpperCase() !== 'NON-TNI'
+      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}-${randSuffix}`
+      : `REG-2026-${Date.now().toString().slice(-4)}-${randSuffix}`);
+    const ticketId = guestData.ticket_id || `TCK-2026-${Date.now().toString().slice(-4)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     const katInstansi = guestData.kategori_instansi || getInstansiCategory(guestData.matra || guestData.satker);
     const warnaKursi = guestData.warna_kursi || getSeatColorAlias(katInstansi);
 
     const newGuest: Guest = {
       ...guestData,
-      id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       registration_id: regId,
       ticket_id: ticketId,
       qr_token: token,
@@ -987,7 +996,7 @@ class DatabaseManager {
       }
     }
 
-    console.log("DATA TERSIMPAN:", {
+    console.log("Database Result (insertResult):", {
       id: newGuest.id,
       registration_id: newGuest.registration_id,
       ticket_id: newGuest.ticket_id,

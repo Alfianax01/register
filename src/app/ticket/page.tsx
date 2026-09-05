@@ -46,7 +46,9 @@ export default function TicketSearchPage() {
     setSearched(true);
 
     try {
-      const res = await fetch(`/api/guests?q=${encodeURIComponent(cleanQuery)}`);
+      const res = await fetch(`/api/guests?q=${encodeURIComponent(cleanQuery)}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
 
       if (!res.ok) {

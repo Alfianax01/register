@@ -21,7 +21,9 @@ export default function TicketPage() {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch(`/api/ticket/${token}`);
+      const res = await fetch(`/api/ticket/${token}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
 
       if (!res.ok) {
