@@ -602,24 +602,35 @@ class DatabaseManager {
 
   private syncPostgresBackground() {
     if (!postgresAdapter.isAvailable()) return;
-    postgresAdapter.getAllGuests().then(pgGuests => {
-      if (pgGuests && pgGuests.length > 0 && this.data) {
-        let updated = false;
-        for (const pgG of pgGuests) {
-          const idx = this.data.guests.findIndex(g => g.id === pgG.id || g.qr_token === pgG.qr_token);
-          if (idx >= 0) {
-            this.data.guests[idx] = { ...this.data.guests[idx], ...pgG };
-          } else {
-            this.data.guests.unshift(pgG);
-            updated = true;
+    postgresAdapter.ensureTables().then(() => {
+      postgresAdapter.getAllGuests().then(pgGuests => {
+        if (pgGuests && pgGuests.length > 0 && this.data) {
+          let updated = false;
+          for (const pgG of pgGuests) {
+            const idx = this.data.guests.findIndex(g => g.id === pgG.id || g.qr_token === pgG.qr_token);
+            if (idx >= 0) {
+              this.data.guests[idx] = { ...this.data.guests[idx], ...pgG };
+            } else {
+              this.data.guests.unshift(pgG);
+              updated = true;
+            }
+          }
+          if (updated) {
+            this.persist();
           }
         }
-        if (updated) {
-          this.persist();
+      }).catch(err => {
+        console.warn('[PostgreSQL] Background sync guests notice:', err);
+      });
+
+      postgresAdapter.getSeatsAndRooms().then(sr => {
+        if (sr && this.data) {
+          if (sr.seats && Array.isArray(sr.seats)) this.data.seats = sr.seats;
+          if (sr.rooms && Array.isArray(sr.rooms)) this.data.accommodations = sr.rooms;
         }
-      }
+      }).catch(() => {});
     }).catch(err => {
-      console.warn('[PostgreSQL] Background sync notice:', err);
+      console.warn('[PostgreSQL] ensureTables error during background sync:', err);
     });
   }
 
@@ -752,9 +763,40 @@ class DatabaseManager {
     return this.data!.guests;
   }
 
+  public async getGuestsAsync(): Promise<Guest[]> {
+    this.ensureInitialized();
+    if (postgresAdapter.isAvailable()) {
+      try {
+        const pgGuests = await postgresAdapter.getAllGuests();
+        if (pgGuests && pgGuests.length > 0) {
+          this.data!.guests = pgGuests;
+          return pgGuests;
+        }
+      } catch (err) {
+        console.warn('[PostgreSQL] Error in getGuestsAsync, falling back to cache:', err);
+      }
+    }
+    return this.data!.guests;
+  }
+
   public findGuestById(id: string): Guest | undefined {
     this.ensureInitialized();
     return this.data!.guests.find(g => g.id === id);
+  }
+
+  public async findGuestByIdAsync(id: string): Promise<Guest | undefined> {
+    const local = this.findGuestById(id);
+    if (local) return local;
+
+    if (postgresAdapter.isAvailable()) {
+      const pgGuest = await postgresAdapter.findGuestById(id);
+      if (pgGuest) {
+        this.data!.guests.unshift(pgGuest);
+        this.persist();
+        return pgGuest;
+      }
+    }
+    return undefined;
   }
 
   public findGuestByToken(token: string): Guest | undefined {
@@ -1103,6 +1145,10 @@ class DatabaseManager {
 
     this.persist();
 
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.deleteGuest(id).catch(err => console.error('[PostgreSQL] deleteGuest error:', err));
+    }
+
     if (mysqlAdapter.isConfigured()) {
       mysqlAdapter.deletePeserta(id).catch(err => console.error('[MySQL] deletePeserta error:', err));
     }
@@ -1174,6 +1220,11 @@ class DatabaseManager {
     }
 
     this.persist();
+
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveSeatsAndRooms(this.data!.seats, this.data!.accommodations).catch(console.error);
+    }
+
     return { success: true, message: 'Alokasi kursi berhasil disimpan' };
   }
 
@@ -1287,6 +1338,15 @@ class DatabaseManager {
     }
 
     this.persist();
+
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveSeatsAndRooms(this.data!.seats, this.data!.accommodations).catch(console.error);
+      if (guestId) {
+        const updatedG = this.data!.guests.find(g => g.id === guestId);
+        if (updatedG) postgresAdapter.saveGuest(updatedG).catch(console.error);
+      }
+    }
+
     return { success: true, message: 'Penempatan kamar berhasil disimpan' };
   }
 
@@ -1298,6 +1358,22 @@ class DatabaseManager {
 
   public getCheckinLogs(limit: number = 50): CheckinLog[] {
     this.ensureInitialized();
+    return this.data!.checkin_logs.slice(0, limit);
+  }
+
+  public async getCheckinLogsAsync(limit: number = 50): Promise<CheckinLog[]> {
+    this.ensureInitialized();
+    if (postgresAdapter.isAvailable()) {
+      try {
+        const pgLogs = await postgresAdapter.getAllCheckinLogs();
+        if (pgLogs && pgLogs.length > 0) {
+          this.data!.checkin_logs = pgLogs;
+          return pgLogs.slice(0, limit);
+        }
+      } catch (err) {
+        console.warn('[PostgreSQL] Error in getCheckinLogsAsync:', err);
+      }
+    }
     return this.data!.checkin_logs.slice(0, limit);
   }
 
@@ -1419,6 +1495,21 @@ class DatabaseManager {
       pangkatCount,
       recentLogs: this.data!.checkin_logs.slice(0, 10)
     };
+  }
+
+  public async getStatsAsync() {
+    this.ensureInitialized();
+    if (postgresAdapter.isAvailable()) {
+      try {
+        const pgGuests = await postgresAdapter.getAllGuests();
+        if (pgGuests && pgGuests.length > 0) {
+          this.data!.guests = pgGuests;
+        }
+      } catch (err) {
+        console.warn('[PostgreSQL] Error in getStatsAsync:', err);
+      }
+    }
+    return this.getStats();
   }
 
   // ADMINS & AUTH

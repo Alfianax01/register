@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const guests = db.getGuests();
+    const guests = await db.getGuestsAsync();
     const headers = [
       'No',
       'NRP/Identitas',

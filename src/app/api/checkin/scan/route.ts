@@ -23,13 +23,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find guest
-    let guest = null;
+    // Find guest (query database cloud asynchronously to support multi-container serverless)
+    let guest: any = null;
     if (token) {
-      guest = db.findGuestByToken(token);
+      guest = (await db.findGuestByTokenAsync(token)) || db.findGuestByToken(token);
     }
     if (!guest && nrp) {
-      guest = db.findGuestByNRP(nrp);
+      guest = (await db.findGuestByNRPAsync(nrp)) || db.findGuestByNRP(nrp);
     }
 
     if (!guest) {

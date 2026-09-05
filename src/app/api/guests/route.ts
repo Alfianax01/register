@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status') || '';
     const group = searchParams.get('group') || '';
 
-    let guests = search ? await db.searchGuestsAsync(search) : db.getGuests();
+    let guests = search ? await db.searchGuestsAsync(search) : await db.getGuestsAsync();
 
     if (search && guests.length === 0) {
       // Direct exact match check as fallback
@@ -96,7 +96,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'ID tamu wajib disertakan' }, { status: 400 });
     }
 
-    const guest = db.findGuestById(id);
+    const guest = (await db.findGuestByIdAsync(id)) || db.findGuestById(id);
     const guestName = guest ? `${guest.nama} (${guest.nrp || '-'})` : id;
 
     const deleted = db.deleteGuest(id);
