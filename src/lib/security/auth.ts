@@ -2,16 +2,10 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { db } from '@/lib/db';
 import { AdminUser, AdminRole } from '@/types';
+import { SESSION_SECRET, SESSION_COOKIE_NAME, verifySessionEdge, SessionPayload } from './session';
 
-const SESSION_SECRET = 'tni-event-super-secret-key-2026-cilangkap';
-
-export interface SessionPayload {
-  userId: string;
-  username: string;
-  nama: string;
-  role: AdminRole;
-  expiresAt: number;
-}
+export { SESSION_SECRET, SESSION_COOKIE_NAME, verifySessionEdge };
+export type { SessionPayload };
 
 /**
  * Generate HMAC signed session token

@@ -14,6 +14,7 @@ import {
 } from '@/types';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
+import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
 import { postgresAdapter } from './postgres';
 import { mysqlAdapter } from './mysql';
 
@@ -75,7 +76,10 @@ function generateSeatsForGroups(groups: SeatGroup[]): Seat[] {
           seat_number: seatNum,
           row_num: r,
           col_num: c,
-          is_reserved: 0
+          is_reserved: 0,
+          status: 'KOSONG',
+          colorAlias: null,
+          peserta_id: null
         });
       }
     }
@@ -894,6 +898,9 @@ class DatabaseManager {
       : `REG-2026-${Date.now().toString().slice(-6)}`);
     const ticketId = guestData.ticket_id || `TCK-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
+    const katInstansi = guestData.kategori_instansi || getInstansiCategory(guestData.matra || guestData.satker);
+    const warnaKursi = guestData.warna_kursi || getSeatColorAlias(katInstansi);
+
     const newGuest: Guest = {
       ...guestData,
       id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -902,6 +909,9 @@ class DatabaseManager {
       qr_token: token,
       token_hash: token_hash,
       status_kehadiran: 'BELUM_HADIR',
+      kategori_instansi: katInstansi,
+      warna_kursi: warnaKursi,
+      seatColorAlias: warnaKursi,
       created_at: now,
       updated_at: now
     };
@@ -940,6 +950,9 @@ class DatabaseManager {
       : `REG-2026-${Date.now().toString().slice(-6)}`);
     const ticketId = guestData.ticket_id || `TCK-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
+    const katInstansi = guestData.kategori_instansi || getInstansiCategory(guestData.matra || guestData.satker);
+    const warnaKursi = guestData.warna_kursi || getSeatColorAlias(katInstansi);
+
     const newGuest: Guest = {
       ...guestData,
       id: `guest_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -948,6 +961,9 @@ class DatabaseManager {
       qr_token: token,
       token_hash: token_hash,
       status_kehadiran: 'BELUM_HADIR',
+      kategori_instansi: katInstansi,
+      warna_kursi: warnaKursi,
+      seatColorAlias: warnaKursi,
       created_at: now,
       updated_at: now
     };
@@ -1186,10 +1202,15 @@ class DatabaseManager {
       const oldSeat = this.data!.seats.find(s => s.guest_id === guestId);
       if (oldSeat && oldSeat.seat_number !== seatNumber) {
         oldSeat.guest_id = undefined;
+        oldSeat.peserta_id = null;
         oldSeat.guest_name = undefined;
         oldSeat.guest_rank = undefined;
         oldSeat.guest_matra = undefined;
         oldSeat.guest_status = undefined;
+        oldSeat.kategori_instansi = undefined;
+        oldSeat.colorAlias = null;
+        oldSeat.warna = undefined;
+        oldSeat.status = 'KOSONG';
       }
     }
 
@@ -1206,20 +1227,36 @@ class DatabaseManager {
       const guest = this.data!.guests.find(g => g.id === guestId);
       if (!guest) return { success: false, message: 'Data tamu tidak ditemukan' };
 
+      const katInstansi = guest.kategori_instansi || getInstansiCategory(guest.matra || guest.satker);
+      const colorAlias = guest.warna_kursi || getSeatColorAlias(katInstansi);
+
       seat.guest_id = guest.id;
+      seat.peserta_id = guest.id;
       seat.guest_name = guest.nama;
       seat.guest_rank = guest.pangkat;
       seat.guest_matra = guest.matra;
       seat.guest_status = guest.status_kehadiran;
+      seat.kategori_instansi = katInstansi;
+      seat.colorAlias = colorAlias;
+      seat.warna = colorAlias;
+      seat.status = guest.status_kehadiran === 'HADIR' ? 'HADIR' : 'ASSIGNED';
 
       guest.seat_group_id = seat.group_id;
       guest.seat_number = seat.seat_number;
+      guest.kategori_instansi = katInstansi;
+      guest.warna_kursi = colorAlias;
+      guest.seatColorAlias = colorAlias;
     } else {
       seat.guest_id = undefined;
+      seat.peserta_id = null;
       seat.guest_name = undefined;
       seat.guest_rank = undefined;
       seat.guest_matra = undefined;
       seat.guest_status = undefined;
+      seat.kategori_instansi = undefined;
+      seat.colorAlias = null;
+      seat.warna = undefined;
+      seat.status = 'KOSONG';
     }
 
     this.persist();
@@ -1425,6 +1462,7 @@ class DatabaseManager {
     const seat = this.data!.seats.find(s => s.guest_id === guest.id);
     if (seat) {
       seat.guest_status = 'HADIR';
+      seat.status = 'HADIR';
     }
 
     this.persist();
@@ -1432,6 +1470,7 @@ class DatabaseManager {
     if (postgresAdapter.isAvailable()) {
       postgresAdapter.saveCheckinLog(log).catch(console.error);
       postgresAdapter.saveGuest(guest).catch(console.error);
+      postgresAdapter.saveSeatsAndRooms(this.data!.seats, this.data!.accommodations).catch(console.error);
     }
 
     console.log("DATA TERSIMPAN:", {

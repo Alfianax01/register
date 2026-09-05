@@ -5,6 +5,7 @@ import { generateTicketPdf } from '@/lib/pdf/ticketPdf';
 import { sendTicketEmail } from '@/lib/email/mailer';
 import { checkRateLimit, escapeHtml, isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import { TNI_RANKS } from '@/lib/constants/ranks';
+import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
 import QRCode from 'qrcode';
 
 export const dynamic = 'force-dynamic';
@@ -181,6 +182,10 @@ export async function POST(req: NextRequest) {
     const rankObj = TNI_RANKS.find(r => r.name === pangkat);
     const pangkat_level = rankObj ? rankObj.level : (matra === 'NON_TNI' ? 8 : 10);
 
+    // Calculate instansi category and seat color alias
+    const kategori_instansi = getInstansiCategory(matra || satker);
+    const warna_kursi = getSeatColorAlias(kategori_instansi);
+
     // Sanitize user inputs safely and persist atomically with retry & post-insert verification
     const newGuest = await db.createGuestAsync({
       nrp: escapeHtml(nrp || '-'),
@@ -199,7 +204,10 @@ export async function POST(req: NextRequest) {
       butuh_akomodasi: butuh_akomodasi ? 1 : 0,
       tgl_checkin: tgl_checkin ? escapeHtml(tgl_checkin) : undefined,
       tgl_checkout: tgl_checkout ? escapeHtml(tgl_checkout) : undefined,
-      catatan_khusus: catatan_khusus ? escapeHtml(catatan_khusus) : undefined
+      catatan_khusus: catatan_khusus ? escapeHtml(catatan_khusus) : undefined,
+      kategori_instansi,
+      warna_kursi,
+      seatColorAlias: warna_kursi
     });
 
     // Generate high resolution QR Code image for immediate client rendering

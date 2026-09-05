@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS tni_guests (
   token_hash VARCHAR(100),
   status_kehadiran VARCHAR(20) DEFAULT 'BELUM_HADIR',
   waktu_kehadiran_pertama VARCHAR(50),
+  kategori_instansi VARCHAR(50),
+  warna_kursi VARCHAR(20),
   created_at VARCHAR(50),
   updated_at VARCHAR(50)
 );

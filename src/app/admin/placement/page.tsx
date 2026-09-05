@@ -7,6 +7,7 @@ import { WismaGridView } from '@/components/placement/WismaGridView';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
 import { SeatGroup, Seat, AccommodationRoom, Guest } from '@/types';
+import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
 import {
   Armchair,
   Bed,
@@ -77,19 +78,31 @@ export default function PlacementPage() {
             return {
               ...s,
               guest_id: undefined,
+              peserta_id: null,
               guest_name: undefined,
               guest_rank: undefined,
               guest_matra: undefined,
-              guest_status: undefined
+              guest_status: undefined,
+              kategori_instansi: undefined,
+              colorAlias: null,
+              warna: undefined,
+              status: 'KOSONG'
             };
           }
+          const katInstansi = assignedGuest?.kategori_instansi || getInstansiCategory(assignedGuest?.matra || assignedGuest?.satker);
+          const colorAlias = assignedGuest?.warna_kursi || getSeatColorAlias(katInstansi);
           return {
             ...s,
             guest_id: guestId,
+            peserta_id: guestId,
             guest_name: assignedGuest?.nama,
             guest_rank: assignedGuest?.pangkat,
             guest_matra: assignedGuest?.matra,
-            guest_status: assignedGuest?.status_kehadiran
+            guest_status: assignedGuest?.status_kehadiran,
+            kategori_instansi: katInstansi,
+            colorAlias: colorAlias,
+            warna: colorAlias,
+            status: assignedGuest?.status_kehadiran === 'HADIR' ? 'HADIR' : 'ASSIGNED'
           };
         }
         // If this guest was previously on another seat, unassign that seat
@@ -97,10 +110,15 @@ export default function PlacementPage() {
           return {
             ...s,
             guest_id: undefined,
+            peserta_id: null,
             guest_name: undefined,
             guest_rank: undefined,
             guest_matra: undefined,
-            guest_status: undefined
+            guest_status: undefined,
+            kategori_instansi: undefined,
+            colorAlias: null,
+            warna: undefined,
+            status: 'KOSONG'
           };
         }
         return s;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Shield, MapPin, Phone, Mail, Lock } from 'lucide-react';
+import { Shield, MapPin, Phone, Mail } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -61,15 +61,9 @@ export const Footer: React.FC = () => {
                 <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
                 <span>Gedung Ahmad Yani, Mabes TNI Cilangkap, Jakarta Timur 13870</span>
               </p>
-              <div className="pt-2">
-                <Link
-                  href="/admin/login"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-blue-400 hover:text-blue-300 transition-colors"
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Portal Masuk Petugas Dinas</span>
-                </Link>
-              </div>
+              <p className="text-[12px] text-slate-500 pt-1">
+                Akses resmi delegasi dan tamu undangan kedinasan.
+              </p>
             </div>
           </div>
         </div>

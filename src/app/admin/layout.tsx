@@ -46,7 +46,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch {}
-    router.push('/admin/login');
+    router.push('/login');
+    router.refresh();
   };
 
   if (isLoginPage) {

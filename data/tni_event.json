@@ -1,6 +1,34 @@
 {
   "guests": [
     {
+      "nrp": "NON-TNI",
+      "nama": "Asta 901",
+      "gelar_depan": "Dr",
+      "gelar_belakang": "S.T",
+      "matra": "NON_TNI",
+      "pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "pangkat_level": 1,
+      "jabatan": "-",
+      "satker": "Kementerian Pertahanan RI (Kemhan)",
+      "satuan": "Setjen Kemhan",
+      "negara_instansi": "Indonesia / TNI - Kemhan RI",
+      "no_hp": "081239482382",
+      "email": "azmialfian487@gmail.com",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-05",
+      "tgl_checkout": "2026-09-06",
+      "id": "guest_1788576307519_coyp",
+      "registration_id": "REG-2026-NONTNI",
+      "ticket_id": "TCK-307519-G9RH",
+      "qr_token": "478ce44d-ff73-4f9b-82eb-d93216a0c816",
+      "token_hash": "a9b6ae125f35fb7632e54e2c38abcd5c27d5e1b6a6b4885ce01edb9377a44521",
+      "status_kehadiran": "HADIR",
+      "created_at": "2026-09-05T02:45:07.518Z",
+      "updated_at": "2026-09-05T02:46:22.206Z",
+      "emailSent": true,
+      "waktu_kehadiran_pertama": "2026-09-05T02:46:22.206Z"
+    },
+    {
       "nrp": "TEST-112981",
       "nama": "Kolonel Infantara Pengujian",
       "gelar_depan": "Kolonel Inf.",
@@ -3016,6 +3044,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788576382206_soaf0",
+      "guest_id": "guest_1788576307519_coyp",
+      "guest_nama": "Asta 901",
+      "guest_nrp": "NON-TNI",
+      "guest_pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-05T02:46:22.206Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788538113000_kls1x",
       "guest_id": "guest_1788538112984_14ko",
       "guest_nama": "Kolonel Infantara Pengujian",
@@ -3305,6 +3347,60 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788625068198_o1g9",
+      "admin_id": "admin_wisma",
+      "admin_username": "panitiawisma",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai PANITIA_AKOMODASI",
+      "ip_address": "::1",
+      "created_at": "2026-09-05T16:17:48.198Z"
+    },
+    {
+      "id": "aud_1788625068103_fyeg",
+      "admin_id": "admin_gate",
+      "admin_username": "panitiagate",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai PANITIA_GATE",
+      "ip_address": "::1",
+      "created_at": "2026-09-05T16:17:48.103Z"
+    },
+    {
+      "id": "aud_1788625058072_5iba",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-05T16:17:38.072Z"
+    },
+    {
+      "id": "aud_1788624800670_sc1x",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_FAILED",
+      "details": "Percobaan kata sandi salah",
+      "ip_address": "::1",
+      "created_at": "2026-09-05T16:13:20.670Z"
+    },
+    {
+      "id": "aud_1788576382276_fcib",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Asta 901 (Menteri / Pejabat Setingkat Menteri / NRP NON-TNI) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-05T02:46:22.276Z"
+    },
+    {
+      "id": "aud_1788576342375_pxbb",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-05T02:45:42.375Z"
+    },
     {
       "id": "aud_1788536275195_h5cw",
       "admin_id": "admin_super",

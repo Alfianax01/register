@@ -12,7 +12,9 @@ import {
   LogOut,
   ExternalLink,
   Shield,
-  X
+  X,
+  ClipboardCheck,
+  Settings
 } from 'lucide-react';
 import { useAdmin } from './AdminContext';
 
@@ -44,28 +46,40 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
     },
     {
-      href: '/admin/scanner',
-      label: 'Scanner Gate',
-      icon: QrCode,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE']
+      href: '/admin/guests',
+      label: 'Data Peserta',
+      icon: Users,
+      allowedRoles: ['SUPER_ADMIN']
     },
     {
       href: '/admin/placement',
-      label: 'Penempatan Kursi',
+      label: 'Alokasi Kursi & Wisma',
       icon: Armchair,
       allowedRoles: ['SUPER_ADMIN', 'PANITIA_AKOMODASI']
     },
     {
-      href: '/admin/monitoring',
-      label: 'Monitoring Real-Time',
-      icon: BarChart3,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
+      href: '/admin/scanner',
+      label: 'Scan QR Gate',
+      icon: QrCode,
+      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE']
     },
     {
-      href: '/admin/guests',
-      label: 'Master Data Tamu',
-      icon: Users,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
+      href: '/admin/checkin',
+      label: 'Log Presensi Check-In',
+      icon: ClipboardCheck,
+      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE']
+    },
+    {
+      href: '/admin/monitoring',
+      label: 'Laporan & Statistik',
+      icon: BarChart3,
+      allowedRoles: ['SUPER_ADMIN']
+    },
+    {
+      href: '/admin/settings',
+      label: 'Pengaturan Sistem',
+      icon: Settings,
+      allowedRoles: ['SUPER_ADMIN']
     }
   ];
 
@@ -109,8 +123,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           const Icon = item.icon;
           const active =
             item.href === '/admin'
-              ? pathname === '/admin'
-              : pathname === item.href || (item.href === '/admin/scanner' && pathname === '/admin/checkin');
+              ? pathname === '/admin' || pathname === '/admin/dashboard'
+              : pathname === item.href ||
+                (item.href === '/admin/guests' && pathname === '/admin/peserta') ||
+                (item.href === '/admin/placement' && pathname === '/admin/kursi') ||
+                (item.href === '/admin/monitoring' && pathname === '/admin/laporan');
 
           const isAllowed = !effectiveRole || item.allowedRoles.includes(effectiveRole);
           if (!isAllowed) return null;

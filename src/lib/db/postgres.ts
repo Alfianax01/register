@@ -82,12 +82,16 @@ class PostgresAdapter {
               token_hash VARCHAR(100),
               status_kehadiran VARCHAR(20) DEFAULT 'BELUM_HADIR',
               waktu_kehadiran_pertama VARCHAR(50),
+              kategori_instansi VARCHAR(50),
+              warna_kursi VARCHAR(20),
               created_at VARCHAR(50),
               updated_at VARCHAR(50)
             );
 
             -- Auto-migration column for existing databases
             ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS email_sent BOOLEAN DEFAULT FALSE;
+            ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS kategori_instansi VARCHAR(50);
+            ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS warna_kursi VARCHAR(20);
 
             CREATE TABLE IF NOT EXISTS tni_checkin_logs (
               id VARCHAR(100) PRIMARY KEY,
@@ -166,6 +170,9 @@ class PostgresAdapter {
       token_hash: r.token_hash,
       status_kehadiran: r.status_kehadiran,
       waktu_kehadiran_pertama: r.waktu_kehadiran_pertama,
+      kategori_instansi: r.kategori_instansi,
+      warna_kursi: r.warna_kursi,
+      seatColorAlias: r.warna_kursi,
       created_at: r.created_at,
       updated_at: r.updated_at
     };
@@ -189,13 +196,15 @@ class PostgresAdapter {
             no_hp, email, email_sent, butuh_akomodasi, tgl_checkin, tgl_checkout,
             catatan_khusus, seat_group_id, seat_number, room_id, room_slot,
             qr_token, token_hash,
-            status_kehadiran, waktu_kehadiran_pertama, created_at, updated_at
+            status_kehadiran, waktu_kehadiran_pertama,
+            kategori_instansi, warna_kursi,
+            created_at, updated_at
           ) VALUES (
             $1, $2, $3, $4, $5, $6, $7,
             $8, $9, $10, $11, $12, $13, $14,
             $15, $16, $17, $18, $19, $20, $21,
             $22, $23, $24, $25, $26, $27,
-            $28, $29, $30, $31
+            $28, $29, $30, $31, $32, $33
           )
           ON CONFLICT (id) DO UPDATE SET
             nama = EXCLUDED.nama,
@@ -214,6 +223,8 @@ class PostgresAdapter {
             room_slot = EXCLUDED.room_slot,
             status_kehadiran = EXCLUDED.status_kehadiran,
             waktu_kehadiran_pertama = EXCLUDED.waktu_kehadiran_pertama,
+            kategori_instansi = EXCLUDED.kategori_instansi,
+            warna_kursi = EXCLUDED.warna_kursi,
             updated_at = EXCLUDED.updated_at;
         `;
         await client.query(query, [
@@ -246,6 +257,8 @@ class PostgresAdapter {
           guest.token_hash || null,
           guest.status_kehadiran || 'BELUM_HADIR',
           guest.waktu_kehadiran_pertama || null,
+          guest.kategori_instansi || null,
+          guest.warna_kursi || guest.seatColorAlias || null,
           guest.created_at,
           guest.updated_at
         ]);
@@ -309,7 +322,10 @@ class PostgresAdapter {
         email: 'email',
         nrp: 'nrp',
         matra: 'matra',
-        catatan_khusus: 'catatan_khusus'
+        catatan_khusus: 'catatan_khusus',
+        kategori_instansi: 'kategori_instansi',
+        warna_kursi: 'warna_kursi',
+        seatColorAlias: 'warna_kursi'
       };
 
       for (const [key, val] of Object.entries(updates)) {

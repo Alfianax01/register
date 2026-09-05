@@ -41,6 +41,9 @@ export interface Guest {
   waktu_kehadiran_pertama?: string;
   token?: string;
   emailSent?: boolean;
+  kategori_instansi?: 'ANGKATAN_DARAT' | 'ANGKATAN_LAUT' | 'ANGKATAN_UDARA' | 'KEMENTERIAN';
+  warna_kursi?: 'green' | 'blue' | 'gray' | 'white';
+  seatColorAlias?: string;
   created_at: string;
   updated_at: string;
 }
@@ -63,10 +66,15 @@ export interface Seat {
   row_num: number;
   col_num: number;
   guest_id?: string;
+  peserta_id?: string | null;
   guest_name?: string;
   guest_rank?: string;
   guest_matra?: MatraType;
+  kategori_instansi?: string;
+  warna?: string;
+  colorAlias?: string | null;
   guest_status?: 'BELUM_HADIR' | 'HADIR';
+  status?: 'KOSONG' | 'ASSIGNED' | 'HADIR';
   is_reserved: number;
 }
 
