@@ -1,9 +1,8 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
 
 interface AppLayoutWrapperProps {
   children: React.ReactNode;
@@ -27,7 +26,6 @@ export const AppLayoutWrapper: React.FC<AppLayoutWrapperProps> = ({ children }) 
       <main className="flex-1 w-full">
         {children}
       </main>
-      <Footer />
     </div>
   );
 };
