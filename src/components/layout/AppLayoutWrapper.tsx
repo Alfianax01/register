@@ -3,6 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 
 interface AppLayoutWrapperProps {
   children: React.ReactNode;
@@ -23,9 +24,10 @@ export const AppLayoutWrapper: React.FC<AppLayoutWrapperProps> = ({ children }) 
   return (
     <div className="w-full min-h-screen flex flex-col bg-[#f8fafc]">
       <Navbar />
-      <main className="flex-1 w-full">
+      <main className="flex-1 flex flex-col w-full">
         {children}
       </main>
+      <Footer />
     </div>
   );
 };
