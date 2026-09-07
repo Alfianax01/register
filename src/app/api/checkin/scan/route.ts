@@ -72,9 +72,27 @@ export async function POST(req: NextRequest) {
     // Record checkin & update status to CHECK_IN
     const result = db.recordCheckin(guest.id, checkpoint, adminUser, ip);
 
-    // Trigger auto-assignment of seat and wisma room
-    const assignResult = AssignmentService.assignGuestOnCheckin(guest.id);
-    const assignment = assignResult.assignment || db.findAssignmentByGuestId(guest.id);
+    // Check-in is STRICTLY presence verification (Seat & Wisma were assigned at registration)
+    let assignment = db.findAssignmentByGuestId(guest.id);
+    if (!assignment && guest.seat_number) {
+      assignment = {
+        id: `assign_${guest.id}`,
+        peserta_id: guest.id,
+        seat_code: guest.seat_number,
+        seat_area: guest.room || 'Ruang Sidang Utama',
+        gedung: guest.building || 'Gedung Ahmad Yani',
+        building: guest.building || 'Gedung Ahmad Yani',
+        room: guest.room || 'Ruang Sidang Utama',
+        seat_row: guest.seat_block || guest.seat_number.split('-')[0] || 'A',
+        seat_num: guest.seat_number.split('-')[1] || '01',
+        wisma_name: guest.wisma_name || 'Tidak Menginap',
+        room_code: guest.room_number || '-',
+        room_number: guest.room_number || '-',
+        bed_number: guest.bed_number || 0,
+        room_floor: guest.wisma_name === 'Tidak Menginap' ? 'Tidak Menginap' : 'Lantai 1',
+        assigned_at: guest.created_at || new Date().toISOString()
+      };
+    }
 
     // Sync to MySQL if configured
     if (mysqlAdapter.isConfigured()) {

@@ -40,11 +40,12 @@ export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplat
   const ticketId = guest.ticket_id || (guest.id ? `TCK-${guest.id.slice(-6).toUpperCase()}` : 'TCK-2026');
 
   // Status nomor kursi & akomodasi wisma (SELALU TAMPIL SEJAK REGISTRASI)
-  const seatCode = guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-07';
-  const seatDisplay = `KURSI ${seatCode}`;
-  const wismaDisplay = guest.assignment?.wisma_name === 'Tidak Menginap' || guest.wisma_assignment === 'Tidak Menginap' || (!guest.butuh_akomodasi && !guest.assignment?.wisma_name)
-    ? 'Tidak Menginap'
-    : (guest.wisma_assignment || (guest.assignment ? `${guest.assignment.wisma_name} - ${guest.assignment.room_code}` : 'Wisma Soedirman - 103A'));
+  const seatCode = guest.assignment?.seat_code || guest.seat_number || guest.seat_assignment || 'A-01';
+  const gedungDisplay = guest.assignment?.gedung || guest.assignment?.building || guest.building || 'Gedung Ahmad Yani';
+  const ruanganDisplay = guest.assignment?.seat_area || guest.assignment?.room || guest.room || 'Ruang Sidang Utama';
+  const isTidakMenginap = guest.assignment?.wisma_name === 'Tidak Menginap' || guest.wisma_assignment === 'Tidak Menginap' || (!guest.butuh_akomodasi && !guest.assignment?.wisma_name && !guest.wisma_name);
+  const wismaDisplay = isTidakMenginap ? 'Tidak Menginap' : (guest.assignment?.wisma_name || guest.wisma_name || 'Wisma Kartika');
+  const kamarDisplay = isTidakMenginap ? '-' : (guest.assignment?.room_code || guest.room_number || '101A');
 
   // Waktu registrasi
   let regTime = '4 September 2026, 08.00 WIB';
@@ -172,32 +173,78 @@ export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplat
             </td>
           </tr>
 
-          <!-- Seating & Wisma Status Grid -->
+          <!-- Seating & Wisma Status Grid (Terisi Resmi Sejak Registrasi) -->
           <tr>
             <td style="padding: 18px 24px; background-color: #ffffff; border-bottom: 1px solid #e2e8f0;">
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <!-- Nomor Kursi -->
-                  <td width="48%" style="padding: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; vertical-align: top;">
-                    <span style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
-                      Nomor Kursi
-                    </span>
-                    <div style="font-size: 14px; font-weight: 700; color: ${guest.seat_number ? '#1e40af' : '#64748b'}; font-family: ${guest.seat_number ? 'monospace' : 'inherit'};">
-                      ${seatDisplay}
-                    </div>
-                  </td>
-                  <td width="4%">&nbsp;</td>
-                  <!-- Akomodasi Wisma -->
-                  <td width="48%" style="padding: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; vertical-align: top;">
-                    <span style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
-                      Akomodasi Wisma
-                    </span>
-                    <div style="font-size: 13px; font-weight: 600; color: ${guest.butuh_akomodasi ? '#b45309' : '#334155'};">
-                      ${wismaDisplay}
-                    </div>
-                  </td>
-                </tr>
-              </table>
+              <!-- Penempatan Tempat Duduk -->
+              <div style="margin-bottom: 12px;">
+                <span style="font-size: 10px; font-weight: 700; color: #1e40af; text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">
+                  PENEMPATAN TEMPAT DUDUK (TERDAFTAR)
+                </span>
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <!-- Nomor Kursi -->
+                    <td width="32%" style="padding: 10px; background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; text-align: center; vertical-align: top;">
+                      <span style="font-size: 9px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px;">
+                        Nomor Kursi
+                      </span>
+                      <strong style="font-size: 15px; font-family: monospace; color: #1e3a8a; display: block;">
+                        ${seatCode}
+                      </strong>
+                    </td>
+                    <td width="2%">&nbsp;</td>
+                    <!-- Gedung -->
+                    <td width="32%" style="padding: 10px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-align: center; vertical-align: top;">
+                      <span style="font-size: 9px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px;">
+                        Gedung
+                      </span>
+                      <strong style="font-size: 11px; color: #0f172a; display: block;">
+                        ${gedungDisplay}
+                      </strong>
+                    </td>
+                    <td width="2%">&nbsp;</td>
+                    <!-- Ruangan -->
+                    <td width="32%" style="padding: 10px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-align: center; vertical-align: top;">
+                      <span style="font-size: 9px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px;">
+                        Ruangan
+                      </span>
+                      <strong style="font-size: 11px; color: #0f172a; display: block;">
+                        ${ruanganDisplay}
+                      </strong>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Akomodasi Penginapan -->
+              <div>
+                <span style="font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 6px;">
+                  AKOMODASI & PENGINAPAN
+                </span>
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <!-- Wisma -->
+                    <td width="58%" style="padding: 10px 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; vertical-align: middle;">
+                      <span style="font-size: 9px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 2px;">
+                        Wisma / Mess
+                      </span>
+                      <strong style="font-size: 12px; color: #0f172a; display: block;">
+                        ${wismaDisplay}
+                      </strong>
+                    </td>
+                    <td width="4%">&nbsp;</td>
+                    <!-- Kamar -->
+                    <td width="38%" style="padding: 10px 12px; background-color: #eef2ff; border: 1px solid #c7d2fe; border-radius: 6px; text-align: center; vertical-align: middle;">
+                      <span style="font-size: 9px; font-weight: 700; color: #4338ca; text-transform: uppercase; display: block; margin-bottom: 2px;">
+                        Nomor Kamar
+                      </span>
+                      <strong style="font-size: 13px; font-family: monospace; color: #312e81; display: block;">
+                        ${kamarDisplay}
+                      </strong>
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </td>
           </tr>
 

@@ -36,7 +36,29 @@ export async function GET(req: NextRequest) {
       guests = guests.filter(g => g.seat_group_id === group);
     }
 
-    return NextResponse.json({ success: true, guests }, {
+    const sanitizedGuests = guests.map(g => {
+      const assignment = g.assignment || db.findAssignmentByGuestId(g.id);
+      const seatBlock = g.seat_block || (g.seat_number ? g.seat_number.split('-')[0] : 'A');
+      const building = g.building || assignment?.gedung || assignment?.building || 'Gedung Ahmad Yani';
+      const room = g.room || assignment?.seat_area || assignment?.room || (seatBlock === 'A' ? 'Area VVIP' : 'Ruang Sidang Utama');
+      const isTidakMenginap = g.butuh_akomodasi === 0 || g.wisma_name === 'Tidak Menginap';
+      const wisma_name = isTidakMenginap ? 'Tidak Menginap' : (g.wisma_name || assignment?.wisma_name || 'Wisma Kartika');
+      const room_number = isTidakMenginap ? '-' : (g.room_number || assignment?.room_code || '101A');
+      const bed_number = isTidakMenginap ? 0 : (g.bed_number || assignment?.bed_number || 1);
+
+      return {
+        ...g,
+        seat_block: seatBlock,
+        building,
+        room,
+        wisma_name,
+        room_number,
+        bed_number,
+        assignment: assignment || g.assignment
+      };
+    });
+
+    return NextResponse.json({ success: true, guests: sanitizedGuests }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
       }

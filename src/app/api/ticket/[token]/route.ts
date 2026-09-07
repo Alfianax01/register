@@ -108,6 +108,12 @@ export async function GET(
         created_at: guest.created_at,
         seat_number: assignmentData.seat_code,
         seat_assignment: assignmentData.seat_code,
+        seat_block: guest.seat_block || assignmentData.seat_row,
+        building: assignmentData.gedung || assignmentData.building || 'Gedung Ahmad Yani',
+        room: assignmentData.seat_area || assignmentData.room || 'Ruang Sidang Utama',
+        wisma_name: assignmentData.wisma_name,
+        room_number: assignmentData.room_code,
+        bed_number: assignmentData.bed_number,
         wisma_assignment: assignmentData.wisma_name === 'Tidak Menginap'
           ? 'Tidak Menginap'
           : `${assignmentData.wisma_name} - ${assignmentData.room_code}`,

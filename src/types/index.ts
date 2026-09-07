@@ -36,9 +36,14 @@ export interface Guest {
   seat_group_id?: string;
   seat_number?: string;
   seat_assignment?: string;
+  seat_block?: 'A' | 'B' | 'C' | 'D' | 'E';
+  building?: string;
+  room?: string;
+  wisma_name?: string;
   room_id?: string;
   room_number?: string;
   room_slot?: 'A' | 'B';
+  bed_number?: number;
   wisma_assignment?: string;
   status_kehadiran: 'REGISTRASI' | 'CHECK_IN';
   waktu_kehadiran_pertama?: string;
@@ -57,12 +62,16 @@ export interface Assignment {
   peserta_id: string;
   seat_code: string;      // contoh: "A-06"
   seat_area: string;      // contoh: "Area VVIP"
-  gedung?: string;        // contoh: "Ahmad Yani"
+  gedung?: string;        // contoh: "Gedung Ahmad Yani"
+  building?: string;      // alias contoh: "Gedung Ahmad Yani"
+  room?: string;          // contoh: "Area VVIP" / "Ruang Sidang Utama"
   seat_row?: string;      // contoh: "A"
   seat_num?: string;      // contoh: "06"
-  wisma_name: string;     // contoh: "Wisma Sudirman"
-  room_code: string;      // contoh: "203"
-  room_floor: string;     // contoh: "Lantai 2"
+  wisma_name: string;     // contoh: "Wisma Kartika" / "Wisma Soedirman"
+  room_code: string;      // contoh: "103A"
+  room_number?: string;   // alias contoh: "103A"
+  bed_number?: number;    // 1 atau 2
+  room_floor: string;     // contoh: "Lantai 1"
   assigned_at: string;
 }
 

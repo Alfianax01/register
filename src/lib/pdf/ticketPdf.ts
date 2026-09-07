@@ -246,7 +246,7 @@ export async function generateTicketPdf(data: TicketPdfData): Promise<Buffer> {
     doc.font('Helvetica')
        .fontSize(8.5)
        .fillColor('#64748B')
-       .text('Tunjukkan QR Code ini kepada petugas gate untuk verifikasi dan alokasi kursi', cardX + 20, currentY, {
+       .text('Tunjukkan QR Code ini kepada petugas gate untuk verifikasi kehadiran presensi resmi', cardX + 20, currentY, {
          align: 'center',
          width: cardWidth - 40
        });

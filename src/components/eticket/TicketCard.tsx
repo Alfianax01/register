@@ -181,7 +181,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               </span>
               <span className={`text-xs font-semibold ${isCheckIn ? 'text-slate-900' : 'text-slate-500'}`}>
                 {isCheckIn
-                  ? `${checkinDetails?.gate || 'Gate 1 Pintu Utama'} • ${checkinDetails?.waktu || 'Telah Hadir'}`
+                  ? `${checkinDetails?.gate || 'Gate 1 Pintu Utama'} • ${checkinDetails?.waktu || 'Telah Hadir'}${checkinDetails?.petugas ? ` • ${checkinDetails.petugas}` : ''}`
                   : 'Belum Check-In • Tunjukkan QR saat tiba di lokasi'}
               </span>
             </div>
@@ -213,7 +213,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               Nomor Kursi
             </span>
             <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
-              {seat || 'A-07'}
+              {seat || 'A-01'}
             </span>
             <span className="text-[10px] text-blue-700/80 font-medium block pt-0.5">
               Sidang Pleno

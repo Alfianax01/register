@@ -12,69 +12,253 @@ export interface AssignmentResult {
 
 export class AssignmentService {
   /**
-   * Determine target seat group code based on military/civilian rank level (1-12)
-   * Jenderal TNI -> A-01, Letjen -> A-02, Mayjen -> B-01, Kolonel -> D-01
+   * Determine seat block according to TNI Rapim 2026 rules:
+   * VIP -> A
+   * TNI AD -> B
+   * TNI AL -> C
+   * TNI AU -> D
+   * Sipil / Non-TNI / Kementerian -> E
    */
-  public static getTargetSeatGroup(pangkatLevel: number = 10, matra?: string): string {
-    if (pangkatLevel === 1) return 'A'; // VVIP Jenderal TNI / Tamu Negara
-    if (pangkatLevel === 2) return 'A'; // Letjen / Laksdya / Marsdya (Baris Depan Utama A)
-    if (pangkatLevel === 3) return 'B'; // Mayjen / Laksda / Marsda (Baris B)
-    if (pangkatLevel === 4) return 'C'; // Brigjen / Laksma / Marsma (Baris C)
-    if (pangkatLevel === 5) return 'D'; // Pamen Kolonel (Baris D)
-    if (pangkatLevel <= 7) return 'E'; // Pamen Letkol & Mayor (Baris E)
-    return 'F';                        // Pama, Tamtama & Delegasi / Sipil (Baris F)
+  public static determineSeatBlock(guest: Partial<Guest>): 'A' | 'B' | 'C' | 'D' | 'E' {
+    const pLevel = guest.pangkat_level ?? 10;
+    const pangkatStr = (guest.pangkat || '').toLowerCase();
+    const jabatanStr = (guest.jabatan || '').toLowerCase();
+    const matraStr = (guest.matra || '').toUpperCase();
+
+    // 1. VIP -> Blok A
+    // - Pangkat level 1-2 (Jenderal TNI, Laksamana, Marsekal, Letjen, Laksdya, Marsdya)
+    // - Atau jabatan VVIP/VIP/Panglima/KASAD/KASAL/KASAU/Menteri/Wamen
+    // - Atau matra VIP
+    const isVip =
+      pLevel <= 2 ||
+      pangkatStr.includes('jenderal') ||
+      pangkatStr.includes('laksamana') ||
+      pangkatStr.includes('marsekal') ||
+      jabatanStr.includes('panglima') ||
+      jabatanStr.includes('kasad') ||
+      jabatanStr.includes('kasal') ||
+      jabatanStr.includes('kasau') ||
+      jabatanStr.includes('menteri') ||
+      jabatanStr.includes('vvip') ||
+      matraStr === 'VIP';
+
+    if (isVip) return 'A';
+
+    // 2. TNI AD -> Blok B
+    if (matraStr === 'AD' || matraStr === 'TNI_AD' || matraStr === 'ANGKATAN_DARAT') {
+      return 'B';
+    }
+
+    // 3. TNI AL -> Blok C
+    if (matraStr === 'AL' || matraStr === 'TNI_AL' || matraStr === 'ANGKATAN_LAUT') {
+      return 'C';
+    }
+
+    // 4. TNI AU -> Blok D
+    if (matraStr === 'AU' || matraStr === 'TNI_AU' || matraStr === 'ANGKATAN_UDARA') {
+      return 'D';
+    }
+
+    // 5. Sipil / Non-TNI / Kementerian / Mabes non-VIP -> Blok E
+    return 'E';
   }
 
   /**
-   * Get seat area label based on rank level
+   * Get seat area / room description based on seat block
+   * Blok A (VIP) -> Area VVIP
+   * Blok B-E -> Ruang Sidang Utama
    */
-  public static getSeatAreaLabel(pangkatLevel: number = 10): string {
-    if (pangkatLevel === 1) return 'Area VVIP';
-    if (pangkatLevel <= 3) return 'Area VIP';
-    if (pangkatLevel === 4) return 'Area VIP Utama';
-    if (pangkatLevel === 5) return 'Area Pamen Kolonel';
-    if (pangkatLevel <= 7) return 'Area Pamen';
-    return 'Area Delegasi';
+  public static getSeatRoom(seatBlock: 'A' | 'B' | 'C' | 'D' | 'E'): string {
+    if (seatBlock === 'A') return 'Area VVIP';
+    return 'Ruang Sidang Utama';
   }
 
   /**
-   * Determine target wisma name, room code, and floor based on rank level
-   * VVIP/Pati: Wisma Sudirman Kamar 203
-   * Pamen: Wisma Kartika Kamar B-101
-   * Delegasi: Wisma Garuda / Bahari
+   * Standardize Wisma Display Name
    */
-  public static getTargetAccommodation(pangkatLevel: number = 10, guestIndex: number = 1): {
-    wismaName: string;
-    roomCode: string;
-    roomFloor: string;
+  public static cleanWismaName(rawName: string): string {
+    if (!rawName || rawName === 'Tidak Menginap') return 'Tidak Menginap';
+    if (rawName.includes('Kartika')) return 'Wisma Kartika';
+    if (rawName.includes('Soedirman') || rawName.includes('Sudirman')) return 'Wisma Soedirman';
+    if (rawName.includes('Gatot') || rawName.includes('Subroto') || rawName.includes('Mess')) return 'Wisma Gatot Subroto';
+    return rawName.replace(/\s*\(.*?\)\s*/g, '').trim();
+  }
+
+  /**
+   * Allocate Seat automatically on Registration:
+   * Finds next available seat in the target block (A, B, C, D, or E)
+   * Numbers sequentially: A-01, A-02, ... B-01, B-02, ...
+   */
+  public static allocateSeat(guest: Partial<Guest>): {
+    seatNumber: string;
+    seatBlock: 'A' | 'B' | 'C' | 'D' | 'E';
+    building: string;
+    room: string;
+    seatGroupId?: string;
   } {
-    const padNum = String((guestIndex % 20) + 101);
-    if (pangkatLevel <= 4) {
+    const seatBlock = this.determineSeatBlock(guest);
+    const building = 'Gedung Ahmad Yani';
+    const room = this.getSeatRoom(seatBlock);
+
+    // If guest already has a valid seat in the matching block, retain it
+    if (guest.seat_number && guest.seat_number.startsWith(`${seatBlock}-`)) {
       return {
-        wismaName: 'Wisma Sudirman',
-        roomCode: '203',
-        roomFloor: 'Lantai 2'
-      };
-    } else if (pangkatLevel <= 7) {
-      return {
-        wismaName: 'Wisma Kartika',
-        roomCode: 'B-101',
-        roomFloor: 'Lantai 1'
-      };
-    } else {
-      return {
-        wismaName: 'Wisma Garuda',
-        roomCode: padNum,
-        roomFloor: 'Lantai 1'
+        seatNumber: guest.seat_number,
+        seatBlock,
+        building,
+        room,
+        seatGroupId: guest.seat_group_id
       };
     }
+
+    const seats = db.getSeats();
+
+    // Look for first unoccupied, unreserved seat in the target block
+    const availableSeat = seats.find(
+      s => (s.group_code === seatBlock || s.seat_number.startsWith(`${seatBlock}-`)) &&
+           !s.guest_id &&
+           !s.peserta_id &&
+           !s.is_reserved &&
+           s.status !== 'ASSIGNED' &&
+           s.status !== 'CHECK_IN'
+    );
+
+    if (availableSeat) {
+      return {
+        seatNumber: availableSeat.seat_number,
+        seatBlock,
+        building,
+        room,
+        seatGroupId: availableSeat.group_id
+      };
+    }
+
+    // If all existing configured seats are occupied, generate next sequential number
+    const blockSeats = seats.filter(s => s.seat_number.startsWith(`${seatBlock}-`));
+    let maxNum = 0;
+    for (const s of blockSeats) {
+      const parts = s.seat_number.split('-');
+      const n = parseInt(parts[1], 10);
+      if (!isNaN(n) && n > maxNum) maxNum = n;
+    }
+
+    // Also check guests already in DB for that block
+    const guests = db.getGuests();
+    for (const g of guests) {
+      if (g.seat_number && g.seat_number.startsWith(`${seatBlock}-`)) {
+        const parts = g.seat_number.split('-');
+        const n = parseInt(parts[1], 10);
+        if (!isNaN(n) && n > maxNum) maxNum = n;
+      }
+    }
+
+    const nextNum = maxNum + 1;
+    const seatNumber = `${seatBlock}-${String(nextNum).padStart(2, '0')}`;
+
+    return {
+      seatNumber,
+      seatBlock,
+      building,
+      room,
+      seatGroupId: `grp_${seatBlock.toLowerCase()}`
+    };
+  }
+
+  /**
+   * Allocate Accommodation automatically on Registration:
+   * If butuh_akomodasi: assigns empty room in Wisma Kartika, Wisma Soedirman, or Wisma Gatot Subroto
+   * Generates room_number like '101A', '101B', '102A'
+   * If not: 'Tidak Menginap'
+   */
+  public static allocateAccommodation(guest: Partial<Guest>, wantsAccommodation: boolean): {
+    wismaName: string;
+    roomNumber: string;
+    bedNumber: number;
+    roomId?: string;
+    roomSlot?: 'A' | 'B';
+    roomFloor: string;
+    wismaAssignment: string;
+  } {
+    if (!wantsAccommodation) {
+      return {
+        wismaName: 'Tidak Menginap',
+        roomNumber: '-',
+        bedNumber: 0,
+        roomFloor: 'Tidak Menginap',
+        wismaAssignment: 'Tidak Menginap'
+      };
+    }
+
+    const rooms = db.getAccommodations();
+    const pLevel = guest.pangkat_level ?? 10;
+
+    // Prioritize wisma:
+    // VIP (pLevel <= 2) -> Wisma Soedirman
+    // Pamen / General -> Wisma Kartika, then Wisma Soedirman, then Wisma Gatot Subroto
+    const wismaPreferences = pLevel <= 2
+      ? ['Soedirman', 'Kartika', 'Gatot', 'Mess']
+      : ['Kartika', 'Soedirman', 'Gatot', 'Mess'];
+
+    let chosenRoom: AccommodationRoom | undefined;
+    let chosenSlot: 'A' | 'B' = 'A';
+
+    for (const pref of wismaPreferences) {
+      const match = rooms.find(
+        r => r.wisma_name.includes(pref) && (!r.slot_a_guest_id || (r.capacity >= 2 && !r.slot_b_guest_id))
+      );
+      if (match) {
+        chosenRoom = match;
+        chosenSlot = !match.slot_a_guest_id ? 'A' : 'B';
+        break;
+      }
+    }
+
+    // Fallback: any room with vacancy
+    if (!chosenRoom) {
+      chosenRoom = rooms.find(
+        r => !r.slot_a_guest_id || (r.capacity >= 2 && !r.slot_b_guest_id)
+      );
+      if (chosenRoom) {
+        chosenSlot = !chosenRoom.slot_a_guest_id ? 'A' : 'B';
+      }
+    }
+
+    if (chosenRoom) {
+      const cleanWisma = this.cleanWismaName(chosenRoom.wisma_name);
+      const roomNumber = `${chosenRoom.room_number}${chosenSlot}`;
+      const bedNumber = chosenSlot === 'A' ? 1 : 2;
+      const roomFloor = `Lantai ${chosenRoom.floor}`;
+
+      return {
+        wismaName: cleanWisma,
+        roomNumber,
+        bedNumber,
+        roomId: chosenRoom.id,
+        roomSlot: chosenSlot,
+        roomFloor,
+        wismaAssignment: `${cleanWisma} - Kamar ${roomNumber} (${roomFloor})`
+      };
+    }
+
+    // If all pre-seeded rooms are filled, generate a new room number in Wisma Kartika
+    const defaultWisma = pLevel <= 2 ? 'Wisma Soedirman' : 'Wisma Kartika';
+    const randRoomNum = String(100 + (Math.floor(Math.random() * 20) + 1));
+    const roomNumber = `${randRoomNum}A`;
+
+    return {
+      wismaName: defaultWisma,
+      roomNumber,
+      bedNumber: 1,
+      roomSlot: 'A',
+      roomFloor: 'Lantai 1',
+      wismaAssignment: `${defaultWisma} - Kamar ${roomNumber} (Lantai 1)`
+    };
   }
 
   /**
    * Automatically allocates seat, wisma, and room immediately when guest registers.
-   * - Seats: chosen from seats table based on rank hierarchy (A = VVIP, B = Mayjen, C = Brigjen, D = Kolonel, E = Pamen, F = Delegasi).
-   * - Wisma & Kamar: if butuhAkomodasi is true, assign empty room according to rank; if false, assign 'Tidak Menginap'.
-   * - Persists into assignments collection and updates guest.
+   * Persists into assignments collection and updates guest record in database.
+   * Status remains 'REGISTRASI', NEVER 'CHECK_IN'.
    */
   public static assignGuestOnRegistration(guestId: string, butuhAkomodasi: boolean = false): AssignmentResult {
     const guest = db.findGuestById(guestId);
@@ -84,7 +268,7 @@ export class AssignmentService {
 
     // Check if already assigned
     const existingAssignment = db.findAssignmentByGuestId(guestId);
-    if (existingAssignment) {
+    if (existingAssignment && guest.seat_number && guest.wisma_name) {
       guest.assignment = existingAssignment;
       return {
         success: true,
@@ -97,128 +281,88 @@ export class AssignmentService {
       };
     }
 
-    const seats = db.getSeats();
-    const rooms = db.getAccommodations();
-    const pLevel = guest.pangkat_level || 5;
+    const wantsAccommodation = Boolean(butuhAkomodasi || guest.butuh_akomodasi === 1);
 
     // 1. ALLOCATE SEAT
-    let seatNumber = guest.seat_number || guest.seat_assignment;
-    const seatArea = this.getSeatAreaLabel(pLevel);
+    const seatAlloc = this.allocateSeat(guest);
 
-    if (!seatNumber) {
-      const targetGroup = this.getTargetSeatGroup(pLevel, guest.matra);
-      
-      // Look for first unoccupied, unreserved seat in target group
-      let availableSeat = seats.find(s => s.group_code === targetGroup && !s.guest_id && !s.peserta_id && !s.is_reserved && s.status !== 'ASSIGNED' && s.status !== 'CHECK_IN');
-      
-      // Fallback: any available seat
-      if (!availableSeat) {
-        availableSeat = seats.find(s => !s.guest_id && !s.peserta_id && !s.is_reserved && s.status !== 'ASSIGNED' && s.status !== 'CHECK_IN');
-      }
-
-      if (availableSeat) {
-        db.assignSeat(availableSeat.seat_number, guest.id);
-        seatNumber = availableSeat.seat_number;
-        guest.seat_number = seatNumber;
-        guest.seat_assignment = seatNumber;
-        guest.seat_group_id = availableSeat.group_id;
-
-        availableSeat.guest_status = 'REGISTRASI';
-        availableSeat.status = 'ASSIGNED';
-        availableSeat.peserta_id = guest.id;
-        availableSeat.guest_id = guest.id;
-        availableSeat.guest_name = guest.nama;
-        availableSeat.guest_rank = guest.pangkat;
-        availableSeat.guest_matra = guest.matra;
-      } else {
-        // Generative seat number if all existing seats filled
-        const prefix = targetGroup;
-        const count = seats.filter(s => s.seat_number.startsWith(prefix)).length;
-        seatNumber = `${prefix}-${String(count + 1).padStart(2, '0')}`;
-        guest.seat_number = seatNumber;
-        guest.seat_assignment = seatNumber;
-      }
+    // Mark seat in DB table
+    db.assignSeat(seatAlloc.seatNumber, guest.id);
+    const seats = db.getSeats();
+    const seatObj = seats.find(s => s.seat_number === seatAlloc.seatNumber);
+    if (seatObj) {
+      seatObj.guest_status = guest.status_kehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'REGISTRASI';
+      seatObj.status = guest.status_kehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'ASSIGNED';
+      seatObj.peserta_id = guest.id;
+      seatObj.guest_id = guest.id;
+      seatObj.guest_name = guest.nama;
+      seatObj.guest_rank = guest.pangkat;
+      seatObj.guest_matra = guest.matra;
     }
 
-    // 2. ALLOCATE WISMA & ROOM
-    let wismaName = 'Tidak Menginap';
-    let roomCode = '-';
-    let roomFloor = 'Tidak Menginap';
-
-    if (butuhAkomodasi) {
-      const defaultAccom = this.getTargetAccommodation(pLevel, Math.floor(Math.random() * 50) + 1);
-      wismaName = defaultAccom.wismaName;
-      roomCode = defaultAccom.roomCode;
-      roomFloor = defaultAccom.roomFloor;
-
-      // Try finding empty room from accommodations in DB
-      let availableRoom = rooms.find(
-        r => (!r.slot_a_guest_id || (r.capacity === 2 && !r.slot_b_guest_id))
-      );
-
-      if (availableRoom) {
-        const slot: 'A' | 'B' = !availableRoom.slot_a_guest_id ? 'A' : 'B';
-        db.assignRoom(availableRoom.id, slot, guest.id);
-        wismaName = availableRoom.wisma_name;
-        roomCode = `${availableRoom.room_number}${slot}`; // e.g. 103A
-        roomFloor = `Lantai ${availableRoom.floor}`;
-        guest.room_id = availableRoom.id;
-        guest.room_slot = slot;
-      }
+    // 2. ALLOCATE ACCOMMODATION
+    const accomAlloc = this.allocateAccommodation(guest, wantsAccommodation);
+    if (accomAlloc.roomId && accomAlloc.roomSlot) {
+      db.assignRoom(accomAlloc.roomId, accomAlloc.roomSlot, guest.id);
     }
 
-    const wismaAssignment = wismaName === 'Tidak Menginap'
-      ? 'Tidak Menginap'
-      : `${wismaName} - Kamar ${roomCode} (${roomFloor})`;
-    guest.wisma_assignment = wismaAssignment;
-    guest.butuh_akomodasi = butuhAkomodasi ? 1 : 0;
-
-    // 3. CREATE PERSISTENT RECORD IN SEPARATE ASSIGNMENTS ENTITY
-    const seatParts = (seatNumber || 'A-01').split('-');
-    const seatRow = seatParts[0] || 'A';
+    // 3. CONSTRUCT PERSISTENT ASSIGNMENT
+    const seatParts = seatAlloc.seatNumber.split('-');
+    const seatRow = seatParts[0] || seatAlloc.seatBlock;
     const seatNum = seatParts[1] || '01';
 
     const assignment: Assignment = {
       id: `assign_${guest.id}`,
       peserta_id: guest.id,
-      seat_code: seatNumber || 'A-01',
-      seat_area: seatArea,
-      gedung: 'Gedung Ahmad Yani',
+      seat_code: seatAlloc.seatNumber,
+      seat_area: seatAlloc.room,
+      gedung: seatAlloc.building,
+      building: seatAlloc.building,
+      room: seatAlloc.room,
       seat_row: seatRow,
       seat_num: seatNum,
-      wisma_name: wismaName,
-      room_code: roomCode,
-      room_floor: roomFloor,
+      wisma_name: accomAlloc.wismaName,
+      room_code: accomAlloc.roomNumber,
+      room_number: accomAlloc.roomNumber,
+      bed_number: accomAlloc.bedNumber,
+      room_floor: accomAlloc.roomFloor,
       assigned_at: new Date().toISOString()
     };
 
     db.saveAssignment(assignment);
     guest.assignment = assignment;
 
-    // 4. PERSIST GUEST UPDATE
-    db.updateGuest(guest.id, {
-      seat_number: seatNumber,
-      seat_assignment: seatNumber,
-      seat_group_id: guest.seat_group_id,
-      room_id: guest.room_id,
-      room_slot: guest.room_slot,
-      wisma_assignment: wismaAssignment,
-      butuh_akomodasi: butuhAkomodasi ? 1 : 0,
+    // 4. PERSIST DIRECT FIELDS TO GUEST RECORD
+    const updatedGuest = db.updateGuest(guest.id, {
+      seat_number: seatAlloc.seatNumber,
+      seat_assignment: seatAlloc.seatNumber,
+      seat_block: seatAlloc.seatBlock,
+      building: seatAlloc.building,
+      room: seatAlloc.room,
+      seat_group_id: seatAlloc.seatGroupId || `grp_${seatAlloc.seatBlock.toLowerCase()}`,
+      wisma_name: accomAlloc.wismaName,
+      room_number: accomAlloc.roomNumber,
+      bed_number: accomAlloc.bedNumber,
+      room_id: accomAlloc.roomId,
+      room_slot: accomAlloc.roomSlot,
+      wisma_assignment: accomAlloc.wismaAssignment,
+      butuh_akomodasi: wantsAccommodation ? 1 : 0,
       assignment
     });
 
     return {
       success: true,
-      guest,
+      guest: updatedGuest || guest,
       assignment,
-      seatNumber,
-      wismaAssignment
+      seatNumber: seatAlloc.seatNumber,
+      wismaAssignment: accomAlloc.wismaAssignment
     };
   }
 
   /**
-   * Automatically verifies/assigns seat and wisma room when guest checks in.
-   * If already assigned during registration, preserves the assignment and updates check-in status.
+   * Check-in is strictly presence verification.
+   * This method NEVER regenerates or modifies seat or room assignments!
+   * It only marks the assigned seat as CHECK_IN in the seats collection.
    */
   public static assignGuestOnCheckin(guestId: string): AssignmentResult {
     const guest = db.findGuestById(guestId);
@@ -226,11 +370,17 @@ export class AssignmentService {
       return { success: false, message: 'Data peserta tidak ditemukan' };
     }
 
-    // 0. CHECK IF ALREADY ASSIGNED
-    const existingAssignment = db.findAssignmentByGuestId(guestId);
+    // Read existing assignment
+    let existingAssignment = db.findAssignmentByGuestId(guestId);
+
+    // If for some legacy reason guest had no assignment at registration, assign now as safety net
+    if (!existingAssignment || !guest.seat_number) {
+      const regAssign = this.assignGuestOnRegistration(guestId, Boolean(guest.butuh_akomodasi));
+      existingAssignment = regAssign.assignment;
+    }
+
+    // Mark seat as checked in
     if (existingAssignment) {
-      guest.assignment = existingAssignment;
-      // Mark seat as checked in
       const seats = db.getSeats();
       const seat = seats.find(s => s.seat_number === existingAssignment.seat_code);
       if (seat) {
@@ -239,47 +389,42 @@ export class AssignmentService {
         seat.guest_id = guest.id;
         seat.peserta_id = guest.id;
       }
-      return {
-        success: true,
-        guest,
-        assignment: existingAssignment,
-        seatNumber: existingAssignment.seat_code,
-        wismaAssignment: `${existingAssignment.wisma_name} - ${existingAssignment.room_code}`
-      };
     }
 
-    // Fallback if not assigned at registration
-    return this.assignGuestOnRegistration(guestId, Boolean(guest.butuh_akomodasi));
+    return {
+      success: true,
+      guest,
+      assignment: existingAssignment,
+      seatNumber: existingAssignment?.seat_code || guest.seat_number,
+      wismaAssignment: existingAssignment?.wisma_name === 'Tidak Menginap'
+        ? 'Tidak Menginap'
+        : `${existingAssignment?.wisma_name} - ${existingAssignment?.room_code}`
+    };
   }
 
   /**
-   * Backfill: ensures ALL existing guests in database have a seat and room assignment
+   * Backfill: ensures ALL existing guests in database have full seat and room assignments immediately
    */
   public static ensureAllGuestsAssigned(): { updatedCount: number } {
     const guests = db.getGuests();
     let count = 0;
     for (const g of guests) {
       const existing = db.findAssignmentByGuestId(g.id);
-      if (!existing || !g.seat_number || !g.seat_assignment) {
-        this.assignGuestOnRegistration(g.id, g.butuh_akomodasi === 1 || Boolean(g.butuh_akomodasi));
+      const isMissingField =
+        !existing ||
+        !g.seat_number ||
+        !g.seat_block ||
+        !g.building ||
+        !g.room ||
+        !g.wisma_name ||
+        !g.room_number;
+
+      if (isMissingField) {
+        const wantsAccom = g.butuh_akomodasi === 1 || Boolean(g.butuh_akomodasi);
+        this.assignGuestOnRegistration(g.id, wantsAccom);
         count++;
       }
     }
     return { updatedCount: count };
-  }
-
-  /**
-   * Batch auto-assign for all checked-in participants who have missing seat or room
-   */
-  public static autoAssignAllCheckedIn(): { processedCount: number } {
-    const guests = db.getGuests().filter((g: Guest) => g.status_kehadiran === 'CHECK_IN');
-    let count = 0;
-    for (const g of guests) {
-      if (!g.seat_assignment || !g.wisma_assignment) {
-        this.assignGuestOnCheckin(g.id);
-        count++;
-      }
-    }
-    return { processedCount: count };
   }
 }

@@ -50,7 +50,7 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
       const currentStatus = currentGuest?.status_kehadiran;
 
       if (prevStatus === 'REGISTRASI' && currentStatus === 'CHECK_IN') {
-        showToast('✅ Check-in berhasil! Penempatan kursi dan wisma telah ditentukan.', {
+        showToast('✅ Check-in berhasil! Kehadiran Anda telah terverifikasi di gerbang masuk.', {
           type: 'success',
           duration: 6000
         });
@@ -174,11 +174,11 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
         guest={guest}
         qrCodeUrl={qrCodeUrl}
         status={isCheckIn ? 'CHECK_IN' : 'REGISTRASI'}
-        seat={guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-07'}
-        gedung={guest.assignment?.gedung || 'Gedung Ahmad Yani'}
-        ruangan={guest.assignment?.seat_area || 'Ruang Sidang Utama'}
-        wisma={guest.assignment?.wisma_name || (guest.butuh_akomodasi ? 'Wisma Soedirman' : 'Tidak Menginap')}
-        room={guest.assignment?.room_code || (guest.butuh_akomodasi ? '103A' : '-')}
+        seat={guest.seat_number || guest.seat_assignment || guest.assignment?.seat_code || 'A-01'}
+        gedung={guest.building || guest.assignment?.gedung || 'Gedung Ahmad Yani'}
+        ruangan={guest.room || guest.assignment?.seat_area || 'Ruang Sidang Utama'}
+        wisma={guest.wisma_name || guest.assignment?.wisma_name || (guest.butuh_akomodasi ? 'Wisma Kartika' : 'Tidak Menginap')}
+        room={guest.room_number || guest.assignment?.room_code || (guest.butuh_akomodasi ? '101A' : '-')}
         checkinDetails={(guest as any).checkin_details || checkinDetails}
       />
 

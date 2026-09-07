@@ -99,7 +99,7 @@ function generateDefaultRooms(): AccommodationRoom[] {
       const roomNum = `${f}0${r}`;
       rooms.push({
         id: `room_soedirman_${roomNum}`,
-        wisma_name: 'Wisma Soedirman (VVIP)',
+        wisma_name: 'Wisma Soedirman',
         floor: f,
         room_number: roomNum,
         capacity: f === 1 ? 1 : 2,
@@ -114,7 +114,7 @@ function generateDefaultRooms(): AccommodationRoom[] {
       const roomNum = `${f}0${r}`;
       rooms.push({
         id: `room_kartika_${roomNum}`,
-        wisma_name: 'Wisma Kartika (Pamen)',
+        wisma_name: 'Wisma Kartika',
         floor: f,
         room_number: roomNum,
         capacity: 2,
@@ -123,13 +123,13 @@ function generateDefaultRooms(): AccommodationRoom[] {
     }
   }
 
-  // Mess Perwira (Pama & Staf) - Lantai 1 s/d 3
+  // Wisma Gatot Subroto (Pama & Staf) - Lantai 1 s/d 3
   for (let f = 1; f <= 3; f++) {
     for (let r = 1; r <= 8; r++) {
       const roomNum = `${f}0${r}`;
       rooms.push({
-        id: `room_mess_${roomNum}`,
-        wisma_name: 'Mess Perwira Utama',
+        id: `room_gatot_${roomNum}`,
+        wisma_name: 'Wisma Gatot Subroto',
         floor: f,
         room_number: roomNum,
         capacity: 2,
@@ -1008,6 +1008,17 @@ class DatabaseManager {
     this.data!.guests.unshift(newGuest);
     this.persist();
 
+    // Auto-allocate seat, wisma and room immediately upon registration
+    try {
+      const wantsAccom = Boolean(newGuest.butuh_akomodasi === 1 || newGuest.butuh_akomodasi);
+      const alloc = AssignmentService.assignGuestOnRegistration(newGuest.id, wantsAccom);
+      if (alloc.success && alloc.guest) {
+        Object.assign(newGuest, alloc.guest);
+      }
+    } catch (allocErr) {
+      console.error('[Database] Auto-allocation on createGuest failed:', allocErr);
+    }
+
     // Persist to Postgres database if configured (async background)
     if (postgresAdapter.isAvailable()) {
       postgresAdapter.saveGuest(newGuest).catch(err => {
@@ -1061,6 +1072,17 @@ class DatabaseManager {
     // 1. Save locally to in-memory & atomic JSON file
     this.data!.guests.unshift(newGuest);
     this.persist();
+
+    // Auto-allocate seat, wisma and room immediately upon registration
+    try {
+      const wantsAccom = Boolean(newGuest.butuh_akomodasi === 1 || newGuest.butuh_akomodasi);
+      const alloc = AssignmentService.assignGuestOnRegistration(newGuest.id, wantsAccom);
+      if (alloc.success && alloc.guest) {
+        Object.assign(newGuest, alloc.guest);
+      }
+    } catch (allocErr) {
+      console.error('[Database] Auto-allocation on createGuestAsync failed:', allocErr);
+    }
 
     // 2. Persist to PostgreSQL if configured (with transactions & retries)
     if (postgresAdapter.isAvailable()) {
@@ -1589,18 +1611,13 @@ class DatabaseManager {
     }
     guest.updated_at = now;
 
-    // Auto-assignment of seat and wisma room upon check-in
-    try {
-      AssignmentService.assignGuestOnCheckin(guest.id);
-    } catch (assignErr) {
-      console.error('[AssignmentService] Auto-assignment error on checkin:', assignErr);
-    }
-
-    // Update seat presence
-    const seat = this.data!.seats.find(s => s.guest_id === guest.id);
-    if (seat) {
-      seat.guest_status = 'CHECK_IN';
-      seat.status = 'CHECK_IN';
+    // Update seat presence to CHECK_IN (Never modify or overwrite seat assignment)
+    const checkinSeat = this.data!.seats.find(s => s.guest_id === guest.id || s.peserta_id === guest.id || (guest.seat_number && s.seat_number === guest.seat_number));
+    if (checkinSeat) {
+      checkinSeat.guest_status = 'CHECK_IN';
+      checkinSeat.status = 'CHECK_IN';
+      checkinSeat.guest_id = guest.id;
+      checkinSeat.peserta_id = guest.id;
     }
 
     this.persist();

@@ -210,6 +210,12 @@ export async function POST(req: NextRequest) {
     if (assignResult.success && assignResult.guest) {
       newGuest.seat_number = assignResult.seatNumber;
       newGuest.seat_assignment = assignResult.seatNumber;
+      newGuest.seat_block = assignResult.guest.seat_block;
+      newGuest.building = assignResult.guest.building;
+      newGuest.room = assignResult.guest.room;
+      newGuest.wisma_name = assignResult.guest.wisma_name;
+      newGuest.room_number = assignResult.guest.room_number;
+      newGuest.bed_number = assignResult.guest.bed_number;
       newGuest.wisma_assignment = assignResult.wismaAssignment;
       newGuest.assignment = assignResult.assignment;
     }
@@ -343,6 +349,12 @@ export async function POST(req: NextRequest) {
       qr_token: newGuest.qr_token,
       seat_number: newGuest.seat_number,
       seat_assignment: newGuest.seat_assignment,
+      seat_block: newGuest.seat_block,
+      building: newGuest.building,
+      room: newGuest.room,
+      wisma_name: newGuest.wisma_name,
+      room_number: newGuest.room_number,
+      bed_number: newGuest.bed_number,
       wisma_assignment: newGuest.wisma_assignment,
       assignment: newGuest.assignment,
       emailSent: emailStatus === 'sent',

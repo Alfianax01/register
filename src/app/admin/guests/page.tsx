@@ -258,10 +258,11 @@ export default function GuestsPage() {
   };
 
   const getStatusAlokasi = (g: Guest) => {
-    const hasSeat = Boolean(g.seat_assignment || g.seat_number || g.assignment?.seat_code);
+    const hasSeat = Boolean(g.seat_number || g.seat_assignment || g.assignment?.seat_code);
     const needsRoom = g.butuh_akomodasi === 1;
     const hasRoom = needsRoom && (
       Boolean(g.room_id) ||
+      Boolean(g.room_number && g.room_number !== '-') ||
       Boolean(g.assignment?.room_code && g.assignment.room_code !== '-') ||
       Boolean(g.wisma_assignment && g.wisma_assignment !== 'Tidak Menginap')
     );
@@ -481,11 +482,11 @@ export default function GuestsPage() {
                 ) : (
                   guests.map((g, idx) => {
                     const alokasi = getStatusAlokasi(g);
-                    const seatNum = g.seat_assignment || g.seat_number || g.assignment?.seat_code || '-';
-                    const gedung = g.assignment?.gedung || 'Gedung Ahmad Yani';
-                    const ruangan = g.assignment?.seat_area || 'Ruang Sidang Utama';
-                    const wisma = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.assignment?.wisma_name || g.wisma_assignment || '-');
-                    const kamar = g.butuh_akomodasi === 0 ? '-' : (g.assignment?.room_code || g.room_number || '-');
+                    const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
+                    const gedung = g.building || g.assignment?.gedung || g.assignment?.building || 'Gedung Ahmad Yani';
+                    const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
+                    const wisma = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
+                    const kamar = g.butuh_akomodasi === 0 ? '-' : (g.room_number || g.assignment?.room_code || '-');
 
                     return (
                       <tr
@@ -668,10 +669,10 @@ export default function GuestsPage() {
                   <Armchair className="w-3 h-3" /> Penempatan Kursi Pleno
                 </span>
                 <p className="font-mono font-bold text-sm text-blue-900">
-                  {viewingGuest.seat_assignment || viewingGuest.seat_number || viewingGuest.assignment?.seat_code || 'Belum Ditentukan'}
+                  {viewingGuest.seat_number || viewingGuest.seat_assignment || viewingGuest.assignment?.seat_code || 'Belum Ditentukan'}
                 </p>
                 <p className="text-[11px] text-slate-600">
-                  {viewingGuest.assignment?.gedung || 'Gedung Ahmad Yani'} &bull; {viewingGuest.assignment?.seat_area || 'Ruang Sidang Utama'}
+                  {viewingGuest.building || viewingGuest.assignment?.gedung || 'Gedung Ahmad Yani'} &bull; {viewingGuest.room || viewingGuest.assignment?.seat_area || 'Ruang Sidang Utama'}
                 </p>
               </div>
 
@@ -680,10 +681,10 @@ export default function GuestsPage() {
                   <Building className="w-3 h-3" /> Penempatan Wisma & Kamar
                 </span>
                 <p className="font-semibold text-slate-800 text-xs">
-                  {viewingGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : (viewingGuest.assignment?.wisma_name || viewingGuest.wisma_assignment || '-')}
+                  {viewingGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : (viewingGuest.wisma_name || viewingGuest.assignment?.wisma_name || viewingGuest.wisma_assignment || '-')}
                 </p>
                 <p className="text-[11px] font-mono text-slate-500">
-                  {viewingGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : `Kamar: ${viewingGuest.assignment?.room_code || viewingGuest.room_number || '-'}`}
+                  {viewingGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : `Kamar: ${viewingGuest.room_number || viewingGuest.assignment?.room_code || '-'}`}
                 </p>
               </div>
 
