@@ -174,31 +174,11 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
         guest={guest}
         qrCodeUrl={qrCodeUrl}
         status={isCheckIn ? 'CHECK_IN' : 'REGISTRASI'}
-        seat={
-          isCheckIn
-            ? guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-06'
-            : 'Belum Dialokasikan'
-        }
-        seatDetail={
-          isCheckIn
-            ? `${guest.assignment?.gedung || 'Ahmad Yani'} • Baris ${guest.assignment?.seat_row || (guest.assignment?.seat_code ? guest.assignment.seat_code.split('-')[0] : 'A')}`
-            : null
-        }
-        accommodation={
-          isCheckIn
-            ? guest.assignment?.wisma_name || 'Wisma Sudirman'
-            : 'Menunggu Check In'
-        }
-        room={
-          isCheckIn
-            ? guest.assignment?.room_code || '203'
-            : 'Menunggu Check In'
-        }
-        roomFloor={
-          isCheckIn
-            ? guest.assignment?.room_floor || 'Lantai 2'
-            : null
-        }
+        seat={guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-07'}
+        gedung={guest.assignment?.gedung || 'Gedung Ahmad Yani'}
+        wisma={guest.assignment?.wisma_name || (guest.butuh_akomodasi ? 'Wisma Soedirman' : 'Tidak Menginap')}
+        room={guest.assignment?.room_code || (guest.butuh_akomodasi ? '103A' : 'Tidak Menginap')}
+        checkinDetails={(guest as any).checkin_details || checkinDetails}
       />
 
       {/* Action Buttons (no-print) */}

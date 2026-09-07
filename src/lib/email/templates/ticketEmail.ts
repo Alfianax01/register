@@ -39,10 +39,12 @@ export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplat
   const regNumber = guest.registration_id || (guest.nrp ? `REG-${guest.nrp}` : (guest.id ? `REG-${guest.id.slice(-6).toUpperCase()}` : 'REG-2026'));
   const ticketId = guest.ticket_id || (guest.id ? `TCK-${guest.id.slice(-6).toUpperCase()}` : 'TCK-2026');
 
-  // Status nomor kursi & akomodasi wisma
-  const isCheckIn = guest.status_kehadiran === 'CHECK_IN';
-  const seatDisplay = isCheckIn && (guest.seat_assignment || guest.seat_number) ? `KURSI ${guest.seat_assignment || guest.seat_number}` : 'Belum Dialokasikan';
-  const wismaDisplay = isCheckIn && guest.wisma_assignment ? guest.wisma_assignment : 'Menunggu Check In';
+  // Status nomor kursi & akomodasi wisma (SELALU TAMPIL SEJAK REGISTRASI)
+  const seatCode = guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-07';
+  const seatDisplay = `KURSI ${seatCode}`;
+  const wismaDisplay = guest.assignment?.wisma_name === 'Tidak Menginap' || guest.wisma_assignment === 'Tidak Menginap' || (!guest.butuh_akomodasi && !guest.assignment?.wisma_name)
+    ? 'Tidak Menginap'
+    : (guest.wisma_assignment || (guest.assignment ? `${guest.assignment.wisma_name} - ${guest.assignment.room_code}` : 'Wisma Soedirman - 103A'));
 
   // Waktu registrasi
   let regTime = '4 September 2026, 08.00 WIB';

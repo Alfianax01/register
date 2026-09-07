@@ -6,6 +6,7 @@ import { sendTicketEmail } from '@/lib/email/mailer';
 import { checkRateLimit, escapeHtml, isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import { TNI_RANKS } from '@/lib/constants/ranks';
 import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
+import { AssignmentService } from '@/lib/services/assignment';
 import QRCode from 'qrcode';
 
 export const dynamic = 'force-dynamic';
@@ -183,6 +184,8 @@ export async function POST(req: NextRequest) {
     const kategori_instansi = getInstansiCategory(matra || satker);
     const warna_kursi = getSeatColorAlias(kategori_instansi);
 
+    const wantsAccommodation = butuh_akomodasi === true || butuh_akomodasi === 1 || butuh_akomodasi === '1' || butuh_akomodasi === 'true' || butuh_akomodasi === 'ya' || butuh_akomodasi === 'Ya';
+
     // Sanitize user inputs safely and persist atomically with retry & post-insert verification
     const newGuest = await db.createGuestAsync({
       nrp: escapeHtml(nrp || '-'),
@@ -196,13 +199,22 @@ export async function POST(req: NextRequest) {
       negara_instansi: escapeHtml(negara_instansi || 'Indonesia / TNI - Kemhan RI'),
       no_hp: no_hp ? escapeHtml(no_hp) : undefined,
       email: escapeHtml(email),
-      butuh_akomodasi: 0,
+      butuh_akomodasi: wantsAccommodation ? 1 : 0,
       kategori_instansi,
       warna_kursi,
       seatColorAlias: warna_kursi
     });
 
-    console.log("Database Result:", newGuest);
+    // AUTO-ALLOCATE SEAT, WISMA & ROOM IMMEDIATELY ON REGISTRATION
+    const assignResult = AssignmentService.assignGuestOnRegistration(newGuest.id, wantsAccommodation);
+    if (assignResult.success && assignResult.guest) {
+      newGuest.seat_number = assignResult.seatNumber;
+      newGuest.seat_assignment = assignResult.seatNumber;
+      newGuest.wisma_assignment = assignResult.wismaAssignment;
+      newGuest.assignment = assignResult.assignment;
+    }
+
+    console.log("Database Result with Auto-Assignment:", newGuest);
 
     // Generate high resolution QR Code image for immediate client rendering
     let qrDataUrl = '';
@@ -220,7 +232,7 @@ export async function POST(req: NextRequest) {
       console.warn('QR Code generation warning:', qrErr);
     }
 
-    // Generate PDF E-Ticket Buffer
+    // Generate PDF E-Ticket Buffer with assigned seat & wisma
     const pdfPath = `/api/ticket/${newGuest.qr_token}/pdf`;
     let pdfBuffer: Buffer | undefined;
     try {
@@ -232,7 +244,11 @@ export async function POST(req: NextRequest) {
         instansi: newGuest.negara_instansi || newGuest.satker,
         kategori_tamu: newGuest.matra === 'NON_TNI' ? 'Undangan Sipil' : 'Prajurit TNI',
         matra: newGuest.matra,
+        status: 'REGISTRASI',
         seat_number: newGuest.seat_number,
+        gedung: newGuest.assignment?.gedung || 'Gedung Ahmad Yani',
+        wisma_name: newGuest.assignment?.wisma_name,
+        room_code: newGuest.assignment?.room_code,
         registration_id: newGuest.registration_id,
         qr_token: newGuest.qr_token,
         created_at: newGuest.created_at
@@ -325,6 +341,10 @@ export async function POST(req: NextRequest) {
       no_hp: newGuest.no_hp,
       status: newGuest.status_kehadiran,
       qr_token: newGuest.qr_token,
+      seat_number: newGuest.seat_number,
+      seat_assignment: newGuest.seat_assignment,
+      wisma_assignment: newGuest.wisma_assignment,
+      assignment: newGuest.assignment,
       emailSent: emailStatus === 'sent',
       pdf_path: pdfPath,
       created_at: newGuest.created_at

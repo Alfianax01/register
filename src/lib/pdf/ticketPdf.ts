@@ -180,8 +180,8 @@ export async function generateTicketPdf(data: TicketPdfData): Promise<Buffer> {
     const statusText = isCheckIn ? 'STATUS: CHECK IN' : 'STATUS: REGISTRASI';
     const statusBg = isCheckIn ? '#10B981' : '#F59E0B';
 
-    const seatCode = data.seat_number || 'A-06';
-    const seatText = isCheckIn ? `KURSI: ${seatCode}` : 'KURSI: BELUM DIALOKASIKAN';
+    const seatCode = data.seat_number || 'A-07';
+    const seatText = `KURSI: ${seatCode}`;
 
     const blockWidth = 230;
     const blockHeight = 44;
@@ -262,7 +262,7 @@ export async function generateTicketPdf(data: TicketPdfData): Promise<Buffer> {
 
     currentY += 16;
 
-    // 7. PARTICIPANT CREDENTIAL DETAIL GRID (2 Kolom Bersih)
+    // 7. CREDENTIALS MATRIX (Two Columns)
     const gridX = cardX + 30;
     const colWidth = (cardWidth - 60) / 2;
 
@@ -272,8 +272,12 @@ export async function generateTicketPdf(data: TicketPdfData): Promise<Buffer> {
       { label: 'KATEGORI PESERTA', value: data.kategori_tamu || 'Delegasi Resmi' }
     ];
 
-    const wismaVal = isCheckIn ? (data.wisma_name ? `${data.wisma_name} (Kamar ${data.room_code || '203'})` : 'Wisma Sudirman (Kamar 203)') : 'Menunggu Check In';
-    const gedungVal = isCheckIn ? `Gedung Ahmad Yani (Baris ${data.seat_row || 'A'} No ${data.seat_num || '06'})` : 'Gedung Ahmad Yani (Ruang Paripurna)';
+    const wismaVal = data.wisma_name === 'Tidak Menginap'
+      ? 'Tidak Menginap'
+      : (data.wisma_name ? `${data.wisma_name} (Kamar ${data.room_code || '103A'})` : 'Wisma Soedirman (Kamar 103A)');
+    const seatRowChar = data.seat_row || (data.seat_number ? data.seat_number.split('-')[0] : 'A');
+    const seatNumChar = data.seat_num || (data.seat_number ? data.seat_number.split('-')[1] : '07');
+    const gedungVal = `Gedung Ahmad Yani (Baris ${seatRowChar} No ${seatNumChar})`;
 
     const infoRight = [
       { label: 'LOKASI SIDANG', value: gedungVal },

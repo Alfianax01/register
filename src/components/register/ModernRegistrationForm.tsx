@@ -37,7 +37,8 @@ const INITIAL_FORM_DATA = {
   pangkat: 'Jenderal TNI',
   jabatan: '',
   satker: 'Mabes TNI AD (Jakarta Pusat)',
-  satuan: 'Staf Umum Kasad'
+  satuan: 'Staf Umum Kasad',
+  butuh_akomodasi: 'ya'
 };
 
 interface ModernRegistrationFormProps {
@@ -182,7 +183,8 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         nrp: formData.nrp.trim(),
         jabatan: formData.jabatan.trim(),
         satker: formData.satker.trim(),
-        satuan: formData.satuan.trim()
+        satuan: formData.satuan.trim(),
+        butuh_akomodasi: formData.butuh_akomodasi === 'ya'
       };
 
       console.log('Frontend Submit Payload:', payload);
@@ -525,6 +527,54 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
             </select>
           </div>
         </div>
+
+        {/* Kebutuhan Akomodasi Wisma */}
+        <div className="pt-3 border-t border-slate-100">
+          <label className="block text-xs font-semibold text-slate-800 mb-2">
+            Kebutuhan Akomodasi / Menginap <span className="text-rose-500">*</span>
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, butuh_akomodasi: 'ya' }))}
+              className={`flex items-start gap-2.5 p-3 rounded-lg border text-left transition-all ${
+                formData.butuh_akomodasi === 'ya'
+                  ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600 text-blue-950'
+                  : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              <div className={`w-4 h-4 mt-0.5 rounded-full border flex items-center justify-center shrink-0 ${
+                formData.butuh_akomodasi === 'ya' ? 'border-blue-600 bg-blue-600' : 'border-slate-300'
+              }`}>
+                {formData.butuh_akomodasi === 'ya' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+              </div>
+              <div>
+                <span className="text-xs font-bold block">Ya, Butuh Penginapan / Wisma</span>
+                <span className="text-[11px] text-slate-500 block mt-0.5">Kamar wisma akan dialokasikan otomatis sesuai kepangkatan dinas</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, butuh_akomodasi: 'tidak' }))}
+              className={`flex items-start gap-2.5 p-3 rounded-lg border text-left transition-all ${
+                formData.butuh_akomodasi === 'tidak'
+                  ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600 text-blue-950'
+                  : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+              }`}
+            >
+              <div className={`w-4 h-4 mt-0.5 rounded-full border flex items-center justify-center shrink-0 ${
+                formData.butuh_akomodasi === 'tidak' ? 'border-blue-600 bg-blue-600' : 'border-slate-300'
+              }`}>
+                {formData.butuh_akomodasi === 'tidak' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+              </div>
+              <div>
+                <span className="text-xs font-bold block">Tidak Menginap</span>
+                <span className="text-[11px] text-slate-500 block mt-0.5">Peserta hadir pulang-pergi (PP) / akomodasi mandiri</span>
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Action Buttons */}
@@ -628,12 +678,20 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 <span className="text-slate-500 block">Satuan Kerja / Detasemen:</span>
                 <span className="text-slate-900">{formData.satker} &bull; {formData.satuan}</span>
               </div>
+              <div className="col-span-2 pt-2 border-t border-slate-200/80">
+                <span className="text-slate-500 block">Kebutuhan Akomodasi:</span>
+                <span className="font-semibold text-slate-900">
+                  {formData.butuh_akomodasi === 'ya'
+                    ? 'Ya — Membutuhkan Penginapan (Dialokasikan Otomatis)'
+                    : 'Tidak Menginap (Pulang-Pergi / Mandiri)'}
+                </span>
+              </div>
             </div>
           </div>
 
           <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-[11px] leading-relaxed">
             <p>
-              <strong>Informasi Alokasi:</strong> Penempatan kursi pleno dan wisma akomodasi resmi akan dialokasikan secara otomatis berdasarkan hierarki kepangkatan dinas setelah pemindaian QR Code di lokasi gerbang masuk (*Check-In Gate*).
+              <strong>Informasi Alokasi Otomatis:</strong> Nomor kursi pleno Gedung Ahmad Yani dan penempatan kamar wisma akan langsung dialokasikan secara otomatis pada E-Ticket resmi Anda setelah pendaftaran dikirimkan.
             </p>
           </div>
 

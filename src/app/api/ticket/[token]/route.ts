@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { AssignmentService } from '@/lib/services/assignment';
 import QRCode from 'qrcode';
 
 export const dynamic = 'force-dynamic';
@@ -22,27 +23,30 @@ export async function GET(
 
     const isCheckIn = guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
 
-    // 1. Conditional Assignment & Check-In Details
-    let assignmentData = null;
+    // 1. Assignment Data (ALWAYS available for both REGISTRASI and CHECK_IN)
+    let assignment = db.findAssignmentByGuestId(guest.id);
+    if (!assignment) {
+      const assignResult = AssignmentService.assignGuestOnRegistration(guest.id, Boolean(guest.butuh_akomodasi));
+      assignment = assignResult.assignment;
+    }
+
+    const assignmentData = assignment || {
+      id: `assign_${guest.id}`,
+      peserta_id: guest.id,
+      seat_code: guest.seat_assignment || guest.seat_number || 'A-07',
+      seat_area: 'Gedung Ahmad Yani',
+      gedung: 'Gedung Ahmad Yani',
+      seat_row: 'A',
+      seat_num: '07',
+      wisma_name: guest.butuh_akomodasi ? 'Wisma Soedirman' : 'Tidak Menginap',
+      room_code: guest.butuh_akomodasi ? '103A' : '-',
+      room_floor: guest.butuh_akomodasi ? 'Lantai 1' : 'Tidak Menginap',
+      assigned_at: new Date().toISOString()
+    };
+
+    // 2. Check-In Details (if checked in)
     let checkinDetails = null;
-
     if (isCheckIn) {
-      const assignment = db.findAssignmentByGuestId(guest.id);
-      if (assignment) {
-        assignmentData = assignment;
-      } else if (guest.seat_assignment || guest.seat_number) {
-        assignmentData = {
-          id: `assign_${guest.id}`,
-          peserta_id: guest.id,
-          seat_code: guest.seat_assignment || guest.seat_number || 'A-01',
-          seat_area: 'Area VIP',
-          wisma_name: 'Wisma Garuda',
-          room_code: 'GAR-101',
-          room_floor: 'Lantai 1',
-          assigned_at: guest.waktu_kehadiran_pertama || new Date().toISOString()
-        };
-      }
-
       const logs = db.getCheckinLogs();
       const log = logs.find(l => l.guest_id === guest.id);
 
@@ -71,7 +75,7 @@ export async function GET(
       };
     }
 
-    // 2. Generate high resolution QR Code
+    // 3. Generate high resolution QR Code
     const qrDataUrl = await QRCode.toDataURL(guest.qr_token, {
       errorCorrectionLevel: 'H',
       margin: 2,
@@ -102,12 +106,16 @@ export async function GET(
         status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
         waktu_kehadiran_pertama: isCheckIn ? guest.waktu_kehadiran_pertama : null,
         created_at: guest.created_at,
-        // Strictly null when REGISTRASI (Do not leak seat/room data before gate scan)
-        assignment: isCheckIn ? assignmentData : null,
-        checkin_details: isCheckIn ? checkinDetails : null
+        seat_number: assignmentData.seat_code,
+        seat_assignment: assignmentData.seat_code,
+        wisma_assignment: assignmentData.wisma_name === 'Tidak Menginap'
+          ? 'Tidak Menginap'
+          : `${assignmentData.wisma_name} - ${assignmentData.room_code}`,
+        assignment: assignmentData,
+        checkin_details: checkinDetails
       },
-      assignment: isCheckIn ? assignmentData : null,
-      checkin_details: isCheckIn ? checkinDetails : null,
+      assignment: assignmentData,
+      checkin_details: checkinDetails,
       qr_code: qrDataUrl
     }, {
       headers: {
