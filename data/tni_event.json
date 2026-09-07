@@ -22,7 +22,7 @@
       "token_hash": "db04f9e9027352d05867506a80725d04ceffd3df3dcbb2e4c10497626718c3f5",
       "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-07T08:13:42.358Z",
-      "updated_at": "2026-09-07T08:15:37.467Z",
+      "updated_at": "2026-09-07T08:51:58.740Z",
       "emailSent": true,
       "waktu_kehadiran_pertama": "2026-09-07T08:15:37.454Z",
       "seat_assignment": "A-06",
@@ -200,12 +200,26 @@
       "ticket_id": "TCK-290056-MR6Q",
       "qr_token": "cdd715eb-46b7-42a0-ac9e-13fee41a8ea3",
       "token_hash": "45564778baeaea7f4fbe39a161f97b9e0e1a174eef33d7073e7756f5cdbcf2e2",
-      "status_kehadiran": "REGISTRASI",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T15:04:50.052Z",
-      "updated_at": "2026-09-04T15:04:50.052Z",
+      "updated_at": "2026-09-07T09:03:27.646Z",
       "seat_group_id": "grp_e",
       "seat_number": "E-03",
-      "seat_assignment": "E-03"
+      "seat_assignment": "E-03",
+      "waktu_kehadiran_pertama": "2026-09-07T09:03:27.628Z",
+      "room_id": "room_soedirman_101",
+      "room_slot": "A",
+      "wisma_assignment": "Wisma Soedirman (VVIP) - 101 (A) (Lantai 1)",
+      "assignment": {
+        "id": "assign_1788771807638_5rxuq",
+        "peserta_id": "guest_1788534290056_opo9",
+        "seat_code": "E-03",
+        "seat_area": "Area Pamen",
+        "wisma_name": "Wisma Soedirman (VVIP)",
+        "room_code": "101 (A)",
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-07T09:03:27.638Z"
+      }
     },
     {
       "nrp": "888313",
@@ -1991,10 +2005,12 @@
       "col_num": 3,
       "is_reserved": 0,
       "guest_id": "guest_1788534290056_opo9",
-      "guest_name": "Kurniawan Pratama",
+      "guest_name": "Letkol Kurniawan Pratama, M.Han.",
       "guest_rank": "Letnan Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "REGISTRASI"
+      "guest_status": "CHECK_IN",
+      "status": "CHECK_IN",
+      "peserta_id": "guest_1788534290056_opo9"
     },
     {
       "id": "seat_e_4",
@@ -2707,7 +2723,11 @@
       "floor": 1,
       "room_number": "101",
       "capacity": 1,
-      "notes": "Suite VVIP Bintang 4"
+      "notes": "Suite VVIP Bintang 4",
+      "slot_a_guest_id": "guest_1788534290056_opo9",
+      "slot_a_guest_name": "Letkol Kurniawan Pratama, M.Han.",
+      "slot_a_guest_rank": "Letnan Kolonel (AD)",
+      "slot_a_guest_matra": "AD"
     },
     {
       "id": "room_soedirman_102",
@@ -3174,6 +3194,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788771807628_clrcv",
+      "guest_id": "guest_1788534290056_opo9",
+      "guest_nama": "Letkol Kurniawan Pratama, M.Han.",
+      "guest_nrp": "668935",
+      "guest_pangkat": "Letnan Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_gate",
+      "scanned_by_admin_name": "Petugas Lapangan",
+      "scanned_at": "2026-09-07T09:03:27.628Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788768937454_is26w",
       "guest_id": "guest_1788768822359_298hsvp",
       "guest_nama": "Jaehwan",
@@ -3505,6 +3539,24 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788771807667_lv04",
+      "admin_id": "admin_gate",
+      "admin_username": "petugas_gate",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Letkol Kurniawan Pratama, M.Han. (Letnan Kolonel (AD) / NRP 668935) di Gate 1: Pintu Masuk Utama (Absensi Awal) - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T09:03:27.667Z"
+    },
+    {
+      "id": "aud_1788771118765_na5a",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "UPDATE_GUEST",
+      "details": "Pembaruan profil tamu Jaehwan (-)",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T08:51:58.765Z"
+    },
     {
       "id": "aud_1788768937516_hcxo",
       "admin_id": "admin_super",
@@ -3863,6 +3915,18 @@
       "action": "INITIALIZE_SYSTEM",
       "details": "Sistem diinisialisasi dengan data pejabat TNI dan tata letak ruang",
       "created_at": "2026-09-04T13:50:47.745Z"
+    }
+  ],
+  "assignments": [
+    {
+      "id": "assign_1788771807638_5rxuq",
+      "peserta_id": "guest_1788534290056_opo9",
+      "seat_code": "E-03",
+      "seat_area": "Area Pamen",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "room_code": "101 (A)",
+      "room_floor": "Lantai 1",
+      "assigned_at": "2026-09-07T09:03:27.638Z"
     }
   ]
 }

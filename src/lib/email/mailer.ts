@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
-import { Guest } from '@/types';
+import { Guest, Assignment } from '@/types';
 import { generateTicketEmailHtml } from './templates/ticketEmail';
+import { generatePostCheckInEmailHtml } from './templates/postCheckInEmail';
 
 export function getEmailTransporter() {
   const host = process.env.SMTP_HOST;
@@ -230,4 +231,67 @@ export async function sendTicketEmail(
       error: `Gagal mengirim email (${err?.code || 'SMTP_ERROR'}): ${err?.message}`
     };
   }
+}
+
+/**
+ * Kirim email notifikasi post check-in secara otomatis dengan detail penempatan kursi dan wisma.
+ */
+export async function sendPostCheckInEmail(
+  guest: Guest,
+  assignment: Assignment,
+  checkinDetails: { gate: string; waktu: string; petugas: string }
+): Promise<{ success: boolean; error?: string }> {
+  if (!guest.email) {
+    return { success: false, error: 'Peserta tidak memiliki alamat email.' };
+  }
+
+  const subject = `[RAPIM TNI 2026] Informasi Kursi & Akomodasi — ${guest.nama}`;
+  const htmlContent = generatePostCheckInEmailHtml({ guest, assignment, checkinDetails });
+
+  const fromName = process.env.SMTP_FROM_NAME || 'Panitia RAPIM TNI 2026';
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'panitia.rapim@tni.mil.id';
+
+  // 1. Resend API (HTTPS REST)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: `${fromName} <${fromEmail}>`,
+          to: [guest.email],
+          subject,
+          html: htmlContent
+        })
+      });
+      if (res.ok) {
+        console.log(`[Mailer] Post check-in email sent via Resend to ${guest.email}`);
+        return { success: true };
+      }
+    } catch (e: any) {
+      console.warn('[Mailer] Resend post checkin email error:', e?.message);
+    }
+  }
+
+  // 2. SMTP Transporter
+  const transporter = getEmailTransporter();
+  if (transporter) {
+    try {
+      await transporter.sendMail({
+        from: `"${fromName}" <${fromEmail}>`,
+        to: guest.email,
+        subject,
+        html: htmlContent
+      });
+      console.log(`[Mailer] Post check-in email sent via SMTP to ${guest.email}`);
+      return { success: true };
+    } catch (e: any) {
+      console.warn('[Mailer] SMTP post checkin email error:', e?.message);
+    }
+  }
+
+  return { success: false, error: 'Email transporter not available' };
 }

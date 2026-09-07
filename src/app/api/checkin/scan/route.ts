@@ -2,12 +2,39 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { mysqlAdapter } from '@/lib/db/mysql';
 import { verifySessionToken } from '@/lib/security/auth';
+import { AssignmentService } from '@/lib/services/assignment';
+import { sendPostCheckInEmail } from '@/lib/email/mailer';
 
 export const dynamic = 'force-dynamic';
+
+// In-memory sliding window rate limiter (max 60 scan requests per minute per IP)
+const scanRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = scanRateLimitMap.get(ip);
+  if (!entry || now > entry.resetTime) {
+    scanRateLimitMap.set(ip, { count: 1, resetTime: now + 60000 });
+    return false;
+  }
+  if (entry.count >= 60) {
+    return true;
+  }
+  entry.count++;
+  return false;
+}
 
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
+
+    // Proteksi Rate Limiting
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Terlalu banyak permintaan scan. Harap tunggu beberapa detik.' },
+        { status: 429 }
+      );
+    }
 
     // Verify admin session from cookie or header (OWASP 9.3)
     const sessionCookie = req.cookies.get('tni_session')?.value;
@@ -23,7 +50,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find guest (query database cloud asynchronously to support multi-container serverless)
+    // Find guest
     let guest = null;
     if (token) {
       guest = (await db.findGuestByTokenAsync(token)) || db.findGuestByToken(token);
@@ -39,15 +66,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const checkpoint = checkpoint_code || 'GATE_UTAMA';
+    const checkpoint = checkpoint_code || 'Gate 1: Pintu Masuk Utama (Absensi Awal)';
     const adminUser = session ? { id: session.userId, nama: session.nama } : { id: 'admin_gate', nama: 'Petugas Lapangan' };
 
+    // Record checkin & update status to CHECK_IN
     const result = db.recordCheckin(guest.id, checkpoint, adminUser, ip);
 
-    // Sync to MySQL
+    // Trigger auto-assignment of seat and wisma room
+    const assignResult = AssignmentService.assignGuestOnCheckin(guest.id);
+    const assignment = assignResult.assignment || db.findAssignmentByGuestId(guest.id);
+
+    // Sync to MySQL if configured
     if (mysqlAdapter.isConfigured()) {
       try {
         await mysqlAdapter.recordCheckin(guest.id, adminUser.nama, checkpoint);
+        if (assignment) {
+          await mysqlAdapter.saveAssignment(assignment);
+        }
       } catch (mysqlErr) {
         console.error('[MySQL Checkin Error]:', mysqlErr);
       }
@@ -62,12 +97,27 @@ export async function POST(req: NextRequest) {
       ip
     );
 
-    // Fetch seating & room details
-    const seats = db.getSeats();
-    const seat = seats.find(s => s.seat_number === result.guest.seat_number);
+    const nowWIB = new Date().toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) + ' WIB';
 
-    const rooms = db.getAccommodations();
-    const room = rooms.find(r => r.id === result.guest.room_id);
+    const checkinDetails = {
+      gate: checkpoint,
+      waktu: nowWIB,
+      petugas: adminUser.nama
+    };
+
+    // Kirim email notifikasi post check-in secara background asinkron
+    if (assignment && result.guest.email && !result.alreadyCheckedIn) {
+      sendPostCheckInEmail(result.guest, assignment, checkinDetails).catch(emailErr => {
+        console.warn('[Mailer] Post-checkin email dispatch failed:', emailErr);
+      });
+    }
 
     return NextResponse.json({
       success: true,
@@ -75,19 +125,11 @@ export async function POST(req: NextRequest) {
       previousTimestamp: result.previousTimestamp,
       guest: {
         ...result.guest,
-        seat_details: seat ? {
-          group_code: seat.group_code,
-          seat_number: seat.seat_number,
-          row_num: seat.row_num,
-          col_num: seat.col_num
-        } : null,
-        room_details: room ? {
-          wisma_name: room.wisma_name,
-          floor: room.floor,
-          room_number: room.room_number,
-          slot: result.guest.room_slot || 'A'
-        } : null
+        status_kehadiran: 'CHECK_IN',
+        assignment: assignment || null
       },
+      assignment: assignment || null,
+      checkin_details: checkinDetails,
       log: result.log
     });
 

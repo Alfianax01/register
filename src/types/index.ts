@@ -46,8 +46,20 @@ export interface Guest {
   kategori_instansi?: 'ANGKATAN_DARAT' | 'ANGKATAN_LAUT' | 'ANGKATAN_UDARA' | 'KEMENTERIAN';
   warna_kursi?: 'green' | 'blue' | 'gray' | 'white';
   seatColorAlias?: string;
+  assignment?: Assignment;
   created_at: string;
   updated_at: string;
+}
+
+export interface Assignment {
+  id: string;
+  peserta_id: string;
+  seat_code: string;      // contoh: "A-06"
+  seat_area: string;      // contoh: "Area VVIP"
+  wisma_name: string;     // contoh: "Wisma Garuda"
+  room_code: string;      // contoh: "GAR-102"
+  room_floor: string;     // contoh: "Lantai 1"
+  assigned_at: string;
 }
 
 export interface SeatGroup {

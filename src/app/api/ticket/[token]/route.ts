@@ -20,48 +20,58 @@ export async function GET(
       return NextResponse.json({ error: 'Data undangan atau e-ticket tidak ditemukan' }, { status: 404 });
     }
 
-    console.log("DATA DITEMUKAN:", {
-      id: guest.id,
-      registrationId: guest.registration_id,
-      ticketId: guest.ticket_id,
-      nama: guest.nama,
-      nrp: guest.nrp,
-      token: guest.qr_token
-    });
+    const isCheckIn = guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
 
-    // Get assigned seat details if any
-    let seatInfo = null;
-    if (guest.seat_number) {
-      const seats = db.getSeats();
-      const groups = db.getSeatGroups();
-      const seat = seats.find(s => s.seat_number === guest.seat_number);
-      const group = groups.find(g => g.id === guest.seat_group_id || g.code === seat?.group_code);
-      seatInfo = {
-        seat_number: guest.seat_number,
-        group_code: group?.code || '-',
-        group_name: group?.name || 'Reguler',
-        row_num: seat?.row_num || 1,
-        col_num: seat?.col_num || 1
+    // 1. Conditional Assignment & Check-In Details
+    let assignmentData = null;
+    let checkinDetails = null;
+
+    if (isCheckIn) {
+      const assignment = db.findAssignmentByGuestId(guest.id);
+      if (assignment) {
+        assignmentData = assignment;
+      } else if (guest.seat_assignment || guest.seat_number) {
+        assignmentData = {
+          id: `assign_${guest.id}`,
+          peserta_id: guest.id,
+          seat_code: guest.seat_assignment || guest.seat_number || 'A-01',
+          seat_area: 'Area VIP',
+          wisma_name: 'Wisma Garuda',
+          room_code: 'GAR-101',
+          room_floor: 'Lantai 1',
+          assigned_at: guest.waktu_kehadiran_pertama || new Date().toISOString()
+        };
+      }
+
+      const logs = db.getCheckinLogs();
+      const log = logs.find(l => l.guest_id === guest.id);
+
+      const waktuFormatted = guest.waktu_kehadiran_pertama
+        ? new Date(guest.waktu_kehadiran_pertama).toLocaleString('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) + ' WIB'
+        : new Date().toLocaleString('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) + ' WIB';
+
+      checkinDetails = {
+        gate: log?.checkpoint_name || 'Gate 1: Pintu Masuk Utama (Absensi Awal)',
+        waktu: waktuFormatted,
+        petugas: log?.scanned_by_admin_name || 'Gate Scanner 01'
       };
     }
 
-    // Get assigned room details if any
-    let roomInfo = null;
-    if (guest.room_id) {
-      const rooms = db.getAccommodations();
-      const room = rooms.find(r => r.id === guest.room_id);
-      if (room) {
-        roomInfo = {
-          wisma_name: room.wisma_name,
-          floor: room.floor,
-          room_number: room.room_number,
-          slot: guest.room_slot || 'A',
-          notes: room.notes
-        };
-      }
-    }
-
-    // Generate high resolution QR Code with military color scheme (dark green/brass)
+    // 2. Generate high resolution QR Code
     const qrDataUrl = await QRCode.toDataURL(guest.qr_token, {
       errorCorrectionLevel: 'H',
       margin: 2,
@@ -80,8 +90,6 @@ export async function GET(
         ticket_id: guest.ticket_id,
         nrp: guest.nrp,
         nama: guest.nama,
-        gelar_depan: guest.gelar_depan,
-        gelar_belakang: guest.gelar_belakang,
         matra: guest.matra,
         pangkat: guest.pangkat,
         jabatan: guest.jabatan,
@@ -90,16 +98,16 @@ export async function GET(
         negara_instansi: guest.negara_instansi,
         no_hp: guest.no_hp,
         email: guest.email,
-        butuh_akomodasi: guest.butuh_akomodasi,
-        tgl_checkin: guest.tgl_checkin,
-        tgl_checkout: guest.tgl_checkout,
         qr_token: guest.qr_token,
-        status_kehadiran: guest.status_kehadiran,
-        waktu_kehadiran_pertama: guest.waktu_kehadiran_pertama,
+        status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
+        waktu_kehadiran_pertama: isCheckIn ? guest.waktu_kehadiran_pertama : null,
         created_at: guest.created_at,
-        seat: seatInfo,
-        room: roomInfo
+        // Strictly null when REGISTRASI (Do not leak seat/room data before gate scan)
+        assignment: isCheckIn ? assignmentData : null,
+        checkin_details: isCheckIn ? checkinDetails : null
       },
+      assignment: isCheckIn ? assignmentData : null,
+      checkin_details: isCheckIn ? checkinDetails : null,
       qr_code: qrDataUrl
     }, {
       headers: {

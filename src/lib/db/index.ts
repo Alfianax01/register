@@ -11,6 +11,7 @@ import {
   AdminUser,
   AuditLog,
   MatraType,
+  Assignment
 } from '@/types';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
@@ -47,6 +48,7 @@ interface DatabaseSchema {
   checkin_logs: CheckinLog[];
   admins: AdminUser[];
   audit_logs: AuditLog[];
+  assignments?: Assignment[];
 }
 
 // Initial Groups
@@ -591,6 +593,11 @@ class DatabaseManager {
           modified = true;
         }
       }
+    }
+
+    if (!this.data.assignments) {
+      this.data.assignments = [];
+      modified = true;
     }
 
     if (modified) {
@@ -1472,6 +1479,46 @@ class DatabaseManager {
     }
 
     return { success: true, message: 'Penempatan kamar berhasil disimpan' };
+  }
+
+  // ==========================================================
+  // ASSIGNMENTS (POST CHECK-IN SEAT & WISMA ALLOCATION)
+  // ==========================================================
+  public getAssignments(): Assignment[] {
+    this.ensureInitialized();
+    return this.data!.assignments || [];
+  }
+
+  public findAssignmentByGuestId(guestId: string): Assignment | undefined {
+    this.ensureInitialized();
+    if (!this.data!.assignments) this.data!.assignments = [];
+    return this.data!.assignments.find(a => a.peserta_id === guestId);
+  }
+
+  public saveAssignment(assignment: Assignment): Assignment {
+    this.ensureInitialized();
+    if (!this.data!.assignments) this.data!.assignments = [];
+    const idx = this.data!.assignments.findIndex(a => a.peserta_id === assignment.peserta_id);
+    if (idx >= 0) {
+      this.data!.assignments[idx] = assignment;
+    } else {
+      this.data!.assignments.push(assignment);
+    }
+    this.persist();
+
+    // Background sync to Postgres & MySQL if available
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveAssignment(assignment).catch(err => {
+        console.warn('[PostgreSQL] Error saving assignment:', err);
+      });
+    }
+    if (mysqlAdapter.isConfigured()) {
+      mysqlAdapter.saveAssignment(assignment).catch(err => {
+        console.warn('[MySQL] Error saving assignment:', err);
+      });
+    }
+
+    return assignment;
   }
 
   // CHECKIN & SCANNING

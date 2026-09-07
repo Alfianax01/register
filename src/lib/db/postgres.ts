@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { Guest, Seat, AccommodationRoom, CheckinLog } from '@/types';
+import { Guest, Seat, AccommodationRoom, CheckinLog, Assignment } from '@/types';
 
 class PostgresAdapter {
   private pool: Pool | null = null;
@@ -130,6 +130,18 @@ class PostgresAdapter {
             CREATE INDEX IF NOT EXISTS idx_tni_guests_status ON tni_guests(status_kehadiran);
             CREATE INDEX IF NOT EXISTS idx_tni_checkin_guest_id ON tni_checkin_logs(guest_id);
             CREATE INDEX IF NOT EXISTS idx_tni_checkin_scanned_at ON tni_checkin_logs(scanned_at);
+
+            CREATE TABLE IF NOT EXISTS tni_assignments (
+              id VARCHAR(64) PRIMARY KEY,
+              peserta_id VARCHAR(64) NOT NULL REFERENCES tni_guests(id) ON DELETE CASCADE,
+              seat_code VARCHAR(50) NOT NULL,
+              seat_area VARCHAR(100) NOT NULL,
+              wisma_name VARCHAR(100) NOT NULL,
+              room_code VARCHAR(50) NOT NULL,
+              room_floor VARCHAR(50) NOT NULL,
+              assigned_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+            CREATE INDEX IF NOT EXISTS idx_tni_assignments_peserta_id ON tni_assignments(peserta_id);
           `);
           this.isConnected = true;
           console.log('[PostgreSQL] Database persistence tables verified & connected successfully.');
@@ -616,6 +628,84 @@ class PostgresAdapter {
       return null;
     } catch {
       return null;
+    }
+  }
+
+  public async saveAssignment(assignment: Assignment): Promise<boolean> {
+    const pool = this.getPool();
+    if (!pool) return false;
+    try {
+      await this.ensureTables();
+      await pool.query(`
+        INSERT INTO tni_assignments (id, peserta_id, seat_code, seat_area, wisma_name, room_code, room_floor, assigned_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ON CONFLICT (id) DO UPDATE SET
+          seat_code = EXCLUDED.seat_code,
+          seat_area = EXCLUDED.seat_area,
+          wisma_name = EXCLUDED.wisma_name,
+          room_code = EXCLUDED.room_code,
+          room_floor = EXCLUDED.room_floor,
+          assigned_at = EXCLUDED.assigned_at;
+      `, [
+        assignment.id,
+        assignment.peserta_id,
+        assignment.seat_code,
+        assignment.seat_area,
+        assignment.wisma_name,
+        assignment.room_code,
+        assignment.room_floor,
+        assignment.assigned_at || new Date().toISOString()
+      ]);
+      return true;
+    } catch (err) {
+      console.error('[PostgreSQL] Gagal menyimpan data assignment:', err);
+      return false;
+    }
+  }
+
+  public async getAssignmentByGuestId(guestId: string): Promise<Assignment | null> {
+    const pool = this.getPool();
+    if (!pool) return null;
+    try {
+      await this.ensureTables();
+      const res = await pool.query('SELECT * FROM tni_assignments WHERE peserta_id = $1 LIMIT 1', [guestId]);
+      if (res.rows.length === 0) return null;
+      const r = res.rows[0];
+      return {
+        id: r.id,
+        peserta_id: r.peserta_id,
+        seat_code: r.seat_code,
+        seat_area: r.seat_area,
+        wisma_name: r.wisma_name,
+        room_code: r.room_code,
+        room_floor: r.room_floor,
+        assigned_at: r.assigned_at
+      };
+    } catch (err) {
+      console.error('[PostgreSQL] Gagal membaca data assignment:', err);
+      return null;
+    }
+  }
+
+  public async getAllAssignments(): Promise<Assignment[]> {
+    const pool = this.getPool();
+    if (!pool) return [];
+    try {
+      await this.ensureTables();
+      const res = await pool.query('SELECT * FROM tni_assignments ORDER BY assigned_at DESC');
+      return res.rows.map(r => ({
+        id: r.id,
+        peserta_id: r.peserta_id,
+        seat_code: r.seat_code,
+        seat_area: r.seat_area,
+        wisma_name: r.wisma_name,
+        room_code: r.room_code,
+        room_floor: r.room_floor,
+        assigned_at: r.assigned_at
+      }));
+    } catch (err) {
+      console.error('[PostgreSQL] Gagal membaca seluruh assignments:', err);
+      return [];
     }
   }
 }

@@ -197,6 +197,24 @@ class MySQLAdapter {
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`assignments\` (
+            \`id\` VARCHAR(64) NOT NULL,
+            \`peserta_id\` VARCHAR(64) NOT NULL,
+            \`seat_code\` VARCHAR(50) NOT NULL,
+            \`seat_area\` VARCHAR(100) NOT NULL,
+            \`wisma_name\` VARCHAR(100) NOT NULL,
+            \`room_code\` VARCHAR(50) NOT NULL,
+            \`room_floor\` VARCHAR(50) NOT NULL,
+            \`assigned_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            KEY \`idx_assignment_peserta_id\` (\`peserta_id\`),
+            CONSTRAINT \`fk_assignment_peserta\` 
+              FOREIGN KEY (\`peserta_id\`) REFERENCES \`peserta\` (\`id\`) 
+              ON DELETE CASCADE ON UPDATE CASCADE
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
         // Seed default seats if empty
         const [existingSeats]: any = await connection.query('SELECT COUNT(*) as count FROM `kursi`');
         if (existingSeats[0]?.count === 0) {
@@ -767,6 +785,60 @@ class MySQLAdapter {
       };
     } catch (err) {
       console.error('[MySQL] Gagal getStats:', err);
+      return null;
+    }
+  }
+
+  // ==========================================================
+  // ASSIGNMENTS
+  // ==========================================================
+  public async saveAssignment(assignment: any): Promise<boolean> {
+    const pool = this.getPool();
+    if (!pool) return false;
+    await this.initSchema();
+
+    const sql = `
+      INSERT INTO \`assignments\` (
+        \`id\`, \`peserta_id\`, \`seat_code\`, \`seat_area\`, 
+        \`wisma_name\`, \`room_code\`, \`room_floor\`, \`assigned_at\`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        \`seat_code\` = VALUES(\`seat_code\`),
+        \`seat_area\` = VALUES(\`seat_area\`),
+        \`wisma_name\` = VALUES(\`wisma_name\`),
+        \`room_code\` = VALUES(\`room_code\`),
+        \`room_floor\` = VALUES(\`room_floor\`),
+        \`assigned_at\` = VALUES(\`assigned_at\`);
+    `;
+
+    try {
+      await pool.execute(sql, [
+        assignment.id,
+        assignment.peserta_id,
+        assignment.seat_code,
+        assignment.seat_area,
+        assignment.wisma_name,
+        assignment.room_code,
+        assignment.room_floor,
+        assignment.assigned_at || new Date().toISOString().slice(0, 19).replace('T', ' ')
+      ]);
+      return true;
+    } catch (err) {
+      console.error('[MySQL] Gagal saveAssignment:', err);
+      return false;
+    }
+  }
+
+  public async getAssignmentByGuestId(guestId: string): Promise<any | null> {
+    const pool = this.getPool();
+    if (!pool) return null;
+    await this.initSchema();
+
+    try {
+      const [rows]: any = await pool.execute('SELECT * FROM `assignments` WHERE `peserta_id` = ? LIMIT 1', [guestId]);
+      return rows[0] || null;
+    } catch (err) {
+      console.error('[MySQL] Gagal getAssignmentByGuestId:', err);
       return null;
     }
   }

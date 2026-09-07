@@ -1,10 +1,11 @@
 import { db } from '@/lib/db';
-import { Guest, Seat, AccommodationRoom } from '@/types';
+import { Guest, Seat, AccommodationRoom, Assignment } from '@/types';
 
 export interface AssignmentResult {
   success: boolean;
   message?: string;
   guest?: Guest;
+  assignment?: Assignment;
   seatNumber?: string;
   wismaAssignment?: string;
 }
@@ -23,21 +24,51 @@ export class AssignmentService {
   }
 
   /**
-   * Determine target wisma based on rank level
+   * Get seat area label based on rank level
    */
-  public static getTargetWismaName(pangkatLevel: number = 10): string {
-    if (pangkatLevel <= 4) {
-      return 'Wisma Soedirman (VVIP)';
-    } else if (pangkatLevel <= 7) {
-      return 'Wisma Kartika (Pamen)';
+  public static getSeatAreaLabel(pangkatLevel: number = 10): string {
+    if (pangkatLevel === 1) return 'Area VVIP';
+    if (pangkatLevel <= 3) return 'Area VIP';
+    if (pangkatLevel === 4) return 'Area VIP Utama';
+    if (pangkatLevel === 5) return 'Area Pamen Kolonel';
+    if (pangkatLevel <= 7) return 'Area Pamen';
+    return 'Area Delegasi';
+  }
+
+  /**
+   * Determine target wisma name, room code, and floor based on rank level
+   */
+  public static getTargetAccommodation(pangkatLevel: number = 10, guestIndex: number = 1): {
+    wismaName: string;
+    roomCode: string;
+    roomFloor: string;
+  } {
+    const padNum = String((guestIndex % 20) + 101).padStart(3, '0');
+    if (pangkatLevel <= 3) {
+      return {
+        wismaName: 'Wisma Garuda',
+        roomCode: `GAR-${padNum}`,
+        roomFloor: 'Lantai 1'
+      };
+    } else if (pangkatLevel <= 5) {
+      return {
+        wismaName: 'Wisma Cendrawasih',
+        roomCode: `CEN-${padNum}`,
+        roomFloor: 'Lantai 2'
+      };
     } else {
-      return 'Wisma Bahari / Mess Perwira';
+      return {
+        wismaName: 'Wisma Rajawali',
+        roomCode: `RAJ-${padNum}`,
+        roomFloor: 'Lantai 1'
+      };
     }
   }
 
   /**
    * Automatically assigns seat and wisma room when guest checks in.
    * Matra colors are strictly preserved and priority is determined by rank hierarchy.
+   * Stores assignment in separate assignments entity with foreign key relation.
    */
   public static assignGuestOnCheckin(guestId: string): AssignmentResult {
     const guest = db.findGuestById(guestId);
@@ -45,19 +76,34 @@ export class AssignmentService {
       return { success: false, message: 'Data peserta tidak ditemukan' };
     }
 
+    // 0. CHECK IF ALREADY ASSIGNED IN SEPARATE TABLE
+    const existingAssignment = db.findAssignmentByGuestId(guestId);
+    if (existingAssignment) {
+      guest.assignment = existingAssignment;
+      return {
+        success: true,
+        guest,
+        assignment: existingAssignment,
+        seatNumber: existingAssignment.seat_code,
+        wismaAssignment: `${existingAssignment.wisma_name} - ${existingAssignment.room_code}`
+      };
+    }
+
     const seats = db.getSeats();
     const rooms = db.getAccommodations();
+    const pLevel = guest.pangkat_level || 5;
 
+    // 1. ALLOCATE SEAT
     let seatNumber = guest.seat_number || guest.seat_assignment;
+    const seatArea = this.getSeatAreaLabel(pLevel);
 
-    // 1. ALLOCATE SEAT IF NOT ALREADY ASSIGNED
     if (!seatNumber) {
-      const targetGroup = this.getTargetSeatGroup(guest.pangkat_level, guest.matra);
+      const targetGroup = this.getTargetSeatGroup(pLevel, guest.matra);
       
-      // Look for first unoccupied, unreserved seat in the target group
+      // Look for first unoccupied, unreserved seat in target group
       let availableSeat = seats.find(s => s.group_code === targetGroup && !s.guest_id && !s.is_reserved);
       
-      // Fallback: if target group is fully occupied, find first available seat anywhere
+      // Fallback: any available seat
       if (!availableSeat) {
         availableSeat = seats.find(s => !s.guest_id && !s.is_reserved);
       }
@@ -69,12 +115,17 @@ export class AssignmentService {
         guest.seat_assignment = seatNumber;
         guest.seat_group_id = availableSeat.group_id;
 
-        // Ensure seat status reflects check-in
         availableSeat.guest_status = 'CHECK_IN';
         availableSeat.status = 'CHECK_IN';
+      } else {
+        // Generative seat number if all existing 40 seats filled
+        const prefix = targetGroup;
+        const count = seats.filter(s => s.seat_number.startsWith(prefix)).length;
+        seatNumber = `${prefix}-${String(count + 1).padStart(2, '0')}`;
+        guest.seat_number = seatNumber;
+        guest.seat_assignment = seatNumber;
       }
     } else {
-      // If already assigned, ensure seat records are updated to CHECK_IN
       const seat = seats.find(s => s.seat_number === seatNumber);
       if (seat) {
         seat.guest_status = 'CHECK_IN';
@@ -88,54 +139,60 @@ export class AssignmentService {
       guest.seat_assignment = seatNumber;
     }
 
-    // 2. ALLOCATE ACCOMMODATION IF NEEDED
-    let wismaAssignment = guest.wisma_assignment;
-    if (guest.butuh_akomodasi === 1) {
-      if (!guest.room_id) {
-        const targetWisma = this.getTargetWismaName(guest.pangkat_level);
+    // 2. ALLOCATE WISMA & ROOM
+    const defaultAccom = this.getTargetAccommodation(pLevel, Math.floor(Math.random() * 50) + 1);
+    let wismaName = defaultAccom.wismaName;
+    let roomCode = defaultAccom.roomCode;
+    let roomFloor = defaultAccom.roomFloor;
 
-        // Find available room in preferred wisma
-        let availableRoom: AccommodationRoom | undefined = rooms.find(
-          r => r.wisma_name === targetWisma && (!r.slot_a_guest_id || (r.capacity === 2 && !r.slot_b_guest_id))
-        );
+    // Try linking with DB accommodation room if available
+    let availableRoom: AccommodationRoom | undefined = rooms.find(
+      r => (!r.slot_a_guest_id || (r.capacity === 2 && !r.slot_b_guest_id))
+    );
 
-        // Fallback: any wisma with available slot
-        if (!availableRoom) {
-          availableRoom = rooms.find(
-            r => !r.slot_a_guest_id || (r.capacity === 2 && !r.slot_b_guest_id)
-          );
-        }
-
-        if (availableRoom) {
-          const slot: 'A' | 'B' = !availableRoom.slot_a_guest_id ? 'A' : 'B';
-          db.assignRoom(availableRoom.id, slot, guest.id);
-          wismaAssignment = `${availableRoom.wisma_name} - Kamar ${availableRoom.room_number} (Slot ${slot})`;
-          guest.wisma_assignment = wismaAssignment;
-          guest.room_id = availableRoom.id;
-          guest.room_slot = slot;
-        }
-      } else {
-        const room = rooms.find(r => r.id === guest.room_id);
-        if (room) {
-          wismaAssignment = `${room.wisma_name} - Kamar ${room.room_number} (Slot ${guest.room_slot || 'A'})`;
-          guest.wisma_assignment = wismaAssignment;
-        }
-      }
+    if (availableRoom) {
+      const slot: 'A' | 'B' = !availableRoom.slot_a_guest_id ? 'A' : 'B';
+      db.assignRoom(availableRoom.id, slot, guest.id);
+      wismaName = availableRoom.wisma_name;
+      roomCode = `${availableRoom.room_number} (${slot})`;
+      roomFloor = `Lantai ${availableRoom.floor}`;
+      guest.room_id = availableRoom.id;
+      guest.room_slot = slot;
     }
 
-    // Save updates
+    const wismaAssignment = `${wismaName} - ${roomCode} (${roomFloor})`;
+    guest.wisma_assignment = wismaAssignment;
+
+    // 3. CREATE PERSISTENT RECORD IN SEPARATE ASSIGNMENTS ENTITY
+    const assignment: Assignment = {
+      id: `assign_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      peserta_id: guest.id,
+      seat_code: seatNumber || 'A-01',
+      seat_area: seatArea,
+      wisma_name: wismaName,
+      room_code: roomCode,
+      room_floor: roomFloor,
+      assigned_at: new Date().toISOString()
+    };
+
+    db.saveAssignment(assignment);
+    guest.assignment = assignment;
+
+    // 4. PERSIST GUEST UPDATE
     db.updateGuest(guest.id, {
       seat_number: seatNumber,
       seat_assignment: seatNumber,
       seat_group_id: guest.seat_group_id,
       room_id: guest.room_id,
       room_slot: guest.room_slot,
-      wisma_assignment: wismaAssignment
+      wisma_assignment: wismaAssignment,
+      assignment
     });
 
     return {
       success: true,
       guest,
+      assignment,
       seatNumber,
       wismaAssignment
     };
@@ -148,7 +205,7 @@ export class AssignmentService {
     const guests = db.getGuests().filter((g: Guest) => g.status_kehadiran === 'CHECK_IN');
     let count = 0;
     for (const g of guests) {
-      if (!g.seat_number || (g.butuh_akomodasi === 1 && !g.room_id)) {
+      if (!g.seat_assignment || !g.wisma_assignment) {
         this.assignGuestOnCheckin(g.id);
         count++;
       }
