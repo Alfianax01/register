@@ -8,6 +8,21 @@ export const MATRA_COLORS = {
   TNI_AL:      '#9CA3AF', // Abu-abu
   MABES:       '#9333EA', // Ungu
   KEMENTERIAN: '#E5E7EB', // Abu muda
+  SIPIL:       { hex: '#C9A227', label: 'Emas'      },
+  TNI_AD:      { hex: '#22A559', label: 'Hijau'     },
+  TNI_AU:      { hex: '#2563EB', label: 'Biru'      },
+  TNI_AL:      { hex: '#9CA3AF', label: 'Abu-abu'   },
+  MABES:       { hex: '#9333EA', label: 'Ungu'      },
+  KEMENTERIAN: { hex: '#E5E7EB', label: 'Putih'     },
+} as const;
+
+export const MATRA_HEX = {
+  SIPIL:       '#C9A227',
+  TNI_AD:      '#22A559',
+  TNI_AU:      '#2563EB',
+  TNI_AL:      '#9CA3AF',
+  MABES:       '#9333EA',
+  KEMENTERIAN: '#E5E7EB',
 } as const;
 
 export type MatraColorKey = keyof typeof MATRA_COLORS;
@@ -30,6 +45,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
     label: 'Sipil / Non-TNI',
     hex: MATRA_COLORS.SIPIL,
     bgHex: MATRA_COLORS.SIPIL,
+    hex: MATRA_COLORS.SIPIL.hex,
+    bgHex: MATRA_COLORS.SIPIL.hex,
     borderHex: '#A17D16',
     textHex: '#FFFFFF',
     bgTint: 'rgba(201, 162, 39, 0.12)',
@@ -41,6 +58,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
     label: 'TNI Angkatan Darat',
     hex: MATRA_COLORS.TNI_AD,
     bgHex: MATRA_COLORS.TNI_AD,
+    hex: MATRA_COLORS.TNI_AD.hex,
+    bgHex: MATRA_COLORS.TNI_AD.hex,
     borderHex: '#187A41',
     textHex: '#FFFFFF',
     bgTint: 'rgba(34, 165, 89, 0.12)',
@@ -52,6 +71,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
     label: 'TNI Angkatan Udara',
     hex: MATRA_COLORS.TNI_AU,
     bgHex: MATRA_COLORS.TNI_AU,
+    hex: MATRA_COLORS.TNI_AU.hex,
+    bgHex: MATRA_COLORS.TNI_AU.hex,
     borderHex: '#1D4ED8',
     textHex: '#FFFFFF',
     bgTint: 'rgba(37, 99, 235, 0.12)',
@@ -63,6 +84,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
     label: 'TNI Angkatan Laut',
     hex: MATRA_COLORS.TNI_AL,
     bgHex: MATRA_COLORS.TNI_AL,
+    hex: MATRA_COLORS.TNI_AL.hex,
+    bgHex: MATRA_COLORS.TNI_AL.hex,
     borderHex: '#64748B',
     textHex: '#FFFFFF',
     bgTint: 'rgba(156, 163, 175, 0.15)',
@@ -74,6 +97,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
     label: 'Mabes TNI',
     hex: MATRA_COLORS.MABES,
     bgHex: MATRA_COLORS.MABES,
+    hex: MATRA_COLORS.MABES.hex,
+    bgHex: MATRA_COLORS.MABES.hex,
     borderHex: '#7E22CE',
     textHex: '#FFFFFF',
     bgTint: 'rgba(147, 51, 234, 0.12)',
@@ -85,6 +110,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
     label: 'Kementerian / Lembaga',
     hex: MATRA_COLORS.KEMENTERIAN,
     bgHex: MATRA_COLORS.KEMENTERIAN,
+    hex: MATRA_COLORS.KEMENTERIAN.hex,
+    bgHex: MATRA_COLORS.KEMENTERIAN.hex,
     borderHex: '#CBD5E1',
     textHex: '#1E293B',
     bgTint: 'rgba(229, 231, 235, 0.40)',

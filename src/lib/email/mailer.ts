@@ -71,6 +71,7 @@ export async function sendTicketEmail(
 
   const fromName = process.env.SMTP_FROM_NAME || 'Panitia RAPIM TNI 2026';
   const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'kiryuukafka@gmail.com';
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'eregister287@gmail.com';
   const subject = `[RAPIM TNI 2026] E-Ticket Registrasi - ${guest.pangkat} ${guest.nama}`;
 
   // --------------------------------------------------------------------------
@@ -250,6 +251,7 @@ export async function sendPostCheckInEmail(
 
   const fromName = process.env.SMTP_FROM_NAME || 'Panitia RAPIM TNI 2026';
   const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'kiryuukafka@gmail.com';
+  const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'eregister287@gmail.com';
 
   // 1. Resend API (HTTPS REST)
   if (process.env.RESEND_API_KEY) {

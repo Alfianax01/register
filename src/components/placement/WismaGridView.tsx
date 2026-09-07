@@ -69,6 +69,17 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
     return rooms.filter(r => r.wisma_name === selectedWisma);
   }, [rooms, selectedWisma]);
 
+  // Group currentRooms by floor (Floor Plan Structure)
+  const roomsByFloor = useMemo(() => {
+    const map: Record<number, AccommodationRoom[]> = {};
+    currentRooms.forEach(r => {
+      const f = r.floor || 1;
+      if (!map[f]) map[f] = [];
+      map[f].push(r);
+    });
+    return Object.entries(map).sort(([a], [b]) => Number(a) - Number(b));
+  }, [currentRooms]);
+
   // Guests who need accommodation
   const guestsNeedingAccommodation = useMemo(() => {
     return guests.filter(g => g.butuh_akomodasi === 1);
@@ -320,12 +331,42 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
           const isFull = room.capacity === 1 ? slotAFilled : slotAFilled && slotBFilled;
           const isEmpty = !slotAFilled && !slotBFilled;
           const isPartial = !isFull && !isEmpty;
+      {/* 3. Floor Plan per Lantai (Floor Plan Structure & Design System Tokens) */}
+      <div className="space-y-8">
+        {roomsByFloor.map(([floor, floorRooms]) => {
+          const floorOccupied = floorRooms.filter(r => !!r.slot_a_guest_id || !!r.slot_b_guest_id).length;
+          return (
+            <div key={floor} className="space-y-3.5">
+              {/* Floor Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-6 h-6 rounded-md bg-blue-600 text-white font-bold text-xs flex items-center justify-center">
+                    {floor}
+                  </span>
+                  <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                    Lantai {floor}
+                  </h3>
+                  <span className="text-xs text-slate-500 font-medium">
+                    &bull; {floorRooms.length} Kamar ({floorOccupied} Terisi)
+                  </span>
+                </div>
+              </div>
 
           const guestA = slotAFilled ? guests.find(g => g.id === room.slot_a_guest_id) : null;
           const guestB = slotBFilled ? guests.find(g => g.id === room.slot_b_guest_id) : null;
+              {/* Room Grid for this floor */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+                {floorRooms.map(room => {
+                  const slotAFilled = !!room.slot_a_guest_id;
+                  const slotBFilled = !!room.slot_b_guest_id;
+                  const isFull = room.capacity === 1 ? slotAFilled : slotAFilled && slotBFilled;
+                  const isEmpty = !slotAFilled && !slotBFilled;
+                  const isPartial = !isFull && !isEmpty;
 
           const styleA = guestA ? getInstansiStyle(guestA.matra, guestA.kategori_instansi) : null;
           const styleB = guestB ? getInstansiStyle(guestB.matra, guestB.kategori_instansi) : null;
+                  const guestA = slotAFilled ? guests.find(g => g.id === room.slot_a_guest_id) : null;
+                  const guestB = slotBFilled ? guests.find(g => g.id === room.slot_b_guest_id) : null;
 
           return (
             <div
@@ -351,6 +392,8 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                     }`}>
                       <DoorClosed className="w-5 h-5" />
                     </div>
+                  const styleA = guestA ? getInstansiStyle(guestA.matra, guestA.kategori_instansi) : null;
+                  const styleB = guestB ? getInstansiStyle(guestB.matra, guestB.kategori_instansi) : null;
 
                     <div className="min-w-0">
                       <h4 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight truncate">
@@ -367,6 +410,8 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                       </div>
                     </div>
                   </div>
+                  const occCount = (slotAFilled ? 1 : 0) + (slotBFilled ? 1 : 0);
+                  const capacityStr = `${occCount}/${room.capacity}`;
 
                   {/* Status Kamar Badge */}
                   <div>
@@ -388,6 +433,15 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                     )}
                   </div>
                 </div>
+                  // Design System tokens:
+                  // Penuh (2/2): Danger 6% tint, border 30%
+                  // Sebagian (1/2): Warning 6% tint, border 30%
+                  // Kosong (0/2): Positive 6% tint, border 30%
+                  const cardBg = isFull
+                    ? 'rgba(239, 68, 68, 0.06)'
+                    : isPartial
+                    ? 'rgba(245, 158, 11, 0.06)'
+                    : 'rgba(16, 185, 129, 0.06)';
 
                 {/* Notes or Room Label */}
                 {room.notes && (
@@ -395,6 +449,11 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                     {room.notes}
                   </p>
                 )}
+                  const cardBorder = isFull
+                    ? 'rgba(239, 68, 68, 0.30)'
+                    : isPartial
+                    ? 'rgba(245, 158, 11, 0.30)'
+                    : 'rgba(16, 185, 129, 0.30)';
 
                 {/* Empty State Banner (Jika kamar kosong total) */}
                 {isEmpty && (
@@ -409,6 +468,11 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                     <p className="text-[11px] text-slate-400 mt-0.5">Kamar siap dialokasikan untuk prajurit/tamu VIP</p>
                   </div>
                 )}
+                  const badgeClass = isFull
+                    ? 'bg-rose-100 text-rose-800 border-rose-200'
+                    : isPartial
+                    ? 'bg-amber-100 text-amber-800 border-amber-200'
+                    : 'bg-emerald-100 text-emerald-800 border-emerald-200';
 
                 {/* 2. Bed Cards (Mini-Card with shadow lift & border glow) */}
                 <div className="space-y-2.5">
@@ -432,6 +496,7 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                         </span>
                       )}
                     </div>
+                  const badgeText = isFull ? 'Penuh' : isPartial ? 'Sebagian' : 'Kosong';
 
                     {slotAFilled && guestA ? (
                       <div className="flex items-center gap-2.5 mt-2">
@@ -443,9 +508,37 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="text-xs font-bold text-slate-900 truncate">
                               {guestA.nama}
+                  return (
+                    <div
+                      key={room.id}
+                      onClick={() => handleOpenRoomModal(room, slotAFilled && !slotBFilled && room.capacity > 1 ? 'B' : 'A')}
+                      style={{
+                        backgroundColor: cardBg,
+                        borderColor: cardBorder,
+                        borderRadius: '10px',
+                        padding: '14px 10px',
+                        borderWidth: '1.5px',
+                        borderStyle: 'solid'
+                      }}
+                      className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer flex flex-col justify-between select-none"
+                    >
+                      {/* Top: Room Number & Capacity */}
+                      <div>
+                        <div className="flex items-center justify-between gap-2 border-b border-black/5 pb-2 mb-2.5">
+                          <div className="flex items-center gap-1.5">
+                            <DoorClosed className="w-4 h-4 text-slate-700" />
+                            <span className="font-mono font-black text-sm text-slate-900">
+                              Kamar {room.room_number}
                             </span>
                             <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-100">
                               {guestA.pangkat}
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs font-bold text-slate-700">
+                              {capacityStr}
+                            </span>
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${badgeClass}`}>
+                              {badgeText}
                             </span>
                           </div>
                           <span className="text-[11px] text-slate-500 block truncate mt-0.5">
@@ -496,15 +589,50 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-xs font-bold text-slate-900 truncate">
                                 {guestB.nama}
+                        {/* Occupants list */}
+                        <div className="space-y-1.5">
+                          {slotAFilled && guestA ? (
+                            <div className="flex items-center justify-between gap-1.5 bg-white/70 px-2 py-1.5 rounded-lg border border-slate-200/60">
+                              <span className="text-xs font-bold text-slate-800 truncate" title={guestA.nama}>
+                                {guestA.nama}
                               </span>
                               <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-100">
                                 {guestB.pangkat}
                               </span>
+                              {styleA && (
+                                <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border shrink-0 ${styleA.badgeClass}`}>
+                                  {styleA.label}
+                                </span>
+                              )}
                             </div>
                             <span className="text-[11px] text-slate-500 block truncate mt-0.5">
                               {guestB.jabatan || guestB.satker} {guestB.satuan ? `(${guestB.satuan})` : ''}
                             </span>
                           </div>
+                          ) : (
+                            <div className="text-[11px] text-slate-400 italic px-2 py-1 bg-white/40 rounded border border-dashed border-slate-200">
+                              Slot A: Kosong
+                            </div>
+                          )}
+
+                          {room.capacity > 1 && (
+                            slotBFilled && guestB ? (
+                              <div className="flex items-center justify-between gap-1.5 bg-white/70 px-2 py-1.5 rounded-lg border border-slate-200/60">
+                                <span className="text-xs font-bold text-slate-800 truncate" title={guestB.nama}>
+                                  {guestB.nama}
+                                </span>
+                                {styleB && (
+                                  <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border shrink-0 ${styleB.badgeClass}`}>
+                                    {styleB.label}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-[11px] text-slate-400 italic px-2 py-1 bg-white/40 rounded border border-dashed border-slate-200">
+                                Slot B: Kosong
+                              </div>
+                            )
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center justify-between py-1 text-slate-400 text-xs">
@@ -515,9 +643,18 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                           </span>
                         </div>
                       )}
+                      </div>
+
+                      {/* Footer Hint */}
+                      <div className="pt-2 mt-2 border-t border-black/5 flex items-center justify-between text-[10px] text-slate-500">
+                        <span>Lantai {room.floor}</span>
+                        <span className="font-semibold text-blue-700 hover:underline">Kelola &rarr;</span>
+                      </div>
                     </div>
                   )}
                 </div>
+                  );
+                })}
               </div>
 
               {/* Card Footer Action */}

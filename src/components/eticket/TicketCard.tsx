@@ -82,6 +82,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             <Clock className="w-4 h-4 stroke-[2.5]" />
           )}
           <span>{isCheckIn ? 'CHECK-IN BERHASIL' : 'TERDAFTAR (REGISTRASI)'}</span>
+          <span>{isCheckIn ? 'CHECK-IN BERHASIL' : 'TERDAFTAR'}</span>
         </div>
       </div>
 
@@ -185,14 +186,33 @@ export const TicketCard: React.FC<TicketCardProps> = ({
                   : 'Belum Check-In • Tunjukkan QR saat tiba di lokasi'}
               </span>
             </div>
+      {/* HINT BOX (Sebelum Check-In: Muncul saat belum scan QR di Gate) */}
+      {!isCheckIn && (
+        <div
+          className="rounded-[10px] border border-amber-500/20 bg-amber-500/[0.08] p-3 text-center transition-all duration-200"
+          style={{
+            backgroundColor: 'rgba(245, 158, 11, 0.08)',
+            borderColor: 'rgba(245, 158, 11, 0.20)',
+            borderRadius: '10px',
+            padding: '12px 16px',
+            textAlign: 'center'
+          }}
+        >
+          <div className="flex items-center justify-center gap-1.5 text-amber-800 font-bold text-xs">
+            <Clock className="w-3.5 h-3.5 stroke-[2.5] text-amber-600" />
+            <span>Belum Check-In</span>
           </div>
           {isCheckIn && (
             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
               VALID
             </span>
           )}
+          <p className="text-[11px] text-amber-900/80 mt-1 leading-relaxed font-medium">
+            Penempatan kursi dan akomodasi akan muncul setelah scan QR di lokasi.
+          </p>
         </div>
       </div>
+      )}
 
       {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar) — SELALU TAMPIL */}
       <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
@@ -211,6 +231,24 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           <div className="p-2.5 rounded-xl bg-blue-50/40 border border-blue-100 text-center flex flex-col justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
               Nomor Kursi
+      {/* 5. CHECK-IN INFO (Hanya Tampil SETELAH Check-In Berhasil) */}
+      {isCheckIn && (
+        <div className="py-1 pb-3 border-b border-slate-100">
+          <div className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div>
+                <span className="text-[10px] text-emerald-800 uppercase font-bold block">
+                  Verifikasi Gerbang (Check-In Info)
+                </span>
+                <span className="text-xs font-semibold text-slate-900">
+                  {checkinDetails?.gate || 'Gate Masuk: Gate A — Utama'} &bull; {checkinDetails?.waktu || 'Telah Hadir'}
+                  {checkinDetails?.petugas ? ` &bull; Petugas: ${checkinDetails.petugas}` : ''}
+                </span>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full shrink-0">
+              VALID
             </span>
             <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
               {seat || 'A-01'}
@@ -219,14 +257,24 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               Sidang Pleno
             </span>
           </div>
+        </div>
+      )}
 
           {/* Kolom 2: Gedung */}
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
               Gedung
+      {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Hanya Tampil SETELAH Check-In Berhasil) */}
+      {isCheckIn && (
+        <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Penempatan Peserta (Resmi Terdaftar)
             </span>
             <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung}>
               {gedung || 'Gedung Ahmad Yani'}
+            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+              Check-In Terverifikasi
             </span>
             <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
               Lokasi Acara
@@ -246,17 +294,39 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             </span>
           </div>
         </div>
+          {/* Baris 1: Nomor Kursi | Gedung | Ruangan */}
+          <div className="grid grid-cols-3 gap-2">
+            {/* Kolom 1: Kursi */}
+            <div className="p-2.5 rounded-xl bg-blue-50/40 border border-blue-100 text-center flex flex-col justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                Nomor Kursi
+              </span>
+              <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
+                {seat || 'A-01'}
+              </span>
+              <span className="text-[10px] text-blue-700/80 font-medium block pt-0.5">
+                Sidang Pleno
+              </span>
+            </div>
 
         {/* Baris 2: Wisma | Kamar */}
         <div className="grid grid-cols-2 gap-2">
           {/* Kolom 1: Wisma */}
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
             <div className="min-w-0 flex-1">
+            {/* Kolom 2: Gedung */}
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
                 Wisma / Mess
+                Gedung
               </span>
               <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma}>
                 {wisma || 'Wisma Soedirman'}
+              <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung}>
+                {gedung || 'Gedung Ahmad Yani'}
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+                Lokasi Acara
               </span>
             </div>
             <Building className="w-4 h-4 text-slate-400 flex-shrink-0 ml-1.5" />
@@ -267,17 +337,58 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             <div className="min-w-0 flex-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 block mb-0.5">
                 Nomor Kamar
+            {/* Kolom 3: Ruangan */}
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                Ruangan
               </span>
               <span className="font-bold font-mono text-indigo-950 text-xs sm:text-sm block truncate">
                 {room && room !== '-' ? (room.toLowerCase().includes('kamar') ? room : `Kamar ${room}`) : (wisma === 'Tidak Menginap' || !room || room === '-' ? 'Tidak Menginap' : room)}
+              <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={ruangan}>
+                {ruangan || 'Ruang Sidang Utama'}
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+                Ruang Sidang
               </span>
             </div>
             <span className="text-[10px] font-bold text-indigo-700 bg-indigo-100/80 px-1.5 py-0.5 rounded flex-shrink-0 ml-1.5">
               Akomodasi
             </span>
           </div>
+
+          {/* Baris 2: Wisma | Kamar */}
+          <div className="grid grid-cols-2 gap-2">
+            {/* Kolom 1: Wisma */}
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                  Wisma / Mess
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma}>
+                  {wisma || 'Wisma Soedirman'}
+                </span>
+              </div>
+              <Building className="w-4 h-4 text-slate-400 flex-shrink-0 ml-1.5" />
+            </div>
+
+            {/* Kolom 2: Kamar */}
+            <div className="p-2.5 rounded-xl bg-indigo-50/40 border border-indigo-100 flex items-center justify-between">
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 block mb-0.5">
+                  Nomor Kamar
+                </span>
+                <span className="font-bold font-mono text-indigo-950 text-xs sm:text-sm block truncate">
+                  {room && room !== '-' ? (room.toLowerCase().includes('kamar') ? room : `Kamar ${room}`) : (wisma === 'Tidak Menginap' || !room || room === '-' ? 'Tidak Menginap' : room)}
+                </span>
+              </div>
+              <span className="text-[10px] font-bold text-indigo-700 bg-indigo-100/80 px-1.5 py-0.5 rounded flex-shrink-0 ml-1.5">
+                Akomodasi
+              </span>
+            </div>
+          </div>
         </div>
       </div>
+      )}
 
       {/* 7. INFORMASI EVENT */}
       <div className="pt-1 space-y-1.5 text-xs text-slate-600">

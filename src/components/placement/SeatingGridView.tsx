@@ -146,11 +146,45 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
   return (
     <div className="w-full space-y-6">
       {/* Group Tabs (VIP, Blok A, B, C, D, E, F) */}
+      {/* 0. Stats Bar: Total Terisi / Total Kosong / Total Check-In */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs text-center">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Terisi</span>
+          <span className="text-xl sm:text-2xl font-black text-blue-700 font-mono mt-0.5 block">
+            {seats.filter(s => !!s.guest_id).length}
+          </span>
+          <span className="text-[10px] text-slate-400">Prajurit / Tamu Undangan</span>
+        </div>
+        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs text-center">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Kosong</span>
+          <span className="text-xl sm:text-2xl font-black text-slate-600 font-mono mt-0.5 block">
+            {seats.filter(s => !s.guest_id).length}
+          </span>
+          <span className="text-[10px] text-slate-400">Kursi Tersedia</span>
+        </div>
+        <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs text-center">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Check-In</span>
+          <span className="text-xl sm:text-2xl font-black text-emerald-600 font-mono mt-0.5 block">
+            {seats.filter(s => s.status === 'CHECK_IN' || s.guest_status === 'CHECK_IN').length}
+          </span>
+          <span className="text-[10px] text-emerald-600/80 font-medium">Terverifikasi di Gate</span>
+        </div>
+      </div>
+
+      {/* Group Tabs (Blok VIP, Blok A, B, C, D) */}
       <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
         {groups.map(grp => {
           const isSelected = selectedGroupCode === grp.code;
           const grpSeats = seats.filter(s => s.group_code === grp.code);
           const occupied = grpSeats.filter(s => !!s.guest_id || s.status === 'ASSIGNED' || s.status === 'CHECK_IN' || (s.status as any) === 'HADIR').length;
+
+          const c = grp.code.toUpperCase();
+          const displayLabel = c === 'A' ? 'Blok A — TNI AD' :
+                               c === 'B' ? 'Blok B — TNI AL' :
+                               c === 'C' ? 'Blok C — TNI AU' :
+                               c === 'D' ? 'Blok D — MABES/Kemen' :
+                               (c === 'VIP' || c === 'E' || grp.name.includes('VIP')) ? 'Blok VIP — SIPIL' :
+                               grp.name;
 
           return (
             <button
@@ -169,6 +203,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                 {grp.code}
               </span>
               <span>{grp.name}</span>
+              <span>{displayLabel}</span>
               <span className={`text-[11px] px-2 py-0.5 rounded-md font-mono ${
                 isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
               }`}>
@@ -184,26 +219,32 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AD, borderColor: '#187A41' }} />
+            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AD.hex, borderColor: '#187A41' }} />
             <span className="font-semibold text-slate-800">TNI AD</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AU, borderColor: '#1D4ED8' }} />
+            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AU.hex, borderColor: '#1D4ED8' }} />
             <span className="font-semibold text-slate-800">TNI AU</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AL, borderColor: '#64748B' }} />
+            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AL.hex, borderColor: '#64748B' }} />
             <span className="font-semibold text-slate-800">TNI AL</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.MABES, borderColor: '#7E22CE' }} />
+            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.MABES.hex, borderColor: '#7E22CE' }} />
             <span className="font-semibold text-slate-800">Mabes TNI</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.SIPIL, borderColor: '#A17D16' }} />
+            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.SIPIL.hex, borderColor: '#A17D16' }} />
             <span className="font-semibold text-slate-800">Sipil / VIP</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border border-slate-300" style={{ backgroundColor: OFFICIAL_COLORS.KEMENTERIAN }} />
+            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border border-slate-300" style={{ backgroundColor: OFFICIAL_COLORS.KEMENTERIAN.hex }} />
             <span className="font-semibold text-slate-800">Kementerian</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -216,10 +257,14 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#22A559] ring-2 ring-emerald-200" />
             <span className="font-semibold text-emerald-800">Check-In (Hadir)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#22A559] ring-2 ring-emerald-200 shadow-2xs" />
+            <span className="font-bold text-emerald-800">CHECK-IN</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-slate-300 ring-2 ring-slate-100" />
             <span className="text-slate-500">Belum Check-In</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-300 ring-2 ring-slate-100 shadow-2xs" />
+            <span className="font-medium text-slate-500">BELUM CHECK-IN</span>
           </div>
         </div>
       </div>
@@ -521,6 +566,26 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                           <div>
                             <span className="text-[11px] text-slate-400 block font-medium">Satuan / Satker</span>
                             <span className="font-semibold text-slate-800">{displayedGuest.satuan || displayedGuest.satker || '-'}</span>
+                          </div>
+                          <div>
+                            <span className="text-[11px] text-slate-400 block font-medium">Penempatan Kursi</span>
+                            <span className="font-bold text-[#1E3A8A] font-mono">
+                              {displayedGuest.seat_number || selectedSeat.seat_number} &bull; {displayedGuest.building || 'Gedung Ahmad Yani'} ({displayedGuest.room || 'Ruang Sidang Utama'})
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[11px] text-slate-400 block font-medium">Akomodasi Wisma</span>
+                            <span className="font-semibold text-slate-800">
+                              {displayedGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : `${displayedGuest.wisma_name || 'Wisma Soedirman'} - Kamar ${displayedGuest.room_number || '-'}`}
+                            </span>
+                          </div>
+                          <div className="sm:col-span-2 pt-1 border-t border-slate-100">
+                            <span className="text-[11px] text-slate-400 block font-medium">Status Presensi Gate</span>
+                            <span className={`font-semibold ${displayedGuest.status_kehadiran === 'CHECK_IN' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                              {displayedGuest.status_kehadiran === 'CHECK_IN'
+                                ? `CHECK-IN ${displayedGuest.waktu_kehadiran_pertama ? `(${new Date(displayedGuest.waktu_kehadiran_pertama).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB)` : ''}`
+                                : 'TERDAFTAR (Belum Scan di Gate)'}
+                            </span>
                           </div>
                         </div>
                       </div>
