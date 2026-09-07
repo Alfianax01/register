@@ -13,9 +13,9 @@ export async function middleware(req: NextRequest) {
 
   // 2. Proteksi Halaman Login (/login)
   if (pathname === '/login') {
-    if (session) {
-      // Jika sudah login, langsung arahkan ke Dashboard Admin
-      return NextResponse.redirect(new URL('/admin', req.url));
+    if (session && session.role) {
+      // Jika sudah login, langsung arahkan ke Direktori Peserta
+      return NextResponse.redirect(new URL('/admin/guests', req.url));
     }
     // Jika belum login, izinkan akses ke halaman login
     return NextResponse.next();
@@ -23,24 +23,48 @@ export async function middleware(req: NextRequest) {
 
   // 3. Normalisasi /admin/login jika ada yang mencoba mengaksesnya
   if (pathname === '/admin/login') {
-    if (session) {
-      return NextResponse.redirect(new URL('/admin', req.url));
+    if (session && session.role) {
+      return NextResponse.redirect(new URL('/admin/guests', req.url));
     }
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // 4. Proteksi Seluruh Rute Admin (/admin dan /admin/*)
-  if (pathname.startsWith('/admin')) {
-    // Jika sesi tidak valid atau belum login:
-    // STEALTH MODE: JANGAN redirect ke /login, JANGAN 401/403.
-    // Rewrite ke 404 Not Found resmi agar keberadaan portal admin tidak bocor ke publik.
-    if (!session) {
+  // 4. URL /admin tidak boleh menampilkan dashboard dan tidak boleh redirect ke login -> WAJIB 404
+  if (pathname === '/admin' || pathname === '/admin/') {
+    return NextResponse.rewrite(new URL('/not-found', req.url), {
+      status: 404
+    });
+  }
+
+  // 5. Proteksi Seluruh Rute Admin (/admin/*)
+  if (pathname.startsWith('/admin/')) {
+    // Hanya route spesifik di dalam /admin/* yang boleh digunakan:
+    // /admin/scanner, /admin/guests, /admin/monitoring, /admin/checkin
+    const allowedAdminRoutes = [
+      '/admin/scanner',
+      '/admin/guests',
+      '/admin/monitoring',
+      '/admin/checkin'
+    ];
+
+    const isAllowed = allowedAdminRoutes.some(
+      route => pathname === route || pathname.startsWith(route + '/')
+    );
+
+    if (!isAllowed) {
       return NextResponse.rewrite(new URL('/not-found', req.url), {
         status: 404
       });
     }
 
-    // Role-based protection check jika diperlukan di masa depan
+    // Role validation: Hanya role panitia resmi yang diizinkan
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.rewrite(new URL('/not-found', req.url), {
+        status: 404
+      });
+    }
+
     return NextResponse.next();
   }
 

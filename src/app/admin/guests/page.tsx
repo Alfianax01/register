@@ -429,16 +429,16 @@ export default function GuestsPage() {
         {/* Compact Guests Table */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-xs">
           <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full min-w-[960px] table-fixed text-left text-xs border-collapse">
               <thead className="sticky top-0 z-10 bg-white border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/90">
-                  <th className="py-2.5 px-3 w-[60px] text-center">No</th>
-                  <th className="py-2.5 px-3 w-[250px]">Nama Peserta</th>
-                  <th className="py-2.5 px-3 w-[100px] text-center">Matra</th>
-                  <th className="py-2.5 px-3 w-[130px]">Pangkat</th>
+                  <th className="py-2.5 px-3 w-[50px] text-center">No</th>
+                  <th className="py-2.5 px-3 w-[240px]">Nama Peserta</th>
+                  <th className="py-2.5 px-3 w-[90px] text-center">Matra</th>
+                  <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
                   <th className="py-2.5 px-3 w-[200px]">Kesatuan</th>
                   <th className="py-2.5 px-3 w-[120px] text-center">Status</th>
-                  <th className="py-2.5 px-3 w-[110px] text-center">Aksi</th>
+                  <th className="py-2.5 px-3 w-[120px] text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">

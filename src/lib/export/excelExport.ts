@@ -147,6 +147,10 @@ export async function generateGuestsExcelBuffer(
     };
   });
 
+  // Freeze Header & Filter
+  worksheet.autoFilter = 'A9:K9';
+  worksheet.views = [{ state: 'frozen', ySplit: 9, showGridLines: true }];
+
   // 8. Data Rows
   let currentRowNum = 10;
 
@@ -155,7 +159,7 @@ export async function generateGuestsExcelBuffer(
     row.height = 22;
 
     const isCheckIn = g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR';
-    const statusText = isCheckIn ? 'CHECK_IN' : 'REGISTRASI';
+    const statusText = isCheckIn ? 'CHECK IN' : 'REGISTRASI';
     const isEven = idx % 2 === 1;
     const defaultBgArgb = isEven ? 'FFF8FAFC' : 'FFFFFFFF'; // Zebra striping
 

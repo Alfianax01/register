@@ -6,50 +6,43 @@ export interface TicketEmailTemplateProps {
 }
 
 export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplateProps): string {
-  // Determine military theme color based on matra:
-  // AD: Hijau (#1B5E39), AL: Navy (#153E75), AU: Sky Blue (#0284C7), Default/Non-TNI: Emas (#D4AF37)
-  let primaryColor = '#D4AF37'; // Default Gold untuk Non-TNI & Mabes
+  // Determine military theme color based on matra/role:
+  // TNI AD -> hijau, TNI AL -> biru tua, TNI AU -> biru muda, Mabes TNI -> emas, Sipil -> abu elegan
+  let primaryColor = '#1E3A8A';
   let matraBadgeText = 'UNDANGAN KEMENTERIAN / SIPIL';
 
   switch (guest.matra) {
     case 'AD':
-      primaryColor = '#1B5E39'; // TNI AD Green
+      primaryColor = '#15803D'; // TNI AD Hijau
       matraBadgeText = 'TNI ANGKATAN DARAT';
       break;
     case 'AL':
-      primaryColor = '#153E75'; // TNI AL Navy Blue
+      primaryColor = '#1E3A8A'; // TNI AL Biru Tua
       matraBadgeText = 'TNI ANGKATAN LAUT';
       break;
     case 'AU':
-      primaryColor = '#0284C7'; // TNI AU Sky Blue
+      primaryColor = '#0284C7'; // TNI AU Biru Muda
       matraBadgeText = 'TNI ANGKATAN UDARA';
       break;
     case 'MABES':
-      primaryColor = '#D4AF37'; // Gold
+      primaryColor = '#B45309'; // Mabes TNI Emas
       matraBadgeText = 'MARKAS BESAR TNI';
       break;
     case 'NON_TNI':
     default:
-      primaryColor = '#D4AF37'; // Default Gold
+      primaryColor = '#475569'; // Sipil / Kementerian Abu Elegan
       matraBadgeText = 'UNDANGAN SIPIL / NON-TNI';
       break;
   }
 
-  const fullName = [guest.gelar_depan, guest.nama, guest.gelar_belakang].filter(Boolean).join(' ') || guest.nama;
+  const fullName = guest.nama;
   const regNumber = guest.registration_id || (guest.nrp ? `REG-${guest.nrp}` : (guest.id ? `REG-${guest.id.slice(-6).toUpperCase()}` : 'REG-2026'));
   const ticketId = guest.ticket_id || (guest.id ? `TCK-${guest.id.slice(-6).toUpperCase()}` : 'TCK-2026');
 
-  // Status nomor kursi & akomodasi wisma ("Ditetapkan di Lokasi" / "Menunggu Verifikasi" jika belum diproses)
-  const seatDisplay = guest.seat_number ? `KURSI ${guest.seat_number}` : 'Ditetapkan di Lokasi';
-  
-  let wismaDisplay = 'Tidak Menginap';
-  if ((guest as any).room_details) {
-    wismaDisplay = `Kamar ${(guest as any).room_details.room_number} (${(guest as any).room_details.slot})`;
-  } else if ((guest as any).room_slot || (guest as any).room_id) {
-    wismaDisplay = String((guest as any).room_slot || (guest as any).room_id);
-  } else if (guest.butuh_akomodasi) {
-    wismaDisplay = 'Menunggu Verifikasi';
-  }
+  // Status nomor kursi & akomodasi wisma
+  const isCheckIn = guest.status_kehadiran === 'CHECK_IN';
+  const seatDisplay = isCheckIn && (guest.seat_assignment || guest.seat_number) ? `KURSI ${guest.seat_assignment || guest.seat_number}` : 'Belum Dialokasikan';
+  const wismaDisplay = isCheckIn && guest.wisma_assignment ? guest.wisma_assignment : 'Menunggu Check In';
 
   // Waktu registrasi
   let regTime = '4 September 2026, 08.00 WIB';

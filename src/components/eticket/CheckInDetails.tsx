@@ -58,3 +58,4 @@ export const CheckInDetails: React.FC<CheckInDetailsProps> = ({ details }) => {
     </div>
   );
 };
+

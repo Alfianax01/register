@@ -86,3 +86,4 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
     </div>
   );
 };
+

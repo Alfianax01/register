@@ -15,6 +15,13 @@ export function generatePostCheckInEmailHtml({
   assignment,
   checkinDetails
 }: PostCheckInEmailProps): string {
+  let themeColor = '#1E3A8A';
+  if (guest.matra === 'AD') themeColor = '#15803D';
+  else if (guest.matra === 'AL') themeColor = '#1E3A8A';
+  else if (guest.matra === 'AU') themeColor = '#0284C7';
+  else if (guest.matra === 'MABES') themeColor = '#B45309';
+  else if (guest.matra === 'NON_TNI') themeColor = '#475569';
+
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +31,7 @@ export function generatePostCheckInEmailHtml({
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #f1f5f9; padding: 20px; margin: 0; }
     .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .header { background: #1E3A8A; color: #ffffff; padding: 28px 24px; text-align: center; }
+    .header { background: ${themeColor}; color: #ffffff; padding: 28px 24px; text-align: center; }
     .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
     .header p { margin: 6px 0 0; opacity: 0.9; font-size: 13px; }
     .content { padding: 28px 24px; }
@@ -53,13 +60,17 @@ export function generatePostCheckInEmailHtml({
       </p>
       
       <div class="status-wrapper">
-        <span class="status-badge">✓ CHECK-IN BERHASIL</span>
+        <span class="status-badge">✓ CHECK IN BERHASIL</span>
       </div>
       
       <div class="detail-grid">
         <div class="detail-row">
           <span class="detail-label">Nomor Kursi Sidang</span>
           <span class="detail-value" style="color: #1E40AF;">${assignment.seat_code} (${assignment.seat_area})</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Lokasi Gedung &amp; Baris</span>
+          <span class="detail-value">${assignment.gedung || 'Gedung Ahmad Yani'} &bull; Baris ${assignment.seat_row || 'A'} No ${assignment.seat_num || '06'}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Wisma Akomodasi</span>
@@ -91,3 +102,4 @@ export function generatePostCheckInEmailHtml({
 </body>
 </html>`;
 }
+

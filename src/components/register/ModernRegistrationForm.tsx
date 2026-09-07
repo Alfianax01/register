@@ -256,9 +256,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         e.preventDefault();
         handleSubmit();
       }}
-      className="w-full space-y-8"
+      className="w-full max-w-[600px] mx-auto space-y-8"
     >
-      {/* SECTION 1: DATA PRIBADI */}
+      {/* DATA PRIBADI & KONTAK */}
       <div className="space-y-4">
         <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200">
           <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
@@ -266,7 +266,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold text-slate-900">
-              Bagian 1: Data Pribadi & Kontak
+              Data Pribadi &amp; Kontak
             </h2>
             <p className="text-xs text-slate-500">
               Identitas diri dan kontak resmi peserta untuk penerbitan E-Ticket
@@ -364,7 +364,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         </div>
       </div>
 
-      {/* SECTION 2: DATA KEDINASAN */}
+      {/* DATA KEDINASAN & PENUGASAN */}
       <div className="space-y-4">
         <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200">
           <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
@@ -372,7 +372,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold text-slate-900">
-              Bagian 2: Data Kedinasan & Penugasan
+              Data Kedinasan &amp; Penugasan
             </h2>
             <p className="text-xs text-slate-500">
               Kualifikasi kepangkatan militer dan penempatan satuan dinas peserta

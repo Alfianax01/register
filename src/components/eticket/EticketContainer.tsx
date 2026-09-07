@@ -244,3 +244,4 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
     </div>
   );
 };
+

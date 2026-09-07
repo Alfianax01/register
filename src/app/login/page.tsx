@@ -36,8 +36,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Berhasil login: redirect ke /admin
-      router.push('/admin');
+      // Berhasil login: redirect ke Direktori Peserta (/admin/guests)
+      router.push('/admin/guests');
       router.refresh();
     } catch {
       setError('Gagal menghubungi server autentikasi.');

@@ -16,7 +16,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[calc(100vh-68px)] bg-[#f8fafc] py-8 sm:py-12 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Navigation Breadcrumb & Quick Link */}
         <div className="flex items-center justify-between">
           <Link
@@ -43,7 +43,7 @@ export default function RegisterPage() {
             <span>MARKAS BESAR TENTARA NASIONAL INDONESIA</span>
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-            Formulir Pendaftaran Resmi
+            Form Registrasi Peserta RAPIM TNI
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
             Silakan lengkapi data kedinasan, matra, dan kontak aktif Anda. E-Ticket beserta QR Code identitas resmi akan diterbitkan secara otomatis setelah verifikasi data selesai.

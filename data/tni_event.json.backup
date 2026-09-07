@@ -241,12 +241,29 @@
       "id": "guest_1788533739968_0r4b",
       "qr_token": "49b28441-f3b8-401e-877f-b47682347c8f",
       "token_hash": "00ad3403621e70ab8d58201490269eb5a35ec3b06acd834a9d37d53cc8d63db7",
-      "status_kehadiran": "REGISTRASI",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T14:55:39.967Z",
-      "updated_at": "2026-09-04T14:55:39.967Z",
+      "updated_at": "2026-09-07T11:15:44.144Z",
       "seat_group_id": "grp_d",
       "seat_number": "D-07",
-      "seat_assignment": "D-07"
+      "seat_assignment": "D-07",
+      "waktu_kehadiran_pertama": "2026-09-07T11:15:44.114Z",
+      "room_id": "room_soedirman_102",
+      "room_slot": "A",
+      "wisma_assignment": "Wisma Soedirman (VVIP) - 102 (A) (Lantai 1)",
+      "assignment": {
+        "id": "assign_1788779744129_zbeoh",
+        "peserta_id": "guest_1788533739968_0r4b",
+        "seat_code": "D-07",
+        "seat_area": "Area Pamen Kolonel",
+        "gedung": "Ahmad Yani",
+        "seat_row": "D",
+        "seat_num": "07",
+        "wisma_name": "Wisma Soedirman (VVIP)",
+        "room_code": "102 (A)",
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-07T11:15:44.129Z"
+      }
     },
     {
       "nrp": "991161",
@@ -1666,10 +1683,12 @@
       "col_num": 7,
       "is_reserved": 0,
       "guest_id": "guest_1788533739968_0r4b",
-      "guest_name": "Hendra Gunawan",
+      "guest_name": "Dr. Hendra Gunawan, S.I.P., M.Han.",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "REGISTRASI"
+      "guest_status": "CHECK_IN",
+      "status": "CHECK_IN",
+      "peserta_id": "guest_1788533739968_0r4b"
     },
     {
       "id": "seat_d_8",
@@ -2735,7 +2754,11 @@
       "floor": 1,
       "room_number": "102",
       "capacity": 1,
-      "notes": "Suite VVIP Bintang 4"
+      "notes": "Suite VVIP Bintang 4",
+      "slot_a_guest_id": "guest_1788533739968_0r4b",
+      "slot_a_guest_name": "Dr. Hendra Gunawan, S.I.P., M.Han.",
+      "slot_a_guest_rank": "Kolonel (AD)",
+      "slot_a_guest_matra": "AD"
     },
     {
       "id": "room_soedirman_103",
@@ -3194,6 +3217,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788779744114_ryd0f",
+      "guest_id": "guest_1788533739968_0r4b",
+      "guest_nama": "Dr. Hendra Gunawan, S.I.P., M.Han.",
+      "guest_nrp": "888313",
+      "guest_pangkat": "Kolonel (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_gate",
+      "scanned_by_admin_name": "Petugas Lapangan",
+      "scanned_at": "2026-09-07T11:15:44.114Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788771807628_clrcv",
       "guest_id": "guest_1788534290056_opo9",
       "guest_nama": "Letkol Kurniawan Pratama, M.Han.",
@@ -3539,6 +3576,24 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788779744177_7g4w",
+      "admin_id": "admin_gate",
+      "admin_username": "petugas_gate",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Dr. Hendra Gunawan, S.I.P., M.Han. (Kolonel (AD) / NRP 888313) di Gate 1: Pintu Masuk Utama (Absensi Awal) - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T11:15:44.177Z"
+    },
+    {
+      "id": "aud_1788772323898_piuj",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T09:12:03.898Z"
+    },
     {
       "id": "aud_1788771807667_lv04",
       "admin_id": "admin_gate",
@@ -3927,6 +3982,19 @@
       "room_code": "101 (A)",
       "room_floor": "Lantai 1",
       "assigned_at": "2026-09-07T09:03:27.638Z"
+    },
+    {
+      "id": "assign_1788779744129_zbeoh",
+      "peserta_id": "guest_1788533739968_0r4b",
+      "seat_code": "D-07",
+      "seat_area": "Area Pamen Kolonel",
+      "gedung": "Ahmad Yani",
+      "seat_row": "D",
+      "seat_num": "07",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "room_code": "102 (A)",
+      "room_floor": "Lantai 1",
+      "assigned_at": "2026-09-07T11:15:44.129Z"
     }
   ]
 }

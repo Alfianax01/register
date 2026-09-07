@@ -13,14 +13,16 @@ export interface AssignmentResult {
 export class AssignmentService {
   /**
    * Determine target seat group code based on military/civilian rank level (1-12)
+   * Jenderal TNI -> A-01, Letjen -> A-02, Mayjen -> B-01, Kolonel -> D-01
    */
   public static getTargetSeatGroup(pangkatLevel: number = 10, matra?: string): string {
-    if (pangkatLevel === 1) return 'A'; // VVIP Bintang 4 & Tamu Negara / Menteri
-    if (pangkatLevel <= 3) return 'B';  // VIP Pati Bintang 3 & 2
-    if (pangkatLevel === 4) return 'C';  // Pati Bintang 1 (Brigjen/Laksma/Marsma)
-    if (pangkatLevel === 5) return 'D';  // Pamen Kolonel
-    if (pangkatLevel <= 7) return 'E';  // Pamen Letkol & Mayor
-    return 'F';                         // Pama, Tamtama & Tamu Undangan / Sipil
+    if (pangkatLevel === 1) return 'A'; // VVIP Jenderal TNI / Tamu Negara
+    if (pangkatLevel === 2) return 'A'; // Letjen / Laksdya / Marsdya (Baris Depan Utama A)
+    if (pangkatLevel === 3) return 'B'; // Mayjen / Laksda / Marsda (Baris B)
+    if (pangkatLevel === 4) return 'C'; // Brigjen / Laksma / Marsma (Baris C)
+    if (pangkatLevel === 5) return 'D'; // Pamen Kolonel (Baris D)
+    if (pangkatLevel <= 7) return 'E'; // Pamen Letkol & Mayor (Baris E)
+    return 'F';                        // Pama, Tamtama & Delegasi / Sipil (Baris F)
   }
 
   /**
@@ -37,29 +39,32 @@ export class AssignmentService {
 
   /**
    * Determine target wisma name, room code, and floor based on rank level
+   * VVIP/Pati: Wisma Sudirman Kamar 203
+   * Pamen: Wisma Kartika Kamar B-101
+   * Delegasi: Wisma Garuda / Bahari
    */
   public static getTargetAccommodation(pangkatLevel: number = 10, guestIndex: number = 1): {
     wismaName: string;
     roomCode: string;
     roomFloor: string;
   } {
-    const padNum = String((guestIndex % 20) + 101).padStart(3, '0');
-    if (pangkatLevel <= 3) {
+    const padNum = String((guestIndex % 20) + 101);
+    if (pangkatLevel <= 4) {
       return {
-        wismaName: 'Wisma Garuda',
-        roomCode: `GAR-${padNum}`,
-        roomFloor: 'Lantai 1'
-      };
-    } else if (pangkatLevel <= 5) {
-      return {
-        wismaName: 'Wisma Cendrawasih',
-        roomCode: `CEN-${padNum}`,
+        wismaName: 'Wisma Sudirman',
+        roomCode: '203',
         roomFloor: 'Lantai 2'
+      };
+    } else if (pangkatLevel <= 7) {
+      return {
+        wismaName: 'Wisma Kartika',
+        roomCode: 'B-101',
+        roomFloor: 'Lantai 1'
       };
     } else {
       return {
-        wismaName: 'Wisma Rajawali',
-        roomCode: `RAJ-${padNum}`,
+        wismaName: 'Wisma Garuda',
+        roomCode: padNum,
         roomFloor: 'Lantai 1'
       };
     }
@@ -164,11 +169,18 @@ export class AssignmentService {
     guest.wisma_assignment = wismaAssignment;
 
     // 3. CREATE PERSISTENT RECORD IN SEPARATE ASSIGNMENTS ENTITY
+    const seatParts = (seatNumber || 'A-01').split('-');
+    const seatRow = seatParts[0] || 'A';
+    const seatNum = seatParts[1] || '01';
+
     const assignment: Assignment = {
       id: `assign_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       peserta_id: guest.id,
       seat_code: seatNumber || 'A-01',
       seat_area: seatArea,
+      gedung: 'Ahmad Yani',
+      seat_row: seatRow,
+      seat_num: seatNum,
       wisma_name: wismaName,
       room_code: roomCode,
       room_floor: roomFloor,

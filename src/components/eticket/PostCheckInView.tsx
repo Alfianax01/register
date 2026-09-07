@@ -23,3 +23,4 @@ export const PostCheckInView: React.FC<PostCheckInViewProps> = ({
     </div>
   );
 };
+

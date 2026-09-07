@@ -46,6 +46,10 @@ export async function GET(
       return NextResponse.json({ error: 'Data peserta tidak ditemukan' }, { status: 404 });
     }
 
+    const assignment = guest.assignment || db.findAssignmentByGuestId(guest.id);
+    const isCheckIn = guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
+    const seatCode = assignment?.seat_code || guest.seat_assignment || guest.seat_number;
+
     // Generate PDF buffer
     const pdfBuffer = await generateTicketPdf({
       nama: guest.nama,
@@ -57,8 +61,14 @@ export async function GET(
       instansi: guest.negara_instansi || guest.instansi || guest.satker || 'Mabes TNI',
       kategori_tamu: guest.kategori_tamu || (guest.matra === 'NON_TNI' ? 'Undangan Sipil' : 'Prajurit TNI'),
       matra: guest.matra,
-      seat_number: guest.seat_number,
-      seat_group: guest.seat_number ? `Sidang Paripurna (Kursi ${guest.seat_number})` : 'Sidang Paripurna Gedung Ahmad Yani',
+      status: isCheckIn ? 'CHECK IN' : 'REGISTRASI',
+      seat_number: seatCode,
+      seat_group: seatCode ? `Sidang Paripurna (Kursi ${seatCode})` : 'Sidang Paripurna Gedung Ahmad Yani',
+      gedung: assignment?.gedung || 'Ahmad Yani',
+      seat_row: assignment?.seat_row,
+      seat_num: assignment?.seat_num,
+      wisma_name: assignment?.wisma_name,
+      room_code: assignment?.room_code,
       registration_id: guest.registration_id,
       qr_token: guest.qr_token,
       created_at: guest.created_at

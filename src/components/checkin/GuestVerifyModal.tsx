@@ -92,49 +92,50 @@ export const GuestVerifyModal: React.FC<GuestVerifyModalProps> = ({
         </div>
 
         {/* Direction Cards: Seating & Room */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Seating Direction */}
-          <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
-            <div className="flex items-center gap-1.5 text-xs text-blue-700 font-medium mb-1">
-              <Armchair className="w-4 h-4" />
-              <span>Nomor Kursi</span>
-            </div>
-            {guest.seat_number ? (
-              <div>
-                <span className="text-xl font-bold font-mono text-blue-900 block">
-                  {guest.seat_number}
-                </span>
-                <span className="text-[11px] text-blue-700">
-                  {guest.seat_details?.group_code ? `Grup ${guest.seat_details.group_code}` : 'Sidang Pleno'}
-                </span>
-              </div>
-            ) : (
-              <span className="text-xs text-slate-400 italic">Belum ditentukan</span>
-            )}
-          </div>
+        {(() => {
+          const assignment = (result as any).assignment || guest.assignment;
+          const seatCode = assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-01';
+          const seatArea = assignment?.seat_area || 'Gedung Ahmad Yani';
+          const wismaName = assignment?.wisma_name || 'Wisma Sudirman';
+          const roomCode = assignment?.room_code ? `Kamar ${assignment.room_code}` : 'Kamar 203';
+          const roomFloor = assignment?.room_floor || 'Lantai 2';
 
-          {/* Wisma Direction */}
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center gap-1.5 text-xs text-slate-700 font-medium mb-1">
-              <Bed className="w-4 h-4 text-slate-500" />
-              <span>Akomodasi Wisma</span>
-            </div>
-            {guest.room_details ? (
-              <div>
-                <span className="text-sm font-semibold text-slate-900 block">
-                  Kamar {guest.room_details.room_number} (Bed {guest.room_details.slot})
-                </span>
-                <span className="text-[11px] text-slate-500 truncate block">
-                  {guest.room_details.wisma_name}
-                </span>
+          return (
+            <div className="grid grid-cols-2 gap-3">
+              {/* Seating Direction */}
+              <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
+                <div className="flex items-center gap-1.5 text-xs text-blue-700 font-medium mb-1">
+                  <Armchair className="w-4 h-4" />
+                  <span>Nomor Kursi</span>
+                </div>
+                <div>
+                  <span className="text-xl font-black font-mono text-blue-900 block">
+                    {seatCode}
+                  </span>
+                  <span className="text-[11px] text-blue-700 font-medium">
+                    {seatArea}
+                  </span>
+                </div>
               </div>
-            ) : guest.butuh_akomodasi ? (
-              <span className="text-xs text-amber-600 font-medium">Perlu Konfirmasi Wisma</span>
-            ) : (
-              <span className="text-xs text-slate-500">Tidak Menginap</span>
-            )}
-          </div>
-        </div>
+
+              {/* Wisma Direction */}
+              <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/80">
+                <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-medium mb-1">
+                  <Bed className="w-4 h-4 text-emerald-600" />
+                  <span>Lokasi Wisma &amp; Kamar</span>
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-slate-900 block">
+                    {wismaName}
+                  </span>
+                  <span className="text-[11px] text-emerald-800 font-semibold block">
+                    {roomCode} &bull; {roomFloor}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Action button */}
         <Button variant="primary" size="md" onClick={onClose} className="w-full text-xs font-semibold h-[42px]">

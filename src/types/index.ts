@@ -56,9 +56,12 @@ export interface Assignment {
   peserta_id: string;
   seat_code: string;      // contoh: "A-06"
   seat_area: string;      // contoh: "Area VVIP"
-  wisma_name: string;     // contoh: "Wisma Garuda"
-  room_code: string;      // contoh: "GAR-102"
-  room_floor: string;     // contoh: "Lantai 1"
+  gedung?: string;        // contoh: "Ahmad Yani"
+  seat_row?: string;      // contoh: "A"
+  seat_num?: string;      // contoh: "06"
+  wisma_name: string;     // contoh: "Wisma Sudirman"
+  room_code: string;      // contoh: "203"
+  room_floor: string;     // contoh: "Lantai 2"
   assigned_at: string;
 }
 

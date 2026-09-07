@@ -40,46 +40,28 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   const menuItems = [
     {
-      href: '/admin',
-      label: 'Dashboard',
-      icon: LayoutDashboard,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
-    },
-    {
       href: '/admin/guests',
       label: 'Data Peserta',
       icon: Users,
-      allowedRoles: ['SUPER_ADMIN']
-    },
-    {
-      href: '/admin/placement',
-      label: 'Alokasi Kursi & Wisma',
-      icon: Armchair,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_AKOMODASI']
+      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
     },
     {
       href: '/admin/scanner',
       label: 'Scan QR Gate',
       icon: QrCode,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE']
+      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'admin', 'superadmin']
+    },
+    {
+      href: '/admin/monitoring',
+      label: 'Monitoring Presensi',
+      icon: BarChart3,
+      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
     },
     {
       href: '/admin/checkin',
       label: 'Log Presensi Check-In',
       icon: ClipboardCheck,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE']
-    },
-    {
-      href: '/admin/monitoring',
-      label: 'Laporan & Statistik',
-      icon: BarChart3,
-      allowedRoles: ['SUPER_ADMIN']
-    },
-    {
-      href: '/admin/settings',
-      label: 'Pengaturan Sistem',
-      icon: Settings,
-      allowedRoles: ['SUPER_ADMIN']
+      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'admin', 'superadmin']
     }
   ];
 
