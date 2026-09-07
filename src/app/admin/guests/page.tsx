@@ -9,7 +9,7 @@ import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Guest, MatraType } from '@/types';
 import { TNI_RANKS } from '@/lib/constants/ranks';
-import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
+import { MATRA_COLORS, getMatraColor, safeMatraBg } from '@/constants/matraColors';
 import {
   Search,
   Filter,
@@ -291,17 +291,18 @@ export default function GuestsPage() {
     };
   };
 
-  const renderMatraBadge = (matra: string) => {
+  const renderMatraBadge = (matra?: string | null) => {
     const spec = getMatraColor(matra);
     const shortLabel = spec.key === 'TNI_AD' ? 'TNI AD' :
                        spec.key === 'TNI_AU' ? 'TNI AU' :
                        spec.key === 'TNI_AL' ? 'TNI AL' :
                        spec.key === 'MABES' ? 'MABES' :
-                       spec.key === 'SIPIL' ? 'SIPIL' : 'KEMEN';
+                       spec.key === 'SIPIL' ? 'SIPIL' :
+                       spec.key === 'KEMENTERIAN' ? 'KEMEN' : 'TNI';
     return (
       <span
         className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black text-white shadow-2xs"
-        style={{ backgroundColor: spec.hex }}
+        style={{ backgroundColor: safeMatraBg(matra) }}
       >
         {shortLabel}
       </span>

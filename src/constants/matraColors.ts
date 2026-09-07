@@ -10,6 +10,8 @@ export const MATRA_COLORS = {
   KEMENTERIAN: { hex: '#E5E7EB', label: 'Putih'     },
 } as const;
 
+export const DEFAULT_MATRA_COLOR = { hex: '#9CA3AF', label: 'Default' } as const;
+
 export const MATRA_HEX = {
   SIPIL:       '#C9A227',
   TNI_AD:      '#22A559',
@@ -22,7 +24,7 @@ export const MATRA_HEX = {
 export type MatraColorKey = keyof typeof MATRA_COLORS;
 
 export interface MatraColorSpec {
-  key: MatraColorKey;
+  key: MatraColorKey | 'DEFAULT';
   label: string;
   hex: string;
   bgHex: string;
@@ -32,6 +34,18 @@ export interface MatraColorSpec {
   borderTint: string; // 30% border
   badgeClass: string;
 }
+
+export const DEFAULT_MATRA_SPEC: MatraColorSpec = {
+  key: 'DEFAULT',
+  label: 'Default',
+  hex: '#9CA3AF',
+  bgHex: '#9CA3AF',
+  borderHex: '#64748B',
+  textHex: '#FFFFFF',
+  bgTint: 'rgba(156, 163, 175, 0.12)',
+  borderTint: 'rgba(156, 163, 175, 0.30)',
+  badgeClass: 'bg-slate-100 text-slate-700 border-slate-300'
+};
 
 export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
   SIPIL: {
@@ -102,8 +116,8 @@ export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
   }
 };
 
-export function normalizeMatraKey(matra?: string | null): MatraColorKey {
-  if (!matra) return 'MABES';
+export function normalizeMatraKey(matra?: unknown): MatraColorKey | null {
+  if (!matra || typeof matra !== 'string') return null;
   const clean = matra.trim().toUpperCase().replace(/\s+/g, '_');
   if (clean === 'AD' || clean === 'TNI_AD' || clean.includes('DARAT')) return 'TNI_AD';
   if (clean === 'AU' || clean === 'TNI_AU' || clean.includes('UDARA')) return 'TNI_AU';
@@ -111,10 +125,47 @@ export function normalizeMatraKey(matra?: string | null): MatraColorKey {
   if (clean === 'SIPIL' || clean === 'NON_TNI' || clean.includes('KEMHAN') || clean === 'VIP') return 'SIPIL';
   if (clean.includes('KEMENTERIAN') || clean.includes('LEMBAGA') || clean === 'POLRI') return 'KEMENTERIAN';
   if (clean === 'MABES' || clean.includes('MABES')) return 'MABES';
-  return 'MABES';
+  if (clean in MATRA_COLOR_SPECS) return clean as MatraColorKey;
+  return null;
 }
 
-export function getMatraColor(matra?: string | null): MatraColorSpec {
+export function getMatraColor(matra?: unknown): MatraColorSpec {
+  if (!matra || typeof matra !== 'string') {
+    return DEFAULT_MATRA_SPEC;
+  }
   const key = normalizeMatraKey(matra);
-  return MATRA_COLOR_SPECS[key];
+  if (!key) return DEFAULT_MATRA_SPEC;
+  return MATRA_COLOR_SPECS[key] || DEFAULT_MATRA_SPEC;
+}
+
+/**
+ * Safe Background Color Accessor
+ */
+export function safeMatraBg(matra?: unknown): string {
+  const spec = getMatraColor(matra);
+  return spec?.hex || DEFAULT_MATRA_COLOR.hex;
+}
+
+/**
+ * Safe Border Color Accessor
+ */
+export function safeMatraBorder(matra?: unknown): string {
+  const spec = getMatraColor(matra);
+  return spec?.borderHex || DEFAULT_MATRA_SPEC.borderHex;
+}
+
+/**
+ * Safe 12% Tint Background Accessor
+ */
+export function safeMatraTintBg(matra?: unknown): string {
+  const spec = getMatraColor(matra);
+  return spec?.bgTint || DEFAULT_MATRA_SPEC.bgTint;
+}
+
+/**
+ * Safe 30% Tint Border Accessor
+ */
+export function safeMatraTintBorder(matra?: unknown): string {
+  const spec = getMatraColor(matra);
+  return spec?.borderTint || DEFAULT_MATRA_SPEC.borderTint;
 }

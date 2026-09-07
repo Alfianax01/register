@@ -33,6 +33,7 @@ interface WismaGridViewProps {
   rooms: AccommodationRoom[];
   guests: Guest[];
   onAssignRoom: (roomId: string, slot: 'A' | 'B', guestId: string | null) => Promise<void> | void;
+  isLoading?: boolean;
 }
 
 // Single Source of Truth Matra styling
@@ -46,7 +47,7 @@ const getInstansiStyle = (matra?: string, kategori?: string) => {
   };
 };
 
-export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onAssignRoom }) => {
+export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onAssignRoom, isLoading = false }) => {
   const wismaNames = useMemo(() => Array.from(new Set(rooms.map(r => r.wisma_name))), [rooms]);
   const [selectedWisma, setSelectedWisma] = useState(wismaNames[0] || 'Wisma Soedirman (VVIP)');
 
@@ -213,6 +214,56 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
     if (!currentSlotOccupantId) return null;
     return guests.find(g => g.id === currentSlotOccupantId) || null;
   }, [guests, currentSlotOccupantId]);
+
+  // 1. Loading Skeleton State (Prompt V5 Requirement)
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-pulse select-none">
+        {/* Skeleton Stats Summary */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="h-20 bg-white rounded-xl border border-slate-200/90 p-4 flex items-center gap-3 shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-slate-200 flex-shrink-0" />
+              <div className="space-y-2 flex-1">
+                <div className="w-16 h-2.5 bg-slate-200 rounded-full" />
+                <div className="w-10 h-5 bg-slate-200 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Wisma Selector */}
+        <div className="p-4 bg-white rounded-2xl border border-slate-200 flex flex-wrap gap-2">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="w-40 h-12 bg-slate-200 rounded-xl" />
+          ))}
+        </div>
+
+        {/* Skeleton Floor Plan */}
+        <div className="space-y-6">
+          <div className="w-48 h-6 bg-slate-200 rounded-md" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="h-32 bg-slate-100 rounded-xl border border-slate-200/80" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Empty State (Prompt V5 Requirement)
+  if (rooms.length === 0) {
+    return (
+      <div className="w-full p-12 text-center bg-white rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
+        <Hotel className="w-12 h-12 text-slate-300 mx-auto stroke-1" />
+        <h3 className="text-base font-bold text-slate-800">Belum Ada Data Kamar Wisma</h3>
+        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          Data gedung wisma dan konfigurasi kamar belum tersedia.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

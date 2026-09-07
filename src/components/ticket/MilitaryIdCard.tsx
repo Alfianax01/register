@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/Badge';
 import { Shield, Armchair, Bed, CheckCircle2, Clock } from 'lucide-react';
+import { safeMatraBg, getMatraColor } from '@/constants/matraColors';
 
 interface MilitaryIdCardProps {
   guest: any;
@@ -9,6 +10,9 @@ interface MilitaryIdCardProps {
 }
 
 export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl, cardRef }) => {
+  const isCheckIn = guest?.status_kehadiran === 'CHECK_IN' || (guest?.status_kehadiran as any) === 'HADIR';
+  const matraBg = safeMatraBg(guest?.matra);
+
   return (
     <div
       ref={cardRef}
@@ -37,10 +41,10 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
 
         <div className="flex flex-col items-end gap-1">
           <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-50 px-2.5 py-0.5 rounded-sm border border-slate-200">
-            {guest.registration_id || (guest.nrp ? `REG-${guest.nrp}` : 'REG-2026')}
+            {guest?.registration_id || (guest?.nrp ? `REG-${guest.nrp}` : 'REG-2026')}
           </span>
           <span className="font-mono text-[10px] text-slate-400">
-            {guest.ticket_id || (guest.id ? `TCK-${guest.id.slice(-6).toUpperCase()}` : 'TCK-2026')}
+            {guest?.ticket_id || (guest?.id ? `TCK-${guest.id.slice(-6).toUpperCase()}` : 'TCK-2026')}
           </span>
         </div>
       </div>
@@ -52,23 +56,24 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
             Nama Tamu / Prajurit
           </span>
           <h3 className="text-[18px] font-semibold text-[#0F172A] mt-0.5 leading-snug">
-            {guest.gelar_depan ? `${guest.gelar_depan} ` : ''}
-            {guest.nama}
-            {guest.gelar_belakang ? `, ${guest.gelar_belakang}` : ''}
+            {guest?.gelar_depan ? `${guest.gelar_depan} ` : ''}
+            {guest?.nama || '-'}
+            {guest?.gelar_belakang ? `, ${guest.gelar_belakang}` : ''}
           </h3>
-          <p className="text-[14px] font-medium text-[#1E40AF] mt-0.5">
-            {guest.pangkat} &bull; {guest.matra === 'NON_TNI' ? 'Undangan Sipil / Non-TNI' : `Matra ${guest.matra}`}
+          <p className="text-[14px] font-medium text-[#1E40AF] mt-0.5 flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: matraBg }} />
+            <span>{guest?.pangkat || '-'} &bull; {guest?.matra === 'NON_TNI' ? 'Undangan Sipil / Non-TNI' : `Matra ${guest?.matra || 'TNI'}`}</span>
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 text-[13px] pt-1.5 border-t border-slate-100">
           <div>
             <span className="text-[#64748B] block text-[11px] uppercase font-medium">Jabatan Dinas</span>
-            <span className="text-[#0F172A] font-medium block truncate">{guest.jabatan}</span>
+            <span className="text-[#0F172A] font-medium block truncate">{guest?.jabatan || '-'}</span>
           </div>
           <div>
             <span className="text-[#64748B] block text-[11px] uppercase font-medium">Instansi / Satuan</span>
-            <span className="text-[#0F172A] font-medium block truncate">{guest.negara_instansi || guest.satuan || guest.satker}</span>
+            <span className="text-[#0F172A] font-medium block truncate">{guest?.negara_instansi || guest?.satuan || guest?.satker || '-'}</span>
           </div>
         </div>
       </div>
@@ -79,13 +84,13 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qrCodeUrl}
-            alt={`QR Code ${guest.nama}`}
+            alt={`QR Code ${guest?.nama || 'Peserta'}`}
             className="w-44 h-44 object-contain"
           />
         </div>
         <div className="space-y-1">
           <span className="font-mono text-[12px] font-medium text-slate-700 bg-white px-3 py-1 rounded-sm border border-slate-200 block">
-            ID: {guest.qr_token?.substring(0, 18)}...
+            ID: {guest?.qr_token ? `${guest.qr_token.substring(0, 18)}...` : 'VALID-TICKET'}
           </span>
           <p className="text-[12px] text-[#64748B]">
             Tunjukkan kode QR ini kepada petugas di Gate Gedung Ahmad Yani.
@@ -93,8 +98,8 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
         </div>
       </div>
 
-      {/* Seating & Wisma Badges or Hint Box based on V4 State Machine */}
-      {guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR' ? (
+      {/* Seating & Wisma Badges (V4 State Machine: Hanya muncul sesudah check-in, sebelum check-in diganti Hint Box) */}
+      {isCheckIn ? (
         <div className="p-5 grid grid-cols-2 gap-3 bg-white">
           <div className="p-3 rounded-md border border-slate-200 bg-slate-50/50 space-y-1">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B] uppercase">
@@ -103,7 +108,7 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
             </div>
             <p className="text-[15px] font-bold text-[#0F172A]">
               <span className="text-[#1E40AF] font-mono">
-                {guest.seat_number || 'A-01'}
+                {guest?.seat_number || 'A-01'}
               </span>
             </p>
           </div>
@@ -114,11 +119,11 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
               <span>Akomodasi Wisma</span>
             </div>
             <p className="text-[13px] font-medium text-[#0F172A]">
-              {guest.room_number ? (
+              {guest?.room_number ? (
                 <span className="text-emerald-700 truncate block">
-                  {guest.wisma_name || 'Wisma'} &bull; Kamar {guest.room_number}
+                  {guest?.wisma_name || 'Wisma'} &bull; Kamar {guest.room_number}
                 </span>
-              ) : guest.butuh_akomodasi ? (
+              ) : guest?.butuh_akomodasi ? (
                 <span className="text-amber-700">Tersedia di Lokasi</span>
               ) : (
                 <span className="text-slate-400 font-normal">Tidak Menginap</span>
@@ -155,10 +160,10 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
         <div>
           <span className="text-[#64748B] block text-[10px] uppercase font-medium">Waktu Registrasi</span>
           <span className="font-mono text-slate-700 text-[11px]">
-            {guest.created_at ? new Date(guest.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '4 Sep 2026'}
+            {guest?.created_at ? new Date(guest.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '4 Sep 2026'}
           </span>
         </div>
-        {guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR' ? (
+        {isCheckIn ? (
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-200">
             <CheckCircle2 className="w-3 h-3 text-[#10B981]" />
             <span>CHECK-IN BERHASIL</span>

@@ -22,7 +22,12 @@ import {
   MATRA_COLOR_SPECS,
   getMatraColor,
   MatraColorSpec,
-  normalizeMatraKey
+  normalizeMatraKey,
+  safeMatraBg,
+  safeMatraBorder,
+  safeMatraTintBg,
+  safeMatraTintBorder,
+  DEFAULT_MATRA_COLOR
 } from '@/constants/matraColors';
 
 interface SeatingGridViewProps {
@@ -31,6 +36,7 @@ interface SeatingGridViewProps {
   guests: Guest[];
   onAssignSeat: (seatNumber: string, guestId: string | null) => Promise<boolean | void> | void;
   onSwapSeats?: (sourceSeatNumber: string, targetSeatNumber: string) => Promise<void> | void;
+  isLoading?: boolean;
 }
 
 export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
@@ -38,7 +44,8 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
   seats,
   guests,
   onAssignSeat,
-  onSwapSeats
+  onSwapSeats,
+  isLoading = false
 }) => {
   const [selectedGroupCode, setSelectedGroupCode] = useState('A');
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
@@ -142,6 +149,53 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
         displayedGuest?.kategori_instansi
       )
     : null;
+
+  // 1. Loading Skeleton State (Prompt V5 Requirement)
+  if (isLoading) {
+    return (
+      <div className="w-full space-y-6 animate-pulse select-none">
+        {/* Skeleton Stats Bar */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-20 bg-white rounded-xl border border-slate-200/90 p-4 flex flex-col justify-center items-center gap-2 shadow-2xs">
+              <div className="w-24 h-2.5 bg-slate-200 rounded-full" />
+              <div className="w-12 h-6 bg-slate-200 rounded-md" />
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Group Tabs */}
+        <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="w-36 h-10 bg-slate-200 rounded-xl" />
+          ))}
+        </div>
+
+        {/* Skeleton Seating Canvas */}
+        <div className="p-5 sm:p-7 rounded-2xl bg-white border border-slate-200 space-y-6 shadow-xs">
+          <div className="w-full h-10 bg-slate-200 rounded-xl" />
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+            {Array.from({ length: 32 }).map((_, i) => (
+              <div key={i} className="h-20 bg-slate-100 rounded-xl border border-slate-200/80" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Empty State (Prompt V5 Requirement: Wajib handle seats / guests array kosong)
+  if (seats.length === 0) {
+    return (
+      <div className="w-full p-12 text-center bg-white rounded-2xl border border-slate-200/90 shadow-xs space-y-3">
+        <Armchair className="w-12 h-12 text-slate-300 mx-auto stroke-1" />
+        <h3 className="text-base font-bold text-slate-800">Belum Ada Data Denah Kursi</h3>
+        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          Konfigurasi kursi belum dimuat atau belum tersedia pada sistem.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6">
@@ -333,10 +387,10 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                     }}
                     onClick={() => handleOpenSeat(seat)}
                     style={
-                      isAssigned && spec
+                      isAssigned
                         ? {
-                            backgroundColor: spec.bgTint,
-                            borderColor: isDragOver ? '#2563EB' : isSelected ? '#F59E0B' : spec.borderTint,
+                            backgroundColor: safeMatraTintBg(seat.guest_matra || seat.kategori_instansi),
+                            borderColor: isDragOver ? '#2563EB' : isSelected ? '#F59E0B' : safeMatraTintBorder(seat.guest_matra || seat.kategori_instansi),
                             boxShadow: isSelected ? '0 0 0 2px #F59E0B, 0 4px 12px rgba(0,0,0,0.08)' : undefined
                           }
                         : undefined
@@ -359,7 +413,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                       {isAssigned ? (
                         <span
                           className="text-[9px] font-black px-1.5 py-0.5 rounded shadow-2xs text-white"
-                          style={{ backgroundColor: spec?.hex || '#2563EB' }}
+                          style={{ backgroundColor: safeMatraBg(seat.guest_matra || seat.kategori_instansi) }}
                         >
                           {badgeLabel}
                         </span>
@@ -433,9 +487,9 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-xs border"
                   style={{
-                    backgroundColor: modalMatraSpec?.bgTint || '#F1F5F9',
-                    borderColor: modalMatraSpec?.borderTint || '#CBD5E1',
-                    color: modalMatraSpec?.hex || '#1E40AF'
+                    backgroundColor: safeMatraTintBg(displayedGuest?.matra || selectedSeat.guest_matra || selectedSeat.kategori_instansi),
+                    borderColor: safeMatraTintBorder(displayedGuest?.matra || selectedSeat.guest_matra || selectedSeat.kategori_instansi),
+                    color: safeMatraBg(displayedGuest?.matra || selectedSeat.guest_matra || selectedSeat.kategori_instansi)
                   }}
                 >
                   <Armchair className="w-6 h-6 stroke-[2.2]" />
@@ -497,7 +551,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                   {modalMatraSpec && selectedSeat.guest_id && (
                     <span
                       className="px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-2xs"
-                      style={{ backgroundColor: modalMatraSpec.hex }}
+                      style={{ backgroundColor: safeMatraBg(displayedGuest?.matra || selectedSeat.guest_matra || selectedSeat.kategori_instansi) }}
                     >
                       {modalMatraSpec.label}
                     </span>

@@ -346,6 +346,7 @@ export default function AllocationPage() {
             guests={guests}
             onAssignSeat={handleAssignSeat}
             onSwapSeats={handleSwapSeats}
+            isLoading={loading}
           />
         )}
 
@@ -355,6 +356,7 @@ export default function AllocationPage() {
             rooms={rooms}
             guests={guests}
             onAssignRoom={handleAssignRoom}
+            isLoading={loading}
           />
         )}
       </div>

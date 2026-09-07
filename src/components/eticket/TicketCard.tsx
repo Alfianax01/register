@@ -3,7 +3,7 @@
 import React from 'react';
 import { Guest } from '@/types';
 import { CheckCircle2, Clock, Calendar, MapPin, Building, ShieldCheck, Armchair } from 'lucide-react';
-import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
+import { MATRA_COLORS, getMatraColor, safeMatraBg } from '@/constants/matraColors';
 
 export interface TicketCardProps {
   guest: Guest;
@@ -45,7 +45,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
   checkinDetails
 }) => {
   const isCheckIn = status === 'CHECK_IN';
-  const matraSpec = getMatraColor(guest.matra || guest.kategori_instansi);
+  const matraSpec = getMatraColor(guest?.matra || guest?.kategori_instansi);
 
   return (
     <div
@@ -151,7 +151,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             <span className="font-semibold text-slate-800 flex items-center gap-1.5">
               <span
                 className="w-2.5 h-2.5 rounded-full shadow-2xs"
-                style={{ backgroundColor: matraSpec.hex }}
+                style={{ backgroundColor: safeMatraBg(guest?.matra || guest?.kategori_instansi) }}
               />
               <span>{matraSpec.label}</span>
             </span>
