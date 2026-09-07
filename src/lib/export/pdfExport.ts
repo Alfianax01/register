@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit';
 import { Guest } from '@/types';
+import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
 
 export interface PdfExportMeta {
   title?: string;
@@ -203,7 +204,8 @@ export async function generateGuestsPdfBuffer(
         currentX += colWidths.nama;
 
         // 3. MATRA
-        doc.fillColor('#334155')
+        const matraSpec = getMatraColor(g.matra || g.kategori_instansi);
+        doc.fillColor(matraSpec.hex)
            .font('Helvetica-Bold')
            .fontSize(7.5)
            .text(g.matra || '-', currentX, y + 6, { width: colWidths.matra, align: 'center' });
@@ -247,7 +249,7 @@ export async function generateGuestsPdfBuffer(
         const badgeY = y + 3.5;
 
         doc.roundedRect(badgeX, badgeY, badgeWidth, badgeHeight, 3)
-           .fillColor(isCheckIn ? '#10B981' : '#F59E0B')
+           .fillColor(isCheckIn ? '#22A559' : '#F59E0B')
            .fill();
 
         doc.fillColor('#FFFFFF')

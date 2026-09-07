@@ -1,6 +1,95 @@
 {
   "guests": [
     {
+      "nrp": "NIP-277411",
+      "nama": "Prof. Dr. Ir. Budi Santoso, M.Sc.",
+      "matra": "NON_TNI",
+      "pangkat": "PNS Golongan IV",
+      "pangkat_level": 8,
+      "jabatan": "Staf Ahli Bidang Pertahanan",
+      "satker": "Kementerian Pertahanan RI",
+      "satuan": "Sekretariat Jenderal",
+      "negara_instansi": "Kementerian Pertahanan RI",
+      "no_hp": "081358790544",
+      "email": "sipil_NIP-277411@kemhan.go.id",
+      "butuh_akomodasi": 0,
+      "kategori_instansi": "SIPIL",
+      "warna_kursi": "gold",
+      "seatColorAlias": "gold",
+      "id": "guest_1788787291318_9sqx7ad",
+      "registration_id": "REG-2026-NIP277411-370188",
+      "ticket_id": "TCK-2026-1318-XLSM",
+      "qr_token": "27bcf6e0-26ad-4169-a432-04adbdd31293",
+      "token_hash": "4dc5dca8e0c1cd943a6d6f8e77b4b92f8818e39465b5884c583d0afa80109422",
+      "status_kehadiran": "REGISTRASI",
+      "created_at": "2026-09-07T13:21:31.318Z",
+      "updated_at": "2026-09-07T13:21:36.558Z",
+      "seat_assignment": "F-07",
+      "seat_group_id": "grp_f",
+      "seat_number": "F-07",
+      "wisma_assignment": "Tidak Menginap",
+      "assignment": {
+        "id": "assign_guest_1788787291318_9sqx7ad",
+        "peserta_id": "guest_1788787291318_9sqx7ad",
+        "seat_code": "F-07",
+        "seat_area": "Area Delegasi",
+        "gedung": "Gedung Ahmad Yani",
+        "seat_row": "F",
+        "seat_num": "07",
+        "wisma_name": "Tidak Menginap",
+        "room_code": "-",
+        "room_floor": "Tidak Menginap",
+        "assigned_at": "2026-09-07T13:21:31.341Z"
+      },
+      "emailSent": true
+    },
+    {
+      "nrp": "99584927",
+      "nama": "Kolonel Laut Bagus Prakoso, S.E.",
+      "matra": "AL",
+      "pangkat": "Kolonel",
+      "pangkat_level": 10,
+      "jabatan": "Asops Danlantamal",
+      "satker": "Mabes TNI AL (Cilangkap)",
+      "satuan": "Staf Operasi Kasal",
+      "negara_instansi": "Indonesia / TNI - Kemhan RI",
+      "no_hp": "081291627229",
+      "email": "perwira_99584927@tni.mil.id",
+      "butuh_akomodasi": 1,
+      "kategori_instansi": "ANGKATAN_LAUT",
+      "warna_kursi": "gray",
+      "seatColorAlias": "gray",
+      "id": "guest_1788787282021_67qnodm",
+      "registration_id": "REG-2026-99584927-770355",
+      "ticket_id": "TCK-2026-2021-PQNO",
+      "qr_token": "ca44def7-e42e-4219-9d3f-b78098bd11e6",
+      "token_hash": "b3d614913ef597d274874e91c09eb349c4507a90972621831fb75e46e76d30bf",
+      "status_kehadiran": "CHECK_IN",
+      "created_at": "2026-09-07T13:21:22.020Z",
+      "updated_at": "2026-09-07T13:21:30.756Z",
+      "seat_assignment": "F-06",
+      "seat_group_id": "grp_f",
+      "seat_number": "F-06",
+      "room_id": "room_kartika_102",
+      "room_slot": "B",
+      "wisma_assignment": "Wisma Kartika (Pamen) - Kamar 102B (Lantai 1)",
+      "assignment": {
+        "id": "assign_guest_1788787282021_67qnodm",
+        "peserta_id": "guest_1788787282021_67qnodm",
+        "seat_code": "F-06",
+        "seat_area": "Area Delegasi",
+        "gedung": "Gedung Ahmad Yani",
+        "seat_row": "F",
+        "seat_num": "06",
+        "wisma_name": "Wisma Kartika (Pamen)",
+        "room_code": "102B",
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-07T13:21:22.061Z"
+      },
+      "emailSent": true,
+      "waktu_kehadiran_pertama": "2026-09-07T13:21:30.756Z"
+    },
+    {
       "nrp": "NIP-471738",
       "nama": "Prof. Dr. Ir. Budi Santoso, M.Sc.",
       "matra": "NON_TNI",
@@ -3134,7 +3223,17 @@
       "seat_number": "F-06",
       "row_num": 1,
       "col_num": 6,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788787282021_67qnodm",
+      "peserta_id": "guest_1788787282021_67qnodm",
+      "guest_name": "Kolonel Laut Bagus Prakoso, S.E.",
+      "guest_rank": "Kolonel",
+      "guest_matra": "AL",
+      "guest_status": "CHECK_IN",
+      "kategori_instansi": "ANGKATAN_LAUT",
+      "colorAlias": "gray",
+      "warna": "gray",
+      "status": "CHECK_IN"
     },
     {
       "id": "seat_f_7",
@@ -3143,7 +3242,17 @@
       "seat_number": "F-07",
       "row_num": 1,
       "col_num": 7,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788787291318_9sqx7ad",
+      "peserta_id": "guest_1788787291318_9sqx7ad",
+      "guest_name": "Prof. Dr. Ir. Budi Santoso, M.Sc.",
+      "guest_rank": "PNS Golongan IV",
+      "guest_matra": "NON_TNI",
+      "guest_status": "REGISTRASI",
+      "kategori_instansi": "SIPIL",
+      "colorAlias": "gold",
+      "warna": "gold",
+      "status": "ASSIGNED"
     },
     {
       "id": "seat_f_8",
@@ -3638,7 +3747,11 @@
       "slot_a_guest_id": "guest_1788784831520_ra0lb6a",
       "slot_a_guest_name": "Kolonel Laut Bagus Prakoso, S.E.",
       "slot_a_guest_rank": "Kolonel",
-      "slot_a_guest_matra": "AL"
+      "slot_a_guest_matra": "AL",
+      "slot_b_guest_id": "guest_1788787282021_67qnodm",
+      "slot_b_guest_name": "Kolonel Laut Bagus Prakoso, S.E.",
+      "slot_b_guest_rank": "Kolonel",
+      "slot_b_guest_matra": "AL"
     },
     {
       "id": "room_kartika_103",
@@ -3976,6 +4089,20 @@
     }
   ],
   "checkin_logs": [
+    {
+      "id": "chk_1788787290756_whp6b",
+      "guest_id": "guest_1788787282021_67qnodm",
+      "guest_nama": "Kolonel Laut Bagus Prakoso, S.E.",
+      "guest_nrp": "99584927",
+      "guest_pangkat": "Kolonel",
+      "guest_matra": "AL",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_gate",
+      "scanned_by_admin_name": "Petugas Lapangan",
+      "scanned_at": "2026-09-07T13:21:30.756Z",
+      "ip_address": "::1"
+    },
     {
       "id": "chk_1788784837080_x2v7s",
       "guest_id": "guest_1788784831520_ra0lb6a",
@@ -4378,6 +4505,42 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788787290797_dfl9",
+      "admin_id": "admin_gate",
+      "admin_username": "petugas_gate",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Kolonel Laut Bagus Prakoso, S.E. (Kolonel / NRP 99584927) di gate-01 - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T13:21:30.797Z"
+    },
+    {
+      "id": "aud_1788787191101_cssd",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T13:19:51.101Z"
+    },
+    {
+      "id": "aud_1788787102296_7f79",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T13:18:22.296Z"
+    },
+    {
+      "id": "aud_1788784923929_p5w5",
+      "admin_id": "admin_wisma",
+      "admin_username": "panitiawisma",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai PANITIA_AKOMODASI",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T12:42:03.929Z"
+    },
     {
       "id": "aud_1788784837122_9ryi",
       "admin_id": "admin_gate",
@@ -5254,6 +5417,32 @@
       "room_code": "-",
       "room_floor": "Tidak Menginap",
       "assigned_at": "2026-09-07T12:40:37.231Z"
+    },
+    {
+      "id": "assign_guest_1788787282021_67qnodm",
+      "peserta_id": "guest_1788787282021_67qnodm",
+      "seat_code": "F-06",
+      "seat_area": "Area Delegasi",
+      "gedung": "Gedung Ahmad Yani",
+      "seat_row": "F",
+      "seat_num": "06",
+      "wisma_name": "Wisma Kartika (Pamen)",
+      "room_code": "102B",
+      "room_floor": "Lantai 1",
+      "assigned_at": "2026-09-07T13:21:22.061Z"
+    },
+    {
+      "id": "assign_guest_1788787291318_9sqx7ad",
+      "peserta_id": "guest_1788787291318_9sqx7ad",
+      "seat_code": "F-07",
+      "seat_area": "Area Delegasi",
+      "gedung": "Gedung Ahmad Yani",
+      "seat_row": "F",
+      "seat_num": "07",
+      "wisma_name": "Tidak Menginap",
+      "room_code": "-",
+      "room_floor": "Tidak Menginap",
+      "assigned_at": "2026-09-07T13:21:31.341Z"
     }
   ]
 }

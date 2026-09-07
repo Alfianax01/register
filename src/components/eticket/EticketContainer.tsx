@@ -176,8 +176,9 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
         status={isCheckIn ? 'CHECK_IN' : 'REGISTRASI'}
         seat={guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-07'}
         gedung={guest.assignment?.gedung || 'Gedung Ahmad Yani'}
+        ruangan={guest.assignment?.seat_area || 'Ruang Sidang Utama'}
         wisma={guest.assignment?.wisma_name || (guest.butuh_akomodasi ? 'Wisma Soedirman' : 'Tidak Menginap')}
-        room={guest.assignment?.room_code || (guest.butuh_akomodasi ? '103A' : 'Tidak Menginap')}
+        room={guest.assignment?.room_code || (guest.butuh_akomodasi ? '103A' : '-')}
         checkinDetails={(guest as any).checkin_details || checkinDetails}
       />
 

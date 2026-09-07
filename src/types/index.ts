@@ -37,14 +37,15 @@ export interface Guest {
   seat_number?: string;
   seat_assignment?: string;
   room_id?: string;
+  room_number?: string;
   room_slot?: 'A' | 'B';
   wisma_assignment?: string;
   status_kehadiran: 'REGISTRASI' | 'CHECK_IN';
   waktu_kehadiran_pertama?: string;
   token?: string;
   emailSent?: boolean;
-  kategori_instansi?: 'ANGKATAN_DARAT' | 'ANGKATAN_LAUT' | 'ANGKATAN_UDARA' | 'KEMENTERIAN';
-  warna_kursi?: 'green' | 'blue' | 'gray' | 'white';
+  kategori_instansi?: 'ANGKATAN_DARAT' | 'ANGKATAN_LAUT' | 'ANGKATAN_UDARA' | 'KEMENTERIAN' | 'MABES' | 'SIPIL';
+  warna_kursi?: 'green' | 'blue' | 'gray' | 'white' | 'purple' | 'gold';
   seatColorAlias?: string;
   assignment?: Assignment;
   created_at: string;

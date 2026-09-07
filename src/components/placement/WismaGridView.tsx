@@ -27,46 +27,22 @@ import {
   Building2
 } from 'lucide-react';
 
+import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
+
 interface WismaGridViewProps {
   rooms: AccommodationRoom[];
   guests: Guest[];
   onAssignRoom: (roomId: string, slot: 'A' | 'B', guestId: string | null) => Promise<void> | void;
 }
 
-// Exact Matra styling adhering to military guidelines
+// Single Source of Truth Matra styling
 const getInstansiStyle = (matra?: string, kategori?: string) => {
-  const m = matra?.toUpperCase();
-  const k = kategori?.toUpperCase();
-
-  if (m === 'AD' || k === 'ANGKATAN_DARAT') {
-    return {
-      bgHex: '#1F7A3E',
-      badgeClass: 'bg-[#1F7A3E]/10 text-[#1F7A3E] border-[#1F7A3E]/30',
-      avatarBg: 'bg-[#1F7A3E]',
-      label: 'TNI AD'
-    };
-  }
-  if (m === 'AU' || k === 'ANGKATAN_UDARA') {
-    return {
-      bgHex: '#2563EB',
-      badgeClass: 'bg-[#2563EB]/10 text-[#2563EB] border-[#2563EB]/30',
-      avatarBg: 'bg-[#2563EB]',
-      label: 'TNI AU'
-    };
-  }
-  if (m === 'AL' || k === 'ANGKATAN_LAUT') {
-    return {
-      bgHex: '#475569',
-      badgeClass: 'bg-[#475569]/10 text-[#475569] border-[#475569]/30',
-      avatarBg: 'bg-[#475569]',
-      label: 'TNI AL'
-    };
-  }
+  const spec = getMatraColor(matra || kategori);
   return {
-    bgHex: '#FFFFFF',
-    badgeClass: 'bg-white text-slate-800 border-[#D1D5DB] shadow-2xs',
-    avatarBg: 'bg-slate-700',
-    label: 'Kementerian / Lembaga'
+    bgHex: spec.hex,
+    badgeClass: spec.badgeClass,
+    avatarBg: spec.hex,
+    label: spec.label
   };
 };
 

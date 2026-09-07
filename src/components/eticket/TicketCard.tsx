@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Guest } from '@/types';
-import { CheckCircle2, Clock, Calendar, MapPin, Building, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Clock, Calendar, MapPin, Building, ShieldCheck, Armchair } from 'lucide-react';
+import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
 
 export interface TicketCardProps {
   guest: Guest;
@@ -10,6 +11,7 @@ export interface TicketCardProps {
   status: 'REGISTRASI' | 'CHECK_IN';
   seat: string;
   gedung?: string;
+  ruangan?: string;
   wisma: string;
   room: string;
   checkinDetails?: {
@@ -27,7 +29,7 @@ export interface TicketCardProps {
  * 3. QR CODE (dengan overlay status via opacity transition)
  * 4. IDENTITAS PESERTA (Nama, NRP, Satuan, Jabatan, Pangkat)
  * 5. CHECK-IN INFO (waktu & lokasi scanner)
- * 6. PENEMPATAN PESERTA (Kursi | Gedung | Wisma & Kamar) — SELALU TAMPIL SEBELUM & SESUDAH CHECK-IN
+ * 6. PENEMPATAN PESERTA (Baris 1: Kursi | Gedung | Ruangan, Baris 2: Wisma | Kamar)
  * 7. INFORMASI EVENT (Tanggal, Lokasi, Agenda)
  */
 export const TicketCard: React.FC<TicketCardProps> = ({
@@ -36,11 +38,13 @@ export const TicketCard: React.FC<TicketCardProps> = ({
   status,
   seat,
   gedung = 'Gedung Ahmad Yani',
+  ruangan = 'Ruang Sidang Utama',
   wisma,
   room,
   checkinDetails
 }) => {
   const isCheckIn = status === 'CHECK_IN';
+  const matraSpec = getMatraColor(guest.matra || guest.kategori_instansi);
 
   return (
     <div
@@ -145,25 +149,10 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             </span>
             <span className="font-semibold text-slate-800 flex items-center gap-1.5">
               <span
-                className={`w-2 h-2 rounded-full ${
-                  guest.matra === 'AD'
-                    ? 'bg-emerald-600'
-                    : guest.matra === 'AL'
-                    ? 'bg-blue-700'
-                    : guest.matra === 'AU'
-                    ? 'bg-sky-500'
-                    : 'bg-amber-600'
-                }`}
+                className="w-2.5 h-2.5 rounded-full shadow-2xs"
+                style={{ backgroundColor: matraSpec.hex }}
               />
-              {guest.matra === 'AD'
-                ? 'TNI AD'
-                : guest.matra === 'AL'
-                ? 'TNI AL'
-                : guest.matra === 'AU'
-                ? 'TNI AU'
-                : guest.matra === 'MABES'
-                ? 'Mabes TNI'
-                : 'Sipil / Tamu'}
+              <span>{matraSpec.label}</span>
             </span>
           </div>
 
@@ -216,12 +205,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </span>
         </div>
 
-        {/* 3 Columns: Kursi | Gedung | Wisma */}
+        {/* Baris 1: Nomor Kursi | Gedung | Ruangan */}
         <div className="grid grid-cols-3 gap-2">
           {/* Kolom 1: Kursi */}
           <div className="p-2.5 rounded-xl bg-blue-50/40 border border-blue-100 text-center flex flex-col justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Kursi
+              Nomor Kursi
             </span>
             <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
               {seat || 'A-07'}
@@ -237,38 +226,56 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               Gedung
             </span>
             <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung}>
-              {gedung || 'Ahmad Yani'}
+              {gedung || 'Gedung Ahmad Yani'}
             </span>
             <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-              Lokasi Duduk
+              Lokasi Acara
             </span>
           </div>
 
-          {/* Kolom 3: Wisma */}
+          {/* Kolom 3: Ruangan */}
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Wisma
+              Ruangan
             </span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma}>
-              {wisma || 'Wisma Soedirman'}
+            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={ruangan}>
+              {ruangan || 'Ruang Sidang Utama'}
             </span>
             <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-              Akomodasi
+              Ruang Sidang
             </span>
           </div>
         </div>
 
-        {/* Full-width Row: Kamar */}
-        <div className="px-3 py-2 rounded-xl bg-indigo-50/40 border border-indigo-100 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <Building className="w-3.5 h-3.5 text-indigo-600" />
-            <span className="text-[11px] font-semibold text-slate-600">
-              Nomor Kamar:
+        {/* Baris 2: Wisma | Kamar */}
+        <div className="grid grid-cols-2 gap-2">
+          {/* Kolom 1: Wisma */}
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+                Wisma / Mess
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma}>
+                {wisma || 'Wisma Soedirman'}
+              </span>
+            </div>
+            <Building className="w-4 h-4 text-slate-400 flex-shrink-0 ml-1.5" />
+          </div>
+
+          {/* Kolom 2: Kamar */}
+          <div className="p-2.5 rounded-xl bg-indigo-50/40 border border-indigo-100 flex items-center justify-between">
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 block mb-0.5">
+                Nomor Kamar
+              </span>
+              <span className="font-bold font-mono text-indigo-950 text-xs sm:text-sm block truncate">
+                {room && room !== '-' ? (room.toLowerCase().includes('kamar') ? room : `Kamar ${room}`) : (wisma === 'Tidak Menginap' || !room || room === '-' ? 'Tidak Menginap' : room)}
+              </span>
+            </div>
+            <span className="text-[10px] font-bold text-indigo-700 bg-indigo-100/80 px-1.5 py-0.5 rounded flex-shrink-0 ml-1.5">
+              Akomodasi
             </span>
           </div>
-          <span className="font-bold font-mono text-indigo-950 text-xs sm:text-sm">
-            {room && room !== '-' ? room : 'Tidak Menginap'}
-          </span>
         </div>
       </div>
 

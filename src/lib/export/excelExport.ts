@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
 import { Guest } from '@/types';
+import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
 
 /**
  * Format tanggal ke standar WIB (Asia/Jakarta)
@@ -202,9 +203,16 @@ export async function generateGuestsExcelBuffer(
         cell.alignment = { horizontal: 'left', vertical: 'middle' };
       }
 
+      // Khusus Cell Matra (Kolom 3)
+      if (colIdx === 2) {
+        const spec = getMatraColor(g.matra || g.kategori_instansi);
+        const hexClean = spec.hex.replace('#', '');
+        cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: `FF${hexClean}` } };
+      }
+
       // Khusus Cell Status (Kolom 9)
       if (colIdx === 8) {
-        const statusBgColor = isCheckIn ? 'FF10B981' : 'FFF59E0B'; // Emerald vs Amber
+        const statusBgColor = isCheckIn ? 'FF22A559' : 'FFF59E0B'; // Hijau vs Amber
         cell.fill = {
           type: 'pattern',
           pattern: 'solid',

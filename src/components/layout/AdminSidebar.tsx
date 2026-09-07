@@ -46,6 +46,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
     },
     {
+      href: '/admin/allocation',
+      label: 'Penempatan Kursi & Wisma',
+      icon: Armchair,
+      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin', 'PANITIA_AKOMODASI']
+    },
+    {
       href: '/admin/scanner',
       label: 'Scan QR Gate',
       icon: QrCode,
@@ -108,7 +114,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               ? pathname === '/admin' || pathname === '/admin/dashboard'
               : pathname === item.href ||
                 (item.href === '/admin/guests' && pathname === '/admin/peserta') ||
-                (item.href === '/admin/placement' && pathname === '/admin/kursi') ||
+                (item.href === '/admin/allocation' && (pathname === '/admin/allocation' || pathname === '/admin/placement' || pathname === '/admin/kursi')) ||
                 (item.href === '/admin/monitoring' && pathname === '/admin/laporan');
 
           const isAllowed = !effectiveRole || item.allowedRoles.includes(effectiveRole);

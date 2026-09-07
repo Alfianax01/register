@@ -1,14 +1,28 @@
 // =============================================================================
 // KONSTANTA PEWARNAAN MATRA & INSTANSI RAPIM TNI 2026
+// Single source of truth diimpor dari @/constants/matraColors
 // =============================================================================
+
+import {
+  MATRA_COLORS as OFFICIAL_MATRA_COLORS,
+  MATRA_COLOR_SPECS,
+  normalizeMatraKey,
+  MatraColorKey,
+  MatraColorSpec
+} from '@/constants/matraColors';
+
+export { OFFICIAL_MATRA_COLORS, MATRA_COLOR_SPECS, normalizeMatraKey };
+export type { MatraColorKey, MatraColorSpec };
 
 export type KategoriInstansi =
   | 'ANGKATAN_DARAT'
   | 'ANGKATAN_LAUT'
   | 'ANGKATAN_UDARA'
+  | 'MABES'
+  | 'SIPIL'
   | 'KEMENTERIAN';
 
-export type WarnaKursiAlias = 'green' | 'blue' | 'gray' | 'white';
+export type WarnaKursiAlias = 'green' | 'blue' | 'gray' | 'purple' | 'gold' | 'white';
 
 export interface MatraColorDefinition {
   alias: WarnaKursiAlias;
@@ -16,6 +30,8 @@ export interface MatraColorDefinition {
   bgHex: string;
   borderHex: string;
   textHex: string;
+  bgTint: string;
+  borderTint: string;
   badgeClass: string;
   cardClass: string;
 }
@@ -24,38 +40,68 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   ANGKATAN_DARAT: {
     alias: 'green',
     label: 'TNI Angkatan Darat',
-    bgHex: '#1F7A3E',
-    borderHex: '#176131',
+    bgHex: OFFICIAL_MATRA_COLORS.TNI_AD, // #22A559
+    borderHex: '#187A41',
     textHex: '#FFFFFF',
-    badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-300 font-semibold',
-    cardClass: 'bg-[#1F7A3E] text-white border-[#176131]'
+    bgTint: 'rgba(34, 165, 89, 0.12)',
+    borderTint: 'rgba(34, 165, 89, 0.30)',
+    badgeClass: 'bg-[#22A559]/10 text-[#156E3B] border-[#22A559]/30 font-semibold',
+    cardClass: 'bg-[#22A559] text-white border-[#187A41]'
   },
   ANGKATAN_UDARA: {
     alias: 'blue',
     label: 'TNI Angkatan Udara',
-    bgHex: '#2563EB',
-    borderHex: '#1d4ed8',
+    bgHex: OFFICIAL_MATRA_COLORS.TNI_AU, // #2563EB
+    borderHex: '#1D4ED8',
     textHex: '#FFFFFF',
-    badgeClass: 'bg-blue-50 text-blue-800 border-blue-300 font-semibold',
-    cardClass: 'bg-[#2563EB] text-white border-[#1d4ed8]'
+    bgTint: 'rgba(37, 99, 235, 0.12)',
+    borderTint: 'rgba(37, 99, 235, 0.30)',
+    badgeClass: 'bg-[#2563EB]/10 text-[#1E40AF] border-[#2563EB]/30 font-semibold',
+    cardClass: 'bg-[#2563EB] text-white border-[#1D4ED8]'
   },
   ANGKATAN_LAUT: {
     alias: 'gray',
     label: 'TNI Angkatan Laut',
-    bgHex: '#64748B',
-    borderHex: '#475569',
+    bgHex: OFFICIAL_MATRA_COLORS.TNI_AL, // #9CA3AF
+    borderHex: '#64748B',
     textHex: '#FFFFFF',
-    badgeClass: 'bg-slate-100 text-slate-800 border-slate-300 font-semibold',
-    cardClass: 'bg-[#64748B] text-white border-[#475569]'
+    bgTint: 'rgba(156, 163, 175, 0.15)',
+    borderTint: 'rgba(156, 163, 175, 0.35)',
+    badgeClass: 'bg-[#9CA3AF]/20 text-[#334155] border-[#9CA3AF]/40 font-semibold',
+    cardClass: 'bg-[#9CA3AF] text-white border-[#64748B]'
+  },
+  MABES: {
+    alias: 'purple',
+    label: 'Mabes TNI',
+    bgHex: OFFICIAL_MATRA_COLORS.MABES, // #9333EA
+    borderHex: '#7E22CE',
+    textHex: '#FFFFFF',
+    bgTint: 'rgba(147, 51, 234, 0.12)',
+    borderTint: 'rgba(147, 51, 234, 0.30)',
+    badgeClass: 'bg-[#9333EA]/10 text-[#7E22CE] border-[#9333EA]/30 font-semibold',
+    cardClass: 'bg-[#9333EA] text-white border-[#7E22CE]'
+  },
+  SIPIL: {
+    alias: 'gold',
+    label: 'Sipil / Non-TNI',
+    bgHex: OFFICIAL_MATRA_COLORS.SIPIL, // #C9A227
+    borderHex: '#A17D16',
+    textHex: '#FFFFFF',
+    bgTint: 'rgba(201, 162, 39, 0.12)',
+    borderTint: 'rgba(201, 162, 39, 0.30)',
+    badgeClass: 'bg-[#C9A227]/10 text-[#8F6F12] border-[#C9A227]/30 font-semibold',
+    cardClass: 'bg-[#C9A227] text-white border-[#A17D16]'
   },
   KEMENTERIAN: {
     alias: 'white',
     label: 'Kementerian / Lembaga',
-    bgHex: '#FFFFFF',
+    bgHex: OFFICIAL_MATRA_COLORS.KEMENTERIAN, // #E5E7EB
     borderHex: '#CBD5E1',
     textHex: '#0F172A',
-    badgeClass: 'bg-white text-slate-800 border-slate-300 font-semibold shadow-2xs',
-    cardClass: 'bg-white text-slate-900 border-slate-300 font-semibold shadow-xs'
+    bgTint: 'rgba(229, 231, 235, 0.40)',
+    borderTint: 'rgba(203, 213, 225, 0.60)',
+    badgeClass: 'bg-slate-100 text-slate-800 border-slate-300 font-semibold shadow-2xs',
+    cardClass: 'bg-[#E5E7EB] text-slate-900 border-slate-300 font-semibold shadow-xs'
   }
 };
 
@@ -75,13 +121,18 @@ export function getInstansiCategory(matraOrInput?: string): KategoriInstansi {
   if (clean === 'AL' || clean.includes('LAUT') || clean === 'ANGKATAN_LAUT' || clean === 'TNI AL') {
     return 'ANGKATAN_LAUT';
   }
+  if (clean.includes('MABES') || clean === 'MABES TNI' || clean === 'MABES_TNI') {
+    return 'MABES';
+  }
+  if (clean.includes('SIPIL') || clean === 'NON_TNI' || clean === 'NON TNI' || clean === 'VIP') {
+    return 'SIPIL';
+  }
 
-  // KEMHAN, NON_TNI, MABES, Instansi Sipil, Kementerian
   return 'KEMENTERIAN';
 }
 
 /**
- * Mendapatkan alias warna kursi ("green" | "blue" | "gray" | "white")
+ * Mendapatkan alias warna kursi ("green" | "blue" | "gray" | "purple" | "gold" | "white")
  */
 export function getSeatColorAlias(matraOrInput?: string): WarnaKursiAlias {
   const cat = getInstansiCategory(matraOrInput);
@@ -98,9 +149,10 @@ export function getMatraColor(matraOrAlias?: string): MatraColorDefinition {
   if (lower === 'green') return MATRA_COLORS.ANGKATAN_DARAT;
   if (lower === 'blue') return MATRA_COLORS.ANGKATAN_UDARA;
   if (lower === 'gray' || lower === 'grey') return MATRA_COLORS.ANGKATAN_LAUT;
+  if (lower === 'purple') return MATRA_COLORS.MABES;
+  if (lower === 'gold' || lower === 'amber' || lower === 'yellow') return MATRA_COLORS.SIPIL;
   if (lower === 'white') return MATRA_COLORS.KEMENTERIAN;
 
   const cat = getInstansiCategory(matraOrAlias);
   return MATRA_COLORS[cat];
 }
-

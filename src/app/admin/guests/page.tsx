@@ -9,6 +9,7 @@ import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Guest, MatraType } from '@/types';
 import { TNI_RANKS } from '@/lib/constants/ranks';
+import { MATRA_COLORS, getMatraColor } from '@/constants/matraColors';
 import {
   Search,
   Filter,
@@ -256,61 +257,76 @@ export default function GuestsPage() {
     }
   };
 
-  const renderMatraBadge = (matra: MatraType) => {
-    switch (matra) {
-      case 'AD':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#1F7A3E] shadow-xs">
-            TNI AD
-          </span>
-        );
-      case 'AU':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#2563EB] shadow-xs">
-            TNI AU
-          </span>
-        );
-      case 'AL':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#475569] shadow-xs">
-            TNI AL
-          </span>
-        );
-      case 'MABES':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-slate-800 shadow-xs">
-            MABES
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold text-slate-700 bg-white border border-slate-300 shadow-xs">
-            SIPIL
-          </span>
-        );
+  const getStatusAlokasi = (g: Guest) => {
+    const hasSeat = Boolean(g.seat_assignment || g.seat_number || g.assignment?.seat_code);
+    const needsRoom = g.butuh_akomodasi === 1;
+    const hasRoom = needsRoom && (
+      Boolean(g.room_id) ||
+      Boolean(g.assignment?.room_code && g.assignment.room_code !== '-') ||
+      Boolean(g.wisma_assignment && g.wisma_assignment !== 'Tidak Menginap')
+    );
+
+    if (hasSeat && (!needsRoom || hasRoom)) {
+      return {
+        status: 'LENGKAP',
+        badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold'
+      };
     }
+    if (hasSeat && needsRoom && !hasRoom) {
+      return {
+        status: 'KURSI SAJA',
+        badgeClass: 'bg-blue-50 text-blue-800 border-blue-300 font-bold'
+      };
+    }
+    if (!hasSeat && hasRoom) {
+      return {
+        status: 'AKOMODASI SAJA',
+        badgeClass: 'bg-indigo-50 text-indigo-800 border-indigo-300 font-bold'
+      };
+    }
+    return {
+      status: 'BELUM DIALOKASIKAN',
+      badgeClass: 'bg-rose-50 text-rose-800 border-rose-300 font-bold'
+    };
+  };
+
+  const renderMatraBadge = (matra: string) => {
+    const spec = getMatraColor(matra);
+    const shortLabel = spec.key === 'TNI_AD' ? 'TNI AD' :
+                       spec.key === 'TNI_AU' ? 'TNI AU' :
+                       spec.key === 'TNI_AL' ? 'TNI AL' :
+                       spec.key === 'MABES' ? 'MABES' :
+                       spec.key === 'SIPIL' ? 'SIPIL' : 'KEMEN';
+    return (
+      <span
+        className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black text-white shadow-2xs"
+        style={{ backgroundColor: spec.hex }}
+      >
+        {shortLabel}
+      </span>
+    );
   };
 
   const renderStatusBadge = (status: string) => {
     if (status === 'CHECK_IN' || status === 'HADIR') {
       return (
         <span
-          className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded text-[11px] font-bold text-white bg-[#10B981] shadow-xs"
+          className="inline-flex items-center justify-center gap-1.5 w-24 py-1 rounded-full text-[10px] font-black text-white bg-[#22A559] shadow-xs"
           title="Peserta telah Check-In di Gate"
         >
-          <CheckCircle2 className="w-3 h-3 stroke-[2.5]" />
-          <span>CHECK_IN</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span>CHECK-IN</span>
         </span>
       );
     }
 
     return (
       <span
-        className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded text-[11px] font-bold text-white bg-[#F59E0B] shadow-xs"
+        className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded-full text-[10px] font-bold text-white bg-[#F59E0B] shadow-xs"
         title="Peserta Terdaftar (Belum Check-In di Gate)"
       >
         <Clock className="w-3 h-3 stroke-[2.5]" />
-        <span>REGISTRASI</span>
+        <span>TERDAFTAR</span>
       </span>
     );
   };
@@ -429,22 +445,27 @@ export default function GuestsPage() {
         {/* Compact Guests Table */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-xs">
           <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
-            <table className="w-full min-w-[960px] table-fixed text-left text-xs border-collapse">
-              <thead className="sticky top-0 z-10 bg-white border-b border-slate-200 shadow-xs">
-                <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/90">
-                  <th className="py-2.5 px-3 w-[50px] text-center">No</th>
-                  <th className="py-2.5 px-3 w-[240px]">Nama Peserta</th>
-                  <th className="py-2.5 px-3 w-[90px] text-center">Matra</th>
-                  <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
-                  <th className="py-2.5 px-3 w-[200px]">Kesatuan</th>
-                  <th className="py-2.5 px-3 w-[120px] text-center">Status</th>
-                  <th className="py-2.5 px-3 w-[120px] text-center">Aksi</th>
+            <table className="w-full min-w-[1440px] table-fixed text-left text-xs border-collapse">
+              <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
+                <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/95">
+                  <th className="py-2.5 px-3 w-[50px] text-center sticky left-0 z-30 bg-slate-50 border-r border-slate-200/80">No</th>
+                  <th className="py-2.5 px-3 w-[220px] sticky left-[50px] z-30 bg-slate-50 border-r border-slate-200/80 shadow-[2px_0_4px_rgba(0,0,0,0.03)]">Nama Peserta</th>
+                  <th className="py-2.5 px-3 w-[85px] text-center">Matra</th>
+                  <th className="py-2.5 px-3 w-[130px]">Pangkat</th>
+                  <th className="py-2.5 px-3 w-[95px] text-center">Kursi</th>
+                  <th className="py-2.5 px-3 w-[140px]">Gedung</th>
+                  <th className="py-2.5 px-3 w-[150px]">Ruangan</th>
+                  <th className="py-2.5 px-3 w-[135px]">Wisma</th>
+                  <th className="py-2.5 px-3 w-[85px] text-center">Kamar</th>
+                  <th className="py-2.5 px-3 w-[140px] text-center">Status Alokasi</th>
+                  <th className="py-2.5 px-3 w-[125px] text-center">Status Kehadiran</th>
+                  <th className="py-2.5 px-3 w-[110px] text-center sticky right-0 z-30 bg-slate-50 border-l border-slate-200/80 shadow-[-2px_0_4px_rgba(0,0,0,0.03)]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-slate-400 font-mono">
+                    <td colSpan={12} className="py-12 text-center text-slate-400 font-mono">
                       <div className="inline-flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
                         <span>Memuat data direktori peserta...</span>
@@ -453,24 +474,31 @@ export default function GuestsPage() {
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-slate-400">
+                    <td colSpan={12} className="py-12 text-center text-slate-400">
                       Tidak ada peserta yang cocok dengan filter pencarian.
                     </td>
                   </tr>
                 ) : (
                   guests.map((g, idx) => {
+                    const alokasi = getStatusAlokasi(g);
+                    const seatNum = g.seat_assignment || g.seat_number || g.assignment?.seat_code || '-';
+                    const gedung = g.assignment?.gedung || 'Gedung Ahmad Yani';
+                    const ruangan = g.assignment?.seat_area || 'Ruang Sidang Utama';
+                    const wisma = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.assignment?.wisma_name || g.wisma_assignment || '-');
+                    const kamar = g.butuh_akomodasi === 0 ? '-' : (g.assignment?.room_code || g.room_number || '-');
+
                     return (
                       <tr
                         key={g.id}
-                        className="hover:bg-blue-50/40 transition-colors"
+                        className="hover:bg-blue-50/40 transition-colors group"
                       >
-                        {/* 1. No */}
-                        <td className="py-2 px-3 text-center font-mono text-slate-400 text-[11px]">
+                        {/* 1. No (Sticky Kiri) */}
+                        <td className="py-2 px-3 text-center font-mono text-slate-400 text-[11px] sticky left-0 z-10 bg-white group-hover:bg-blue-50/40 border-r border-slate-100">
                           {idx + 1}
                         </td>
 
-                        {/* 2. Nama Peserta */}
-                        <td className="py-2 px-3 max-w-[250px]">
+                        {/* 2. Nama Peserta (Sticky Kiri) */}
+                        <td className="py-2 px-3 max-w-[220px] sticky left-[50px] z-10 bg-white group-hover:bg-blue-50/40 border-r border-slate-100 shadow-[2px_0_4px_rgba(0,0,0,0.03)]">
                           <div className="flex items-center gap-1.5">
                             <span
                               className="text-slate-900 font-semibold truncate block"
@@ -495,22 +523,51 @@ export default function GuestsPage() {
                         </td>
 
                         {/* 4. Pangkat */}
-                        <td className="py-2 px-3 text-slate-800 font-medium truncate max-w-[130px]" title={g.pangkat}>
+                        <td className="py-2 px-3 text-slate-800 font-medium truncate" title={g.pangkat}>
                           {g.pangkat}
                         </td>
 
-                        {/* 5. Kesatuan */}
-                        <td className="py-2 px-3 text-slate-600 truncate max-w-[200px]" title={g.satuan || g.satker || g.negara_instansi}>
-                          {g.satuan || g.satker || g.negara_instansi || '-'}
+                        {/* 5. Nomor Kursi */}
+                        <td className="py-2 px-3 text-center">
+                          <span className="inline-block px-2 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
+                            {seatNum}
+                          </span>
                         </td>
 
-                        {/* 6. Status */}
+                        {/* 6. Gedung */}
+                        <td className="py-2 px-3 text-slate-700 font-medium truncate" title={gedung}>
+                          {gedung}
+                        </td>
+
+                        {/* 7. Ruangan */}
+                        <td className="py-2 px-3 text-slate-600 truncate" title={ruangan}>
+                          {ruangan}
+                        </td>
+
+                        {/* 8. Wisma */}
+                        <td className="py-2 px-3 text-slate-700 truncate" title={wisma}>
+                          {wisma}
+                        </td>
+
+                        {/* 9. Kamar */}
+                        <td className="py-2 px-3 text-center font-mono text-xs font-semibold text-slate-800">
+                          {kamar}
+                        </td>
+
+                        {/* 10. Status Alokasi */}
+                        <td className="py-2 px-3 text-center">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] border ${alokasi.badgeClass}`}>
+                            {alokasi.status}
+                          </span>
+                        </td>
+
+                        {/* 11. Status Kehadiran */}
                         <td className="py-2 px-3 text-center">
                           {renderStatusBadge(g.status_kehadiran)}
                         </td>
 
-                        {/* 7. Aksi */}
-                        <td className="py-2 px-3 text-center">
+                        {/* 12. Aksi (Sticky Kanan) */}
+                        <td className="py-2 px-3 text-center sticky right-0 z-10 bg-white group-hover:bg-blue-50/40 border-l border-slate-100 shadow-[-2px_0_4px_rgba(0,0,0,0.03)]">
                           <div className="flex items-center justify-center gap-1">
                             {/* Lihat Detail */}
                             <button
@@ -608,22 +665,25 @@ export default function GuestsPage() {
 
               <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-lg space-y-1">
                 <span className="text-blue-600 font-semibold uppercase text-[10px] flex items-center gap-1">
-                  <Armchair className="w-3 h-3" /> Alokasi Kursi Pleno
+                  <Armchair className="w-3 h-3" /> Penempatan Kursi Pleno
                 </span>
                 <p className="font-mono font-bold text-sm text-blue-900">
-                  {viewingGuest.seat_assignment || viewingGuest.seat_number || 'Belum Ditentukan'}
+                  {viewingGuest.seat_assignment || viewingGuest.seat_number || viewingGuest.assignment?.seat_code || 'Belum Ditentukan'}
                 </p>
-                <p className="text-[11px] text-slate-500">
-                  {viewingGuest.warna_kursi ? `Sektor Warna: ${viewingGuest.warna_kursi.toUpperCase()}` : ''}
+                <p className="text-[11px] text-slate-600">
+                  {viewingGuest.assignment?.gedung || 'Gedung Ahmad Yani'} &bull; {viewingGuest.assignment?.seat_area || 'Ruang Sidang Utama'}
                 </p>
               </div>
 
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
                 <span className="text-slate-600 font-semibold uppercase text-[10px] flex items-center gap-1">
-                  <Building className="w-3 h-3" /> Alokasi Wisma / Mess
+                  <Building className="w-3 h-3" /> Penempatan Wisma & Kamar
                 </span>
                 <p className="font-semibold text-slate-800 text-xs">
-                  {viewingGuest.wisma_assignment || (viewingGuest.butuh_akomodasi === 1 ? 'Menunggu Penempatan' : 'Tidak Mengajukan')}
+                  {viewingGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : (viewingGuest.assignment?.wisma_name || viewingGuest.wisma_assignment || '-')}
+                </p>
+                <p className="text-[11px] font-mono text-slate-500">
+                  {viewingGuest.butuh_akomodasi === 0 ? 'Tidak Menginap' : `Kamar: ${viewingGuest.assignment?.room_code || viewingGuest.room_number || '-'}`}
                 </p>
               </div>
 

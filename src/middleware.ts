@@ -38,13 +38,14 @@ export async function middleware(req: NextRequest) {
 
   // 5. Proteksi Seluruh Rute Admin (/admin/*)
   if (pathname.startsWith('/admin/')) {
-    // Hanya route spesifik di dalam /admin/* yang boleh digunakan:
-    // /admin/scanner, /admin/guests, /admin/monitoring, /admin/checkin
+    // /admin/scanner, /admin/guests, /admin/monitoring, /admin/checkin, /admin/allocation, /admin/placement
     const allowedAdminRoutes = [
       '/admin/scanner',
       '/admin/guests',
       '/admin/monitoring',
-      '/admin/checkin'
+      '/admin/checkin',
+      '/admin/allocation',
+      '/admin/placement'
     ];
 
     const isAllowed = allowedAdminRoutes.some(
