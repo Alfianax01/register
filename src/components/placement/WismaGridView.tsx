@@ -69,16 +69,17 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
     return rooms.filter(r => r.wisma_name === selectedWisma);
   }, [rooms, selectedWisma]);
 
-  // Group currentRooms by floor (Floor Plan Structure)
   const roomsByFloor = useMemo(() => {
-    const map: Record<number, AccommodationRoom[]> = {};
-    currentRooms.forEach(r => {
-      const f = r.floor || 1;
-      if (!map[f]) map[f] = [];
-      map[f].push(r);
+    const map = new Map<number, AccommodationRoom[]>();
+    currentRooms.forEach(room => {
+      const fl = room.floor || 1;
+      if (!map.has(fl)) map.set(fl, []);
+      map.get(fl)!.push(room);
     });
-    return Object.entries(map).sort(([a], [b]) => Number(a) - Number(b));
+    return Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
   }, [currentRooms]);
+
+
 
   // Guests who need accommodation
   const guestsNeedingAccommodation = useMemo(() => {
@@ -323,14 +324,6 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
         </div>
       </div>
 
-      {/* 3. Room Grid (Tablet: 2 kolom, Mobile: 1 kolom, Desktop: 3 kolom) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-        {currentRooms.map(room => {
-          const slotAFilled = !!room.slot_a_guest_id;
-          const slotBFilled = !!room.slot_b_guest_id;
-          const isFull = room.capacity === 1 ? slotAFilled : slotAFilled && slotBFilled;
-          const isEmpty = !slotAFilled && !slotBFilled;
-          const isPartial = !isFull && !isEmpty;
       {/* 3. Floor Plan per Lantai (Floor Plan Structure & Design System Tokens) */}
       <div className="space-y-8">
         {roomsByFloor.map(([floor, floorRooms]) => {
@@ -352,8 +345,6 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                 </div>
               </div>
 
-          const guestA = slotAFilled ? guests.find(g => g.id === room.slot_a_guest_id) : null;
-          const guestB = slotBFilled ? guests.find(g => g.id === room.slot_b_guest_id) : null;
               {/* Room Grid for this floor */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
                 {floorRooms.map(room => {
@@ -363,76 +354,15 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                   const isEmpty = !slotAFilled && !slotBFilled;
                   const isPartial = !isFull && !isEmpty;
 
-          const styleA = guestA ? getInstansiStyle(guestA.matra, guestA.kategori_instansi) : null;
-          const styleB = guestB ? getInstansiStyle(guestB.matra, guestB.kategori_instansi) : null;
                   const guestA = slotAFilled ? guests.find(g => g.id === room.slot_a_guest_id) : null;
                   const guestB = slotBFilled ? guests.find(g => g.id === room.slot_b_guest_id) : null;
 
-          return (
-            <div
-              key={room.id}
-              className={`rounded-2xl border bg-white p-4 sm:p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between ${
-                isFull
-                  ? 'border-emerald-200/90 hover:border-emerald-400'
-                  : isPartial
-                  ? 'border-blue-200/90 hover:border-blue-400'
-                  : 'border-slate-200/90 hover:border-slate-300'
-              }`}
-            >
-              <div>
-                {/* Header Kartu Kamar */}
-                <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 mb-3.5">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      isFull
-                        ? 'bg-emerald-50 text-emerald-700'
-                        : isPartial
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      <DoorClosed className="w-5 h-5" />
-                    </div>
                   const styleA = guestA ? getInstansiStyle(guestA.matra, guestA.kategori_instansi) : null;
                   const styleB = guestB ? getInstansiStyle(guestB.matra, guestB.kategori_instansi) : null;
 
-                    <div className="min-w-0">
-                      <h4 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight truncate">
-                        Kamar {room.room_number}
-                      </h4>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200/70">
-                          <Layers className="w-3 h-3 text-slate-500" />
-                          Lantai {room.floor}
-                        </span>
-                        <span className="text-[11px] text-slate-400">
-                          &bull; {room.capacity === 1 ? 'Single Bed (VIP)' : 'Twin Bed (2 Slot)'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
                   const occCount = (slotAFilled ? 1 : 0) + (slotBFilled ? 1 : 0);
                   const capacityStr = `${occCount}/${room.capacity}`;
 
-                  {/* Status Kamar Badge */}
-                  <div>
-                    {isFull ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                        Penuh
-                      </span>
-                    ) : isPartial ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-                        1 Terisi
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                        Kosong
-                      </span>
-                    )}
-                  </div>
-                </div>
                   // Design System tokens:
                   // Penuh (2/2): Danger 6% tint, border 30%
                   // Sebagian (1/2): Warning 6% tint, border 30%
@@ -443,71 +373,20 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                     ? 'rgba(245, 158, 11, 0.06)'
                     : 'rgba(16, 185, 129, 0.06)';
 
-                {/* Notes or Room Label */}
-                {room.notes && (
-                  <p className="text-[11px] text-slate-500 mb-3 bg-slate-50/70 px-2.5 py-1 rounded-lg border border-slate-100 italic truncate">
-                    {room.notes}
-                  </p>
-                )}
                   const cardBorder = isFull
                     ? 'rgba(239, 68, 68, 0.30)'
                     : isPartial
                     ? 'rgba(245, 158, 11, 0.30)'
                     : 'rgba(16, 185, 129, 0.30)';
 
-                {/* Empty State Banner (Jika kamar kosong total) */}
-                {isEmpty && (
-                  <div
-                    onClick={() => handleOpenRoomModal(room, 'A')}
-                    className="p-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-blue-300 transition-all cursor-pointer text-center mb-3 group"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 flex items-center justify-center mx-auto transition-colors">
-                      <BedDouble className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs font-bold text-slate-700 mt-2">Tidak Ada Penghuni</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">Kamar siap dialokasikan untuk prajurit/tamu VIP</p>
-                  </div>
-                )}
                   const badgeClass = isFull
                     ? 'bg-rose-100 text-rose-800 border-rose-200'
                     : isPartial
                     ? 'bg-amber-100 text-amber-800 border-amber-200'
                     : 'bg-emerald-100 text-emerald-800 border-emerald-200';
 
-                {/* 2. Bed Cards (Mini-Card with shadow lift & border glow) */}
-                <div className="space-y-2.5">
-                  {/* Bed A Mini-Card */}
-                  <div
-                    onClick={() => handleOpenRoomModal(room, 'A')}
-                    className={`rounded-xl border p-3 transition-all duration-200 cursor-pointer ${
-                      slotAFilled
-                        ? 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5 hover:ring-1 hover:ring-blue-100'
-                        : 'border-dashed border-slate-200 bg-slate-50/40 hover:bg-slate-50 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-bold tracking-wider uppercase text-blue-700 flex items-center gap-1.5">
-                        <Bed className="w-3.5 h-3.5 text-blue-600" />
-                        BED A {room.capacity === 1 && '(VIP Utama)'}
-                      </span>
-                      {slotAFilled && styleA && (
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${styleA.badgeClass}`}>
-                          {styleA.label}
-                        </span>
-                      )}
-                    </div>
                   const badgeText = isFull ? 'Penuh' : isPartial ? 'Sebagian' : 'Kosong';
 
-                    {slotAFilled && guestA ? (
-                      <div className="flex items-center gap-2.5 mt-2">
-                        {/* Avatar */}
-                        <div className={`w-8 h-8 rounded-full text-white font-bold text-xs flex items-center justify-center flex-shrink-0 ${styleA?.avatarBg || 'bg-slate-700'}`}>
-                          {guestA.nama ? guestA.nama.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'A'}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs font-bold text-slate-900 truncate">
-                              {guestA.nama}
                   return (
                     <div
                       key={room.id}
@@ -530,8 +409,6 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                             <span className="font-mono font-black text-sm text-slate-900">
                               Kamar {room.room_number}
                             </span>
-                            <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-100">
-                              {guestA.pangkat}
                           </div>
                           <div className="flex items-center gap-1.5">
                             <span className="font-mono text-xs font-bold text-slate-700">
@@ -541,54 +418,8 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                               {badgeText}
                             </span>
                           </div>
-                          <span className="text-[11px] text-slate-500 block truncate mt-0.5">
-                            {guestA.jabatan || guestA.satker} {guestA.satuan ? `(${guestA.satuan})` : ''}
-                          </span>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-between py-1 text-slate-400 text-xs">
-                        <span className="text-[11px] italic">Slot Kosong</span>
-                        <span className="text-[11px] font-semibold text-blue-600 flex items-center gap-1">
-                          <UserPlus className="w-3.5 h-3.5" />
-                          Alokasikan
-                        </span>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Bed B Mini-Card (Jika Kapasitas > 1) */}
-                  {room.capacity > 1 && (
-                    <div
-                      onClick={() => handleOpenRoomModal(room, 'B')}
-                      className={`rounded-xl border p-3 transition-all duration-200 cursor-pointer ${
-                        slotBFilled
-                          ? 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5 hover:ring-1 hover:ring-blue-100'
-                          : 'border-dashed border-slate-200 bg-slate-50/40 hover:bg-slate-50 hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] font-bold tracking-wider uppercase text-indigo-700 flex items-center gap-1.5">
-                          <Bed className="w-3.5 h-3.5 text-indigo-600" />
-                          BED B
-                        </span>
-                        {slotBFilled && styleB && (
-                          <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${styleB.badgeClass}`}>
-                            {styleB.label}
-                          </span>
-                        )}
-                      </div>
-
-                      {slotBFilled && guestB ? (
-                        <div className="flex items-center gap-2.5 mt-2">
-                          {/* Avatar */}
-                          <div className={`w-8 h-8 rounded-full text-white font-bold text-xs flex items-center justify-center flex-shrink-0 ${styleB?.avatarBg || 'bg-slate-700'}`}>
-                            {guestB.nama ? guestB.nama.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'B'}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-bold text-slate-900 truncate">
-                                {guestB.nama}
                         {/* Occupants list */}
                         <div className="space-y-1.5">
                           {slotAFilled && guestA ? (
@@ -596,19 +427,12 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                               <span className="text-xs font-bold text-slate-800 truncate" title={guestA.nama}>
                                 {guestA.nama}
                               </span>
-                              <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-100">
-                                {guestB.pangkat}
-                              </span>
                               {styleA && (
                                 <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border shrink-0 ${styleA.badgeClass}`}>
                                   {styleA.label}
                                 </span>
                               )}
                             </div>
-                            <span className="text-[11px] text-slate-500 block truncate mt-0.5">
-                              {guestB.jabatan || guestB.satker} {guestB.satuan ? `(${guestB.satuan})` : ''}
-                            </span>
-                          </div>
                           ) : (
                             <div className="text-[11px] text-slate-400 italic px-2 py-1 bg-white/40 rounded border border-dashed border-slate-200">
                               Slot A: Kosong
@@ -634,15 +458,6 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                             )
                           )}
                         </div>
-                      ) : (
-                        <div className="flex items-center justify-between py-1 text-slate-400 text-xs">
-                          <span className="text-[11px] italic">Slot Kosong</span>
-                          <span className="text-[11px] font-semibold text-indigo-600 flex items-center gap-1">
-                            <UserPlus className="w-3.5 h-3.5" />
-                            Alokasikan
-                          </span>
-                        </div>
-                      )}
                       </div>
 
                       {/* Footer Hint */}
@@ -651,26 +466,8 @@ export const WismaGridView: React.FC<WismaGridViewProps> = ({ rooms, guests, onA
                         <span className="font-semibold text-blue-700 hover:underline">Kelola &rarr;</span>
                       </div>
                     </div>
-                  )}
-                </div>
                   );
                 })}
-              </div>
-
-              {/* Card Footer Action */}
-              <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400">
-                  {room.capacity === 1
-                    ? (slotAFilled ? '1/1 Terisi' : '0/1 Kosong')
-                    : `${(slotAFilled ? 1 : 0) + (slotBFilled ? 1 : 0)}/2 Terisi`}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleOpenRoomModal(room, 'A')}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer py-1 px-2 rounded hover:bg-blue-50"
-                >
-                  Kelola Alokasi &rarr;
-                </button>
               </div>
             </div>
           );

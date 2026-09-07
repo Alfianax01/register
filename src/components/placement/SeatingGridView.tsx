@@ -218,32 +218,26 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4 rounded-xl bg-slate-50/90 border border-slate-200/80 text-xs text-slate-700 shadow-2xs">
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AD, borderColor: '#187A41' }} />
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AD.hex, borderColor: '#187A41' }} />
             <span className="font-semibold text-slate-800">TNI AD</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AU, borderColor: '#1D4ED8' }} />
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AU.hex, borderColor: '#1D4ED8' }} />
             <span className="font-semibold text-slate-800">TNI AU</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AL, borderColor: '#64748B' }} />
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.TNI_AL.hex, borderColor: '#64748B' }} />
             <span className="font-semibold text-slate-800">TNI AL</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.MABES, borderColor: '#7E22CE' }} />
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.MABES.hex, borderColor: '#7E22CE' }} />
             <span className="font-semibold text-slate-800">Mabes TNI</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.SIPIL, borderColor: '#A17D16' }} />
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.SIPIL.hex, borderColor: '#A17D16' }} />
             <span className="font-semibold text-slate-800">Sipil / VIP</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3.5 h-3.5 rounded-md shadow-2xs border border-slate-300" style={{ backgroundColor: OFFICIAL_COLORS.KEMENTERIAN }} />
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border border-slate-300" style={{ backgroundColor: OFFICIAL_COLORS.KEMENTERIAN.hex }} />
             <span className="font-semibold text-slate-800">Kementerian</span>
           </div>

@@ -93,42 +93,62 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
         </div>
       </div>
 
-      {/* Seating & Wisma Badges */}
-      <div className="p-5 grid grid-cols-2 gap-3 bg-white">
-        <div className="p-3 rounded-md border border-slate-200 bg-slate-50/50 space-y-1">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B] uppercase">
-            <Armchair className="w-3.5 h-3.5 text-[#1E40AF]" />
-            <span>Nomor Kursi</span>
-          </div>
-          <p className="text-[15px] font-bold text-[#0F172A]">
-            {guest.seat_number ? (
+      {/* Seating & Wisma Badges or Hint Box based on V4 State Machine */}
+      {guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR' ? (
+        <div className="p-5 grid grid-cols-2 gap-3 bg-white">
+          <div className="p-3 rounded-md border border-slate-200 bg-slate-50/50 space-y-1">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B] uppercase">
+              <Armchair className="w-3.5 h-3.5 text-[#1E40AF]" />
+              <span>Nomor Kursi</span>
+            </div>
+            <p className="text-[15px] font-bold text-[#0F172A]">
               <span className="text-[#1E40AF] font-mono">
-                {guest.seat_number}
+                {guest.seat_number || 'A-01'}
               </span>
-            ) : (
-              <span className="text-slate-400 font-normal italic text-[13px]">Ditetapkan di Lokasi</span>
-            )}
-          </p>
-        </div>
-
-        <div className="p-3 rounded-md border border-slate-200 bg-slate-50/50 space-y-1">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B] uppercase">
-            <Bed className="w-3.5 h-3.5 text-[#16A34A]" />
-            <span>Akomodasi Wisma</span>
+            </p>
           </div>
-          <p className="text-[13px] font-medium text-[#0F172A]">
-            {guest.room_details ? (
-              <span className="text-emerald-700 truncate block">
-                Kamar {guest.room_details.room_number} ({guest.room_details.slot})
-              </span>
-            ) : guest.butuh_akomodasi ? (
-              <span className="text-amber-700">Menunggu Verifikasi</span>
-            ) : (
-              <span className="text-slate-400 font-normal">Tidak Menginap</span>
-            )}
-          </p>
+
+          <div className="p-3 rounded-md border border-slate-200 bg-slate-50/50 space-y-1">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B] uppercase">
+              <Bed className="w-3.5 h-3.5 text-[#16A34A]" />
+              <span>Akomodasi Wisma</span>
+            </div>
+            <p className="text-[13px] font-medium text-[#0F172A]">
+              {guest.room_number ? (
+                <span className="text-emerald-700 truncate block">
+                  {guest.wisma_name || 'Wisma'} &bull; Kamar {guest.room_number}
+                </span>
+              ) : guest.butuh_akomodasi ? (
+                <span className="text-amber-700">Tersedia di Lokasi</span>
+              ) : (
+                <span className="text-slate-400 font-normal">Tidak Menginap</span>
+              )}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="p-5 bg-white">
+          <div
+            style={{
+              backgroundColor: 'rgba(245, 158, 11, 0.08)',
+              borderColor: 'rgba(245, 158, 11, 0.20)',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              textAlign: 'center',
+              borderWidth: '1px',
+              borderStyle: 'solid'
+            }}
+          >
+            <div className="flex items-center justify-center gap-1.5 text-amber-800 font-bold text-xs">
+              <Clock className="w-3.5 h-3.5 stroke-[2.5] text-amber-600" />
+              <span>Belum Check-In</span>
+            </div>
+            <p className="text-[11px] text-amber-900/80 mt-1 leading-relaxed font-medium">
+              Penempatan kursi dan akomodasi akan muncul setelah scan QR di lokasi.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Bottom Status & Timestamp Bar */}
       <div className="px-6 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-[12px]">
@@ -138,17 +158,17 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
             {guest.created_at ? new Date(guest.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '4 Sep 2026'}
           </span>
         </div>
-          {guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR' ? (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-200">
-              <CheckCircle2 className="w-3 h-3 text-[#10B981]" />
-              <span>CHECK_IN</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-sm border border-amber-200">
-              <Clock className="w-3 h-3 text-[#F59E0B]" />
-              <span>REGISTRASI</span>
-            </span>
-          )}
+        {guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR' ? (
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-200">
+            <CheckCircle2 className="w-3 h-3 text-[#10B981]" />
+            <span>CHECK-IN BERHASIL</span>
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-sm border border-amber-200">
+            <Clock className="w-3 h-3 text-[#F59E0B]" />
+            <span>TERDAFTAR</span>
+          </span>
+        )}
       </div>
     </div>
   );

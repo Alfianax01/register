@@ -40,7 +40,6 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   ANGKATAN_DARAT: {
     alias: 'green',
     label: 'TNI Angkatan Darat',
-    bgHex: OFFICIAL_MATRA_COLORS.TNI_AD, // #22A559
     bgHex: OFFICIAL_MATRA_COLORS.TNI_AD.hex, // #22A559
     borderHex: '#187A41',
     textHex: '#FFFFFF',
@@ -52,7 +51,6 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   ANGKATAN_UDARA: {
     alias: 'blue',
     label: 'TNI Angkatan Udara',
-    bgHex: OFFICIAL_MATRA_COLORS.TNI_AU, // #2563EB
     bgHex: OFFICIAL_MATRA_COLORS.TNI_AU.hex, // #2563EB
     borderHex: '#1D4ED8',
     textHex: '#FFFFFF',
@@ -64,7 +62,6 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   ANGKATAN_LAUT: {
     alias: 'gray',
     label: 'TNI Angkatan Laut',
-    bgHex: OFFICIAL_MATRA_COLORS.TNI_AL, // #9CA3AF
     bgHex: OFFICIAL_MATRA_COLORS.TNI_AL.hex, // #9CA3AF
     borderHex: '#64748B',
     textHex: '#FFFFFF',
@@ -76,7 +73,6 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   MABES: {
     alias: 'purple',
     label: 'Mabes TNI',
-    bgHex: OFFICIAL_MATRA_COLORS.MABES, // #9333EA
     bgHex: OFFICIAL_MATRA_COLORS.MABES.hex, // #9333EA
     borderHex: '#7E22CE',
     textHex: '#FFFFFF',
@@ -88,7 +84,6 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   SIPIL: {
     alias: 'gold',
     label: 'Sipil / Non-TNI',
-    bgHex: OFFICIAL_MATRA_COLORS.SIPIL, // #C9A227
     bgHex: OFFICIAL_MATRA_COLORS.SIPIL.hex, // #C9A227
     borderHex: '#A17D16',
     textHex: '#FFFFFF',
@@ -100,7 +95,6 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   KEMENTERIAN: {
     alias: 'white',
     label: 'Kementerian / Lembaga',
-    bgHex: OFFICIAL_MATRA_COLORS.KEMENTERIAN, // #E5E7EB
     bgHex: OFFICIAL_MATRA_COLORS.KEMENTERIAN.hex, // #E5E7EB
     borderHex: '#CBD5E1',
     textHex: '#0F172A',
