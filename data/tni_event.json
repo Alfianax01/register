@@ -1,6 +1,51 @@
 {
   "guests": [
     {
+      "nrp": "111111",
+      "nama": "Fandi",
+      "matra": "MABES",
+      "pangkat": "Jenderal TNI",
+      "pangkat_level": 1,
+      "jabatan": "Jenderal",
+      "satker": "Mabes TNI (Cilangkap)",
+      "satuan": "Inspektorat Jenderal (Itjen TNI)",
+      "negara_instansi": "Indonesia / TNI - Kemhan RI",
+      "email": "azmialfian471@gmail.com",
+      "butuh_akomodasi": 0,
+      "kategori_instansi": "KEMENTERIAN",
+      "warna_kursi": "white",
+      "seatColorAlias": "white",
+      "id": "guest_1788783468190_r12uuom",
+      "registration_id": "REG-2026-111111-698881",
+      "ticket_id": "TCK-2026-8190-7L1Y",
+      "qr_token": "c63221af-54f6-4fd8-8049-5baccab8301b",
+      "token_hash": "ca983027925283b2aa91e06db33f39ec697c3876e4dab73be8bfafcefb71771c",
+      "status_kehadiran": "CHECK_IN",
+      "created_at": "2026-09-07T12:17:48.185Z",
+      "updated_at": "2026-09-07T12:18:37.325Z",
+      "emailSent": false,
+      "waktu_kehadiran_pertama": "2026-09-07T12:18:37.277Z",
+      "seat_assignment": "A-08",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-08",
+      "room_id": "room_soedirman_104",
+      "room_slot": "A",
+      "wisma_assignment": "Wisma Soedirman (VVIP) - 104 (A) (Lantai 1)",
+      "assignment": {
+        "id": "assign_1788783517308_y11yv",
+        "peserta_id": "guest_1788783468190_r12uuom",
+        "seat_code": "A-08",
+        "seat_area": "Area VVIP",
+        "gedung": "Ahmad Yani",
+        "seat_row": "A",
+        "seat_num": "08",
+        "wisma_name": "Wisma Soedirman (VVIP)",
+        "room_code": "104 (A)",
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-07T12:18:37.308Z"
+      }
+    },
+    {
       "nrp": "-",
       "nama": "Farel",
       "matra": "NON_TNI",
@@ -1037,7 +1082,17 @@
       "seat_number": "A-08",
       "row_num": 1,
       "col_num": 8,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788783468190_r12uuom",
+      "peserta_id": "guest_1788783468190_r12uuom",
+      "guest_name": "Fandi",
+      "guest_rank": "Jenderal TNI",
+      "guest_matra": "MABES",
+      "guest_status": "CHECK_IN",
+      "kategori_instansi": "KEMENTERIAN",
+      "colorAlias": "white",
+      "warna": "white",
+      "status": "CHECK_IN"
     },
     {
       "id": "seat_a_9",
@@ -2833,7 +2888,11 @@
       "floor": 1,
       "room_number": "104",
       "capacity": 1,
-      "notes": "Suite VVIP Bintang 4"
+      "notes": "Suite VVIP Bintang 4",
+      "slot_a_guest_id": "guest_1788783468190_r12uuom",
+      "slot_a_guest_name": "Fandi",
+      "slot_a_guest_rank": "Jenderal TNI",
+      "slot_a_guest_matra": "MABES"
     },
     {
       "id": "room_soedirman_105",
@@ -3276,6 +3335,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788783517278_pcbij",
+      "guest_id": "guest_1788783468190_r12uuom",
+      "guest_nama": "Fandi",
+      "guest_nrp": "111111",
+      "guest_pangkat": "Jenderal TNI",
+      "guest_matra": "MABES",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-07T12:18:37.277Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788780287524_mdhwj",
       "guest_id": "guest_1788780214104_cbc8omc",
       "guest_nama": "Farel",
@@ -3649,6 +3722,33 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788783525658_w4y1",
+      "admin_id": "admin_wisma",
+      "admin_username": "panitiawisma",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai PANITIA_AKOMODASI",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T12:18:45.658Z"
+    },
+    {
+      "id": "aud_1788783517412_720i",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Fandi (Jenderal TNI / NRP 111111) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T12:18:37.412Z"
+    },
+    {
+      "id": "aud_1788783494286_kn4s",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T12:18:14.286Z"
+    },
     {
       "id": "aud_1788780287616_b00o",
       "admin_id": "admin_super",
@@ -4099,6 +4199,19 @@
       "room_code": "103 (A)",
       "room_floor": "Lantai 1",
       "assigned_at": "2026-09-07T11:24:47.548Z"
+    },
+    {
+      "id": "assign_1788783517308_y11yv",
+      "peserta_id": "guest_1788783468190_r12uuom",
+      "seat_code": "A-08",
+      "seat_area": "Area VVIP",
+      "gedung": "Ahmad Yani",
+      "seat_row": "A",
+      "seat_num": "08",
+      "wisma_name": "Wisma Soedirman (VVIP)",
+      "room_code": "104 (A)",
+      "room_floor": "Lantai 1",
+      "assigned_at": "2026-09-07T12:18:37.308Z"
     }
   ]
 }
