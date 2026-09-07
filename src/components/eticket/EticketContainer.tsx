@@ -2,11 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Guest } from '@/types';
-import { StatusBadge } from './StatusBadge';
-import { QRCodeDisplay } from './QRCodeDisplay';
-import { ParticipantInfo } from './ParticipantInfo';
-import { PreCheckInView } from './PreCheckInView';
-import { PostCheckInView } from './PostCheckInView';
+import { TicketCard } from './TicketCard';
 import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { RotateCw, Printer, Download, ArrowLeft, ShieldCheck } from 'lucide-react';
@@ -173,68 +169,60 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
         </button>
       </div>
 
-      {/* Main E-Ticket Card */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-lg p-5 sm:p-6 space-y-5 select-none transition-all">
-        {/* Header E-Ticket */}
-        <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
-          <div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-              TNI EVENT PASS &bull; RAPIM 2026
-            </span>
-            <h1 className="text-base sm:text-lg font-extrabold text-[#1E3A8A] mt-0.5">
-              E-TICKET RAPIM TNI 2026
-            </h1>
-          </div>
+      {/* Single Unified Ticket Card (No layout shift, identical DOM structure) */}
+      <TicketCard
+        guest={guest}
+        qrCodeUrl={qrCodeUrl}
+        status={isCheckIn ? 'CHECK_IN' : 'REGISTRASI'}
+        seat={
+          isCheckIn
+            ? guest.assignment?.seat_code || guest.seat_assignment || guest.seat_number || 'A-06'
+            : 'Belum Dialokasikan'
+        }
+        seatDetail={
+          isCheckIn
+            ? `${guest.assignment?.gedung || 'Ahmad Yani'} • Baris ${guest.assignment?.seat_row || (guest.assignment?.seat_code ? guest.assignment.seat_code.split('-')[0] : 'A')}`
+            : null
+        }
+        accommodation={
+          isCheckIn
+            ? guest.assignment?.wisma_name || 'Wisma Sudirman'
+            : 'Menunggu Check In'
+        }
+        room={
+          isCheckIn
+            ? guest.assignment?.room_code || '203'
+            : 'Menunggu Check In'
+        }
+        roomFloor={
+          isCheckIn
+            ? guest.assignment?.room_floor || 'Lantai 2'
+            : null
+        }
+      />
 
-          <StatusBadge status={guest.status_kehadiran} />
-        </div>
+      {/* Action Buttons (no-print) */}
+      <div className="flex items-center gap-2.5 no-print">
+        <Button
+          variant="outline"
+          size="md"
+          onClick={handlePrint}
+          className="flex-1 text-xs gap-1.5 font-medium border-slate-200 hover:bg-slate-50 text-slate-700 bg-white shadow-xs"
+        >
+          <Printer className="w-3.5 h-3.5 text-slate-600" />
+          <span>Cetak Halaman</span>
+        </Button>
 
-        {/* QR Code Section */}
-        <QRCodeDisplay
-          qrCodeUrl={qrCodeUrl}
-          isCheckIn={isCheckIn}
-          token={guest.qr_token}
-          nama={guest.nama}
-        />
-
-        {/* Data Peserta */}
-        <ParticipantInfo guest={guest} />
-
-        {/* CONDITIONAL RENDERING KETAT: */}
-        {/* Jika REGISTRASI: Hanya PreCheckInView (Notice menunggu verifikasi) */}
-        {/* Jika CHECK-IN: PostCheckInView (CheckInDetails + AssignmentCards) */}
-        {!isCheckIn ? (
-          <PreCheckInView />
-        ) : (
-          <PostCheckInView
-            assignment={guest.assignment}
-            checkinDetails={checkinDetails}
-          />
-        )}
-
-        {/* Action Buttons (no-print) */}
-        <div className="pt-3 border-t border-slate-100 flex items-center gap-2.5 no-print">
+        <Link href={`/api/ticket/${initialToken}/pdf`} target="_blank" className="flex-1">
           <Button
-            variant="outline"
+            variant="primary"
             size="md"
-            onClick={handlePrint}
-            className="flex-1 text-xs gap-1.5 font-medium border-slate-200 hover:bg-slate-50 text-slate-700"
+            className="w-full text-xs gap-1.5 font-medium bg-[#1E3A8A] hover:bg-[#1E40AF] shadow-xs"
           >
-            <Printer className="w-3.5 h-3.5 text-slate-600" />
-            <span>Cetak Halaman</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>Unduh PDF</span>
           </Button>
-
-          <Link href={`/api/ticket/${initialToken}/pdf`} target="_blank" className="flex-1">
-            <Button
-              variant="primary"
-              size="md"
-              className="w-full text-xs gap-1.5 font-medium bg-[#1E3A8A] hover:bg-[#1E40AF]"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Unduh PDF</span>
-            </Button>
-          </Link>
-        </div>
+        </Link>
       </div>
 
       {/* Footer Branding */}
