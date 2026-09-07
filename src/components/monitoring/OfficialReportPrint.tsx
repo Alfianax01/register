@@ -55,9 +55,7 @@ export const OfficialReportPrint: React.FC<OfficialReportPrintProps> = ({ guests
               <td className="border border-black p-1.5 text-center font-mono">{idx + 1}</td>
               <td className="border border-black p-1.5 font-mono">{g.nrp}</td>
               <td className="border border-black p-1.5 font-bold">
-                {g.gelar_depan ? `${g.gelar_depan} ` : ''}
                 {g.nama}
-                {g.gelar_belakang ? `, ${g.gelar_belakang}` : ''}
               </td>
               <td className="border border-black p-1.5">
                 {g.pangkat} ({g.matra})
@@ -66,13 +64,13 @@ export const OfficialReportPrint: React.FC<OfficialReportPrintProps> = ({ guests
                 {g.jabatan} - {g.satuan}
               </td>
               <td className="border border-black p-1.5 text-center font-mono font-bold">
-                {g.seat_number || '-'}
+                {g.seat_assignment || g.seat_number || '-'}
               </td>
               <td className="border border-black p-1.5 text-center font-bold">
-                {g.status_kehadiran === 'HADIR' ? 'HADIR' : 'BELUM'}
+                {g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR' ? 'CHECK_IN' : 'REGISTRASI'}
               </td>
               <td className="border border-black p-1.5 text-center font-mono text-[9px]">
-                {g.status_kehadiran === 'HADIR' ? 'TERVERIFIKASI' : ''}
+                {g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR' ? 'TERVERIFIKASI' : ''}
               </td>
             </tr>
           ))}

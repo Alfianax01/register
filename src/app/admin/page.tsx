@@ -119,72 +119,68 @@ export default function AdminDashboardPage() {
       <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6">
         {/* Statistik Kehadiran Grid: 2 Kolom Mobile, 4 Kolom Desktop */}
         <section aria-label="Statistik Kehadiran">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {/* Total Undangan */}
-            <Card className="p-3.5 sm:p-4 bg-white border border-slate-200/80 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* 1. Total Registrasi */}
+            <Card className="p-4 bg-white border border-blue-200/80 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                  Total Undangan
+                <span className="text-[11px] font-semibold text-blue-700 uppercase tracking-wider">
+                  Total Registrasi
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Users className="w-3.5 h-3.5" />
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Users className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 leading-tight">
+              <div className="text-2xl sm:text-3xl font-bold font-mono text-[#3B82F6] leading-tight">
                 {stats.totalGuests}
               </div>
-              <span className="text-[10px] text-slate-400 mt-1 block">Peserta terdaftar</span>
+              <span className="text-[11px] text-slate-500 mt-1 block">Seluruh peserta terdaftar</span>
             </Card>
 
-            {/* Tamu Hadir */}
-            <Card className="p-3.5 sm:p-4 bg-white border border-emerald-200/80 shadow-xs">
+            {/* 2. Total Check-In */}
+            <Card className="p-4 bg-white border border-emerald-200/80 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-emerald-700 uppercase tracking-wider">
-                  Tamu Hadir
+                <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">
+                  Total Check-In
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-600 leading-tight">
+              <div className="text-2xl sm:text-3xl font-bold font-mono text-[#10B981] leading-tight">
                 {stats.presentGuests}
               </div>
-              <span className="text-[10px] text-emerald-600/80 mt-1 block">Sudah check-in gate</span>
+              <span className="text-[11px] text-emerald-600/90 mt-1 block">Terverifikasi masuk gate</span>
             </Card>
 
-            {/* Belum Hadir */}
-            <Card className="p-3.5 sm:p-4 bg-white border border-slate-200/80 shadow-xs">
+            {/* 3. Persentase Kehadiran */}
+            <Card className="p-4 bg-white border border-slate-200/80 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                  Belum Hadir
+                <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
+                  Persentase Kehadiran
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                  <Clock className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-slate-700 leading-tight">
-                {stats.absentGuests}
-              </div>
-              <span className="text-[10px] text-slate-400 mt-1 block">Menunggu kehadiran</span>
-            </Card>
-
-            {/* Persentase Kehadiran */}
-            <Card className="p-3.5 sm:p-4 bg-white border border-slate-200/80 shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                  Tingkat Hadir
+                <span
+                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
+                    stats.percentagePresent >= 80
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                  }`}
+                >
+                  {stats.percentagePresent >= 80 ? 'Optimal' : 'Menunggu'}
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                </div>
               </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-indigo-600 leading-tight">
+              <div
+                className={`text-2xl sm:text-3xl font-bold font-mono leading-tight ${
+                  stats.percentagePresent >= 80 ? 'text-[#10B981]' : 'text-[#F59E0B]'
+                }`}
+              >
                 {stats.percentagePresent}%
               </div>
-              {/* Progress bar */}
-              <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2">
+              {/* Visual Progress Bar */}
+              <div className="w-full bg-slate-100 rounded-full h-2 mt-2.5 overflow-hidden">
                 <div
-                  className="bg-indigo-600 h-1.5 rounded-full transition-all duration-500"
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    stats.percentagePresent >= 80 ? 'bg-[#10B981]' : 'bg-[#F59E0B]'
+                  }`}
                   style={{ width: `${Math.min(stats.percentagePresent, 100)}%` }}
                 />
               </div>
@@ -291,9 +287,7 @@ export default function AdminDashboardPage() {
                   <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
                     <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Nama Lengkap & Pangkat</span>
                     <strong className="text-slate-900 font-semibold text-sm block">
-                      {verifyResult.guest.gelar_depan ? `${verifyResult.guest.gelar_depan} ` : ''}
                       {verifyResult.guest.nama}
-                      {verifyResult.guest.gelar_belakang ? `, ${verifyResult.guest.gelar_belakang}` : ''}
                     </strong>
                     <span className="text-slate-600 text-xs">{verifyResult.guest.pangkat} &bull; NRP {verifyResult.guest.nrp}</span>
                   </div>
@@ -307,17 +301,24 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
-                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Alokasi Kursi Sidang</span>
-                    <span className="font-mono font-bold text-slate-900 text-sm">
-                      {verifyResult.guest.seat_number || 'Belum Ditentukan'}
-                    </span>
+                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Alokasi Kursi & Wisma</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-emerald-900 text-sm">
+                        Kursi: {verifyResult.guest.seat_assignment || verifyResult.guest.seat_number || 'Belum Ditentukan'}
+                      </span>
+                    </div>
+                    {verifyResult.guest.wisma_assignment && (
+                      <span className="text-slate-600 text-[11px] block mt-0.5">
+                        {verifyResult.guest.wisma_assignment}
+                      </span>
+                    )}
                   </div>
 
                   <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
                     <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Status Validasi</span>
                     <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      HADIR &bull; Checkpoint {selectedCheckpoint}
+                      CHECK_IN &bull; Checkpoint {selectedCheckpoint}
                     </span>
                   </div>
                 </div>

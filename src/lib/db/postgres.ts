@@ -78,9 +78,11 @@ class PostgresAdapter {
               seat_number VARCHAR(50),
               room_id VARCHAR(50),
               room_slot VARCHAR(10),
+              seat_assignment VARCHAR(100),
+              wisma_assignment VARCHAR(100),
               qr_token VARCHAR(100) UNIQUE NOT NULL,
               token_hash VARCHAR(100),
-              status_kehadiran VARCHAR(20) DEFAULT 'BELUM_HADIR',
+              status_kehadiran VARCHAR(20) DEFAULT 'REGISTRASI',
               waktu_kehadiran_pertama VARCHAR(50),
               kategori_instansi VARCHAR(50),
               warna_kursi VARCHAR(20),
@@ -92,6 +94,11 @@ class PostgresAdapter {
             ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS email_sent BOOLEAN DEFAULT FALSE;
             ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS kategori_instansi VARCHAR(50);
             ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS warna_kursi VARCHAR(20);
+            ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS seat_assignment VARCHAR(100);
+            ALTER TABLE tni_guests ADD COLUMN IF NOT EXISTS wisma_assignment VARCHAR(100);
+            ALTER TABLE tni_guests ALTER COLUMN no_hp DROP NOT NULL;
+            UPDATE tni_guests SET status_kehadiran = 'REGISTRASI' WHERE status_kehadiran = 'BELUM_HADIR';
+            UPDATE tni_guests SET status_kehadiran = 'CHECK_IN' WHERE status_kehadiran = 'HADIR';
 
             CREATE TABLE IF NOT EXISTS tni_checkin_logs (
               id VARCHAR(100) PRIMARY KEY,
@@ -164,11 +171,13 @@ class PostgresAdapter {
       catatan_khusus: r.catatan_khusus,
       seat_group_id: r.seat_group_id,
       seat_number: r.seat_number,
+      seat_assignment: r.seat_assignment || r.seat_number || undefined,
       room_id: r.room_id,
       room_slot: r.room_slot,
+      wisma_assignment: r.wisma_assignment || undefined,
       qr_token: r.qr_token,
       token_hash: r.token_hash,
-      status_kehadiran: r.status_kehadiran,
+      status_kehadiran: (r.status_kehadiran === 'HADIR' || r.status_kehadiran === 'CHECK_IN') ? 'CHECK_IN' : 'REGISTRASI',
       waktu_kehadiran_pertama: r.waktu_kehadiran_pertama,
       kategori_instansi: r.kategori_instansi,
       warna_kursi: r.warna_kursi,
@@ -195,6 +204,7 @@ class PostgresAdapter {
             matra, pangkat, pangkat_level, jabatan, satker, satuan, negara_instansi,
             no_hp, email, email_sent, butuh_akomodasi, tgl_checkin, tgl_checkout,
             catatan_khusus, seat_group_id, seat_number, room_id, room_slot,
+            seat_assignment, wisma_assignment,
             qr_token, token_hash,
             status_kehadiran, waktu_kehadiran_pertama,
             kategori_instansi, warna_kursi,
@@ -204,7 +214,8 @@ class PostgresAdapter {
             $8, $9, $10, $11, $12, $13, $14,
             $15, $16, $17, $18, $19, $20, $21,
             $22, $23, $24, $25, $26, $27,
-            $28, $29, $30, $31, $32, $33
+            $28, $29, $30, $31, $32, $33,
+            $34, $35
           )
           ON CONFLICT (id) DO UPDATE SET
             nama = EXCLUDED.nama,
@@ -219,8 +230,10 @@ class PostgresAdapter {
             email_sent = EXCLUDED.email_sent,
             seat_number = EXCLUDED.seat_number,
             seat_group_id = EXCLUDED.seat_group_id,
+            seat_assignment = EXCLUDED.seat_assignment,
             room_id = EXCLUDED.room_id,
             room_slot = EXCLUDED.room_slot,
+            wisma_assignment = EXCLUDED.wisma_assignment,
             status_kehadiran = EXCLUDED.status_kehadiran,
             waktu_kehadiran_pertama = EXCLUDED.waktu_kehadiran_pertama,
             kategori_instansi = EXCLUDED.kategori_instansi,
@@ -242,7 +255,7 @@ class PostgresAdapter {
           guest.satker,
           guest.satuan || null,
           guest.negara_instansi || null,
-          guest.no_hp,
+          guest.no_hp || null,
           guest.email || null,
           guest.emailSent ? true : false,
           guest.butuh_akomodasi ? 1 : 0,
@@ -253,9 +266,11 @@ class PostgresAdapter {
           guest.seat_number || null,
           guest.room_id || null,
           guest.room_slot || null,
+          guest.seat_assignment || guest.seat_number || null,
+          guest.wisma_assignment || null,
           guest.qr_token,
           guest.token_hash || null,
-          guest.status_kehadiran || 'BELUM_HADIR',
+          guest.status_kehadiran || 'REGISTRASI',
           guest.waktu_kehadiran_pertama || null,
           guest.kategori_instansi || null,
           guest.warna_kursi || guest.seatColorAlias || null,

@@ -93,17 +93,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!no_hp || !String(no_hp).trim()) {
+    // Validate phone number format (if provided)
+    if (no_hp && String(no_hp).trim() && !isValidPhone(String(no_hp).trim())) {
       return NextResponse.json(
-        { error: 'Nomor WhatsApp / HP wajib diisi.' },
+        { error: 'Format nomor WhatsApp / HP tidak valid. Gunakan format nomor Indonesia (contoh: 0812xxxxxxxx atau 62812xxxxxxxx).' },
         { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
-    // Validate phone number format
-    if (!isValidPhone(no_hp)) {
+    // Validate email (wajib untuk pengiriman tiket)
+    if (!email || !String(email).trim()) {
       return NextResponse.json(
-        { error: 'Format nomor HP tidak valid. Gunakan format nomor Indonesia (contoh: 0812xxxxxxxx atau 62812xxxxxxxx).' },
+        { error: 'Alamat email wajib diisi untuk pengiriman e-ticket resmi.' },
+        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      );
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return NextResponse.json(
+        { error: 'Format alamat email tidak valid (contoh: nama@domain.com).' },
         { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
@@ -131,7 +141,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check duplicate Phone Number
+    // Check duplicate Phone Number (if provided)
     if (no_hp && String(no_hp).trim()) {
       const existingPhone = await db.findGuestByPhoneAsync(String(no_hp).trim());
       if (existingPhone) {
@@ -145,27 +155,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Validate and check duplicate Email (if email is provided)
-    if (email && String(email).trim()) {
-      const cleanEmail = String(email).trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(cleanEmail)) {
-        return NextResponse.json(
-          { error: 'Format alamat email tidak valid (contoh: nama@domain.com).' },
-          { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
-      }
-
-      const existingEmail = await db.findGuestByEmailAsync(cleanEmail);
-      if (existingEmail) {
-        return NextResponse.json(
-          {
-            error: `Email ${email} sudah terdaftar atas nama ${existingEmail.nama}. Silakan gunakan alamat email yang berbeda.`,
-            isDuplicate: true
-          },
-          { status: 409, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-        );
-      }
+    // Check duplicate Email
+    const existingEmail = await db.findGuestByEmailAsync(cleanEmail);
+    if (existingEmail) {
+      return NextResponse.json(
+        {
+          error: `Email ${email} sudah terdaftar atas nama ${existingEmail.nama}. Silakan gunakan alamat email yang berbeda.`,
+          isDuplicate: true
+        },
+        { status: 409, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
+      );
     }
 
     // Validate CAPTCHA if expected
@@ -188,21 +187,16 @@ export async function POST(req: NextRequest) {
     const newGuest = await db.createGuestAsync({
       nrp: escapeHtml(nrp || '-'),
       nama: escapeHtml(nama),
-      gelar_depan: escapeHtml(gelar_depan || ''),
-      gelar_belakang: escapeHtml(gelar_belakang || ''),
       matra: matra,
       pangkat: escapeHtml(pangkat),
       pangkat_level,
       jabatan: escapeHtml(jabatan),
       satker: escapeHtml(satker),
       satuan: escapeHtml(satuan || satker),
-      negara_instansi: escapeHtml(negara_instansi || 'Indonesia / Mabes TNI'),
-      no_hp: escapeHtml(no_hp),
-      email: escapeHtml(email || ''),
-      butuh_akomodasi: butuh_akomodasi ? 1 : 0,
-      tgl_checkin: tgl_checkin ? escapeHtml(tgl_checkin) : undefined,
-      tgl_checkout: tgl_checkout ? escapeHtml(tgl_checkout) : undefined,
-      catatan_khusus: catatan_khusus ? escapeHtml(catatan_khusus) : undefined,
+      negara_instansi: escapeHtml(negara_instansi || 'Indonesia / TNI - Kemhan RI'),
+      no_hp: no_hp ? escapeHtml(no_hp) : undefined,
+      email: escapeHtml(email),
+      butuh_akomodasi: 0,
       kategori_instansi,
       warna_kursi,
       seatColorAlias: warna_kursi
@@ -232,8 +226,6 @@ export async function POST(req: NextRequest) {
     try {
       pdfBuffer = await generateTicketPdf({
         nama: newGuest.nama,
-        gelar_depan: newGuest.gelar_depan,
-        gelar_belakang: newGuest.gelar_belakang,
         pangkat: newGuest.pangkat,
         nrp: newGuest.nrp,
         jabatan: newGuest.jabatan,
@@ -255,12 +247,12 @@ export async function POST(req: NextRequest) {
       try {
         await mysqlAdapter.savePeserta({
           id: newGuest.id,
-          nama_lengkap: [newGuest.gelar_depan, newGuest.nama, newGuest.gelar_belakang].filter(Boolean).join(' ') || newGuest.nama,
+          nama_lengkap: newGuest.nama,
           pangkat: newGuest.pangkat,
           jabatan: newGuest.jabatan,
           instansi: newGuest.negara_instansi || newGuest.satker,
           email: newGuest.email,
-          no_hp: newGuest.no_hp,
+          no_hp: newGuest.no_hp || '-',
           kategori_tamu: newGuest.matra === 'NON_TNI' ? 'SIPIL' : 'TNI',
           nrp: newGuest.nrp || null,
           matra: newGuest.matra,
@@ -322,8 +314,6 @@ export async function POST(req: NextRequest) {
       registrationId: newGuest.registration_id,
       ticketId: newGuest.ticket_id,
       nama: newGuest.nama,
-      gelar_depan: newGuest.gelar_depan,
-      gelar_belakang: newGuest.gelar_belakang,
       pangkat: newGuest.pangkat,
       matra: newGuest.matra,
       jabatan: newGuest.jabatan,

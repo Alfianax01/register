@@ -280,9 +280,7 @@ export default function CheckinPage() {
                   <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
                     <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Nama Lengkap & Pangkat</span>
                     <strong className="text-slate-900 font-semibold text-sm block">
-                      {verifyResult.guest.gelar_depan ? `${verifyResult.guest.gelar_depan} ` : ''}
                       {verifyResult.guest.nama}
-                      {verifyResult.guest.gelar_belakang ? `, ${verifyResult.guest.gelar_belakang}` : ''}
                     </strong>
                     <span className="text-slate-600 text-xs">{verifyResult.guest.pangkat} &bull; NRP {verifyResult.guest.nrp}</span>
                   </div>
@@ -296,17 +294,24 @@ export default function CheckinPage() {
                   </div>
 
                   <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
-                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Alokasi Kursi Sidang</span>
-                    <span className="font-mono font-bold text-slate-900 text-sm">
-                      {verifyResult.guest.seat_number || 'Belum Ditentukan'}
-                    </span>
+                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Alokasi Kursi & Wisma</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-emerald-900 text-sm">
+                        Kursi: {verifyResult.guest.seat_assignment || verifyResult.guest.seat_number || 'Belum Ditentukan'}
+                      </span>
+                    </div>
+                    {verifyResult.guest.wisma_assignment && (
+                      <span className="text-slate-600 text-[11px] block mt-0.5">
+                        {verifyResult.guest.wisma_assignment}
+                      </span>
+                    )}
                   </div>
 
                   <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
                     <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Status Validasi</span>
                     <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      HADIR &bull; Checkpoint {selectedCheckpoint}
+                      CHECK_IN &bull; Checkpoint {selectedCheckpoint}
                     </span>
                   </div>
                 </div>

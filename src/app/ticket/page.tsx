@@ -231,11 +231,8 @@ export default function TicketSearchPage() {
 
             <div className="space-y-3">
               {results.map((guest) => {
-                const fullName = [guest.gelar_depan, guest.nama, guest.gelar_belakang]
-                  .filter(Boolean)
-                  .join(' ');
-
-                const isHadir = guest.status_kehadiran === 'HADIR';
+                const fullName = guest.nama;
+                const isCheckIn = guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
 
                 return (
                   <Card
@@ -251,13 +248,13 @@ export default function TicketSearchPage() {
                           <Badge variant={guest.matra.toLowerCase() as any} size="sm">
                             {guest.matra === 'NON_TNI' ? 'SIPIL' : `TNI ${guest.matra}`}
                           </Badge>
-                          {isHadir ? (
+                          {isCheckIn ? (
                             <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              <UserCheck className="w-3 h-3" /> Hadir di Acara
+                              <UserCheck className="w-3 h-3" /> CHECK_IN &bull; Hadir di Acara
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                              Terdaftar Resmi
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                              REGISTRASI &bull; Terdaftar Resmi
                             </span>
                           )}
                         </div>

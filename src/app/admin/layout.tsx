@@ -67,7 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <AdminProvider initialUser={currentUser}>
       <div className="flex min-h-screen bg-[#f8fafc] text-slate-900 overflow-x-hidden">
         <AdminSidebar userRole={currentUser?.role} onLogout={handleLogout} />
-        <div className="flex-1 flex flex-col min-w-0 w-full overflow-x-hidden">
+        <div className="flex-1 flex flex-col min-w-0 w-full lg:ml-[280px] lg:w-[calc(100%-280px)] min-h-screen overflow-y-auto">
           {children}
         </div>
       </div>

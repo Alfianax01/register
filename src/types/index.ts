@@ -23,7 +23,7 @@ export interface Guest {
   satker: string;
   satuan: string;
   negara_instansi: string;
-  no_hp: string;
+  no_hp?: string;
   email: string;
   butuh_akomodasi: number; // 0 or 1
   tgl_checkin?: string;
@@ -35,9 +35,11 @@ export interface Guest {
   ticket_id?: string;
   seat_group_id?: string;
   seat_number?: string;
+  seat_assignment?: string;
   room_id?: string;
   room_slot?: 'A' | 'B';
-  status_kehadiran: 'BELUM_HADIR' | 'HADIR';
+  wisma_assignment?: string;
+  status_kehadiran: 'REGISTRASI' | 'CHECK_IN';
   waktu_kehadiran_pertama?: string;
   token?: string;
   emailSent?: boolean;
@@ -73,8 +75,8 @@ export interface Seat {
   kategori_instansi?: string;
   warna?: string;
   colorAlias?: string | null;
-  guest_status?: 'BELUM_HADIR' | 'HADIR';
-  status?: 'KOSONG' | 'ASSIGNED' | 'HADIR';
+  guest_status?: 'REGISTRASI' | 'CHECK_IN';
+  status?: 'KOSONG' | 'ASSIGNED' | 'CHECK_IN';
   is_reserved: number;
 }
 

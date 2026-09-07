@@ -2,29 +2,25 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { MatraType } from '@/types';
 import { getRanksByMatra } from '@/lib/constants/ranks';
 import { getSatkersByMatra } from '@/lib/constants/units';
-import { isValidNRP } from '@/lib/security/sanitizer';
+import { isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import {
   User,
   Shield,
-  Award,
   Briefcase,
   Building2,
   Phone,
   Mail,
-  Bed,
   CheckCircle2,
   Eye,
   ArrowRight,
-  ChevronRight,
-  Sparkles
+  Loader2,
+  Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useRouter } from 'next/navigation';
@@ -33,8 +29,6 @@ const DRAFT_STORAGE_KEY = 'tni_registration_draft';
 
 const INITIAL_FORM_DATA = {
   nama: '',
-  gelar_depan: '',
-  gelar_belakang: '',
   no_hp: '',
   email: '',
   negara_instansi: 'Indonesia / TNI - Kemhan RI',
@@ -43,11 +37,7 @@ const INITIAL_FORM_DATA = {
   pangkat: 'Jenderal TNI',
   jabatan: '',
   satker: 'Mabes TNI AD (Jakarta Pusat)',
-  satuan: 'Staf Umum Kasad',
-  butuh_akomodasi: false,
-  tgl_checkin: '2026-09-04',
-  tgl_checkout: '2026-09-06',
-  catatan_khusus: ''
+  satuan: 'Staf Umum Kasad'
 };
 
 interface ModernRegistrationFormProps {
@@ -60,15 +50,14 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
   const router = useRouter();
   const { showToast } = useToast();
 
-  const [activeStep, setActiveStep] = useState<number>(1);
   const [isPreviewOpen, setIsPreviewOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Form State: Always start fresh with clean fields
+  // Form State: Always starts clean
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
-  // Clear any residual session draft on mount to prevent old data from reappearing
+  // Clear any residual session draft on mount
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -93,24 +82,42 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
   // Realtime field validation
   const validateField = (field: string, val: any) => {
     let err = '';
-    if (field === 'nama' && !val.trim()) err = 'Nama lengkap wajib diisi.';
-    if (field === 'no_hp' && !val.trim()) err = 'Nomor WhatsApp / HP wajib diisi.';
+    if (field === 'nama') {
+      if (!val.trim()) {
+        err = 'Nama lengkap wajib diisi.';
+      } else if (val.trim().length > 150) {
+        err = 'Nama lengkap tidak boleh melebihi 150 karakter.';
+      }
+    }
+
     if (field === 'email') {
-      if (val && typeof val === 'string' && val.trim()) {
+      if (!val.trim()) {
+        err = 'Alamat email wajib diisi untuk penerbitan e-ticket.';
+      } else {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(val.trim())) {
           err = 'Format alamat email tidak valid (contoh: nama@domain.com).';
         }
       }
     }
+
+    if (field === 'no_hp' && val.trim()) {
+      if (!isValidPhone(val.trim())) {
+        err = 'Format nomor HP tidak valid (contoh: 0812xxxxxxxx atau 62812xxxxxxxx).';
+      }
+    }
+
     if (field === 'nrp') {
       if (!val.trim()) {
         err = 'NRP / NIP wajib diisi.';
       } else if (formData.matra !== 'NON_TNI' && !isValidNRP(val)) {
-        err = 'Format NRP tidak valid (5-18 karakter angka/huruf).';
+        err = 'Format NRP tidak valid (5-20 karakter alfanumerik).';
       }
     }
-    if (field === 'jabatan' && !val.trim()) err = 'Jabatan dinas wajib diisi.';
+
+    if (field === 'jabatan' && !val.trim()) {
+      err = 'Jabatan dinas wajib diisi.';
+    }
 
     setErrors(prev => {
       const next = { ...prev };
@@ -145,33 +152,29 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
 
   const validateAll = (): boolean => {
     const isNamaValid = validateField('nama', formData.nama);
+    const isEmailValid = validateField('email', formData.email);
+    const isPhoneValid = validateField('no_hp', formData.no_hp);
     const isNrpValid = validateField('nrp', formData.nrp);
     const isJabatanValid = validateField('jabatan', formData.jabatan);
-    const isPhoneValid = validateField('no_hp', formData.no_hp);
-    const isEmailValid = validateField('email', formData.email);
 
-    return isNamaValid && isNrpValid && isJabatanValid && isPhoneValid && isEmailValid;
+    return isNamaValid && isEmailValid && isPhoneValid && isNrpValid && isJabatanValid;
   };
 
   const handleSubmit = async () => {
     if (!validateAll()) {
       showToast('Periksa Isian Formulir', {
         type: 'error',
-        message: 'Mohon lengkapi kolom yang bertanda bintang sebelum mengirim.'
+        message: 'Mohon lengkapi seluruh kolom wajib bertanda bintang sebelum mengirim pendaftaran.'
       });
       return;
     }
 
     setIsSubmitting(true);
-    setIsPreviewOpen(false);
 
     try {
-      // Build fresh payload directly from current state
       const payload = {
         nama: formData.nama.trim(),
-        gelar_depan: formData.gelar_depan.trim(),
-        gelar_belakang: formData.gelar_belakang.trim(),
-        no_hp: formData.no_hp.trim(),
+        no_hp: formData.no_hp ? formData.no_hp.trim() : undefined,
         email: formData.email.trim(),
         negara_instansi: formData.negara_instansi.trim(),
         matra: formData.matra,
@@ -179,15 +182,10 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         nrp: formData.nrp.trim(),
         jabatan: formData.jabatan.trim(),
         satker: formData.satker.trim(),
-        satuan: formData.satuan.trim(),
-        butuh_akomodasi: formData.butuh_akomodasi,
-        tgl_checkin: formData.tgl_checkin,
-        tgl_checkout: formData.tgl_checkout,
-        catatan_khusus: formData.catatan_khusus.trim()
+        satuan: formData.satuan.trim()
       };
 
-      // Checklist #7: Frontend Logging
-      console.log("Frontend Payload:", payload);
+      console.log('Frontend Submit Payload:', payload);
 
       const res = await fetch('/api/register', {
         method: 'POST',
@@ -197,12 +195,12 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       });
 
       const data = await res.json();
-      console.log("Response Registrasi:", data);
+      console.log('Response Registrasi:', data);
 
       if (!res.ok) {
         showToast('Pendaftaran Ditolak', {
           type: 'error',
-          message: data.error || data.message || `Kode respon ${res.status}: Gagal memproses pendaftaran.`
+          message: data.error || data.message || `Gagal memproses pendaftaran (Kode ${res.status}).`
         });
         setIsSubmitting(false);
         return;
@@ -217,36 +215,24 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         });
       } catch {}
 
-      // Reset form completely so no stale participant data lingers
+      // Reset form
       setFormData(INITIAL_FORM_DATA);
       setErrors({});
-      setActiveStep(1);
       setIsPreviewOpen(false);
-      if (typeof window !== 'undefined') {
-        try {
-          sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-          sessionStorage.removeItem('tni_registration_success');
-        } catch {}
-      }
 
-      if (payload.email && data.emailStatus === 'failed') {
-        showToast('Registrasi Berhasil (Email Belum Terkirim)', {
-          type: 'info',
-          message: 'E-Ticket & QR Code resmi tersimpan, tetapi email belum terkirim karena SMTP belum dikonfigurasi di .env.local.'
-        });
-      } else if (payload.email && data.emailStatus === 'sent') {
-        showToast('Registrasi & Email Terkirim', {
+      if (payload.email && data.emailStatus === 'sent') {
+        showToast('Registrasi Berhasil & Email Terkirim', {
           type: 'success',
-          message: 'E-Ticket resmi telah dikirim ke email Anda. Mengalihkan ke tiket...'
+          message: 'E-Ticket resmi telah dikirimkan ke alamat email Anda.'
         });
       } else {
         showToast('Registrasi Berhasil', {
           type: 'success',
-          message: 'E-Ticket & QR Code resmi telah diterbitkan. Mengalihkan ke tiket...'
+          message: 'E-Ticket & QR Code pendaftaran Anda telah aktif. Mengalihkan...'
         });
       }
 
-      // Automatic redirect to newly generated ticket
+      // Redirect
       if (onSuccess) {
         onSuccess(data.token, data.guest, data);
       } else {
@@ -254,11 +240,10 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       }
 
     } catch (err: any) {
-      // Checklist #7: Error logging
-      console.error("Submit Error:", err);
+      console.error('Submit Error:', err);
       showToast('Koneksi Terputus', {
         type: 'error',
-        message: err?.message || 'Gagal menghubungi server. Periksa jaringan Anda.'
+        message: err?.message || 'Gagal menghubungi server database. Periksa jaringan Anda.'
       });
     } finally {
       setIsSubmitting(false);
@@ -271,454 +256,409 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         e.preventDefault();
         handleSubmit();
       }}
-      className="w-full flex flex-col space-y-6"
+      className="w-full space-y-8"
     >
-      {/* Step Pills Navigation (Linear Style) */}
-      <nav aria-label="Tahap Pendaftaran" className="flex items-center gap-1 border-b border-slate-100 pb-3">
-        {[
-          { id: 1, label: 'Identitas Diri' },
-          { id: 2, label: 'Data Dinas' },
-          { id: 3, label: 'Akomodasi' }
-        ].map((step) => {
-          const isActive = activeStep === step.id;
-          return (
-            <button
-              key={step.id}
-              type="button"
-              onClick={() => setActiveStep(step.id)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                isActive
-                  ? 'bg-slate-100 text-slate-900 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-              }`}
-            >
-              <span className="font-mono text-slate-400 mr-1.5">{step.id}.</span>
-              {step.label}
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Step 1: Identitas Pribadi */}
-      {activeStep === 1 && (
-        <div className="space-y-4 animate-in fade-in duration-150">
-          <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-            <div className="sm:col-span-3">
-              <Input
-                label="Gelar Depan"
-                name="gelar_depan"
-                placeholder="Dr. / Ir."
-                value={formData.gelar_depan}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="sm:col-span-6">
-              <Input
-                label="Nama Lengkap"
-                name="nama"
-                required
-                placeholder="Nama prajurit / tamu..."
-                value={formData.nama}
-                onChange={handleInputChange}
-                error={errors.nama}
-                autoComplete="name"
-              />
-            </div>
-            <div className="sm:col-span-3">
-              <Input
-                label="Gelar Belakang"
-                name="gelar_belakang"
-                placeholder="S.E., M.Si."
-                value={formData.gelar_belakang}
-                onChange={handleInputChange}
-              />
-            </div>
+      {/* SECTION 1: DATA PRIBADI */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200">
+          <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
+            <User className="w-4 h-4" />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Input
-              label="WhatsApp / Nomor HP"
-              name="no_hp"
-              type="tel"
-              required
-              placeholder="0812xxxxxxxx"
-              value={formData.no_hp}
-              onChange={handleInputChange}
-              error={errors.no_hp}
-              helperText="E-ticket digital akan dikirimkan ke nomor ini."
-              leftIcon={<Phone className="w-3.5 h-3.5" />}
-              autoComplete="tel"
-            />
-
-            <Input
-              label="Alamat Email Dinas / Pribadi"
-              name="email"
-              type="email"
-              placeholder="nama@tni.mil.id"
-              value={formData.email}
-              onChange={handleInputChange}
-              error={errors.email}
-              helperText="E-Ticket resmi dan QR Code akan dikirim otomatis ke email ini."
-              leftIcon={<Mail className="w-3.5 h-3.5" />}
-              autoComplete="email"
-            />
-          </div>
-
           <div>
-            <Input
-              label="Asal Negara / Instansi"
-              name="negara_instansi"
-              placeholder="Indonesia / TNI - Kemhan RI"
-              value={formData.negara_instansi}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="pt-2 flex justify-end">
-            <Button
-              type="button"
-              variant="primary"
-              size="md"
-              onClick={() => {
-                const isNamaValid = validateField('nama', formData.nama);
-                const isPhoneValid = validateField('no_hp', formData.no_hp);
-                const isEmailValid = validateField('email', formData.email);
-                if (isNamaValid && isPhoneValid && isEmailValid) {
-                  setActiveStep(2);
-                } else {
-                  showToast('Periksa Isian', {
-                    type: 'error',
-                    message: 'Mohon lengkapi data identitas dengan benar sebelum melanjutkan.'
-                  });
-                }
-              }}
-            >
-              <span>Lanjut ke Data Dinas</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-1" />
-            </Button>
+            <h2 className="text-sm sm:text-base font-bold text-slate-900">
+              Bagian 1: Data Pribadi & Kontak
+            </h2>
+            <p className="text-xs text-slate-500">
+              Identitas diri dan kontak resmi peserta untuk penerbitan E-Ticket
+            </p>
           </div>
         </div>
-      )}
 
-      {/* Step 2: Data Kedinasan */}
-      {activeStep === 2 && (
-        <div className="space-y-4 animate-in fade-in duration-150">
-          {/* Matra Segmented Control */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5 select-none">
-              Pilih Matra / Kesatuan Induk <span className="text-blue-600 font-bold">*</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Nama Lengkap */}
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Nama Lengkap <span className="text-rose-500">*</span>
             </label>
-            <div className="grid grid-cols-5 gap-1 sm:gap-1.5 p-1 bg-slate-100 rounded-lg border border-slate-200/80">
-              {(['AD', 'AL', 'AU', 'MABES', 'NON_TNI'] as MatraType[]).map((m) => {
-                const labels: Record<string, string> = {
-                  AD: 'TNI AD',
-                  AL: 'TNI AL',
-                  AU: 'TNI AU',
-                  MABES: 'Mabes',
-                  NON_TNI: 'Sipil'
-                };
-                const isSelected = formData.matra === m;
-                return (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => handleMatraChange(m)}
-                    className={`py-2 px-0.5 sm:px-1 text-[11px] sm:text-xs font-medium rounded-md transition-all text-center truncate ${
-                      isSelected
-                        ? 'bg-white text-blue-700 font-semibold shadow-xs border border-slate-200/80'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    {labels[m]}
-                  </button>
-                );
-              })}
-            </div>
+            <Input
+              name="nama"
+              value={formData.nama}
+              onChange={handleInputChange}
+              maxLength={150}
+              placeholder="Contoh: Jenderal TNI Agus Subiyanto, S.E., M.Si."
+              required
+              className="text-xs sm:text-sm"
+            />
+            {errors.nama ? (
+              <p className="text-[11px] text-rose-600 mt-1">{errors.nama}</p>
+            ) : (
+              <p className="text-[11px] text-slate-500 mt-1">
+                Tuliskan nama lengkap beserta gelar jika ada (maksimal 150 karakter).
+              </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Input
-              label={formData.matra === 'NON_TNI' ? 'NIP / Nomor Identitas Pegawai' : 'NRP Prajurit'}
-              name="nrp"
-              required
-              placeholder="Contoh: 519284 / 1102941"
-              value={formData.nrp}
-              onChange={handleInputChange}
-              error={errors.nrp}
-              helperText="Nomor registrasi prajurit resmi."
-              leftIcon={<Award className="w-3.5 h-3.5" />}
-            />
+          {/* Nomor WhatsApp (Opsional) */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Nomor WhatsApp (Opsional)
+            </label>
+            <div className="relative">
+              <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Input
+                name="no_hp"
+                value={formData.no_hp}
+                onChange={handleInputChange}
+                placeholder="Contoh: 08123456789"
+                className="pl-9 text-xs sm:text-sm"
+              />
+            </div>
+            {errors.no_hp ? (
+              <p className="text-[11px] text-rose-600 mt-1">{errors.no_hp}</p>
+            ) : (
+              <p className="text-[11px] text-slate-500 mt-1">
+                Diisi jika ingin menerima notifikasi e-ticket via WhatsApp.
+              </p>
+            )}
+          </div>
 
-            <Select
-              label="Pangkat / Golongan"
+          {/* Email */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Alamat Email <span className="text-rose-500">*</span>
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="nama@tni.mil.id atau email dinas"
+                required
+                className="pl-9 text-xs sm:text-sm"
+              />
+            </div>
+            {errors.email ? (
+              <p className="text-[11px] text-rose-600 mt-1">{errors.email}</p>
+            ) : (
+              <p className="text-[11px] text-slate-500 mt-1">
+                Alamat email aktif untuk pengiriman berkas E-Ticket PDF resmi.
+              </p>
+            )}
+          </div>
+
+          {/* Asal Negara / Instansi */}
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Asal Negara / Instansi Induk
+            </label>
+            <Input
+              name="negara_instansi"
+              value={formData.negara_instansi}
+              onChange={handleInputChange}
+              placeholder="Indonesia / TNI - Kemhan RI"
+              className="text-xs sm:text-sm"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 2: DATA KEDINASAN */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+            <Shield className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-sm sm:text-base font-bold text-slate-900">
+              Bagian 2: Data Kedinasan & Penugasan
+            </h2>
+            <p className="text-xs text-slate-500">
+              Kualifikasi kepangkatan militer dan penempatan satuan dinas peserta
+            </p>
+          </div>
+        </div>
+
+        {/* Matra Selector Pills */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-800 mb-2">
+            Matra / Kategori Kedinasan <span className="text-rose-500">*</span>
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[
+              { code: 'AD' as MatraType, label: 'TNI AD', color: 'bg-[#1F7A3E]' },
+              { code: 'AL' as MatraType, label: 'TNI AL', color: 'bg-[#475569]' },
+              { code: 'AU' as MatraType, label: 'TNI AU', color: 'bg-[#2563EB]' },
+              { code: 'MABES' as MatraType, label: 'Mabes TNI', color: 'bg-slate-800' },
+              { code: 'NON_TNI' as MatraType, label: 'Sipil / Non-TNI', color: 'bg-slate-600' }
+            ].map(m => {
+              const isSelected = formData.matra === m.code;
+              return (
+                <button
+                  key={m.code}
+                  type="button"
+                  onClick={() => handleMatraChange(m.code)}
+                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold transition-all ${
+                    isSelected
+                      ? `${m.color} text-white border-transparent shadow-sm ring-2 ring-offset-1 ring-blue-500`
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  {isSelected && <Check className="w-3.5 h-3.5" />}
+                  <span>{m.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Pangkat */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Pangkat / Golongan <span className="text-rose-500">*</span>
+            </label>
+            <select
               name="pangkat"
-              required
               value={formData.pangkat}
               onChange={handleInputChange}
+              aria-label="Pilih Pangkat atau Golongan"
+              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
               {availableRanks.map(r => (
                 <option key={r.id} value={r.name}>
                   {r.name} ({r.golongan})
                 </option>
               ))}
-            </Select>
+            </select>
           </div>
 
+          {/* NRP / NIP */}
           <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              NRP / NIP <span className="text-rose-500">*</span>
+            </label>
             <Input
-              label="Jabatan Kedinasan Saat Ini"
-              name="jabatan"
-              required
-              placeholder="Contoh: Danjen Kopassus / Asops Kasal / Danskadron"
-              value={formData.jabatan}
+              name="nrp"
+              value={formData.nrp}
               onChange={handleInputChange}
-              error={errors.jabatan}
-              leftIcon={<Briefcase className="w-3.5 h-3.5" />}
+              placeholder={formData.matra === 'NON_TNI' ? 'Nomor NIP atau tanda pengenal' : 'Nomor Registrasi Pokok (NRP)'}
+              required
+              className="text-xs sm:text-sm font-mono"
             />
+            {errors.nrp ? (
+              <p className="text-[11px] text-rose-600 mt-1">{errors.nrp}</p>
+            ) : (
+              <p className="text-[11px] text-slate-500 mt-1">
+                {formData.matra === 'NON_TNI' ? 'Gunakan tanda strip (-) jika tidak memiliki NIP' : 'Wajib 5-20 digit angka resmi prajurit'}
+              </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Select
-              label="Satuan Kerja (Satker Induk)"
+          {/* Jabatan */}
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Jabatan Kedinasan <span className="text-rose-500">*</span>
+            </label>
+            <div className="relative">
+              <Briefcase className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Input
+                name="jabatan"
+                value={formData.jabatan}
+                onChange={handleInputChange}
+                placeholder="Contoh: Panglima Kodam / Asops Kasad / Pejabat Tinggi"
+                required
+                className="pl-9 text-xs sm:text-sm"
+              />
+            </div>
+            {errors.jabatan && (
+              <p className="text-[11px] text-rose-600 mt-1">{errors.jabatan}</p>
+            )}
+          </div>
+
+          {/* Satker */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Satuan Kerja (Satker) <span className="text-rose-500">*</span>
+            </label>
+            <select
               name="satker"
-              required
               value={formData.satker}
               onChange={(e) => {
-                const val = e.target.value;
-                const found = availableSatkers.find(s => s.name === val);
-                setFormData(prev => ({ ...prev, satker: val, satuan: found?.satuans[0] || '' }));
+                const newSatker = e.target.value;
+                const found = availableSatkers.find(s => s.name === newSatker);
+                setFormData(prev => ({
+                  ...prev,
+                  satker: newSatker,
+                  satuan: found?.satuans[0] || ''
+                }));
               }}
+              aria-label="Pilih Satuan Kerja"
+              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
               {availableSatkers.map(s => (
                 <option key={s.id} value={s.name}>
                   {s.name}
                 </option>
               ))}
-            </Select>
-
-            {availableSatuans.length > 0 ? (
-              <Select
-                label="Unit / Kesatuan Spesifik"
-                name="satuan"
-                required
-                value={formData.satuan}
-                onChange={handleInputChange}
-              >
-                {availableSatuans.map(u => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </Select>
-            ) : (
-              <Input
-                label="Unit / Kesatuan Spesifik"
-                name="satuan"
-                required
-                placeholder="Tuliskan nama unit kerja..."
-                value={formData.satuan}
-                onChange={handleInputChange}
-              />
-            )}
+            </select>
           </div>
 
-          <div className="pt-2 flex items-center justify-between">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setActiveStep(1)}
-            >
-              Kembali
-            </Button>
-
-            <Button
-              type="button"
-              variant="primary"
-              size="md"
-              onClick={() => setActiveStep(3)}
-            >
-              <span>Lanjut ke Akomodasi</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-1" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Akomodasi & Review */}
-      {activeStep === 3 && (
-        <div className="space-y-4 animate-in fade-in duration-150">
-          {/* Accommodation Toggle */}
-          <div
-            onClick={() => setFormData(prev => ({ ...prev, butuh_akomodasi: !prev.butuh_akomodasi }))}
-            className={`p-3.5 rounded-lg border cursor-pointer transition-all flex items-start gap-3 select-none ${
-              formData.butuh_akomodasi
-                ? 'bg-blue-50/70 border-blue-300 ring-1 ring-blue-500/20'
-                : 'bg-white border-slate-200 hover:border-slate-300'
-            }`}
-          >
-            <div className={`mt-0.5 w-4 h-4 rounded flex items-center justify-center border ${
-              formData.butuh_akomodasi ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-300'
-            }`}>
-              {formData.butuh_akomodasi && <CheckCircle2 className="w-3 h-3 stroke-[3]" />}
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-900">
-                Memerlukan Fasilitas Penginapan (Wisma Mabes TNI)
-              </p>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                Alokasi kamar di Wisma Soedirman (VVIP), Wisma Kartika, atau Mess Perwira.
-              </p>
-            </div>
-          </div>
-
-          {formData.butuh_akomodasi && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-lg bg-slate-50 border border-slate-200 animate-in fade-in duration-150">
-              <Input
-                label="Tanggal Check-In"
-                name="tgl_checkin"
-                type="date"
-                value={formData.tgl_checkin}
-                onChange={handleInputChange}
-              />
-              <Input
-                label="Tanggal Check-Out"
-                name="tgl_checkout"
-                type="date"
-                value={formData.tgl_checkout}
-                onChange={handleInputChange}
-              />
-            </div>
-          )}
-
+          {/* Sub-Satuan */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5 select-none">
-              Preferensi / Kebutuhan Khusus (Opsional)
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Sub-Satuan / Detasemen
             </label>
-            <textarea
-              name="catatan_khusus"
-              rows={2}
-              value={formData.catatan_khusus}
+            <select
+              name="satuan"
+              value={formData.satuan}
               onChange={handleInputChange}
-              placeholder="Catatan alergi makanan jamuan, kebutuhan medis khusus..."
-              className="block w-full rounded-lg bg-white text-slate-900 border border-slate-200 text-xs p-3 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 placeholder:text-slate-400"
-            />
-          </div>
-
-          {/* Action Row */}
-          <div className="pt-3 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => setActiveStep(2)}
-              className="w-full sm:w-auto"
+              aria-label="Pilih Sub-Satuan atau Detasemen"
+              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
-              Kembali
-            </Button>
-
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="md"
-                onClick={() => {
-                  if (validateAll()) setIsPreviewOpen(true);
-                  else {
-                    showToast('Data Belum Lengkap', {
-                      type: 'error',
-                      message: 'Harap lengkapi nama, NRP, dan jabatan terlebih dahulu.'
-                    });
-                  }
-                }}
-                className="w-full sm:w-auto"
-              >
-                <Eye className="w-3.5 h-3.5 mr-1" />
-                <span>Preview Data</span>
-              </Button>
-
-              <Button
-                type="button"
-                variant="primary"
-                size="md"
-                onClick={handleSubmit}
-                isLoading={isSubmitting}
-                loadingText="Memproses Pendaftaran..."
-                className="w-full sm:w-auto font-semibold"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
-                <span>Kirim Registrasi</span>
-              </Button>
-            </div>
+              {availableSatuans.map(sub => (
+                <option key={sub} value={sub}>
+                  {sub}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Preview Modal before Submit */}
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 border-t border-slate-200">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={() => {
+            if (validateAll()) {
+              setIsPreviewOpen(true);
+            } else {
+              showToast('Periksa Isian', {
+                type: 'error',
+                message: 'Mohon lengkapi kolom wajib sebelum membuka pratinjau.'
+              });
+            }
+          }}
+          className="w-full sm:w-auto gap-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white border-slate-300 hover:bg-slate-50"
+        >
+          <Eye className="w-4 h-4" />
+          <span>Pratinjau Data</span>
+        </Button>
+
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          disabled={isSubmitting}
+          className="w-full sm:w-auto gap-2 text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Memproses Pendaftaran...</span>
+            </>
+          ) : (
+            <>
+              <span>Kirim Pendaftaran</span>
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* MODAL PRATINJAU DATA */}
       <Modal
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        title="Konfirmasi Data Registrasi"
-        description="Periksa kembali data Anda sebelum E-Ticket QR Code resmi diterbitkan."
-        maxWidth="md"
+        title="Pratinjau Data Pendaftaran"
+        description="Periksa kembali identitas dan data kedinasan Anda sebelum dikirimkan ke panitia."
+        maxWidth="lg"
       >
         <div className="space-y-4 text-xs">
-          <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <span className="font-semibold text-slate-900 text-sm">
-                {formData.gelar_depan ? `${formData.gelar_depan} ` : ''}
-                {formData.nama}
-                {formData.gelar_belakang ? `, ${formData.gelar_belakang}` : ''}
-              </span>
-              <Badge variant="primary">{formData.matra}</Badge>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+            <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-200">
+              Data Pribadi
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-slate-400 block">Pangkat / NRP</span>
-                <span className="font-semibold text-slate-800">{formData.pangkat} &bull; {formData.nrp}</span>
+                <span className="text-slate-500 block">Nama Lengkap:</span>
+                <span className="font-bold text-slate-900">{formData.nama || '-'}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">WhatsApp</span>
-                <span className="font-mono text-slate-800">{formData.no_hp}</span>
+                <span className="text-slate-500 block">WhatsApp / HP:</span>
+                <span className="font-mono text-slate-900">{formData.no_hp || '(Tidak diisi)'}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Jabatan</span>
-                <span className="text-slate-800">{formData.jabatan}</span>
+                <span className="text-slate-500 block">Alamat Email:</span>
+                <span className="font-mono text-slate-900">{formData.email || '-'}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Satker & Kesatuan</span>
-                <span className="text-slate-800">{formData.satuan} ({formData.satker})</span>
+                <span className="text-slate-500 block">Instansi / Negara:</span>
+                <span className="text-slate-900">{formData.negara_instansi || '-'}</span>
               </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-200 flex justify-between text-[11px]">
-              <span className="text-slate-500">Penginapan Wisma:</span>
-              <span className={formData.butuh_akomodasi ? 'text-emerald-700 font-semibold' : 'text-slate-500'}>
-                {formData.butuh_akomodasi ? `Ya (${formData.tgl_checkin} s/d ${formData.tgl_checkout})` : 'Tidak Menginap'}
-              </span>
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+            <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-200">
+              Data Kedinasan
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <span className="text-slate-500 block">Matra Dinas:</span>
+                <span className="font-bold text-slate-900">{formData.matra}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">Pangkat / Golongan:</span>
+                <span className="font-semibold text-slate-900">{formData.pangkat}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">NRP / NIP:</span>
+                <span className="font-mono font-semibold text-slate-900">{formData.nrp || '-'}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block">Jabatan Dinas:</span>
+                <span className="font-semibold text-slate-900">{formData.jabatan || '-'}</span>
+              </div>
+              <div className="col-span-2">
+                <span className="text-slate-500 block">Satuan Kerja / Detasemen:</span>
+                <span className="text-slate-900">{formData.satker} &bull; {formData.satuan}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-[11px] leading-relaxed">
+            <p>
+              <strong>Informasi Alokasi:</strong> Penempatan kursi pleno dan wisma akomodasi resmi akan dialokasikan secara otomatis berdasarkan hierarki kepangkatan dinas setelah pemindaian QR Code di lokasi gerbang masuk (*Check-In Gate*).
+            </p>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
             <Button
               type="button"
-              variant="secondary"
+              variant="ghost"
               size="md"
               onClick={() => setIsPreviewOpen(false)}
             >
-              Perbaiki Data
+              Kembali & Sunting
             </Button>
-
             <Button
               type="button"
               variant="primary"
               size="md"
-              onClick={handleSubmit}
-              isLoading={isSubmitting}
-              loadingText="Memproses..."
+              disabled={isSubmitting}
+              onClick={() => {
+                setIsPreviewOpen(false);
+                handleSubmit();
+              }}
+              className="gap-1.5"
             >
-              <span>Konfirmasi & Terbitkan</span>
+              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              <span>Konfirmasi & Kirim</span>
             </Button>
           </div>
         </div>
@@ -726,4 +666,3 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     </form>
   );
 };
-

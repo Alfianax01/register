@@ -74,9 +74,7 @@ export const GuestVerifyModal: React.FC<GuestVerifyModalProps> = ({
                 </span>
               </div>
               <h4 className="text-base font-semibold text-slate-900 mt-1">
-                {guest.gelar_depan ? `${guest.gelar_depan} ` : ''}
                 {guest.nama}
-                {guest.gelar_belakang ? `, ${guest.gelar_belakang}` : ''}
               </h4>
             </div>
           </div>

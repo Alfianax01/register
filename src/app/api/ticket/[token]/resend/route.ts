@@ -74,7 +74,7 @@ export async function POST(
           matra: (p.matra as any) || 'AD',
           butuh_akomodasi: 0,
           seat_number: p.seat_number || undefined,
-          status_kehadiran: p.status_hadir === 'HADIR' ? 'HADIR' : 'BELUM_HADIR',
+          status_kehadiran: p.status_hadir === 'HADIR' ? 'CHECK_IN' : 'REGISTRASI',
           qr_token: p.qr_token, // STRICTLY PRESERVED FROM DB, NEVER REGENERATED
           token: p.qr_token,
           token_hash: '',
@@ -151,8 +151,6 @@ export async function POST(
     try {
       pdfBuffer = await generateTicketPdf({
         nama: guest.nama,
-        gelar_depan: guest.gelar_depan,
-        gelar_belakang: guest.gelar_belakang,
         pangkat: guest.pangkat,
         nrp: guest.nrp,
         jabatan: guest.jabatan,

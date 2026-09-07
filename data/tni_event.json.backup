@@ -1,8 +1,70 @@
 {
   "guests": [
     {
+      "nrp": "----",
+      "nama": "Dr Joseph",
+      "gelar_depan": "Dr",
+      "gelar_belakang": "-",
+      "matra": "NON_TNI",
+      "pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "pangkat_level": 1,
+      "jabatan": "-",
+      "satker": "Kementerian Pertahanan RI (Kemhan)",
+      "satuan": "Setjen Kemhan",
+      "negara_instansi": "Indonesia / TNI - Kemhan RI",
+      "no_hp": "081327272845",
+      "email": "test@gmaill.com",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-07",
+      "tgl_checkout": "2026-09-08",
+      "kategori_instansi": "KEMENTERIAN",
+      "warna_kursi": "white",
+      "seatColorAlias": "white",
+      "id": "guest_1788765569721_q3g2bqw",
+      "registration_id": "REG-2026--116198",
+      "ticket_id": "TCK-2026-9721-76YK",
+      "qr_token": "f549d7db-73f9-4b4a-899e-0bb40a5d546a",
+      "token_hash": "928df7b0cd8ff39aa5f30b74a1516975df5f4a75fe6493efecbf6cc08b046e22",
+      "status_kehadiran": "CHECK_IN",
+      "created_at": "2026-09-07T07:19:29.720Z",
+      "updated_at": "2026-09-07T07:22:09.311Z",
+      "emailSent": true,
+      "waktu_kehadiran_pertama": "2026-09-07T07:22:09.311Z"
+    },
+    {
+      "nrp": "Non-tni",
+      "nama": "Asep, S.T",
+      "gelar_depan": "-",
+      "gelar_belakang": "S.T",
+      "matra": "NON_TNI",
+      "pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "pangkat_level": 1,
+      "jabatan": "-",
+      "satker": "Kementerian Pertahanan RI (Kemhan)",
+      "satuan": "Setjen Kemhan",
+      "negara_instansi": "Indonesia / TNI - Kemhan RI",
+      "no_hp": "081239482378",
+      "email": "azmialfian631@gmail.com",
+      "butuh_akomodasi": 1,
+      "tgl_checkin": "2026-09-07",
+      "tgl_checkout": "2026-09-08",
+      "kategori_instansi": "KEMENTERIAN",
+      "warna_kursi": "white",
+      "seatColorAlias": "white",
+      "id": "guest_1788765265940_2ec4jl9",
+      "registration_id": "REG-2026-5940-836542",
+      "ticket_id": "TCK-2026-5940-GUIF",
+      "qr_token": "4294a2f7-8abd-4551-8259-2eaab7362604",
+      "token_hash": "75e556dc502b3d8caccbb49703b15f402018220443541b74addf8433ed14b75d",
+      "status_kehadiran": "CHECK_IN",
+      "created_at": "2026-09-07T07:14:25.940Z",
+      "updated_at": "2026-09-07T07:27:00.079Z",
+      "emailSent": true,
+      "waktu_kehadiran_pertama": "2026-09-07T07:27:00.030Z"
+    },
+    {
       "nrp": "NON-TNI",
-      "nama": "Asta 901",
+      "nama": "Dr Asta 901, S.T",
       "gelar_depan": "Dr",
       "gelar_belakang": "S.T",
       "matra": "NON_TNI",
@@ -22,7 +84,7 @@
       "ticket_id": "TCK-307519-G9RH",
       "qr_token": "478ce44d-ff73-4f9b-82eb-d93216a0c816",
       "token_hash": "a9b6ae125f35fb7632e54e2c38abcd5c27d5e1b6a6b4885ce01edb9377a44521",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-05T02:45:07.518Z",
       "updated_at": "2026-09-05T02:46:22.206Z",
       "emailSent": true,
@@ -30,7 +92,7 @@
     },
     {
       "nrp": "TEST-112981",
-      "nama": "Kolonel Infantara Pengujian",
+      "nama": "Kolonel Inf. Kolonel Infantara Pengujian, S.Sos., M.Han.",
       "gelar_depan": "Kolonel Inf.",
       "gelar_belakang": "S.Sos., M.Han.",
       "matra": "AD",
@@ -51,14 +113,14 @@
       "ticket_id": "TCK-112984-83IM",
       "qr_token": "a0bc24d9-cf11-4412-a6f2-2902570303b9",
       "token_hash": "33c7a1bc2832f1e404d2887253cd8a2b07536e93150cecb56891eeb0cd9b9738",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T16:08:32.981Z",
       "updated_at": "2026-09-04T16:08:33.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T16:08:32.995Z"
     },
     {
       "nrp": "113599",
-      "nama": "Tri Nugroho",
+      "nama": "Dr. Tri Nugroho, S.T., M.Si.",
       "gelar_depan": "Dr.",
       "gelar_belakang": "S.T., M.Si.",
       "matra": "AD",
@@ -79,16 +141,17 @@
       "ticket_id": "TCK-275005-92PS",
       "qr_token": "309d2bac-98d0-437b-ba8e-f6ccad146820",
       "token_hash": "8873d91e12725b01f4c2201471cf381d4450198d4dbee0847ecb5a481b8598df",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T15:37:55.005Z",
       "updated_at": "2026-09-04T15:37:55.174Z",
       "waktu_kehadiran_pertama": "2026-09-04T15:37:55.164Z",
       "seat_group_id": "grp_d",
-      "seat_number": "D-06"
+      "seat_number": "D-06",
+      "seat_assignment": "D-06"
     },
     {
       "nrp": "668935",
-      "nama": "Kurniawan Pratama",
+      "nama": "Letkol Kurniawan Pratama, M.Han.",
       "gelar_depan": "Letkol",
       "gelar_belakang": "M.Han.",
       "matra": "AD",
@@ -108,15 +171,16 @@
       "ticket_id": "TCK-290056-MR6Q",
       "qr_token": "cdd715eb-46b7-42a0-ac9e-13fee41a8ea3",
       "token_hash": "45564778baeaea7f4fbe39a161f97b9e0e1a174eef33d7073e7756f5cdbcf2e2",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T15:04:50.052Z",
       "updated_at": "2026-09-04T15:04:50.052Z",
       "seat_group_id": "grp_e",
-      "seat_number": "E-03"
+      "seat_number": "E-03",
+      "seat_assignment": "E-03"
     },
     {
       "nrp": "888313",
-      "nama": "Hendra Gunawan",
+      "nama": "Dr. Hendra Gunawan, S.I.P., M.Han.",
       "gelar_depan": "Dr.",
       "gelar_belakang": "S.I.P., M.Han.",
       "matra": "AD",
@@ -134,11 +198,12 @@
       "id": "guest_1788533739968_0r4b",
       "qr_token": "49b28441-f3b8-401e-877f-b47682347c8f",
       "token_hash": "00ad3403621e70ab8d58201490269eb5a35ec3b06acd834a9d37d53cc8d63db7",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T14:55:39.967Z",
       "updated_at": "2026-09-04T14:55:39.967Z",
       "seat_group_id": "grp_d",
-      "seat_number": "D-07"
+      "seat_number": "D-07",
+      "seat_assignment": "D-07"
     },
     {
       "nrp": "991161",
@@ -158,15 +223,16 @@
       "id": "guest_1788533666602_nlbz",
       "qr_token": "c74a90c9-227b-4a27-8044-ac8d4cbe066b",
       "token_hash": "f7e8278aabac72d0ca41cf4e96ec30997cebf40565df6ec332e6d393b83bd11b",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T14:54:26.602Z",
       "updated_at": "2026-09-04T14:54:26.602Z",
       "seat_group_id": "grp_f",
-      "seat_number": "F-02"
+      "seat_number": "F-02",
+      "seat_assignment": "F-02"
     },
     {
       "nrp": "115417",
-      "nama": "Tri Nugroho",
+      "nama": "Dr. Tri Nugroho, S.T., M.Si.",
       "gelar_depan": "Dr.",
       "gelar_belakang": "S.T., M.Si.",
       "matra": "AD",
@@ -185,16 +251,17 @@
       "id": "guest_1788532925759_s7xf",
       "qr_token": "ef130dcc-a0e7-4fd7-af96-841aefedaebf",
       "token_hash": "42c42d93bad5dafa9c7817e59d4b23b84a43112937f1b2baa4c2e9e87986e5ca",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T14:42:05.759Z",
       "updated_at": "2026-09-04T14:42:05.892Z",
       "waktu_kehadiran_pertama": "2026-09-04T14:42:05.883Z",
       "seat_group_id": "grp_d",
-      "seat_number": "D-05"
+      "seat_number": "D-05",
+      "seat_assignment": "D-05"
     },
     {
       "nrp": "117507",
-      "nama": "Tri Nugroho",
+      "nama": "Dr. Tri Nugroho, S.T., M.Si.",
       "gelar_depan": "Dr.",
       "gelar_belakang": "S.T., M.Si.",
       "matra": "AD",
@@ -213,16 +280,17 @@
       "id": "guest_1788531847559_kdun",
       "qr_token": "e48db23a-be58-40e9-9edc-240efe98cd6d",
       "token_hash": "c52fd7f7b5aed993265d39db0a96e7765f0cc6eb4ab7281ce3aa3abcf373cd14",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T14:24:07.558Z",
       "updated_at": "2026-09-04T14:24:07.706Z",
       "waktu_kehadiran_pertama": "2026-09-04T14:24:07.697Z",
       "seat_group_id": "grp_d",
-      "seat_number": "D-04"
+      "seat_number": "D-04",
+      "seat_assignment": "D-04"
     },
     {
       "nrp": "113686",
-      "nama": "Tri Nugroho",
+      "nama": "Dr. Tri Nugroho, S.T., M.Si.",
       "gelar_depan": "Dr.",
       "gelar_belakang": "S.T., M.Si.",
       "matra": "AD",
@@ -241,16 +309,17 @@
       "id": "guest_1788531323959_993f",
       "qr_token": "4ba66742-ea67-4ff1-8b2c-5cf9cc532891",
       "token_hash": "097c81ad6e1bede27a943eb27618fd87e3ae9668d275d56c87196a231478ec15",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T14:15:23.959Z",
       "updated_at": "2026-09-04T14:15:24.098Z",
       "waktu_kehadiran_pertama": "2026-09-04T14:15:24.089Z",
       "seat_group_id": "grp_d",
-      "seat_number": "D-03"
+      "seat_number": "D-03",
+      "seat_assignment": "D-03"
     },
     {
       "nrp": "1105999",
-      "nama": "Tri Nugroho",
+      "nama": "Dr. Tri Nugroho, S.T., M.Si.",
       "gelar_depan": "Dr.",
       "gelar_belakang": "S.T., M.Si.",
       "matra": "AD",
@@ -269,17 +338,18 @@
       "id": "guest_1788529980717_zpbh",
       "qr_token": "d19b9cc9-e35e-42f4-ad6e-7b969f64f030",
       "token_hash": "0ac22264e4c258bba1eddb22dde2e9e9b82df42f92c1c142a9a280853f0f93b4",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "created_at": "2026-09-04T13:53:00.716Z",
       "updated_at": "2026-09-04T13:53:00.864Z",
       "waktu_kehadiran_pertama": "2026-09-04T13:53:00.851Z",
       "seat_group_id": "grp_d",
-      "seat_number": "D-02"
+      "seat_number": "D-02",
+      "seat_assignment": "D-02"
     },
     {
       "id": "guest_519284",
       "nrp": "519284",
-      "nama": "Agus Subiyanto",
+      "nama": "Jenderal TNI Agus Subiyanto, S.E., M.Si.",
       "gelar_depan": "Jenderal TNI",
       "gelar_belakang": "S.E., M.Si.",
       "matra": "AD",
@@ -296,15 +366,16 @@
       "token_hash": "4a05058e24e403818025844650868c8e0bca46da5464ef8f27317ee85e3c4f72",
       "seat_group_id": "grp_a",
       "seat_number": "A-01",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "A-01"
     },
     {
       "id": "guest_520193",
       "nrp": "520193",
-      "nama": "Maruli Simanjuntak",
+      "nama": "Jenderal TNI Maruli Simanjuntak, M.Sc.",
       "gelar_depan": "Jenderal TNI",
       "gelar_belakang": "M.Sc.",
       "matra": "AD",
@@ -321,15 +392,16 @@
       "token_hash": "b9b424514531a35605786cf3653f5168ec118c169013d13417d9d39e14fdb463",
       "seat_group_id": "grp_a",
       "seat_number": "A-02",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "A-02"
     },
     {
       "id": "guest_521876",
       "nrp": "521876",
-      "nama": "Muhammad Ali",
+      "nama": "Laksamana TNI Muhammad Ali, S.E., M.M.",
       "gelar_depan": "Laksamana TNI",
       "gelar_belakang": "S.E., M.M.",
       "matra": "AL",
@@ -346,15 +418,16 @@
       "token_hash": "79f15880ad2e7742b0fb381afca7e7be0d7fd1df7825d9ea318f73f5654a51e6",
       "seat_group_id": "grp_a",
       "seat_number": "A-03",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "A-03"
     },
     {
       "id": "guest_522431",
       "nrp": "522431",
-      "nama": "M. Tonny Harjono",
+      "nama": "Marsekal TNI M. Tonny Harjono, S.E., M.M.",
       "gelar_depan": "Marsekal TNI",
       "gelar_belakang": "S.E., M.M.",
       "matra": "AU",
@@ -371,9 +444,10 @@
       "token_hash": "d13b663cb0ff5885796632db81837df725a25d035a75f0ea983979be65b82d5a",
       "seat_group_id": "grp_a",
       "seat_number": "A-04",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "A-04"
     },
     {
       "id": "guest_1965010190",
@@ -393,17 +467,18 @@
       "butuh_akomodasi": 0,
       "qr_token": "ab44db05-619e-4b06-b076-2cb02500bf13",
       "token_hash": "6dacf5c984da9d234eed184637e9a5e3c603dbfdd934b95f9816316990bd0549",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
       "updated_at": "2026-09-04T13:50:47.358Z",
       "seat_group_id": "grp_a",
-      "seat_number": "A-05"
+      "seat_number": "A-05",
+      "seat_assignment": "A-05"
     },
     {
       "id": "guest_524901",
       "nrp": "524901",
-      "nama": "Bambang Trisnohadi",
+      "nama": "Letjen TNI Bambang Trisnohadi",
       "gelar_depan": "Letjen TNI",
       "gelar_belakang": "",
       "matra": "AD",
@@ -424,15 +499,17 @@
       "seat_number": "B-01",
       "room_id": "room_soedirman_201",
       "room_slot": "A",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "B-01",
+      "wisma_assignment": "Wisma Soedirman (VVIP) - Kamar 201 (Slot A)"
     },
     {
       "id": "guest_525112",
       "nrp": "525112",
-      "nama": "Dedy Suryadi",
+      "nama": "Mayor Jenderal TNI Dedy Suryadi, S.I.P.",
       "gelar_depan": "Mayor Jenderal TNI",
       "gelar_belakang": "S.I.P.",
       "matra": "AD",
@@ -453,14 +530,16 @@
       "seat_number": "B-02",
       "room_id": "room_soedirman_201",
       "room_slot": "B",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "B-02",
+      "wisma_assignment": "Wisma Soedirman (VVIP) - Kamar 201 (Slot B)"
     },
     {
       "id": "guest_526330",
       "nrp": "526330",
-      "nama": "Endi Supardi",
+      "nama": "Mayor Jenderal TNI (Mar) Endi Supardi, S.E., M.Tr.Opsla.",
       "gelar_depan": "Mayor Jenderal TNI (Mar)",
       "gelar_belakang": "S.E., M.Tr.Opsla.",
       "matra": "AL",
@@ -477,15 +556,16 @@
       "token_hash": "3a75bde70f802802a8a65397cc0858c5dd3eb0d8845dfae7b1a15a09819d209e",
       "seat_group_id": "grp_b",
       "seat_number": "B-03",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.416Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "B-03"
     },
     {
       "id": "guest_527441",
       "nrp": "527441",
-      "nama": "Yudi Bustami",
+      "nama": "Mayor Jenderal TNI Yudi Bustami, S.Sos.",
       "gelar_depan": "Mayor Jenderal TNI",
       "gelar_belakang": "S.Sos.",
       "matra": "AU",
@@ -506,14 +586,16 @@
       "seat_number": "B-04",
       "room_id": "room_soedirman_202",
       "room_slot": "A",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "B-04",
+      "wisma_assignment": "Wisma Soedirman (VVIP) - Kamar 202 (Slot A)"
     },
     {
       "id": "guest_531024",
       "nrp": "531024",
-      "nama": "Achiruddin",
+      "nama": "Brigadir Jenderal TNI Achiruddin, S.E., M.Han.",
       "gelar_depan": "Brigadir Jenderal TNI",
       "gelar_belakang": "S.E., M.Han.",
       "matra": "AD",
@@ -530,15 +612,16 @@
       "token_hash": "ca3353286deb41dba8168b717b45fa58c058c7d0ebd91a76ac6a27a355846694",
       "seat_group_id": "grp_c",
       "seat_number": "C-01",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.417Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "C-01"
     },
     {
       "id": "guest_1102941",
       "nrp": "1102941",
-      "nama": "Rizky Prakoso",
+      "nama": "Rizky Prakoso, S.T.",
       "gelar_depan": "",
       "gelar_belakang": "S.T.",
       "matra": "AD",
@@ -559,14 +642,16 @@
       "seat_number": "D-01",
       "room_id": "room_kartika_101",
       "room_slot": "A",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "D-01",
+      "wisma_assignment": "Wisma Kartika (Pamen) - Kamar 101 (Slot A)"
     },
     {
       "id": "guest_1103852",
       "nrp": "1103852",
-      "nama": "Budi Hartono",
+      "nama": "Budi Hartono, M.Tr.Han.",
       "gelar_depan": "",
       "gelar_belakang": "M.Tr.Han.",
       "matra": "AL",
@@ -587,9 +672,11 @@
       "seat_number": "E-01",
       "room_id": "room_kartika_101",
       "room_slot": "B",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "E-01",
+      "wisma_assignment": "Wisma Kartika (Pamen) - Kamar 101 (Slot B)"
     },
     {
       "id": "guest_1104921",
@@ -613,16 +700,18 @@
       "token_hash": "21761062ae4f475b34d8308f4bd73c71419d2bc65487ab0b4ef08f154d08a37c",
       "room_id": "room_mess_101",
       "room_slot": "A",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
       "updated_at": "2026-09-04T13:50:47.358Z",
       "seat_group_id": "grp_e",
-      "seat_number": "E-02"
+      "seat_number": "E-02",
+      "seat_assignment": "E-02",
+      "wisma_assignment": "Mess Perwira Utama - Kamar 101 (Slot A)"
     },
     {
       "id": "guest_1105819",
       "nrp": "1105819",
-      "nama": "Dian Permana",
+      "nama": "Dian Permana, S.Sos.",
       "gelar_depan": "",
       "gelar_belakang": "S.Sos.",
       "matra": "AD",
@@ -637,16 +726,17 @@
       "butuh_akomodasi": 0,
       "qr_token": "ba99e85e-f8b7-4803-a925-270056e853f0",
       "token_hash": "68900e1d0e9deaf3fae5cf447c2d7cdbf45eea1bffb4e6ea91fd0e6ca5cd66b8",
-      "status_kehadiran": "BELUM_HADIR",
+      "status_kehadiran": "REGISTRASI",
       "created_at": "2026-09-04T13:50:47.358Z",
       "updated_at": "2026-09-04T13:50:47.358Z",
       "seat_group_id": "grp_f",
-      "seat_number": "F-01"
+      "seat_number": "F-01",
+      "seat_assignment": "F-01"
     },
     {
       "id": "guest_defus091",
       "nrp": "DEF-US-091",
-      "nama": "Col. Michael Vance",
+      "nama": "Colonel Col. Michael Vance, USAF",
       "gelar_depan": "Colonel",
       "gelar_belakang": "USAF",
       "matra": "NON_TNI",
@@ -663,10 +753,11 @@
       "token_hash": "f4dce658a79e5e9c2e97ad5bda9f21bf435a01bbf0aefbb349ddde0420ecdfb8",
       "seat_group_id": "grp_c",
       "seat_number": "C-02",
-      "status_kehadiran": "HADIR",
+      "status_kehadiran": "CHECK_IN",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.417Z",
       "created_at": "2026-09-04T13:50:47.358Z",
-      "updated_at": "2026-09-04T13:50:47.358Z"
+      "updated_at": "2026-09-04T13:50:47.358Z",
+      "seat_assignment": "C-02"
     }
   ],
   "seat_groups": [
@@ -738,7 +829,7 @@
       "guest_name": "Agus Subiyanto",
       "guest_rank": "Jenderal TNI",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_a_2",
@@ -752,7 +843,7 @@
       "guest_name": "Maruli Simanjuntak",
       "guest_rank": "Jenderal TNI",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_a_3",
@@ -766,7 +857,7 @@
       "guest_name": "Muhammad Ali",
       "guest_rank": "Laksamana TNI",
       "guest_matra": "AL",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_a_4",
@@ -780,7 +871,7 @@
       "guest_name": "M. Tonny Harjono",
       "guest_rank": "Marsekal TNI",
       "guest_matra": "AU",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_a_5",
@@ -794,7 +885,7 @@
       "guest_name": "Sjafrie Sjamsoeddin",
       "guest_rank": "Menteri / Pejabat Setingkat Menteri",
       "guest_matra": "NON_TNI",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_a_6",
@@ -907,7 +998,7 @@
       "guest_name": "Bambang Trisnohadi",
       "guest_rank": "Letnan Jenderal TNI",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_b_2",
@@ -921,7 +1012,7 @@
       "guest_name": "Dedy Suryadi",
       "guest_rank": "Mayor Jenderal TNI",
       "guest_matra": "AD",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_b_3",
@@ -935,7 +1026,7 @@
       "guest_name": "Endi Supardi",
       "guest_rank": "Mayor Jenderal TNI",
       "guest_matra": "AL",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_b_4",
@@ -949,7 +1040,7 @@
       "guest_name": "Yudi Bustami",
       "guest_rank": "Mayor Jenderal TNI",
       "guest_matra": "AU",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_b_5",
@@ -1143,7 +1234,7 @@
       "guest_name": "Achiruddin",
       "guest_rank": "Brigadir Jenderal TNI",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_c_2",
@@ -1157,7 +1248,7 @@
       "guest_name": "Col. Michael Vance",
       "guest_rank": "Atase Pertahanan (Military Attaché)",
       "guest_matra": "NON_TNI",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_c_3",
@@ -1441,7 +1532,7 @@
       "guest_name": "Rizky Prakoso",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_d_2",
@@ -1455,7 +1546,7 @@
       "guest_name": "Tri Nugroho",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_d_3",
@@ -1469,7 +1560,7 @@
       "guest_name": "Tri Nugroho",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_d_4",
@@ -1483,7 +1574,7 @@
       "guest_name": "Tri Nugroho",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_d_5",
@@ -1497,7 +1588,7 @@
       "guest_name": "Tri Nugroho",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_d_6",
@@ -1511,7 +1602,7 @@
       "guest_name": "Tri Nugroho",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "HADIR"
+      "guest_status": "CHECK_IN"
     },
     {
       "id": "seat_d_7",
@@ -1525,7 +1616,7 @@
       "guest_name": "Hendra Gunawan",
       "guest_rank": "Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_d_8",
@@ -1836,7 +1927,7 @@
       "guest_name": "Budi Hartono",
       "guest_rank": "Letnan Kolonel (AL)",
       "guest_matra": "AL",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_e_2",
@@ -1850,7 +1941,7 @@
       "guest_name": "Ferry Hendrawan",
       "guest_rank": "Mayor (AU)",
       "guest_matra": "AU",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_e_3",
@@ -1864,7 +1955,7 @@
       "guest_name": "Kurniawan Pratama",
       "guest_rank": "Letnan Kolonel (AD)",
       "guest_matra": "AD",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_e_4",
@@ -2211,7 +2302,7 @@
       "guest_name": "Dian Permana",
       "guest_rank": "Kapten (AD)",
       "guest_matra": "AD",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_f_2",
@@ -2225,7 +2316,7 @@
       "guest_name": "Perwira Baru",
       "guest_rank": "Kapten (AD)",
       "guest_matra": "AD",
-      "guest_status": "BELUM_HADIR"
+      "guest_status": "REGISTRASI"
     },
     {
       "id": "seat_f_3",
@@ -3044,6 +3135,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788765729311_d1kx5",
+      "guest_id": "guest_1788765569721_q3g2bqw",
+      "guest_nama": "Joseph",
+      "guest_nrp": "----",
+      "guest_pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-07T07:22:09.311Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788576382206_soaf0",
       "guest_id": "guest_1788576307519_coyp",
       "guest_nama": "Asta 901",
@@ -3347,6 +3452,60 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788767887425_6f6e",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T07:58:07.425Z"
+    },
+    {
+      "id": "aud_1788766020095_sc7x",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "UPDATE_GUEST",
+      "details": "Pembaruan profil tamu Asep (Non-tni)",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T07:27:00.095Z"
+    },
+    {
+      "id": "aud_1788765729352_z2ms",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Joseph (Menteri / Pejabat Setingkat Menteri / NRP ----) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T07:22:09.352Z"
+    },
+    {
+      "id": "aud_1788765693725_pktd",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T07:21:33.726Z"
+    },
+    {
+      "id": "aud_1788765653382_8mzd",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T07:20:53.382Z"
+    },
+    {
+      "id": "aud_1788765613296_k9wi",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T07:20:13.296Z"
+    },
     {
       "id": "aud_1788625068198_o1g9",
       "admin_id": "admin_wisma",

@@ -183,8 +183,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   return (
     <>
-      {/* Desktop Sidebar: Permanent w-64 */}
-      <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 flex-col flex-shrink-0 min-h-screen sticky top-0 h-screen">
+      {/* Desktop Sidebar: Fixed 280px */}
+      <aside className="hidden lg:flex w-[280px] bg-white border-r border-slate-200 flex-col flex-shrink-0 fixed inset-y-0 left-0 h-screen z-40 overflow-y-auto">
         {renderSidebarContent(false)}
       </aside>
 

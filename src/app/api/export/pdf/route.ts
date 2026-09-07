@@ -130,8 +130,8 @@ export async function GET(req: NextRequest) {
          .lineWidth(0.5)
          .stroke();
 
-      const fullName = [g.gelar_depan, g.nama, g.gelar_belakang].filter(Boolean).join(' ') || g.nama;
-      const isHadir = g.status_kehadiran === 'HADIR';
+      const fullName = g.nama;
+      const isCheckIn = g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR';
 
       doc.fillColor('#334155')
          .font('Helvetica')
@@ -151,11 +151,11 @@ export async function GET(req: NextRequest) {
 
       doc.font('Helvetica-Bold')
          .fillColor('#1E40AF')
-         .text(g.seat_number || '-', marginX + 406, y + 6, { width: 45, align: 'center' });
+         .text(g.seat_assignment || g.seat_number || '-', marginX + 406, y + 6, { width: 45, align: 'center' });
 
       doc.font('Helvetica-Bold')
-         .fillColor(isHadir ? '#16A34A' : '#64748B')
-         .text(isHadir ? 'HADIR' : 'BELUM', marginX + 454, y + 6, { width: 60, align: 'center' });
+         .fillColor(isCheckIn ? '#10B981' : '#F59E0B')
+         .text(isCheckIn ? 'CHECK_IN' : 'REGISTRASI', marginX + 454, y + 6, { width: 60, align: 'center' });
 
       y += 20;
     });

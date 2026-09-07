@@ -102,7 +102,7 @@ export default function PlacementPage() {
             kategori_instansi: katInstansi,
             colorAlias: colorAlias,
             warna: colorAlias,
-            status: assignedGuest?.status_kehadiran === 'HADIR' ? 'HADIR' : 'ASSIGNED'
+            status: (assignedGuest?.status_kehadiran === 'CHECK_IN' || (assignedGuest?.status_kehadiran as any) === 'HADIR') ? 'CHECK_IN' : 'ASSIGNED'
           };
         }
         // If this guest was previously on another seat, unassign that seat

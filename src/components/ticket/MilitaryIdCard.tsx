@@ -138,19 +138,17 @@ export const MilitaryIdCard: React.FC<MilitaryIdCardProps> = ({ guest, qrCodeUrl
             {guest.created_at ? new Date(guest.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '4 Sep 2026'}
           </span>
         </div>
-        <div>
-          {guest.status_kehadiran === 'HADIR' ? (
+          {guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR' ? (
             <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-200">
-              <CheckCircle2 className="w-3 h-3 text-[#16A34A]" />
-              <span>Telah Hadir</span>
+              <CheckCircle2 className="w-3 h-3 text-[#10B981]" />
+              <span>CHECK_IN</span>
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-600 bg-white px-2 py-0.5 rounded-sm border border-slate-200">
-              <Clock className="w-3 h-3 text-slate-400" />
-              <span>Resmi Terdaftar</span>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-sm border border-amber-200">
+              <Clock className="w-3 h-3 text-[#F59E0B]" />
+              <span>REGISTRASI</span>
             </span>
           )}
-        </div>
       </div>
     </div>
   );

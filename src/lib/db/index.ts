@@ -17,6 +17,7 @@ import { hashToken, generateSecureToken } from '@/lib/security/tokens';
 import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
 import { postgresAdapter } from './postgres';
 import { mysqlAdapter } from './mysql';
+import { AssignmentService } from '@/lib/services/assignment';
 
 function resolveDbPaths(): { dataDir: string; dbFile: string; backupFile: string } {
   // If running in Vercel or read-only serverless environment
@@ -156,7 +157,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08111945001',
       email: 'panglima@tni.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_a',
       seat_number: 'A-01'
     },
@@ -175,7 +176,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08129876002',
       email: 'kasad@tni-ad.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_a',
       seat_number: 'A-02'
     },
@@ -194,7 +195,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08137788003',
       email: 'kasal@tni-al.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_a',
       seat_number: 'A-03'
     },
@@ -213,7 +214,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08151234004',
       email: 'kasau@tni-au.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'BELUM_HADIR' as const,
+      status_kehadiran: 'REGISTRASI' as const,
       seat_group_id: 'grp_a',
       seat_number: 'A-04'
     },
@@ -232,7 +233,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08111900005',
       email: 'menhan@kemhan.go.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_a',
       seat_number: 'A-05'
     },
@@ -253,7 +254,7 @@ function generateSeedGuests(): Guest[] {
       butuh_akomodasi: 1,
       tgl_checkin: '2026-09-04',
       tgl_checkout: '2026-09-06',
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_b',
       seat_number: 'B-01',
       room_id: 'room_soedirman_201',
@@ -276,7 +277,7 @@ function generateSeedGuests(): Guest[] {
       butuh_akomodasi: 1,
       tgl_checkin: '2026-09-04',
       tgl_checkout: '2026-09-06',
-      status_kehadiran: 'BELUM_HADIR' as const,
+      status_kehadiran: 'REGISTRASI' as const,
       seat_group_id: 'grp_b',
       seat_number: 'B-02',
       room_id: 'room_soedirman_201',
@@ -297,7 +298,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08128899103',
       email: 'dankormar@tni-al.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_b',
       seat_number: 'B-03'
     },
@@ -318,7 +319,7 @@ function generateSeedGuests(): Guest[] {
       butuh_akomodasi: 1,
       tgl_checkin: '2026-09-04',
       tgl_checkout: '2026-09-06',
-      status_kehadiran: 'BELUM_HADIR' as const,
+      status_kehadiran: 'REGISTRASI' as const,
       seat_group_id: 'grp_b',
       seat_number: 'B-04',
       room_id: 'room_soedirman_202',
@@ -339,7 +340,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08136655105',
       email: 'danpaspampres@tni.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_c',
       seat_number: 'C-01'
     },
@@ -360,7 +361,7 @@ function generateSeedGuests(): Guest[] {
       butuh_akomodasi: 1,
       tgl_checkin: '2026-09-04',
       tgl_checkout: '2026-09-06',
-      status_kehadiran: 'BELUM_HADIR' as const,
+      status_kehadiran: 'REGISTRASI' as const,
       seat_group_id: 'grp_d',
       seat_number: 'D-01',
       room_id: 'room_kartika_101',
@@ -383,7 +384,7 @@ function generateSeedGuests(): Guest[] {
       butuh_akomodasi: 1,
       tgl_checkin: '2026-09-04',
       tgl_checkout: '2026-09-06',
-      status_kehadiran: 'BELUM_HADIR' as const,
+      status_kehadiran: 'REGISTRASI' as const,
       seat_group_id: 'grp_e',
       seat_number: 'E-01',
       room_id: 'room_kartika_101',
@@ -406,7 +407,7 @@ function generateSeedGuests(): Guest[] {
       butuh_akomodasi: 1,
       tgl_checkin: '2026-09-04',
       tgl_checkout: '2026-09-06',
-      status_kehadiran: 'BELUM_HADIR' as const,
+      status_kehadiran: 'REGISTRASI' as const,
       room_id: 'room_mess_101',
       room_slot: 'A' as const
     },
@@ -425,7 +426,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '08124433221',
       email: 'dian.gultor@tni.mil.id',
       butuh_akomodasi: 0,
-      status_kehadiran: 'BELUM_HADIR' as const
+      status_kehadiran: 'REGISTRASI' as const
     },
     {
       nrp: 'DEF-US-091',
@@ -442,7 +443,7 @@ function generateSeedGuests(): Guest[] {
       no_hp: '+62811880099',
       email: 'michael.vance@state.gov',
       butuh_akomodasi: 0,
-      status_kehadiran: 'HADIR' as const,
+      status_kehadiran: 'CHECK_IN' as const,
       seat_group_id: 'grp_c',
       seat_number: 'C-02'
     }
@@ -476,10 +477,11 @@ function generateSeedGuests(): Guest[] {
       token_hash: token_hash,
       seat_group_id: item.seat_group_id,
       seat_number: item.seat_number,
+      seat_assignment: item.seat_number,
       room_id: (item as any).room_id,
       room_slot: (item as any).room_slot,
       status_kehadiran: item.status_kehadiran,
-      waktu_kehadiran_pertama: item.status_kehadiran === 'HADIR' ? new Date(Date.now() - 3600000).toISOString() : undefined,
+      waktu_kehadiran_pertama: item.status_kehadiran === 'CHECK_IN' ? new Date(Date.now() - 3600000).toISOString() : undefined,
       created_at: now,
       updated_at: now
     });
@@ -528,6 +530,75 @@ class DatabaseManager {
     this.ensureInitialized();
   }
 
+  private migrateLegacyStatuses() {
+    if (!this.data) return;
+    let modified = false;
+
+    // Migrate guests
+    if (Array.isArray(this.data.guests)) {
+      for (const g of this.data.guests) {
+        if ((g.status_kehadiran as any) === 'BELUM_HADIR') {
+          g.status_kehadiran = 'REGISTRASI';
+          modified = true;
+        } else if ((g.status_kehadiran as any) === 'HADIR') {
+          g.status_kehadiran = 'CHECK_IN';
+          modified = true;
+        }
+
+        // Merge gelar into nama if present and separate
+        const gd = (g as any).gelar_depan ? String((g as any).gelar_depan).trim() : '';
+        const gb = (g as any).gelar_belakang ? String((g as any).gelar_belakang).trim() : '';
+        if ((gd && gd !== '-') || (gb && gb !== '-')) {
+          let full = g.nama.trim();
+          if (gd && gd !== '-' && !full.startsWith(gd)) {
+            full = `${gd} ${full}`;
+            modified = true;
+          }
+          if (gb && gb !== '-' && !full.endsWith(gb)) {
+            full = `${full}, ${gb}`;
+            modified = true;
+          }
+          g.nama = full;
+        }
+
+        // Ensure seat_assignment & wisma_assignment
+        if (g.seat_number && !g.seat_assignment) {
+          g.seat_assignment = g.seat_number;
+          modified = true;
+        }
+        if (g.room_id && !g.wisma_assignment && Array.isArray(this.data.accommodations)) {
+          const room = this.data.accommodations.find(r => r.id === g.room_id);
+          if (room) {
+            g.wisma_assignment = `${room.wisma_name} - Kamar ${room.room_number} (Slot ${g.room_slot || 'A'})`;
+            modified = true;
+          }
+        }
+      }
+    }
+
+    // Migrate seats
+    if (Array.isArray(this.data.seats)) {
+      for (const s of this.data.seats) {
+        if ((s.guest_status as any) === 'BELUM_HADIR') {
+          s.guest_status = 'REGISTRASI';
+          modified = true;
+        } else if ((s.guest_status as any) === 'HADIR') {
+          s.guest_status = 'CHECK_IN';
+          modified = true;
+        }
+        if ((s.status as any) === 'HADIR') {
+          s.status = 'CHECK_IN';
+          modified = true;
+        }
+      }
+    }
+
+    if (modified) {
+      console.log('[DATABASE] Migrasi status selesai: BELUM_HADIR -> REGISTRASI, HADIR -> CHECK_IN.');
+      this.persist();
+    }
+  }
+
   private ensureInitialized() {
     // 1. In-memory check for current instance
     if (this.data && Array.isArray(this.data.guests) && this.data.guests.length > 0) {
@@ -537,6 +608,7 @@ class DatabaseManager {
     // 2. Global process memory cache (preserves state across hot serverless function invocations)
     if (globalForDb.__TNI_EVENT_DB__ && Array.isArray(globalForDb.__TNI_EVENT_DB__.guests) && globalForDb.__TNI_EVENT_DB__.guests.length > 0) {
       this.data = globalForDb.__TNI_EVENT_DB__;
+      this.migrateLegacyStatuses();
       return;
     }
 
@@ -556,6 +628,7 @@ class DatabaseManager {
         if (parsed && Array.isArray(parsed.guests) && parsed.guests.length > 0) {
           this.data = parsed;
           globalForDb.__TNI_EVENT_DB__ = this.data;
+          this.migrateLegacyStatuses();
           this.syncPostgresBackground();
           return;
         }
@@ -602,6 +675,7 @@ class DatabaseManager {
 
     // 6. If no file exists or readable, initialize default data
     this.initDefaultData();
+    this.migrateLegacyStatuses();
   }
 
   private syncPostgresBackground() {
@@ -691,7 +765,7 @@ class DatabaseManager {
 
     // Initial checkin logs for present seed guests
     const checkin_logs: CheckinLog[] = [];
-    for (const g of guests.filter(x => x.status_kehadiran === 'HADIR')) {
+    for (const g of guests.filter(x => x.status_kehadiran === 'CHECK_IN')) {
       checkin_logs.push({
         id: `chk_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         guest_id: g.id,
@@ -916,7 +990,7 @@ class DatabaseManager {
       ticket_id: ticketId,
       qr_token: token,
       token_hash: token_hash,
-      status_kehadiran: 'BELUM_HADIR',
+      status_kehadiran: 'REGISTRASI',
       kategori_instansi: katInstansi,
       warna_kursi: warnaKursi,
       seatColorAlias: warnaKursi,
@@ -969,7 +1043,7 @@ class DatabaseManager {
       ticket_id: ticketId,
       qr_token: token,
       token_hash: token_hash,
-      status_kehadiran: 'BELUM_HADIR',
+      status_kehadiran: 'REGISTRASI',
       kategori_instansi: katInstansi,
       warna_kursi: warnaKursi,
       seatColorAlias: warnaKursi,
@@ -1136,7 +1210,7 @@ class DatabaseManager {
         no_hp: updated.no_hp,
         matra: updated.matra,
         seat_number: updated.seat_number,
-        status_hadir: updated.status_kehadiran === 'HADIR' ? 'HADIR' : 'BELUM_HADIR',
+        status_hadir: updated.status_kehadiran === 'CHECK_IN' ? 'HADIR' : 'BELUM_HADIR',
       }).catch(err => console.error('[MySQL] updatePeserta error:', err));
     }
 
@@ -1248,7 +1322,8 @@ class DatabaseManager {
       seat.kategori_instansi = katInstansi;
       seat.colorAlias = colorAlias;
       seat.warna = colorAlias;
-      seat.status = guest.status_kehadiran === 'HADIR' ? 'HADIR' : 'ASSIGNED';
+      seat.status = guest.status_kehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'ASSIGNED';
+      guest.seat_assignment = seat.seat_number;
 
       guest.seat_group_id = seat.group_id;
       guest.seat_number = seat.seat_number;
@@ -1461,17 +1536,24 @@ class DatabaseManager {
     this.data!.checkin_logs.unshift(log);
 
     // Update guest presence
-    guest.status_kehadiran = 'HADIR';
+    guest.status_kehadiran = 'CHECK_IN';
     if (!guest.waktu_kehadiran_pertama) {
       guest.waktu_kehadiran_pertama = now;
     }
     guest.updated_at = now;
 
+    // Auto-assignment of seat and wisma room upon check-in
+    try {
+      AssignmentService.assignGuestOnCheckin(guest.id);
+    } catch (assignErr) {
+      console.error('[AssignmentService] Auto-assignment error on checkin:', assignErr);
+    }
+
     // Update seat presence
     const seat = this.data!.seats.find(s => s.guest_id === guest.id);
     if (seat) {
-      seat.guest_status = 'HADIR';
-      seat.status = 'HADIR';
+      seat.guest_status = 'CHECK_IN';
+      seat.status = 'CHECK_IN';
     }
 
     this.persist();
@@ -1504,7 +1586,7 @@ class DatabaseManager {
     this.ensureInitialized();
     const guests = this.data!.guests;
     const totalGuests = guests.length;
-    const presentGuests = guests.filter(g => g.status_kehadiran === 'HADIR').length;
+    const presentGuests = guests.filter(g => g.status_kehadiran === 'CHECK_IN').length;
     const absentGuests = totalGuests - presentGuests;
     const percentagePresent = totalGuests > 0 ? Math.round((presentGuests / totalGuests) * 100) : 0;
 

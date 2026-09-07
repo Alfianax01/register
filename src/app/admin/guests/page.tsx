@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -6,7 +5,6 @@ import { AdminHeader } from '@/components/layout/AdminHeader';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Guest, MatraType } from '@/types';
@@ -26,7 +24,12 @@ import {
   Download,
   AlertTriangle,
   Loader2,
-  Send
+  Send,
+  Eye,
+  Armchair,
+  Building,
+  User,
+  Phone
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -40,6 +43,8 @@ export default function GuestsPage() {
   const [filterStatus, setFilterStatus] = useState('');
 
   // Modals state
+  const [viewingGuest, setViewingGuest] = useState<Guest | null>(null);
+
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const [editFormData, setEditFormData] = useState<any>({});
   const [savingEdit, setSavingEdit] = useState(false);
@@ -71,8 +76,9 @@ export default function GuestsPage() {
         const meData = await meRes.json();
         setCurrentUser(meData.user);
       }
-
-    } catch {} finally {
+    } catch {
+      showToast('Gagal memuat data peserta', { type: 'error' });
+    } finally {
       setLoading(false);
     }
   };
@@ -86,40 +92,10 @@ export default function GuestsPage() {
     fetchGuests();
   };
 
-  const togglePresence = async (guest: Guest) => {
-    const newStatus = guest.status_kehadiran === 'HADIR' ? 'BELUM_HADIR' : 'HADIR';
-    try {
-      const res = await fetch('/api/guests', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: guest.id,
-          updates: {
-            status_kehadiran: newStatus,
-            waktu_kehadiran_pertama: newStatus === 'HADIR' ? new Date().toISOString() : undefined
-          }
-        })
-      });
-      if (res.ok) {
-        showToast(
-          `Status presensi ${guest.nama} diubah ke ${newStatus === 'HADIR' ? 'HADIR' : 'BELUM HADIR'}`,
-          { type: 'success' }
-        );
-        fetchGuests();
-      } else {
-        showToast('Gagal mengubah status presensi', { type: 'error' });
-      }
-    } catch {
-      showToast('Terjadi kesalahan jaringan', { type: 'error' });
-    }
-  };
-
   const openEditModal = (guest: Guest) => {
     setEditingGuest(guest);
     setEditFormData({
       nama: guest.nama || '',
-      gelar_depan: guest.gelar_depan || '',
-      gelar_belakang: guest.gelar_belakang || '',
       pangkat: guest.pangkat || '',
       nrp: guest.nrp || '',
       jabatan: guest.jabatan || '',
@@ -129,7 +105,7 @@ export default function GuestsPage() {
       matra: guest.matra || 'AD',
       email: guest.email || '',
       no_hp: guest.no_hp || '',
-      seat_number: guest.seat_number || ''
+      seat_number: guest.seat_number || guest.seat_assignment || ''
     });
   };
 
@@ -144,20 +120,33 @@ export default function GuestsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: editingGuest.id,
-          updates: editFormData
+          updates: {
+            nama: editFormData.nama.trim(),
+            pangkat: editFormData.pangkat.trim(),
+            nrp: editFormData.nrp.trim(),
+            jabatan: editFormData.jabatan.trim(),
+            satker: editFormData.satker.trim(),
+            satuan: editFormData.satuan.trim(),
+            negara_instansi: editFormData.negara_instansi.trim(),
+            matra: editFormData.matra,
+            email: editFormData.email.trim(),
+            no_hp: editFormData.no_hp ? editFormData.no_hp.trim() : undefined,
+            seat_number: editFormData.seat_number.trim() || undefined,
+            seat_assignment: editFormData.seat_number.trim() || undefined
+          }
         })
       });
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        showToast(`Data ${editFormData.nama} berhasil diperbarui`, { type: 'success' });
+      if (res.ok) {
+        showToast(`Profil ${editFormData.nama} berhasil diperbarui`, { type: 'success' });
         setEditingGuest(null);
         fetchGuests();
       } else {
-        showToast(data.error || 'Gagal menyimpan pembaruan', { type: 'error' });
+        const err = await res.json();
+        showToast(err.message || 'Gagal menyimpan perubahan data', { type: 'error' });
       }
     } catch {
-      showToast('Terjadi kesalahan jaringan', { type: 'error' });
+      showToast('Terjadi gangguan jaringan saat menyimpan data', { type: 'error' });
     } finally {
       setSavingEdit(false);
     }
@@ -165,41 +154,30 @@ export default function GuestsPage() {
 
   const handleDeleteSubmit = async () => {
     if (!deletingGuest) return;
-
     setDeletingLoading(true);
     try {
-      const res = await fetch(`/api/guests?id=${encodeURIComponent(deletingGuest.id)}`, {
+      const res = await fetch(`/api/guests?id=${deletingGuest.id}`, {
         method: 'DELETE'
       });
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        showToast(`Peserta ${deletingGuest.nama} berhasil dihapus`, { type: 'success' });
+      if (res.ok) {
+        showToast(`Peserta ${deletingGuest.nama} berhasil dihapus dari sistem`, { type: 'success' });
         setDeletingGuest(null);
         fetchGuests();
       } else {
-        showToast(data.error || 'Gagal menghapus data peserta', { type: 'error' });
+        const err = await res.json();
+        showToast(err.message || 'Gagal menghapus peserta', { type: 'error' });
       }
     } catch {
-      showToast('Terjadi kesalahan jaringan saat menghapus', { type: 'error' });
+      showToast('Gagal menghubungi server database', { type: 'error' });
     } finally {
       setDeletingLoading(false);
     }
   };
 
-  const openResendModal = (guest: Guest) => {
-    setResendingGuest(guest);
-    setResendEmail(guest.email || '');
-  };
-
   const handleResendSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resendingGuest) return;
-
-    if (!resendEmail.trim()) {
-      showToast('Harap masukkan alamat email tujuan', { type: 'error' });
-      return;
-    }
+    if (!resendingGuest || !resendEmail) return;
 
     setResendingLoading(true);
     try {
@@ -211,79 +189,139 @@ export default function GuestsPage() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        showToast(`E-Ticket & PDF berhasil dikirimkan ke ${resendEmail}`, { type: 'success' });
+        showToast(`E-Ticket resmi berhasil dikirim ke ${resendEmail}`, { type: 'success' });
         setResendingGuest(null);
         fetchGuests();
       } else {
-        showToast(data.error || 'Gagal mengirim email E-Ticket', { type: 'error' });
+        showToast(data.message || 'Gagal mengirim email E-Ticket', { type: 'error' });
       }
     } catch {
-      showToast('Terjadi kesalahan jaringan saat mengirim email', { type: 'error' });
+      showToast('Gagal mengirimkan instruksi ke server mail', { type: 'error' });
     } finally {
       setResendingLoading(false);
     }
   };
 
+  const renderMatraBadge = (matra: MatraType) => {
+    switch (matra) {
+      case 'AD':
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#1F7A3E] shadow-xs">
+            TNI AD
+          </span>
+        );
+      case 'AU':
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#2563EB] shadow-xs">
+            TNI AU
+          </span>
+        );
+      case 'AL':
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#475569] shadow-xs">
+            TNI AL
+          </span>
+        );
+      case 'MABES':
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-slate-800 shadow-xs">
+            MABES
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold text-slate-700 bg-white border border-slate-300 shadow-xs">
+            SIPIL
+          </span>
+        );
+    }
+  };
+
+  const renderStatusBadge = (status: string) => {
+    if (status === 'CHECK_IN' || status === 'HADIR') {
+      return (
+        <span
+          className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded text-[11px] font-bold text-white bg-[#10B981] shadow-xs"
+          title="Peserta telah Check-In di Gate"
+        >
+          <CheckCircle2 className="w-3 h-3 stroke-[2.5]" />
+          <span>CHECK_IN</span>
+        </span>
+      );
+    }
+
+    return (
+      <span
+        className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded text-[11px] font-bold text-white bg-[#F59E0B] shadow-xs"
+        title="Peserta Terdaftar (Belum Check-In di Gate)"
+      >
+        <Clock className="w-3 h-3 stroke-[2.5]" />
+        <span>REGISTRASI</span>
+      </span>
+    );
+  };
+
   return (
-    <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
+    <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
       <AdminHeader
+        title="Data Peserta"
+        subtitle="Manajemen direktori prajurit, status kehadiran gate, dan berkas E-Ticket resmi RAPIM TNI 2026"
         user={currentUser}
-        title="Master Data Tamu & Prajurit"
-        subtitle="Kelola seluruh direktori peserta, penempatan kursi, dan pencetakan ID Card"
       />
 
-      <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6">
-        {/* Filters & Actions Bar */}
-        <Card className="p-4 space-y-3 bg-white border border-slate-200 shadow-xs">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="p-4 sm:p-6 space-y-4 max-w-[1600px] w-full mx-auto">
+        {/* Top Actions & Filters Card */}
+        <Card className="p-4 bg-white border border-slate-200 shadow-xs space-y-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Search Input */}
-            <form onSubmit={handleSearchSubmit} className="flex-1 w-full flex gap-2">
-              <div className="flex-1">
-                <Input
-                  placeholder="Cari nama, NRP, jabatan, satker..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  leftIcon={<Search className="w-4 h-4 text-slate-400" />}
-                />
-              </div>
-              <Button type="submit" variant="primary" size="md" className="text-xs px-4 h-[42px] font-semibold">
-                Cari
-              </Button>
+            <form onSubmit={handleSearchSubmit} className="relative flex-1 w-full sm:max-w-md">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Cari Nama, NRP, Jabatan, atau Token..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all placeholder:text-slate-400"
+              />
             </form>
 
-            {/* Quick Export & Rekap Buttons */}
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            {/* Export & Refresh Actions */}
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <Button
                 variant="outline"
-                size="md"
-                onClick={() => { window.location.href = '/api/export'; }}
-                className="text-xs h-[42px] flex-1 md:flex-initial"
-                title="Unduh seluruh data tamu format file Excel / CSV"
-              >
-                <FileSpreadsheet className="w-4 h-4 mr-1.5 text-emerald-600" />
-                <span>Unduh Excel</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => { window.open('/api/export/pdf', '_blank'); }}
-                className="text-xs h-[42px] flex-1 md:flex-initial"
-                title="Cetak dan unduh rekap resmi daftar hadir seluruh peserta format PDF A4"
-              >
-                <FileText className="w-4 h-4 mr-1.5 text-rose-600" />
-                <span>Rekap PDF</span>
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="md"
+                size="sm"
                 onClick={fetchGuests}
-                className="text-xs h-[42px] px-2.5 text-slate-500 hover:text-slate-800"
-                title="Muat ulang data"
+                disabled={loading}
+                className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200"
+                title="Muat ulang direktori data peserta"
               >
-                <RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
+                <RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                <span>Segarkan</span>
               </Button>
+
+              <Link href="/api/export?format=csv" target="_blank">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                  title="Ekspor CSV untuk Microsoft Excel"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Ekspor CSV</span>
+                </Button>
+              </Link>
+
+              <Link href="/api/export/pdf" target="_blank">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                  title="Unduh Lembar Presensi Resmi PDF"
+                >
+                  <FileText className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Cetak Presensi PDF</span>
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -297,6 +335,7 @@ export default function GuestsPage() {
             <select
               value={filterMatra}
               onChange={(e) => setFilterMatra(e.target.value)}
+              aria-label="Filter Matra"
               className="bg-white text-slate-700 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
               <option value="">Semua Matra</option>
@@ -311,184 +350,134 @@ export default function GuestsPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
+              aria-label="Filter Status"
               className="bg-white text-slate-700 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
               <option value="">Semua Status Presensi</option>
-              <option value="HADIR">Sudah Hadir</option>
-              <option value="BELUM_HADIR">Belum Check-In</option>
+              <option value="REGISTRASI">Registrasi</option>
+              <option value="CHECK_IN">Check-In</option>
             </select>
 
             <span className="ml-auto text-[11px] text-slate-500 font-mono">
-              Total: {guests.length} Tamu
+              Total: <strong>{guests.length}</strong> Peserta
             </span>
           </div>
         </Card>
 
-        {/* Guests Table */}
+        {/* Compact Guests Table */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-xs">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
             <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold text-[10px] tracking-wider">
-                  <th className="py-3 px-3 w-10 text-center">No</th>
-                  <th className="py-3 px-3">Prajurit / Tamu</th>
-                  <th className="py-3 px-3">Pangkat & NRP</th>
-                  <th className="py-3 px-3">Jabatan & Kesatuan</th>
-                  <th className="py-3 px-3 text-center">Kursi</th>
-                  <th className="py-3 px-3 text-center">Status</th>
-                  <th className="py-3 px-3 text-center w-52">Aksi Dokumen & Data</th>
+              <thead className="sticky top-0 z-10 bg-white border-b border-slate-200 shadow-xs">
+                <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/90">
+                  <th className="py-2.5 px-3 w-[60px] text-center">No</th>
+                  <th className="py-2.5 px-3 w-[250px]">Nama Peserta</th>
+                  <th className="py-2.5 px-3 w-[100px] text-center">Matra</th>
+                  <th className="py-2.5 px-3 w-[130px]">Pangkat</th>
+                  <th className="py-2.5 px-3 w-[200px]">Kesatuan</th>
+                  <th className="py-2.5 px-3 w-[120px] text-center">Status</th>
+                  <th className="py-2.5 px-3 w-[110px] text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="py-12 text-center text-slate-400 font-mono">
                       <div className="inline-flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
-                        <span>Memuat direktori data tamu...</span>
+                        <span>Memuat data direktori peserta...</span>
                       </div>
                     </td>
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="py-12 text-center text-slate-400">
-                      Tidak ada data tamu yang cocok dengan filter pencarian.
+                      Tidak ada peserta yang cocok dengan filter pencarian.
                     </td>
                   </tr>
                 ) : (
                   guests.map((g, idx) => {
-                    const isPresent = g.status_kehadiran === 'HADIR';
-
                     return (
                       <tr
                         key={g.id}
-                        className="hover:bg-slate-50/80 transition-colors"
+                        className="hover:bg-blue-50/40 transition-colors"
                       >
-                        <td className="py-3 px-3 text-center font-mono text-slate-400 text-[11px]">
+                        {/* 1. No */}
+                        <td className="py-2 px-3 text-center font-mono text-slate-400 text-[11px]">
                           {idx + 1}
                         </td>
 
-                        <td className="py-3 px-3">
+                        {/* 2. Nama Peserta */}
+                        <td className="py-2 px-3 max-w-[250px]">
                           <div className="flex items-center gap-1.5">
-                            <strong className="text-slate-900 font-semibold">
-                              {g.gelar_depan ? `${g.gelar_depan} ` : ''}
+                            <span
+                              className="text-slate-900 font-semibold truncate block"
+                              title={g.nama}
+                            >
                               {g.nama}
-                              {g.gelar_belakang ? `, ${g.gelar_belakang}` : ''}
-                            </strong>
-                            <Badge variant={g.matra === 'AD' ? 'ad' : g.matra === 'AL' ? 'al' : g.matra === 'AU' ? 'au' : 'slate'} size="sm">
-                              {g.matra}
-                            </Badge>
-                            {g.emailSent && (
-                              <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200" title="E-Ticket telah dikirim via email">
-                                <Mail className="w-2.5 h-2.5" /> Terkirim
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono mt-0.5">
-                            <span>{g.no_hp}</span>
-                            {g.email && <span className="truncate max-w-[140px]">&bull; {g.email}</span>}
-                          </div>
-                        </td>
-
-                        <td className="py-3 px-3">
-                          <span className="font-medium text-slate-800 block">
-                            {g.pangkat}
-                          </span>
-                          <span className="font-mono text-[11px] text-slate-500">
-                            NRP: {g.nrp || '-'}
-                          </span>
-                        </td>
-
-                        <td className="py-3 px-3 max-w-xs">
-                          <span className="font-medium text-slate-800 block truncate">
-                            {g.jabatan}
-                          </span>
-                          <span className="text-[11px] text-slate-500 block truncate">
-                            {g.satuan || g.satker || g.negara_instansi}
-                          </span>
-                        </td>
-
-                        <td className="py-3 px-3 text-center">
-                          {g.seat_number ? (
-                            <span className="font-mono font-bold text-xs text-blue-700 px-2 py-0.5 rounded bg-blue-50 border border-blue-200">
-                              {g.seat_number}
                             </span>
-                          ) : (
-                            <span className="text-[11px] text-slate-400 italic">-</span>
-                          )}
-                        </td>
-
-                        <td className="py-3 px-3 text-center">
-                          <button
-                            type="button"
-                            onClick={() => togglePresence(g)}
-                            className="focus:outline-none"
-                            title="Klik untuk mengubah status kehadiran manual"
-                          >
-                            {isPresent ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 hover:bg-emerald-100 transition-colors">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                <span>Hadir</span>
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 hover:border-slate-300 transition-colors">
-                                <Clock className="w-3 h-3 text-slate-400" />
-                                <span>Belum</span>
+                            {g.emailSent && (
+                              <span
+                                className="inline-flex items-center text-[10px] text-emerald-600 flex-shrink-0"
+                                title="E-Ticket telah terkirim via email"
+                              >
+                                <Mail className="w-3 h-3" />
                               </span>
                             )}
-                          </button>
+                          </div>
                         </td>
 
-                        <td className="py-3 px-3 text-center">
+                        {/* 3. Matra */}
+                        <td className="py-2 px-3 text-center">
+                          {renderMatraBadge(g.matra)}
+                        </td>
+
+                        {/* 4. Pangkat */}
+                        <td className="py-2 px-3 text-slate-800 font-medium truncate max-w-[130px]" title={g.pangkat}>
+                          {g.pangkat}
+                        </td>
+
+                        {/* 5. Kesatuan */}
+                        <td className="py-2 px-3 text-slate-600 truncate max-w-[200px]" title={g.satuan || g.satker || g.negara_instansi}>
+                          {g.satuan || g.satker || g.negara_instansi || '-'}
+                        </td>
+
+                        {/* 6. Status */}
+                        <td className="py-2 px-3 text-center">
+                          {renderStatusBadge(g.status_kehadiran)}
+                        </td>
+
+                        {/* 7. Aksi */}
+                        <td className="py-2 px-3 text-center">
                           <div className="flex items-center justify-center gap-1">
-                            {/* Buka E-Ticket Digital */}
-                            <Link
-                              href={`/ticket/${g.qr_token}`}
-                              target="_blank"
-                              className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                              title="Buka E-Ticket Web & QR Code"
-                            >
-                              <QrCode className="w-4 h-4" />
-                            </Link>
-
-                            {/* Unduh PDF Resmi */}
-                            <Link
-                              href={`/api/ticket/${g.qr_token}/pdf`}
-                              target="_blank"
-                              className="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-                              title="Unduh E-Ticket PDF Resmi (A4 Invoice)"
-                            >
-                              <Download className="w-4 h-4" />
-                            </Link>
-
-                            {/* Kirim Ulang Email E-Ticket */}
+                            {/* Lihat Detail */}
                             <button
                               type="button"
-                              onClick={() => openResendModal(g)}
-                              className="p-1.5 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
-                              title="Kirim Ulang E-Ticket PDF via Email"
+                              onClick={() => setViewingGuest(g)}
+                              className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                              title="Lihat Profil & Detail Lengkap"
                             >
-                              <Mail className="w-4 h-4" />
+                              <Eye className="w-3.5 h-3.5" />
                             </button>
 
-                            {/* Edit Profil Peserta */}
+                            {/* Edit Profil */}
                             <button
                               type="button"
                               onClick={() => openEditModal(g)}
-                              className="p-1.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
-                              title="Sunting Data Peserta"
+                              className="p-1.5 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded transition-colors"
+                              title="Sunting Informasi Peserta"
                             >
-                              <Edit2 className="w-4 h-4" />
+                              <Edit2 className="w-3.5 h-3.5" />
                             </button>
 
                             {/* Hapus Peserta */}
                             <button
                               type="button"
                               onClick={() => setDeletingGuest(g)}
-                              className="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-                              title="Hapus Peserta dari Database"
+                              className="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                              title="Hapus Data Peserta"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         </td>
@@ -503,13 +492,151 @@ export default function GuestsPage() {
       </div>
 
       {/* ========================================================== */}
+      {/* MODAL LIHAT DETAIL PESERTA */}
+      {/* ========================================================== */}
+      <Modal
+        isOpen={!!viewingGuest}
+        onClose={() => setViewingGuest(null)}
+        title="Detail Profil Peserta"
+        description="Informasi lengkap identitas kedinasan, penempatan, dan status kehadiran."
+        maxWidth="lg"
+      >
+        {viewingGuest && (
+          <div className="space-y-4">
+            {/* Header Profil */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-slate-900">
+                    {viewingGuest.nama}
+                  </h3>
+                  {renderMatraBadge(viewingGuest.matra)}
+                </div>
+                <p className="text-xs text-slate-600 font-medium">
+                  {viewingGuest.pangkat} &bull; NRP/NIP: <span className="font-mono">{viewingGuest.nrp || '-'}</span>
+                </p>
+              </div>
+              <div>
+                {renderStatusBadge(viewingGuest.status_kehadiran)}
+              </div>
+            </div>
+
+            {/* Grid Informasi */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
+                <span className="text-slate-400 font-semibold uppercase text-[10px] block">Jabatan Kedinasan</span>
+                <p className="font-semibold text-slate-800">{viewingGuest.jabatan || '-'}</p>
+              </div>
+
+              <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
+                <span className="text-slate-400 font-semibold uppercase text-[10px] block">Kesatuan / Satker</span>
+                <p className="font-semibold text-slate-800">{viewingGuest.satuan || viewingGuest.satker || '-'}</p>
+              </div>
+
+              <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
+                <span className="text-slate-400 font-semibold uppercase text-[10px] block">Instansi / Negara</span>
+                <p className="font-semibold text-slate-800">{viewingGuest.negara_instansi || '-'}</p>
+              </div>
+
+              <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-1">
+                <span className="text-slate-400 font-semibold uppercase text-[10px] block">Kontak WhatsApp & Email</span>
+                <p className="font-mono text-slate-800">{viewingGuest.no_hp || '-'}</p>
+                <p className="text-slate-600 truncate">{viewingGuest.email || '-'}</p>
+              </div>
+
+              <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-lg space-y-1">
+                <span className="text-blue-600 font-semibold uppercase text-[10px] flex items-center gap-1">
+                  <Armchair className="w-3 h-3" /> Alokasi Kursi Pleno
+                </span>
+                <p className="font-mono font-bold text-sm text-blue-900">
+                  {viewingGuest.seat_assignment || viewingGuest.seat_number || 'Belum Ditentukan'}
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  {viewingGuest.warna_kursi ? `Sektor Warna: ${viewingGuest.warna_kursi.toUpperCase()}` : ''}
+                </p>
+              </div>
+
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                <span className="text-slate-600 font-semibold uppercase text-[10px] flex items-center gap-1">
+                  <Building className="w-3 h-3" /> Alokasi Wisma / Mess
+                </span>
+                <p className="font-semibold text-slate-800 text-xs">
+                  {viewingGuest.wisma_assignment || (viewingGuest.butuh_akomodasi === 1 ? 'Menunggu Penempatan' : 'Tidak Mengajukan')}
+                </p>
+              </div>
+
+              <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-1 sm:col-span-2">
+                <span className="text-slate-400 font-semibold uppercase text-[10px] block">QR Gate Token & Registrasi</span>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-mono text-slate-700 text-[11px] truncate">
+                    Token: {viewingGuest.qr_token}
+                  </p>
+                  <span className="font-mono text-[11px] text-slate-500 flex-shrink-0">
+                    ID: {viewingGuest.registration_id || '-'}
+                  </span>
+                </div>
+                {viewingGuest.waktu_kehadiran_pertama && (
+                  <p className="text-[11px] text-emerald-700 font-medium pt-1">
+                    Waktu Scan Presensi: {new Date(viewingGuest.waktu_kehadiran_pertama).toLocaleString('id-ID')}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/ticket/${viewingGuest.qr_token}`}
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>Buka E-Ticket</span>
+                </Link>
+
+                <Link
+                  href={`/api/ticket/${viewingGuest.qr_token}/pdf`}
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Unduh PDF</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResendEmail(viewingGuest.email || '');
+                    setResendingGuest(viewingGuest);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 transition-colors"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Kirim Email</span>
+                </button>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setViewingGuest(null)}
+              >
+                Tutup
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* ========================================================== */}
       {/* MODAL EDIT DATA PESERTA */}
       {/* ========================================================== */}
       <Modal
         isOpen={!!editingGuest}
         onClose={() => setEditingGuest(null)}
-        title="Sunting Profil Tamu & Prajurit"
-        description="Perbarui informasi identitas kedinasan, penempatan kursi, dan kontak resmi peserta."
+        title="Sunting Profil Peserta"
+        description="Perbarui identitas kedinasan, penempatan kursi, dan kontak resmi peserta."
         maxWidth="lg"
       >
         {editingGuest && (
@@ -517,35 +644,14 @@ export default function GuestsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Nama Lengkap (Tanpa Gelar) <span className="text-rose-500">*</span>
+                  Nama Lengkap (termasuk gelar) <span className="text-rose-500">*</span>
                 </label>
                 <Input
                   value={editFormData.nama}
+                  maxLength={150}
                   onChange={(e) => setEditFormData({ ...editFormData, nama: e.target.value })}
-                  placeholder="Contoh: Budi Santoso"
+                  placeholder="Contoh: Jenderal TNI Agus Subiyanto, S.E., M.Si."
                   required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Gelar Depan
-                </label>
-                <Input
-                  value={editFormData.gelar_depan}
-                  onChange={(e) => setEditFormData({ ...editFormData, gelar_depan: e.target.value })}
-                  placeholder="Contoh: Dr. / Mayjen TNI"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Gelar Belakang
-                </label>
-                <Input
-                  value={editFormData.gelar_belakang}
-                  onChange={(e) => setEditFormData({ ...editFormData, gelar_belakang: e.target.value })}
-                  placeholder="Contoh: S.E., M.M."
                 />
               </div>
 
@@ -633,25 +739,25 @@ export default function GuestsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Nomor WhatsApp / HP <span className="text-rose-500">*</span>
+                  Nomor WhatsApp / HP (Opsional)
                 </label>
                 <Input
                   value={editFormData.no_hp}
                   onChange={(e) => setEditFormData({ ...editFormData, no_hp: e.target.value })}
                   placeholder="Contoh: 08123456789"
-                  required
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Alamat Email (Pengiriman E-Ticket)
+                  Alamat Email (Wajib) <span className="text-rose-500">*</span>
                 </label>
                 <Input
                   type="email"
                   value={editFormData.email}
                   onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
                   placeholder="nama@tni.mil.id"
+                  required
                 />
               </div>
             </div>

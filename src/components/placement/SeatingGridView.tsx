@@ -126,7 +126,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
 
   // Visual styling for seat buttons in grid
   const getSeatVisualClasses = (seat: Seat, isSelected: boolean) => {
-    const isAssigned = !!seat.guest_id || seat.status === 'ASSIGNED' || seat.status === 'HADIR';
+    const isAssigned = !!seat.guest_id || seat.status === 'ASSIGNED' || seat.status === 'CHECK_IN' || (seat.status as any) === 'HADIR';
 
     if (!isAssigned) {
       if (isSelected) {
@@ -185,7 +185,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
         {groups.map(grp => {
           const isSelected = selectedGroupCode === grp.code;
           const grpSeats = seats.filter(s => s.group_code === grp.code);
-          const occupied = grpSeats.filter(s => !!s.guest_id || s.status === 'ASSIGNED' || s.status === 'HADIR').length;
+          const occupied = grpSeats.filter(s => !!s.guest_id || s.status === 'ASSIGNED' || s.status === 'CHECK_IN' || (s.status as any) === 'HADIR').length;
 
           return (
             <button
@@ -259,8 +259,8 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
           <div className="min-w-[720px] md:min-w-[880px] lg:min-w-0 w-full flex justify-center">
             <div className="grid grid-cols-8 gap-2.5 sm:gap-3">
               {groupSeats.map(seat => {
-                const isAssigned = !!seat.guest_id || seat.status === 'ASSIGNED' || seat.status === 'HADIR';
-                const isPresent = seat.status === 'HADIR' || seat.guest_status === 'HADIR';
+                const isAssigned = !!seat.guest_id || seat.status === 'ASSIGNED' || seat.status === 'CHECK_IN' || (seat.status as any) === 'HADIR';
+                const isPresent = seat.status === 'CHECK_IN' || (seat.status as any) === 'HADIR' || seat.guest_status === 'CHECK_IN' || (seat.guest_status as any) === 'HADIR';
                 const isSelected = selectedSeat?.id === seat.id;
                 const visualClass = getSeatVisualClasses(seat, isSelected);
 
@@ -368,10 +368,10 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                     </span>
 
                     {/* Status Hadir / Kosong / Terisi */}
-                    {selectedSeat.guest_status === 'HADIR' || selectedSeat.status === 'HADIR' ? (
+                    {selectedSeat.guest_status === 'CHECK_IN' || (selectedSeat.guest_status as any) === 'HADIR' || selectedSeat.status === 'CHECK_IN' || (selectedSeat.status as any) === 'HADIR' ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        Hadir di Lokasi
+                        CHECK_IN &bull; Hadir di Lokasi
                       </span>
                     ) : selectedSeat.guest_id ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
@@ -417,9 +417,9 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                       {modalMatraDef.label}
                     </span>
                   )}
-                  {selectedSeat.guest_status === 'HADIR' || selectedSeat.status === 'HADIR' ? (
+                  {selectedSeat.guest_status === 'CHECK_IN' || (selectedSeat.guest_status as any) === 'HADIR' || selectedSeat.status === 'CHECK_IN' || (selectedSeat.status as any) === 'HADIR' ? (
                     <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100/80 text-emerald-800 border border-emerald-300">
-                      Hadir di Lokasi
+                      CHECK_IN &bull; Hadir di Lokasi
                     </span>
                   ) : selectedSeat.guest_id ? (
                     <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-100/80 text-blue-800 border border-blue-300">

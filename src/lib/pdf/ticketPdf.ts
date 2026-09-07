@@ -148,7 +148,7 @@ export async function generateTicketPdf(data: TicketPdfData): Promise<Buffer> {
        .fillColor('#334155')
        .text('DATA IDENTITAS TAMU UNDANGAN / PRAJURIT', marginX + 10, bodyStartY + 6);
 
-    const fullName = [data.gelar_depan, data.nama, data.gelar_belakang].filter(Boolean).join(' ');
+    const fullName = data.nama;
 
     const rows: Array<{ label: string; val: string; bold?: boolean }> = [
       { label: 'Nama Lengkap', val: fullName || '-', bold: true },
