@@ -1,180 +1,94 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { mysqlAdapter } from '@/lib/db/mysql';
-import PDFDocument from 'pdfkit';
+import { applyGuestFilters } from '@/lib/export/guestFilters';
+import { generateGuestsPdfBuffer } from '@/lib/export/pdfExport';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+
+    // Ambil parameter filter
+    const filters = {
+      search: searchParams.get('search') || searchParams.get('q') || undefined,
+      matra: searchParams.get('matra') || undefined,
+      pangkat: searchParams.get('pangkat') || undefined,
+      status: searchParams.get('status') || undefined,
+      dateFrom: searchParams.get('dateFrom') || undefined,
+      dateTo: searchParams.get('dateTo') || undefined,
+      sortBy: searchParams.get('sortBy') || undefined,
+      sortDir: (searchParams.get('sortDir') as 'asc' | 'desc') || undefined
+    };
+
     let guests: any[] = [];
+
     if (mysqlAdapter.isConfigured()) {
-      const pesertaList = await mysqlAdapter.getAllPeserta();
-      if (pesertaList && pesertaList.length > 0) {
-        guests = pesertaList.map(p => ({
-          nama: p.nama_lengkap,
-          pangkat: p.pangkat,
-          nrp: p.nrp,
-          jabatan: p.jabatan,
-          instansi: p.instansi,
-          matra: p.matra,
-          seat_number: p.seat_number,
-          status_kehadiran: p.status_hadir,
-          no_hp: p.no_hp
-        }));
+      try {
+        const pesertaList = await mysqlAdapter.getAllPeserta();
+        if (pesertaList && pesertaList.length > 0) {
+          guests = pesertaList.map(p => ({
+            id: p.id,
+            nama: p.nama_lengkap,
+            pangkat: p.pangkat,
+            pangkat_level: 5,
+            nrp: p.nrp || '-',
+            jabatan: p.jabatan,
+            satker: p.instansi,
+            satuan: p.instansi,
+            negara_instansi: p.instansi,
+            matra: p.matra,
+            seat_assignment: p.seat_number,
+            seat_number: p.seat_number,
+            status_kehadiran: p.status_hadir === 'HADIR' ? 'CHECK_IN' : (p.status_hadir === 'BELUM_HADIR' ? 'REGISTRASI' : p.status_hadir),
+            no_hp: p.no_hp,
+            email: p.email,
+            created_at: p.created_at,
+            waktu_kehadiran_pertama: undefined
+          }));
+        }
+      } catch (err) {
+        console.warn('[Export PDF] MySQL fallback to hybrid DB:', err);
       }
     }
 
     if (guests.length === 0) {
-      guests = db.getGuests();
       guests = await db.getGuestsAsync();
     }
 
-    const doc = new PDFDocument({
-      size: 'A4',
-      margins: { top: 36, bottom: 36, left: 36, right: 36 },
-      info: {
-        Title: 'Daftar Hadir & Akreditasi RAPIM TNI 2026',
-        Author: 'Sekretariat Panitia RAPIM TNI 2026'
-      }
+    // Terapkan filter bersama
+    const filteredGuests = applyGuestFilters(guests, filters);
+
+    if (filteredGuests.length === 0) {
+      return NextResponse.json(
+        { error: 'Tidak ada data yang sesuai filter untuk diekspor.' },
+        { status: 400 }
+      );
+    }
+
+    // Buat buffer file PDF Resmi dengan PDFKit Landscape
+    const pdfBuffer = await generateGuestsPdfBuffer(filteredGuests, {
+      title: 'DAFTAR INDUK PESERTA & AKREDITASI RAPIM TNI 2026',
+      subtitle: 'TENTARA NASIONAL INDONESIA'
     });
 
-    const chunks: Buffer[] = [];
-    (doc as any).on('data', (chunk: Buffer) => chunks.push(chunk));
+    const tanggal = new Date().toISOString().slice(0, 10);
+    const filename = `Rekap_Peserta_RAPIM_TNI_${tanggal}.pdf`;
 
-    const pdfBufferPromise = new Promise<Buffer>((resolve, reject) => {
-      (doc as any).on('end', () => resolve(Buffer.concat(chunks)));
-      (doc as any).on('error', reject);
-    });
-
-    const pageWidth = 595.28;
-    const marginX = 36;
-    const contentWidth = pageWidth - (marginX * 2);
-
-    // Header
-    doc.rect(marginX, 36, contentWidth, 54)
-       .fillColor('#1E3A8A')
-       .fill();
-
-    doc.fillColor('#FFFFFF')
-       .font('Helvetica-Bold')
-       .fontSize(10)
-       .text('MARKAS BESAR TENTARA NASIONAL INDONESIA', marginX, 46, { align: 'center', width: contentWidth });
-
-    doc.font('Helvetica-Bold')
-       .fontSize(13)
-       .text('DAFTAR INDUK PESERTA & AKREDITASI RAPIM TNI 2026', marginX, 60, { align: 'center', width: contentWidth });
-
-    doc.font('Helvetica')
-       .fontSize(8)
-       .fillColor('#94A3B8')
-       .text(`Tanggal Cetak: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })} • Total: ${guests.length} Peserta Terdaftar`, marginX, 76, { align: 'center', width: contentWidth });
-
-    // Table Header
-    let y = 104;
-    doc.rect(marginX, y, contentWidth, 20)
-       .fillColor('#F1F5F9')
-       .strokeColor('#CBD5E1')
-       .lineWidth(1)
-       .fillAndStroke();
-
-    doc.fillColor('#0F172A')
-       .font('Helvetica-Bold')
-       .fontSize(7.5);
-
-    doc.text('NO', marginX + 4, y + 6, { width: 22, align: 'center' });
-    doc.text('NAMA PRAJURIT / TAMU', marginX + 28, y + 6, { width: 145 });
-    doc.text('PANGKAT & NRP', marginX + 175, y + 6, { width: 90 });
-    doc.text('JABATAN & SATKER', marginX + 268, y + 6, { width: 135 });
-    doc.text('KURSI', marginX + 406, y + 6, { width: 45, align: 'center' });
-    doc.text('STATUS', marginX + 454, y + 6, { width: 60, align: 'center' });
-
-    y += 20;
-
-    guests.forEach((g, idx) => {
-      // Check page break
-      if (y > 780) {
-        doc.addPage();
-        y = 36;
-
-        // Redraw table header on new page
-        doc.rect(marginX, y, contentWidth, 20)
-           .fillColor('#F1F5F9')
-           .strokeColor('#CBD5E1')
-           .lineWidth(1)
-           .fillAndStroke();
-
-        doc.fillColor('#0F172A')
-           .font('Helvetica-Bold')
-           .fontSize(7.5);
-
-        doc.text('NO', marginX + 4, y + 6, { width: 22, align: 'center' });
-        doc.text('NAMA PRAJURIT / TAMU', marginX + 28, y + 6, { width: 145 });
-        doc.text('PANGKAT & NRP', marginX + 175, y + 6, { width: 90 });
-        doc.text('JABATAN & SATKER', marginX + 268, y + 6, { width: 135 });
-        doc.text('KURSI', marginX + 406, y + 6, { width: 45, align: 'center' });
-        doc.text('STATUS', marginX + 454, y + 6, { width: 60, align: 'center' });
-
-        y += 20;
-      }
-
-      // Alternate row background
-      if (idx % 2 === 1) {
-        doc.rect(marginX, y, contentWidth, 20)
-           .fillColor('#F8FAFC')
-           .fill();
-      }
-
-      doc.rect(marginX, y, contentWidth, 20)
-         .strokeColor('#E2E8F0')
-         .lineWidth(0.5)
-         .stroke();
-
-      const fullName = g.nama;
-      const isCheckIn = g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR';
-
-      doc.fillColor('#334155')
-         .font('Helvetica')
-         .fontSize(7);
-
-      doc.text(String(idx + 1), marginX + 4, y + 6, { width: 22, align: 'center' });
-
-      doc.font('Helvetica-Bold')
-         .fillColor('#0F172A')
-         .text(fullName, marginX + 28, y + 6, { width: 145, lineBreak: false });
-
-      doc.font('Helvetica')
-         .fillColor('#334155')
-         .text(`${g.pangkat} (${g.nrp || '-'})`, marginX + 175, y + 6, { width: 90, lineBreak: false });
-
-      doc.text(`${g.jabatan || '-'} • ${g.satuan || g.instansi || '-'}`, marginX + 268, y + 6, { width: 135, lineBreak: false });
-
-      doc.font('Helvetica-Bold')
-         .fillColor('#1E40AF')
-         .text(g.seat_assignment || g.seat_number || '-', marginX + 406, y + 6, { width: 45, align: 'center' });
-
-      doc.font('Helvetica-Bold')
-         .fillColor(isCheckIn ? '#10B981' : '#F59E0B')
-         .text(isCheckIn ? 'CHECK_IN' : 'REGISTRASI', marginX + 454, y + 6, { width: 60, align: 'center' });
-
-      y += 20;
-    });
-
-    doc.end();
-
-    const finalBuffer = await pdfBufferPromise;
-
-    return new Response(new Uint8Array(finalBuffer), {
+    return new Response(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Rekap_Peserta_RAPIM_TNI_${new Date().toISOString().slice(0, 10)}.pdf"`
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
       }
     });
-
   } catch (err: any) {
     console.error('[Export PDF] Gagal membuat rekap PDF:', err);
-    return NextResponse.json({ error: 'Gagal mengekspor PDF: ' + err?.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Gagal mengekspor PDF: ' + (err?.message || '') },
+      { status: 500 }
+    );
   }
 }
-

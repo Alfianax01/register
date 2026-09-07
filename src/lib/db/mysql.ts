@@ -7,13 +7,17 @@ export interface PesertaRow {
   jabatan: string;
   instansi: string;
   email: string;
-  no_hp: string;
+  no_hp: string | null;
   kategori_tamu: string;
   nrp: string | null;
   matra: string;
   qr_token: string;
   seat_number: string | null;
-  status_hadir: 'BELUM_HADIR' | 'HADIR';
+  seat_assignment?: string | null;
+  wisma_assignment?: string | null;
+  satuan?: string | null;
+  satker?: string | null;
+  status_hadir: 'REGISTRASI' | 'CHECK_IN' | 'BELUM_HADIR' | 'HADIR';
   pdf_path: string | null;
   created_at?: string;
   updated_at?: string;
@@ -111,13 +115,17 @@ class MySQLAdapter {
             \`jabatan\` VARCHAR(255) NOT NULL,
             \`instansi\` VARCHAR(255) NOT NULL,
             \`email\` VARCHAR(255) NOT NULL,
-            \`no_hp\` VARCHAR(50) NOT NULL,
+            \`no_hp\` VARCHAR(50) DEFAULT NULL,
             \`kategori_tamu\` VARCHAR(50) NOT NULL DEFAULT 'TNI',
             \`nrp\` VARCHAR(50) DEFAULT NULL,
             \`matra\` VARCHAR(20) NOT NULL DEFAULT 'AD',
             \`qr_token\` VARCHAR(100) NOT NULL,
             \`seat_number\` VARCHAR(50) DEFAULT NULL,
-            \`status_hadir\` VARCHAR(20) NOT NULL DEFAULT 'BELUM_HADIR',
+            \`seat_assignment\` VARCHAR(50) DEFAULT NULL,
+            \`wisma_assignment\` VARCHAR(100) DEFAULT NULL,
+            \`satker\` VARCHAR(100) DEFAULT NULL,
+            \`satuan\` VARCHAR(100) DEFAULT NULL,
+            \`status_hadir\` VARCHAR(20) NOT NULL DEFAULT 'REGISTRASI',
             \`pdf_path\` VARCHAR(255) DEFAULT NULL,
             \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -129,6 +137,28 @@ class MySQLAdapter {
             KEY \`idx_peserta_status_hadir\` (\`status_hadir\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
+
+        // Migrasi kolom & status lama ke format baru jika tabel sudah ada
+        try {
+          await connection.query(`
+            UPDATE \`peserta\` SET \`status_hadir\` = 'CHECK_IN' WHERE \`status_hadir\` = 'HADIR';
+          `);
+          await connection.query(`
+            UPDATE \`peserta\` SET \`status_hadir\` = 'REGISTRASI' WHERE \`status_hadir\` = 'BELUM_HADIR';
+          `);
+        } catch {}
+
+        try {
+          await connection.query(`
+            ALTER TABLE \`peserta\` 
+            ADD COLUMN IF NOT EXISTS \`seat_assignment\` VARCHAR(50) DEFAULT NULL,
+            ADD COLUMN IF NOT EXISTS \`wisma_assignment\` VARCHAR(100) DEFAULT NULL,
+            ADD COLUMN IF NOT EXISTS \`satker\` VARCHAR(100) DEFAULT NULL,
+            ADD COLUMN IF NOT EXISTS \`satuan\` VARCHAR(100) DEFAULT NULL,
+            MODIFY COLUMN \`no_hp\` VARCHAR(50) DEFAULT NULL,
+            MODIFY COLUMN \`status_hadir\` VARCHAR(20) NOT NULL DEFAULT 'REGISTRASI';
+          `);
+        } catch {}
 
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`kursi\` (
@@ -292,7 +322,7 @@ class MySQLAdapter {
       data.matra || 'AD',
       data.qr_token,
       data.seat_number || null,
-      data.status_hadir || 'BELUM_HADIR',
+      data.status_hadir || 'REGISTRASI',
       data.pdf_path || null
     ];
 
@@ -420,8 +450,11 @@ class MySQLAdapter {
     }
 
     if (filters?.status) {
-      sql += ' AND `status_hadir` = ?';
-      params.push(filters.status);
+      let st = filters.status;
+      if (st === 'HADIR') st = 'CHECK_IN';
+      if (st === 'BELUM_HADIR') st = 'REGISTRASI';
+      sql += ' AND (`status_hadir` = ? OR (`status_hadir` = "HADIR" AND ? = "CHECK_IN") OR (`status_hadir` = "BELUM_HADIR" AND ? = "REGISTRASI"))';
+      params.push(st, st, st);
     }
 
     if (filters?.search) {

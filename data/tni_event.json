@@ -1,6 +1,35 @@
 {
   "guests": [
     {
+      "nrp": "-",
+      "nama": "Jaehwan",
+      "matra": "NON_TNI",
+      "pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "pangkat_level": 1,
+      "jabatan": "-",
+      "satker": "Kementerian Pertahanan RI (Kemhan)",
+      "satuan": "Setjen Kemhan",
+      "negara_instansi": "Indonesia / TNI - Kemhan RI",
+      "email": "kiryuukafka@gmail.com",
+      "butuh_akomodasi": 0,
+      "kategori_instansi": "KEMENTERIAN",
+      "warna_kursi": "white",
+      "seatColorAlias": "white",
+      "id": "guest_1788768822359_298hsvp",
+      "registration_id": "REG-2026-2359-649903",
+      "ticket_id": "TCK-2026-2359-RPDM",
+      "qr_token": "36f4ca73-e753-4b34-ad66-bc4adb4c4300",
+      "token_hash": "db04f9e9027352d05867506a80725d04ceffd3df3dcbb2e4c10497626718c3f5",
+      "status_kehadiran": "CHECK_IN",
+      "created_at": "2026-09-07T08:13:42.358Z",
+      "updated_at": "2026-09-07T08:15:37.467Z",
+      "emailSent": true,
+      "waktu_kehadiran_pertama": "2026-09-07T08:15:37.454Z",
+      "seat_assignment": "A-06",
+      "seat_group_id": "grp_a",
+      "seat_number": "A-06"
+    },
+    {
       "nrp": "----",
       "nama": "Dr Joseph",
       "gelar_depan": "Dr",
@@ -894,7 +923,17 @@
       "seat_number": "A-06",
       "row_num": 1,
       "col_num": 6,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "guest_1788768822359_298hsvp",
+      "peserta_id": "guest_1788768822359_298hsvp",
+      "guest_name": "Jaehwan",
+      "guest_rank": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "guest_status": "CHECK_IN",
+      "kategori_instansi": "KEMENTERIAN",
+      "colorAlias": "white",
+      "warna": "white",
+      "status": "CHECK_IN"
     },
     {
       "id": "seat_a_7",
@@ -3135,6 +3174,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1788768937454_is26w",
+      "guest_id": "guest_1788768822359_298hsvp",
+      "guest_nama": "Jaehwan",
+      "guest_nrp": "-",
+      "guest_pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-07T08:15:37.454Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1788765729311_d1kx5",
       "guest_id": "guest_1788765569721_q3g2bqw",
       "guest_nama": "Joseph",
@@ -3452,6 +3505,24 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1788768937516_hcxo",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Jaehwan (Menteri / Pejabat Setingkat Menteri / NRP -) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T08:15:37.516Z"
+    },
+    {
+      "id": "aud_1788768913944_oedt",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-07T08:15:13.944Z"
+    },
     {
       "id": "aud_1788767887425_6f6e",
       "admin_id": "admin_super",

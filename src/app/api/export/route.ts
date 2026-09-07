@@ -1,57 +1,95 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { mysqlAdapter } from '@/lib/db/mysql';
+import { applyGuestFilters } from '@/lib/export/guestFilters';
+import { generateGuestsExcelBuffer } from '@/lib/export/excelExport';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const guests = await db.getGuestsAsync();
-    const headers = [
-      'No',
-      'NRP/Identitas',
-      'Nama Lengkap',
-      'Matra',
-      'Pangkat',
-      'Jabatan',
-      'Satker',
-      'Satuan',
-      'Nomor HP',
-      'Email',
-      'Kebutuhan Akomodasi',
-      'Alokasi Kursi',
-      'Alokasi Kamar',
-      'Status Hadir',
-      'Waktu Hadir Pertama'
-    ];
+    const { searchParams } = new URL(req.url);
 
-    const rows = guests.map((g, idx) => [
-      idx + 1,
-      `"${g.nrp}"`,
-      `"${g.nama}"`,
-      `"${g.matra}"`,
-      `"${g.pangkat}"`,
-      `"${g.jabatan}"`,
-      `"${g.satker}"`,
-      `"${g.satuan}"`,
-      `"${g.no_hp || '-'}"`,
-      `"${g.email}"`,
-      g.butuh_akomodasi ? 'Ya' : 'Tidak',
-      `"${g.seat_assignment || g.seat_number || '-'}"`,
-      `"${g.wisma_assignment || (g.room_id ? `${g.room_id} (${g.room_slot || 'A'})` : '-')}"`,
-      g.status_kehadiran,
-      `"${g.waktu_kehadiran_pertama || '-'}"`
-    ]);
+    // Ambil parameter filter
+    const filters = {
+      search: searchParams.get('search') || searchParams.get('q') || undefined,
+      matra: searchParams.get('matra') || undefined,
+      pangkat: searchParams.get('pangkat') || undefined,
+      status: searchParams.get('status') || undefined,
+      dateFrom: searchParams.get('dateFrom') || undefined,
+      dateTo: searchParams.get('dateTo') || undefined,
+      sortBy: searchParams.get('sortBy') || undefined,
+      sortDir: (searchParams.get('sortDir') as 'asc' | 'desc') || undefined
+    };
 
-    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    let guests: any[] = [];
 
-    return new Response(csvContent, {
+    // Prioritas koneksi database
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const pesertaList = await mysqlAdapter.getAllPeserta();
+        if (pesertaList && pesertaList.length > 0) {
+          guests = pesertaList.map(p => ({
+            id: p.id,
+            nama: p.nama_lengkap,
+            pangkat: p.pangkat,
+            pangkat_level: 5,
+            nrp: p.nrp || '-',
+            jabatan: p.jabatan,
+            satker: p.instansi,
+            satuan: p.instansi,
+            negara_instansi: p.instansi,
+            matra: p.matra,
+            seat_assignment: p.seat_number,
+            seat_number: p.seat_number,
+            status_kehadiran: p.status_hadir === 'HADIR' ? 'CHECK_IN' : (p.status_hadir === 'BELUM_HADIR' ? 'REGISTRASI' : p.status_hadir),
+            no_hp: p.no_hp,
+            email: p.email,
+            created_at: p.created_at,
+            waktu_kehadiran_pertama: undefined
+          }));
+        }
+      } catch (err) {
+        console.warn('[Export Excel] MySQL fallback to hybrid DB:', err);
+      }
+    }
+
+    if (guests.length === 0) {
+      guests = await db.getGuestsAsync();
+    }
+
+    // Terapkan filter bersama
+    const filteredGuests = applyGuestFilters(guests, filters);
+
+    if (filteredGuests.length === 0) {
+      return NextResponse.json(
+        { error: 'Tidak ada data yang sesuai filter untuk diekspor.' },
+        { status: 400 }
+      );
+    }
+
+    // Buat buffer file .xlsx asli dengan ExcelJS
+    const excelBuffer = await generateGuestsExcelBuffer(filteredGuests, {
+      title: 'DAFTAR PESERTA RAPIM TNI 2026',
+      subtitle: 'TENTARA NASIONAL INDONESIA'
+    });
+
+    const tanggal = new Date().toISOString().slice(0, 10);
+    const filename = `RAPIM-TNI-2026-Peserta-${tanggal}.xlsx`;
+
+    return new Response(new Uint8Array(excelBuffer), {
       status: 200,
       headers: {
-        'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="Daftar_Peserta_Rapim_TNI_${new Date().toISOString().slice(0, 10)}.csv"`
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
       }
     });
-  } catch (err) {
-    return NextResponse.json({ error: 'Gagal mengekspor data' }, { status: 500 });
+  } catch (err: any) {
+    console.error('[Export Excel] Error generating xlsx:', err);
+    return NextResponse.json(
+      { error: 'Gagal mengekspor data Excel: ' + (err?.message || '') },
+      { status: 500 }
+    );
   }
 }

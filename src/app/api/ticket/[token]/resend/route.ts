@@ -70,7 +70,7 @@ export async function POST(
           satuan: p.instansi,
           negara_instansi: p.instansi,
           email: p.email,
-          no_hp: p.no_hp,
+          no_hp: p.no_hp || undefined,
           matra: (p.matra as any) || 'AD',
           butuh_akomodasi: 0,
           seat_number: p.seat_number || undefined,

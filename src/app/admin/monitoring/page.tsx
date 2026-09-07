@@ -8,21 +8,27 @@ import { PangkatCompositionChart } from '@/components/monitoring/PangkatComposit
 import { OfficialReportPrint } from '@/components/monitoring/OfficialReportPrint';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { useToast } from '@/components/ui/Toast';
 import { formatTimeID } from '@/lib/utils/formatters';
 import { Guest, CheckinLog } from '@/types';
 import {
   FileSpreadsheet,
+  FileText,
   Printer,
   RotateCw,
-  Radio
+  Radio,
+  Loader2
 } from 'lucide-react';
 
 export default function MonitoringPage() {
+  const { showToast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [recentLogs, setRecentLogs] = useState<CheckinLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exportingExcel, setExportingExcel] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
 
   const fetchStatsAndData = async () => {
     try {
@@ -60,8 +66,49 @@ export default function MonitoringPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleExportCSV = () => {
-    window.location.href = '/api/export';
+  const handleExport = async (format: 'excel' | 'pdf') => {
+    const isExcel = format === 'excel';
+    if (isExcel) setExportingExcel(true);
+    else setExportingPdf(true);
+
+    try {
+      const endpoint = isExcel ? '/api/export' : '/api/export/pdf';
+      const res = await fetch(endpoint);
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const errMsg = errData.error || (isExcel ? 'Gagal mengekspor Excel' : 'Gagal mengekspor PDF');
+        showToast(errMsg, { type: 'error' });
+        return;
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get('content-disposition');
+      let filename = isExcel
+        ? `RAPIM-TNI-2026-Peserta-${new Date().toISOString().slice(0, 10)}.xlsx`
+        : `Rekap_Peserta_RAPIM_TNI_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+      if (disposition && disposition.includes('filename=')) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) filename = match[1];
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      showToast(isExcel ? '✓ Excel berhasil dibuat' : '✓ PDF berhasil dibuat', { type: 'success' });
+    } catch {
+      showToast(isExcel ? 'Gagal mengekspor Excel' : 'Gagal mengekspor PDF', { type: 'error' });
+    } finally {
+      if (isExcel) setExportingExcel(false);
+      else setExportingPdf(false);
+    }
   };
 
   const handlePrintOfficialReport = () => {
@@ -93,11 +140,33 @@ export default function MonitoringPage() {
             <Button
               variant="outline"
               size="md"
-              onClick={handleExportCSV}
-              className="text-xs h-[38px]"
+              onClick={() => handleExport('excel')}
+              disabled={exportingExcel || loading}
+              className="text-xs h-[38px] gap-1.5 text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+              title="Ekspor Spreadsheet (.xlsx) Resmi"
             >
-              <FileSpreadsheet className="w-4 h-4 mr-1.5 text-emerald-600" />
-              <span>Ekspor CSV (Excel)</span>
+              {exportingExcel ? (
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+              ) : (
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+              )}
+              <span>{exportingExcel ? 'Membuat laporan...' : 'Ekspor Excel'}</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => handleExport('pdf')}
+              disabled={exportingPdf || loading}
+              className="text-xs h-[38px] gap-1.5 text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+              title="Unduh Lembar Presensi Resmi PDF (Landscape)"
+            >
+              {exportingPdf ? (
+                <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+              ) : (
+                <FileText className="w-4 h-4 text-rose-600" />
+              )}
+              <span>{exportingPdf ? 'Membuat laporan...' : 'Cetak PDF'}</span>
             </Button>
 
             <Button
@@ -107,7 +176,7 @@ export default function MonitoringPage() {
               className="text-xs font-semibold h-[38px]"
             >
               <Printer className="w-3.5 h-3.5 mr-1.5" />
-              <span>Cetak Laporan Resmi</span>
+              <span>Cetak Laporan</span>
             </Button>
 
             <Button

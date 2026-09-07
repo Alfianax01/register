@@ -42,6 +42,10 @@ export default function GuestsPage() {
   const [filterMatra, setFilterMatra] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
 
+  // Export states
+  const [exportingExcel, setExportingExcel] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+
   // Modals state
   const [viewingGuest, setViewingGuest] = useState<Guest | null>(null);
 
@@ -90,6 +94,56 @@ export default function GuestsPage() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     fetchGuests();
+  };
+
+  const handleExport = async (format: 'excel' | 'pdf') => {
+    const isExcel = format === 'excel';
+    if (isExcel) setExportingExcel(true);
+    else setExportingPdf(true);
+
+    try {
+      const params = new URLSearchParams();
+      if (searchTerm) params.set('q', searchTerm);
+      if (filterMatra) params.set('matra', filterMatra);
+      if (filterStatus) params.set('status', filterStatus);
+
+      const endpoint = isExcel ? `/api/export?${params.toString()}` : `/api/export/pdf?${params.toString()}`;
+      const res = await fetch(endpoint);
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const errMsg = errData.error || (isExcel ? 'Gagal mengekspor Excel' : 'Gagal mengekspor PDF');
+        showToast(errMsg, { type: 'error' });
+        return;
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get('content-disposition');
+      let filename = isExcel
+        ? `RAPIM-TNI-2026-Peserta-${new Date().toISOString().slice(0, 10)}.xlsx`
+        : `Rekap_Peserta_RAPIM_TNI_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+      if (disposition && disposition.includes('filename=')) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) filename = match[1];
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      showToast(isExcel ? '✓ Excel berhasil dibuat' : '✓ PDF berhasil dibuat', { type: 'success' });
+    } catch {
+      showToast(isExcel ? 'Gagal mengekspor Excel' : 'Gagal mengekspor PDF', { type: 'error' });
+    } finally {
+      if (isExcel) setExportingExcel(false);
+      else setExportingPdf(false);
+    }
   };
 
   const openEditModal = (guest: Guest) => {
@@ -299,29 +353,37 @@ export default function GuestsPage() {
                 <span>Segarkan</span>
               </Button>
 
-              <Link href="/api/export?format=csv" target="_blank">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
-                  title="Ekspor CSV untuk Microsoft Excel"
-                >
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExport('excel')}
+                disabled={exportingExcel || loading}
+                className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                title="Ekspor Spreadsheet (.xlsx) Resmi"
+              >
+                {exportingExcel ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
+                ) : (
                   <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Ekspor CSV</span>
-                </Button>
-              </Link>
+                )}
+                <span>{exportingExcel ? 'Membuat laporan...' : 'Ekspor Excel'}</span>
+              </Button>
 
-              <Link href="/api/export/pdf" target="_blank">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
-                  title="Unduh Lembar Presensi Resmi PDF"
-                >
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleExport('pdf')}
+                disabled={exportingPdf || loading}
+                className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                title="Unduh Lembar Presensi Resmi PDF (Landscape)"
+              >
+                {exportingPdf ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                ) : (
                   <FileText className="w-3.5 h-3.5 text-rose-600" />
-                  <span>Cetak Presensi PDF</span>
-                </Button>
-              </Link>
+                )}
+                <span>{exportingPdf ? 'Membuat laporan...' : 'Cetak Presensi PDF'}</span>
+              </Button>
             </div>
           </div>
 
