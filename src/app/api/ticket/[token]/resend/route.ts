@@ -3,7 +3,7 @@ import QRCode from 'qrcode';
 import { db } from '@/lib/db';
 import { mysqlAdapter } from '@/lib/db/mysql';
 import { generateTicketPdf } from '@/lib/pdf/ticketPdf';
-import { sendTicketEmail } from '@/lib/email/mailer';
+import { sendTicketEmail, isValidEmailFormat } from '@/lib/email/mailer';
 import { verifySessionToken } from '@/lib/security/auth';
 import { Guest } from '@/types';
 
@@ -75,7 +75,7 @@ export async function POST(
           butuh_akomodasi: 0,
           seat_number: p.seat_number || undefined,
           status_kehadiran: p.status_hadir === 'HADIR' ? 'CHECK_IN' : 'REGISTRASI',
-          qr_token: p.qr_token, // STRICTLY PRESERVED FROM DB, NEVER REGENERATED
+          qr_token: p.qr_token,
           token: p.qr_token,
           token_hash: '',
           registration_id: `REG-${p.nrp || p.id.slice(-6).toUpperCase()}`,
@@ -97,7 +97,7 @@ export async function POST(
       );
     }
 
-    // Optional email override (e.g. admin correcting a typo)
+    // Optional email override (e.g. admin correcting a typo or bounced email)
     let overrideEmail = '';
     try {
       const body = await req.json();
@@ -114,18 +114,54 @@ export async function POST(
       );
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(targetEmail)) {
+    // Strict validation of email format
+    if (!isValidEmailFormat(targetEmail)) {
       return NextResponse.json(
-        { error: 'Format alamat email tujuan tidak valid' },
+        { error: 'Format alamat email tujuan tidak valid (contoh: nama@domain.com)' },
         { status: 400 }
       );
     }
 
-    if (overrideEmail && overrideEmail !== guest.email) {
+    const isEmailChanged = Boolean(
+      overrideEmail &&
+      overrideEmail.toLowerCase() !== (guest.email || '').toLowerCase()
+    );
+
+    // Hard Bounce Guard: If email previously bounced, block retry unless email has changed
+    if (guest.email_status === 'BOUNCED' && !isEmailChanged) {
+      return NextResponse.json(
+        {
+          error: `Alamat email ini (${guest.email}) sebelumnya memantul (bounced/tidak ditemukan oleh mail server). Mohon perbarui alamat email peserta ke alamat yang benar sebelum mengirim ulang.`,
+          status: 'BOUNCED',
+          lastError: guest.last_email_error
+        },
+        { status: 400 }
+      );
+    }
+
+    // Bounded Retry Guard: max 3 attempts for same unchanged email
+    if ((guest.email_retry_count || 0) >= 3 && !isEmailChanged) {
+      return NextResponse.json(
+        {
+          error: `Batas percobaan pengiriman email telah tercapai (maksimal 3 kali). Silakan ganti alamat email peserta untuk mencoba lagi.`,
+          status: 'FAILED'
+        },
+        { status: 429 }
+      );
+    }
+
+    // If email is changed, reset retry count and status
+    if (isEmailChanged) {
       guest.email = overrideEmail;
-      db.updateGuest(guest.id, { email: overrideEmail });
+      guest.email_status = 'PENDING';
+      guest.email_retry_count = 0;
+      guest.last_email_error = undefined;
+      db.updateGuest(guest.id, {
+        email: overrideEmail,
+        email_status: 'PENDING',
+        email_retry_count: 0,
+        last_email_error: undefined
+      });
       if (mysqlAdapter.isConfigured()) {
         mysqlAdapter.updatePeserta(guest.id, { email: overrideEmail }).catch(console.error);
       }
@@ -159,7 +195,7 @@ export async function POST(
         matra: guest.matra,
         seat_number: guest.seat_number,
         registration_id: guest.registration_id,
-        qr_token: guest.qr_token // STRICTLY EXISTING TOKEN
+        qr_token: guest.qr_token
       });
     } catch (pdfErr) {
       console.warn('[Resend] Warning generating PDF:', pdfErr);
@@ -169,15 +205,12 @@ export async function POST(
     const emailResult = await sendTicketEmail(guest, ticketUrl, qrCodeBuffer, pdfBuffer);
 
     if (!emailResult.success) {
-      db.updateGuest(guest.id, { emailSent: false });
       return NextResponse.json({
         success: false,
+        status: emailResult.status,
         error: emailResult.error || 'Gagal mengirimkan email. Periksa konfigurasi SMTP server.'
-      }, { status: 500 });
+      }, { status: emailResult.status === 'BOUNCED' ? 400 : 500 });
     }
-
-    // Mark emailSent: true on successful dispatch
-    db.updateGuest(guest.id, { emailSent: true });
 
     // Record audit log if admin session is present
     if (session) {
@@ -192,8 +225,10 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: `E-Ticket PDF berhasil dikirim ulang ke alamat email: ${targetEmail}`,
+      message: `E-Ticket PDF berhasil dikirimkan ke alamat email: ${targetEmail}`,
       messageId: emailResult.messageId,
+      status: emailResult.status,
+      simulated: emailResult.simulated,
       token: guest.qr_token
     });
 

@@ -2,6 +2,8 @@ export type MatraType = 'AD' | 'AL' | 'AU' | 'MABES' | 'NON_TNI';
 
 export type PangkatGolongan = 'PATI' | 'PAMEN' | 'PAMA' | 'BINTARA' | 'TAMTAMA' | 'SIPIL';
 
+export type EmailDeliveryStatus = 'PENDING' | 'SENT' | 'FAILED' | 'BOUNCED';
+
 export interface PangkatItem {
   id: string;
   name: string;
@@ -49,6 +51,9 @@ export interface Guest {
   waktu_kehadiran_pertama?: string;
   token?: string;
   emailSent?: boolean;
+  email_status?: EmailDeliveryStatus;
+  email_retry_count?: number;
+  last_email_error?: string;
   kategori_instansi?: 'ANGKATAN_DARAT' | 'ANGKATAN_LAUT' | 'ANGKATAN_UDARA' | 'KEMENTERIAN' | 'MABES' | 'SIPIL';
   warna_kursi?: 'green' | 'blue' | 'gray' | 'white' | 'purple' | 'gold';
   seatColorAlias?: string;
@@ -166,4 +171,17 @@ export interface AuditLog {
   ip_address?: string;
   created_at: string;
 }
+
+export interface EmailLog {
+  id: string;
+  guest_id: string;
+  email: string;
+  subject: string;
+  status: EmailDeliveryStatus;
+  error_message?: string;
+  message_id?: string;
+  provider?: string;
+  sent_at: string;
+}
+
 

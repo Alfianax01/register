@@ -24,6 +24,7 @@ import {
   Mail,
   Download,
   AlertTriangle,
+  AlertCircle,
   Loader2,
   Send,
   Eye,
@@ -248,7 +249,7 @@ export default function GuestsPage() {
         setResendingGuest(null);
         fetchGuests();
       } else {
-        showToast(data.message || 'Gagal mengirim email E-Ticket', { type: 'error' });
+        showToast(data.error || data.message || 'Gagal mengirim email E-Ticket', { type: 'error' });
       }
     } catch {
       showToast('Gagal mengirimkan instruksi ke server mail', { type: 'error' });
@@ -508,14 +509,30 @@ export default function GuestsPage() {
                             >
                               {g.nama}
                             </span>
-                            {g.emailSent && (
+                            {g.email_status === 'BOUNCED' ? (
+                              <span
+                                className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded flex-shrink-0 gap-0.5"
+                                title={`Email Bounced: ${g.last_email_error || 'Alamat ditolak server tujuan'}`}
+                              >
+                                <AlertCircle className="w-2.5 h-2.5 text-rose-500" />
+                                <span>Bounced</span>
+                              </span>
+                            ) : g.email_status === 'FAILED' ? (
+                              <span
+                                className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded flex-shrink-0 gap-0.5"
+                                title={`Email Gagal Terkirim: ${g.last_email_error || 'Gagal via SMTP'}`}
+                              >
+                                <AlertCircle className="w-2.5 h-2.5 text-amber-500" />
+                                <span>Gagal</span>
+                              </span>
+                            ) : (g.email_status === 'SENT' || g.emailSent) ? (
                               <span
                                 className="inline-flex items-center text-[10px] text-emerald-600 flex-shrink-0"
                                 title="E-Ticket telah terkirim via email"
                               >
                                 <Mail className="w-3 h-3" />
                               </span>
-                            )}
+                            ) : null}
                           </div>
                         </td>
 
@@ -977,13 +994,41 @@ export default function GuestsPage() {
         {resendingGuest && (
           <form onSubmit={handleResendSubmit} className="space-y-4">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1">
-              <div className="font-semibold text-slate-900">
-                {resendingGuest.nama} ({resendingGuest.pangkat})
+              <div className="flex items-center justify-between">
+                <div className="font-semibold text-slate-900">
+                  {resendingGuest.nama} ({resendingGuest.pangkat})
+                </div>
+                {resendingGuest.email_status === 'BOUNCED' ? (
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold text-rose-700 bg-rose-100 border border-rose-300 rounded">
+                    BOUNCED
+                  </span>
+                ) : resendingGuest.email_status === 'FAILED' ? (
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-300 rounded">
+                    FAILED
+                  </span>
+                ) : (
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 rounded">
+                    {resendingGuest.email_status || 'READY'}
+                  </span>
+                )}
               </div>
               <div className="text-slate-500 font-mono text-[11px]">
                 NRP: {resendingGuest.nrp || '-'} &bull; Kursi: {resendingGuest.seat_number || 'Belum diatur'}
               </div>
             </div>
+
+            {resendingGuest.email_status === 'BOUNCED' && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs space-y-1 text-rose-800">
+                <div className="font-semibold flex items-center gap-1.5 text-rose-700">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                  <span>Peringatan: Alamat Email Sebelumnya Memantul (BOUNCED)</span>
+                </div>
+                <p className="text-[11px] text-rose-600 leading-relaxed">
+                  Server mail penerima menolak alamat ini ({resendingGuest.last_email_error || '550 Recipient address rejected: User unknown'}).
+                  <strong className="block mt-0.5 font-semibold text-rose-800">Mohon perbaiki alamat email peserta di bawah ke alamat yang valid sebelum menekan Kirimkan E-Ticket.</strong>
+                </p>
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">

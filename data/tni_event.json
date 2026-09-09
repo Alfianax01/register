@@ -53,7 +53,10 @@
       "room_number": "207B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 207B (Lantai 2)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41209498",
@@ -108,7 +111,9 @@
       "room_number": "207A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 207A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31568948",
@@ -161,7 +166,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21893185",
@@ -217,7 +224,9 @@
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 206B (Lantai 2)",
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T15:02:30.921Z"
+      "waktu_kehadiran_pertama": "2026-09-07T15:02:30.921Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51806933",
@@ -272,7 +281,9 @@
       "room_number": "206A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 206A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31967492",
@@ -325,7 +336,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21286420",
@@ -380,7 +393,9 @@
       "room_number": "205B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 205B (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51305114",
@@ -435,7 +450,9 @@
       "room_number": "205A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 205A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "19850101251846",
@@ -490,7 +507,10 @@
       "room_number": "204B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 204B (Lantai 2)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41245348",
@@ -545,7 +565,9 @@
       "room_number": "204A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 204A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31105728",
@@ -598,7 +620,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21122807",
@@ -654,7 +678,9 @@
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 203B (Lantai 2)",
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T14:49:56.758Z"
+      "waktu_kehadiran_pertama": "2026-09-07T14:49:56.758Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51623269",
@@ -709,7 +735,9 @@
       "room_number": "203A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 203A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "19850101962662",
@@ -764,7 +792,10 @@
       "room_number": "202B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 202B (Lantai 2)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41457976",
@@ -819,7 +850,9 @@
       "room_number": "202A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 202A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31669632",
@@ -872,7 +905,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21513834",
@@ -928,7 +963,9 @@
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 201B (Lantai 2)",
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T14:35:26.071Z"
+      "waktu_kehadiran_pertama": "2026-09-07T14:35:26.071Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51257489",
@@ -983,7 +1020,9 @@
       "room_number": "201A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 201A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "19850101870460",
@@ -1038,7 +1077,10 @@
       "room_number": "108A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 108A (Lantai 1)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41735962",
@@ -1093,7 +1135,9 @@
       "room_number": "107B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 107B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31629233",
@@ -1146,7 +1190,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21657079",
@@ -1202,7 +1248,9 @@
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 107A (Lantai 1)",
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T14:11:10.369Z"
+      "waktu_kehadiran_pertama": "2026-09-07T14:11:10.369Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51971214",
@@ -1257,7 +1305,9 @@
       "room_number": "106B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 106B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31158533",
@@ -1310,7 +1360,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21125583",
@@ -1365,7 +1417,9 @@
       "room_number": "106A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 106A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51109886",
@@ -1420,7 +1474,9 @@
       "room_number": "105B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 105B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "41999999",
@@ -1475,7 +1531,9 @@
       "room_number": "105A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 105A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31743771",
@@ -1528,7 +1586,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21452796",
@@ -1583,7 +1643,9 @@
       "room_number": "104B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 104B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51779506",
@@ -1638,7 +1700,9 @@
       "room_number": "104A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 104A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31251548",
@@ -1691,7 +1755,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21909967",
@@ -1746,7 +1812,9 @@
       "room_number": "103B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 103B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51332565",
@@ -1801,7 +1869,9 @@
       "room_number": "103A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 103A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "19850101208380",
@@ -1856,7 +1926,10 @@
       "room_number": "102B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 102B (Lantai 1)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41813835",
@@ -1911,7 +1984,9 @@
       "room_number": "102A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 102A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31566955",
@@ -1964,7 +2039,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21669973",
@@ -2019,7 +2096,9 @@
       "room_number": "101B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 101B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51474808",
@@ -2074,7 +2153,9 @@
       "room_number": "101A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 101A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "19850101771474",
@@ -2129,7 +2210,10 @@
       "room_number": "208B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 208B (Lantai 2)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41703854",
@@ -2184,7 +2268,9 @@
       "room_number": "208A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 208A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31129494",
@@ -2237,7 +2323,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21314745",
@@ -2293,7 +2381,9 @@
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 207B (Lantai 2)",
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T13:58:43.059Z"
+      "waktu_kehadiran_pertama": "2026-09-07T13:58:43.059Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51198825",
@@ -2348,7 +2438,9 @@
       "room_number": "207A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 207A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "19850101914701",
@@ -2403,7 +2495,10 @@
       "room_number": "206B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 206B (Lantai 2)",
-      "emailSent": true
+      "emailSent": false,
+      "email_status": "BOUNCED",
+      "last_email_error": "550 5.1.1 Recipient address rejected: User unknown",
+      "email_retry_count": 0
     },
     {
       "nrp": "41954411",
@@ -2458,7 +2553,9 @@
       "room_number": "206A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 206A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31273970",
@@ -2511,7 +2608,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21798533",
@@ -2566,7 +2665,9 @@
       "room_number": "205B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 205B (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51477665",
@@ -2621,7 +2722,9 @@
       "room_number": "205A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 205A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "41942127",
@@ -2676,7 +2779,9 @@
       "room_number": "204B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 204B (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31709618",
@@ -2729,7 +2834,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21269077",
@@ -2784,7 +2891,9 @@
       "room_number": "204A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 204A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51310342",
@@ -2839,7 +2948,9 @@
       "room_number": "203B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 203B (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31415808",
@@ -2892,7 +3003,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21993744",
@@ -2947,7 +3060,9 @@
       "room_number": "203A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 203A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51558769",
@@ -3002,7 +3117,9 @@
       "room_number": "202B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 202B (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31544635",
@@ -3055,7 +3172,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21472435",
@@ -3110,7 +3229,9 @@
       "room_number": "202A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 202A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51908636",
@@ -3165,7 +3286,9 @@
       "room_number": "201B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 201B (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31983170",
@@ -3218,7 +3341,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21125112",
@@ -3273,7 +3398,9 @@
       "room_number": "201A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 201A (Lantai 2)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51463110",
@@ -3328,7 +3455,9 @@
       "room_number": "108B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 108B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31505597",
@@ -3381,7 +3510,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21345045",
@@ -3436,7 +3567,9 @@
       "room_number": "107B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 107B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51311180",
@@ -3491,7 +3624,9 @@
       "room_number": "107A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 107A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31909189",
@@ -3544,7 +3679,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21132395",
@@ -3599,7 +3736,9 @@
       "room_number": "106B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 106B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51309332",
@@ -3654,7 +3793,9 @@
       "room_number": "106A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 106A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31768717",
@@ -3707,7 +3848,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21834413",
@@ -3762,7 +3905,9 @@
       "room_number": "105B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 105B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51275459",
@@ -3817,7 +3962,9 @@
       "room_number": "105A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 105A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "41664775",
@@ -3872,7 +4019,9 @@
       "room_number": "104B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 104B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "31818403",
@@ -3925,7 +4074,9 @@
       "room_number": "-",
       "bed_number": 0,
       "wisma_assignment": "Tidak Menginap",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "21205948",
@@ -3980,7 +4131,9 @@
       "room_number": "104A",
       "bed_number": 1,
       "wisma_assignment": "Wisma Kartika - Kamar 104A (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "51622417",
@@ -4035,7 +4188,9 @@
       "room_number": "103B",
       "bed_number": 2,
       "wisma_assignment": "Wisma Kartika - Kamar 103B (Lantai 1)",
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "1181822",
@@ -4079,7 +4234,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T13:26:58.260Z"
       },
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "NIP-277411",
@@ -4122,7 +4279,9 @@
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T13:21:31.341Z"
       },
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "99584927",
@@ -4168,7 +4327,9 @@
         "assigned_at": "2026-09-07T13:21:22.061Z"
       },
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T13:21:30.756Z"
+      "waktu_kehadiran_pertama": "2026-09-07T13:21:30.756Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "NIP-471738",
@@ -4211,7 +4372,9 @@
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:40:37.231Z"
       },
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "99247679",
@@ -4257,7 +4420,9 @@
         "assigned_at": "2026-09-07T12:40:31.535Z"
       },
       "emailSent": true,
-      "waktu_kehadiran_pertama": "2026-09-07T12:40:37.080Z"
+      "waktu_kehadiran_pertama": "2026-09-07T12:40:37.080Z",
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "99262050",
@@ -4302,7 +4467,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T12:39:48.332Z"
       },
-      "emailSent": true
+      "emailSent": true,
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "111111",
@@ -4347,7 +4514,9 @@
         "room_code": "104 (A)",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T12:18:37.308Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "-",
@@ -4392,7 +4561,9 @@
         "room_code": "103 (A)",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T11:24:47.548Z"
-      }
+      },
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "-",
@@ -4435,7 +4606,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:06.777Z"
-      }
+      },
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "----",
@@ -4485,7 +4658,9 @@
         "room_code": "105A",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T12:38:06.905Z"
-      }
+      },
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "NON-TNI",
@@ -4535,7 +4710,9 @@
         "room_code": "202B",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.064Z"
-      }
+      },
+      "email_status": "SENT",
+      "email_retry_count": 0
     },
     {
       "nrp": "TEST-112981",
@@ -4585,7 +4762,9 @@
         "room_code": "203A",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.138Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "113599",
@@ -4632,7 +4811,9 @@
         "room_code": "203B",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.233Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "668935",
@@ -4675,7 +4856,9 @@
         "room_code": "101 (A)",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T09:03:27.638Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "888313",
@@ -4719,7 +4902,9 @@
         "room_code": "102 (A)",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T11:15:44.129Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "991161",
@@ -4758,7 +4943,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:07.473Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "115417",
@@ -4803,7 +4990,9 @@
         "room_code": "204A",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.608Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "117507",
@@ -4848,7 +5037,9 @@
         "room_code": "204B",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.729Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "113686",
@@ -4893,7 +5084,9 @@
         "room_code": "205A",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.798Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "nrp": "1105999",
@@ -4938,7 +5131,9 @@
         "room_code": "205B",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:07.892Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_519284",
@@ -4978,7 +5173,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:07.959Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_520193",
@@ -5018,7 +5215,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:08.068Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_521876",
@@ -5058,7 +5257,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:08.147Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_522431",
@@ -5097,7 +5298,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:08.211Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_1965010190",
@@ -5137,7 +5340,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:08.292Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_524901",
@@ -5181,7 +5386,9 @@
         "room_code": "206A",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:08.360Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_525112",
@@ -5224,7 +5431,9 @@
         "room_code": "201A",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:08.470Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_526330",
@@ -5264,7 +5473,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:08.536Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_527441",
@@ -5307,7 +5518,9 @@
         "room_code": "201B",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:08.611Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_531024",
@@ -5347,7 +5560,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:08.700Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_1102941",
@@ -5390,7 +5605,9 @@
         "room_code": "202A",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:08.792Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_1103852",
@@ -5433,7 +5650,9 @@
         "room_code": "206B",
         "room_floor": "Lantai 2",
         "assigned_at": "2026-09-07T12:38:08.875Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_1104921",
@@ -5476,7 +5695,9 @@
         "room_code": "101A",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-07T12:38:08.981Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_1105819",
@@ -5515,7 +5736,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:09.076Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     },
     {
       "id": "guest_defus091",
@@ -5555,7 +5778,9 @@
         "room_code": "-",
         "room_floor": "Tidak Menginap",
         "assigned_at": "2026-09-07T12:38:09.171Z"
-      }
+      },
+      "email_status": "PENDING",
+      "email_retry_count": 0
     }
   ],
   "seat_groups": [
@@ -6313,7 +6538,12 @@
       "seat_number": "B-24",
       "row_num": 3,
       "col_num": 8,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "peserta_id": "guest_1788965540887_ajn4d2d",
+      "kategori_instansi": "ANGKATAN_DARAT",
+      "colorAlias": "green",
+      "warna": "green",
+      "status": "ASSIGNED"
     },
     {
       "id": "seat_c_1",
@@ -11766,6 +11996,36 @@
       "bed_number": 2,
       "room_floor": "Lantai 2",
       "assigned_at": "2026-09-07T15:02:22.262Z"
+    },
+    {
+      "id": "assign_guest_1788965540887_ajn4d2d",
+      "peserta_id": "guest_1788965540887_ajn4d2d",
+      "seat_code": "B-24",
+      "seat_area": "Ruang Sidang Utama",
+      "gedung": "Gedung Ahmad Yani",
+      "building": "Gedung Ahmad Yani",
+      "room": "Ruang Sidang Utama",
+      "seat_row": "B",
+      "seat_num": "24",
+      "wisma_name": "Tidak Menginap",
+      "room_code": "-",
+      "room_number": "-",
+      "bed_number": 0,
+      "room_floor": "Tidak Menginap",
+      "assigned_at": "2026-09-09T14:52:20.908Z"
+    }
+  ],
+  "email_logs": [
+    {
+      "id": "elog_1788965540925_9nu0y",
+      "guest_id": "guest_1788965540887_ajn4d2d",
+      "email": "kolonel.test@tni.mil.id",
+      "subject": "[RAPIM TNI 2026] E-Ticket Registrasi - Kolonel Kolonel Test Sim",
+      "status": "SENT",
+      "error_message": "[DEV MODE SIMULATED]",
+      "message_id": "sim_1788965540925_vvns",
+      "provider": "simulated_dev_mode",
+      "sent_at": "2026-09-09T14:52:20.925Z"
     }
   ]
 }

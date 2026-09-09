@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { mysqlAdapter } from '@/lib/db/mysql';
 import { generateTicketPdf } from '@/lib/pdf/ticketPdf';
-import { sendTicketEmail } from '@/lib/email/mailer';
+import { sendTicketEmail, isValidEmailFormat } from '@/lib/email/mailer';
 import { checkRateLimit, escapeHtml, isValidNRP, isValidPhone } from '@/lib/security/sanitizer';
 import { TNI_RANKS } from '@/lib/constants/ranks';
 import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
@@ -111,8 +111,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanEmail = String(email).trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
+    if (!isValidEmailFormat(cleanEmail)) {
       return NextResponse.json(
         { error: 'Format alamat email tidak valid (contoh: nama@domain.com).' },
         { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
@@ -309,25 +308,16 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const ticketUrl = `${baseUrl.replace(/\/$/, '')}/ticket/${newGuest.qr_token}`;
 
-    // Dispatch Email with E-Ticket & QR Code CID (separate try/catch, non-blocking)
-    let emailStatus: 'sent' | 'failed' = 'failed';
+    // Dispatch Email with E-Ticket & QR Code CID (strictly once, non-blocking)
+    let emailDeliveryStatus: 'PENDING' | 'SENT' | 'FAILED' | 'BOUNCED' = 'PENDING';
     if (newGuest.email) {
       try {
         console.log(`Sending ticket email to ${newGuest.email}...`);
         const mailResult = await sendTicketEmail(newGuest, ticketUrl, qrCodeBuffer, pdfBuffer);
-        if (mailResult.success) {
-          console.log(`Email sent successfully`);
-          emailStatus = 'sent';
-          db.updateGuest(newGuest.id, { emailSent: true });
-        } else {
-          console.error(`Email failed: ${mailResult.error || 'Unknown error'}`);
-          emailStatus = 'failed';
-          db.updateGuest(newGuest.id, { emailSent: false });
-        }
+        emailDeliveryStatus = mailResult.status;
       } catch (mailErr: any) {
-        console.error(`Email failed: ${mailErr?.message || mailErr}`);
-        emailStatus = 'failed';
-        db.updateGuest(newGuest.id, { emailSent: false });
+        console.error(`Email unexpected error: ${mailErr?.message || mailErr}`);
+        emailDeliveryStatus = 'FAILED';
       }
     }
 
@@ -357,7 +347,8 @@ export async function POST(req: NextRequest) {
       bed_number: newGuest.bed_number,
       wisma_assignment: newGuest.wisma_assignment,
       assignment: newGuest.assignment,
-      emailSent: emailStatus === 'sent',
+      emailSent: emailDeliveryStatus === 'SENT',
+      email_status: emailDeliveryStatus,
       pdf_path: pdfPath,
       created_at: newGuest.created_at
     };
@@ -369,7 +360,7 @@ export async function POST(req: NextRequest) {
       nama: newGuest.nama,
       nrp: newGuest.nrp,
       token: newGuest.qr_token,
-      emailStatus,
+      emailStatus: emailDeliveryStatus,
       pdfPath
     });
 
@@ -379,13 +370,14 @@ export async function POST(req: NextRequest) {
       registrationId: newGuest.registration_id,
       ticketId: newGuest.ticket_id,
       token: newGuest.qr_token,
-      emailStatus,
+      emailStatus: emailDeliveryStatus,
       qrCode: qrDataUrl,
       pdfUrl: pdfPath,
       participant: participantData,
       guest: {
         ...newGuest,
-        emailSent: emailStatus === 'sent',
+        emailSent: emailDeliveryStatus === 'SENT',
+        email_status: emailDeliveryStatus,
         registration_id: newGuest.registration_id,
         ticket_id: newGuest.ticket_id,
         pdf_path: pdfPath

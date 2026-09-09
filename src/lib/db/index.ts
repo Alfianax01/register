@@ -11,7 +11,9 @@ import {
   AdminUser,
   AuditLog,
   MatraType,
-  Assignment
+  Assignment,
+  EmailLog,
+  EmailDeliveryStatus
 } from '@/types';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
@@ -49,6 +51,7 @@ interface DatabaseSchema {
   admins: AdminUser[];
   audit_logs: AuditLog[];
   assignments?: Assignment[];
+  email_logs?: EmailLog[];
 }
 
 // Initial Groups
@@ -575,6 +578,25 @@ class DatabaseManager {
             modified = true;
           }
         }
+        // Initialize email delivery status if absent
+        if (!g.email_status) {
+          if (g.email && g.email.toLowerCase().includes('hendrawan.') && g.email.toLowerCase().includes('@kemhan.go.id')) {
+            g.email_status = 'BOUNCED';
+            g.last_email_error = '550 5.1.1 Recipient address rejected: User unknown';
+            g.emailSent = false;
+            modified = true;
+          } else if (g.emailSent) {
+            g.email_status = 'SENT';
+            modified = true;
+          } else {
+            g.email_status = 'PENDING';
+            modified = true;
+          }
+        }
+        if (g.email_retry_count === undefined) {
+          g.email_retry_count = 0;
+          modified = true;
+        }
       }
     }
 
@@ -597,6 +619,11 @@ class DatabaseManager {
 
     if (!this.data.assignments) {
       this.data.assignments = [];
+      modified = true;
+    }
+
+    if (!this.data.email_logs) {
+      this.data.email_logs = [];
       modified = true;
     }
 
@@ -806,7 +833,9 @@ class DatabaseManager {
       checkpoints,
       checkin_logs,
       admins,
-      audit_logs
+      audit_logs,
+      assignments: [],
+      email_logs: []
     };
 
     globalForDb.__TNI_EVENT_DB__ = this.data;
@@ -998,6 +1027,9 @@ class DatabaseManager {
       qr_token: token,
       token_hash: token_hash,
       status_kehadiran: 'REGISTRASI',
+      email_status: 'PENDING',
+      email_retry_count: 0,
+      emailSent: false,
       kategori_instansi: katInstansi,
       warna_kursi: warnaKursi,
       seatColorAlias: warnaKursi,
@@ -1062,6 +1094,9 @@ class DatabaseManager {
       qr_token: token,
       token_hash: token_hash,
       status_kehadiran: 'REGISTRASI',
+      email_status: 'PENDING',
+      email_retry_count: 0,
+      emailSent: false,
       kategori_instansi: katInstansi,
       warna_kursi: warnaKursi,
       seatColorAlias: warnaKursi,
@@ -1728,6 +1763,50 @@ class DatabaseManager {
     };
     this.data!.audit_logs.unshift(log);
     this.persist();
+  }
+
+  // EMAIL LOGS
+  public addEmailLog(log: Omit<EmailLog, 'id' | 'sent_at'> & { sent_at?: string }): EmailLog {
+    this.ensureInitialized();
+    if (!this.data!.email_logs) {
+      this.data!.email_logs = [];
+    }
+
+    const newLog: EmailLog = {
+      id: `elog_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      guest_id: log.guest_id,
+      email: log.email,
+      subject: log.subject,
+      status: log.status,
+      error_message: log.error_message,
+      message_id: log.message_id,
+      provider: log.provider,
+      sent_at: log.sent_at || new Date().toISOString()
+    };
+
+    this.data!.email_logs.unshift(newLog);
+    // Retain maximum 500 email logs to prevent JSON file bloat
+    if (this.data!.email_logs.length > 500) {
+      this.data!.email_logs = this.data!.email_logs.slice(0, 500);
+    }
+    this.persist();
+
+    return newLog;
+  }
+
+  public getEmailLogs(guestId?: string, limit: number = 50): EmailLog[] {
+    this.ensureInitialized();
+    if (!this.data!.email_logs) {
+      this.data!.email_logs = [];
+    }
+    if (guestId) {
+      return this.data!.email_logs.filter(l => l.guest_id === guestId).slice(0, limit);
+    }
+    return this.data!.email_logs.slice(0, limit);
+  }
+
+  public async getEmailLogsAsync(guestId?: string, limit: number = 50): Promise<EmailLog[]> {
+    return this.getEmailLogs(guestId, limit);
   }
 }
 
