@@ -1764,8 +1764,9 @@ class DatabaseManager {
 
     const cp = this.data!.checkpoints.find(c => c.code === checkpointCode) || this.data!.checkpoints[0];
 
-    // Check if previously scanned at THIS checkpoint
-    const existingLog = this.data!.checkin_logs.find(l => l.guest_id === guestId && l.checkpoint_code === checkpointCode);
+    // Check if previously checked in
+    const isAlreadyCheckedIn = guest.status_kehadiran === 'CHECK-IN' || guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
+    const existingLog = this.data!.checkin_logs.find(l => l.guest_id === guestId);
     const now = new Date().toISOString();
 
     const log: CheckinLog = {
@@ -1783,31 +1784,32 @@ class DatabaseManager {
       ip_address: ip
     };
 
-    this.data!.checkin_logs.unshift(log);
+    if (!isAlreadyCheckedIn) {
+      this.data!.checkin_logs.unshift(log);
 
-    // Update guest presence
-    guest.status_kehadiran = 'CHECK_IN';
-    guest.status_kehadiran = 'CHECK-IN';
-    if (!guest.waktu_kehadiran_pertama) {
-      guest.waktu_kehadiran_pertama = now;
-    }
-    guest.updated_at = now;
+      // Update guest presence
+      guest.status_kehadiran = 'CHECK-IN';
+      if (!guest.waktu_kehadiran_pertama) {
+        guest.waktu_kehadiran_pertama = now;
+      }
+      guest.updated_at = now;
 
-    // Update seat presence to CHECK_IN (Never modify or overwrite seat assignment)
-    const checkinSeat = this.data!.seats.find(s => s.guest_id === guest.id || s.peserta_id === guest.id || (guest.seat_number && s.seat_number === guest.seat_number));
-    if (checkinSeat) {
-      checkinSeat.guest_status = 'CHECK_IN';
-      checkinSeat.status = 'CHECK_IN';
-      checkinSeat.guest_id = guest.id;
-      checkinSeat.peserta_id = guest.id;
-    }
+      // Update seat presence to CHECK_IN (Never modify or overwrite seat assignment)
+      const checkinSeat = this.data!.seats.find(s => s.guest_id === guest.id || s.peserta_id === guest.id || (guest.seat_number && s.seat_number === guest.seat_number));
+      if (checkinSeat) {
+        checkinSeat.guest_status = 'CHECK_IN';
+        checkinSeat.status = 'CHECK_IN';
+        checkinSeat.guest_id = guest.id;
+        checkinSeat.peserta_id = guest.id;
+      }
 
-    this.persist();
+      this.persist();
 
-    if (postgresAdapter.isAvailable()) {
-      postgresAdapter.saveCheckinLog(log).catch(console.error);
-      postgresAdapter.saveGuest(guest).catch(console.error);
-      postgresAdapter.saveSeatsAndRooms(this.data!.seats, this.data!.accommodations).catch(console.error);
+      if (postgresAdapter.isAvailable()) {
+        postgresAdapter.saveCheckinLog(log).catch(console.error);
+        postgresAdapter.saveGuest(guest).catch(console.error);
+        postgresAdapter.saveSeatsAndRooms(this.data!.seats, this.data!.accommodations).catch(console.error);
+      }
     }
 
     console.log("DATA TERSIMPAN:", {
@@ -1820,10 +1822,10 @@ class DatabaseManager {
 
     return {
       success: true,
-      alreadyCheckedIn: !!existingLog,
+      alreadyCheckedIn: isAlreadyCheckedIn,
       guest,
       log,
-      previousTimestamp: existingLog?.scanned_at
+      previousTimestamp: existingLog?.scanned_at || guest.waktu_kehadiran_pertama || undefined
     };
   }
 
@@ -1832,7 +1834,7 @@ class DatabaseManager {
     this.ensureInitialized();
     const guests = this.data!.guests;
     const totalGuests = guests.length;
-    const presentGuests = guests.filter(g => g.status_kehadiran === 'CHECK_IN').length;
+    const presentGuests = guests.filter(g => g.status_kehadiran === 'CHECK-IN' || g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR').length;
     const absentGuests = totalGuests - presentGuests;
     const percentagePresent = totalGuests > 0 ? Math.round((presentGuests / totalGuests) * 100) : 0;
 

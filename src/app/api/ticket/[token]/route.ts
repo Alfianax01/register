@@ -22,6 +22,7 @@ export async function GET(
     }
 
     const isCheckIn = guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
+    const isCheckIn = guest.status_kehadiran === 'CHECK-IN' || guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
 
     // 1. Assignment Data (ALWAYS available for both REGISTRASI and CHECK_IN)
     let assignment = db.findAssignmentByGuestId(guest.id);
@@ -119,6 +120,7 @@ export async function GET(
         email: guest.email,
         qr_token: guest.qr_token,
         status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
+        status_kehadiran: isCheckIn ? 'CHECK-IN' : 'TEREGISTRASI',
         waktu_kehadiran_pertama: isCheckIn ? guest.waktu_kehadiran_pertama : null,
         registered_at: (guest as any).registered_at || guest.created_at,
         created_at: guest.created_at,

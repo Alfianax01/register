@@ -79,14 +79,20 @@ export default function CheckinPage() {
     setErrorMsg('');
 
     try {
-      const isUUID = /^[0-9a-fA-F-]{36}$/.test(scannedText.trim());
+      let cleanInput = scannedText.trim();
+      if (cleanInput.includes('/ticket/')) {
+        const parts = cleanInput.split('/ticket/');
+        cleanInput = parts[parts.length - 1].split('?')[0].split('/')[0].trim();
+      }
+
+      const isUUID = /^[0-9a-fA-F-]{36}$/.test(cleanInput);
 
       const res = await fetch('/api/checkin/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          token: isUUID ? scannedText.trim() : undefined,
-          nrp: !isUUID ? scannedText.trim() : undefined,
+          token: cleanInput,
+          nrp: !isUUID ? cleanInput : undefined,
           checkpoint_code: selectedCheckpoint
         })
       });

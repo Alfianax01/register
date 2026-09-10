@@ -95,9 +95,26 @@ export async function POST(req: NextRequest) {
     }
 
     // Sync to MySQL if configured
+    let myGuest = null;
+    let alreadyCheckedIn = result.alreadyCheckedIn;
+    let previousTimestamp = result.previousTimestamp;
+    let previousGate = (guest.checkin_gate) || 'Gate 1';
+
     if (mysqlAdapter.isConfigured()) {
       try {
-        await mysqlAdapter.recordCheckin(guest.qr_token || guest.registration_id || guest.id, checkpoint, adminUser.nama);
+        const myResult = await mysqlAdapter.recordCheckin(
+          guest.qr_token || guest.registration_id || guest.id,
+          checkpoint,
+          adminUser.nama
+        );
+        if (myResult.alreadyCheckedIn) {
+          alreadyCheckedIn = true;
+          if (myResult.previousTimestamp) previousTimestamp = myResult.previousTimestamp;
+          if (myResult.previousGate) previousGate = myResult.previousGate;
+        }
+        if (myResult.guest) {
+          myGuest = myResult.guest;
+        }
         if (assignment) {
           await mysqlAdapter.saveAssignment(assignment);
         }
@@ -111,7 +128,7 @@ export async function POST(req: NextRequest) {
       adminUser.id,
       session?.username || 'petugas_gate',
       'CHECKIN_SCAN',
-      `Check-in tamu ${guest.nama} (${guest.pangkat} / NRP ${guest.nrp}) di ${checkpoint} - ${result.alreadyCheckedIn ? 'RE-SCAN' : 'FIRST SCAN'}`,
+      `Check-in tamu ${guest.nama} (${guest.pangkat} / NRP ${guest.nrp}) di ${checkpoint} - ${alreadyCheckedIn ? 'RE-SCAN' : 'FIRST SCAN'}`,
       ip
     );
 
@@ -131,22 +148,31 @@ export async function POST(req: NextRequest) {
     };
 
     // Kirim email notifikasi post check-in secara background asinkron
-    if (assignment && result.guest.email && !result.alreadyCheckedIn) {
-      sendPostCheckInEmail(result.guest, assignment, checkinDetails).catch(emailErr => {
+    if (assignment && (myGuest?.email || guest.email) && !alreadyCheckedIn) {
+      sendPostCheckInEmail(myGuest || guest, assignment, checkinDetails).catch(emailErr => {
         console.warn('[Mailer] Post-checkin email dispatch failed:', emailErr);
       });
     }
 
+    const finalGuest = myGuest || {
+      ...guest,
+      ...result.guest,
+      status_kehadiran: 'CHECK-IN',
+      checkin_gate: checkpoint,
+      checkin_time: result.guest.checkin_time || new Date().toISOString()
+    };
+
     return NextResponse.json({
       success: true,
-      alreadyCheckedIn: result.alreadyCheckedIn,
-      previousTimestamp: result.previousTimestamp,
+      alreadyCheckedIn,
+      previousTimestamp,
+      previousGate,
       guest: {
-        ...result.guest,
-        status_kehadiran: 'CHECK_IN',
-        assignment: assignment || null
+        ...finalGuest,
+        status_kehadiran: 'CHECK-IN',
+        assignment: assignment || finalGuest.assignment || null
       },
-      assignment: assignment || null,
+      assignment: assignment || finalGuest.assignment || null,
       checkin_details: checkinDetails,
       log: result.log
     });

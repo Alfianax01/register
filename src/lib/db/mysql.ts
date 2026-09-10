@@ -562,19 +562,24 @@ class MySQLAdapter {
     tokenOrId: string,
     gate: string = 'Gate Utama Hankam',
     petugas: string = 'Petugas Gate'
-  ): Promise<{ success: boolean; guest?: Guest; error?: string }> {
+  ): Promise<{ success: boolean; guest?: Guest; alreadyCheckedIn?: boolean; previousTimestamp?: string; previousGate?: string; error?: string }> {
     const pool = this.getPool();
     if (!pool) return { success: false, error: 'Database MySQL tidak terhubung' };
     await this.initSchema();
 
-    const guest = (await this.getGuestByToken(tokenOrId)) || (await this.getGuestById(tokenOrId));
+    const guest = (await this.getGuestByToken(tokenOrId)) || (await this.getGuestById(tokenOrId)) || (await this.getGuestByNRP(tokenOrId));
     if (!guest) {
       return { success: false, error: 'Data peserta tidak ditemukan dengan token atau ID tersebut' };
     }
 
-    if (guest.status_kehadiran === 'CHECK_IN') {
+    const isAlreadyCheckedIn = guest.status_kehadiran === 'CHECK-IN' || guest.status_kehadiran === 'CHECK_IN' || (guest as any).status_kehadiran === 'HADIR';
+
+    if (isAlreadyCheckedIn) {
       return {
         success: true,
+        alreadyCheckedIn: true,
+        previousTimestamp: guest.checkin_time || guest.waktu_kehadiran_pertama,
+        previousGate: guest.checkin_gate || 'Gate Utama',
         guest,
         error: `Peserta ${guest.nama} sudah melakukan check-in sebelumnya pada ${guest.checkin_time || 'sesi sebelumnya'}.`
       };
@@ -593,7 +598,11 @@ class MySQLAdapter {
       );
 
       const updated = await this.getGuestById(guest.id);
-      return { success: true, guest: updated || undefined };
+      return {
+        success: true,
+        alreadyCheckedIn: false,
+        guest: updated || { ...guest, status_kehadiran: 'CHECK-IN', checkin_gate: gate, checkin_time: now.toISOString() }
+      };
     } catch (err: any) {
       console.error('[MySQL] Gagal recordCheckin:', err);
       return { success: false, error: err.message || 'Gagal menyimpan check-in ke database' };
