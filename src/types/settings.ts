@@ -14,6 +14,7 @@ export interface SiteSettings {
 
   // Form Registration Labels
   label_nama: string;
+  label_negara?: string;
   label_matra: string;
   label_pangkat: string;
   label_nrp: string;
@@ -36,10 +37,11 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   hero_banner: '',
 
   label_nama: 'Nama Lengkap & Gelar',
+  label_negara: 'Negara',
   label_matra: 'Matra / Kategori',
   label_pangkat: 'Pangkat Kedinasan',
   label_nrp: 'NRP / NIP (Opsional)',
-  label_jabatan: 'Jabatan Kedinasan',
+  label_jabatan: 'Kedinasan',
   label_satker: 'Satker / Kesatuan Asal',
   label_email: 'Alamat Email Kedinasan',
   label_phone: 'Nomor WhatsApp / HP Aktif',

@@ -82,14 +82,7 @@ export async function POST(req: NextRequest) {
 
     if (!jabatan || !String(jabatan).trim()) {
       return NextResponse.json(
-        { error: 'Jabatan kedinasan wajib diisi.' },
-        { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-      );
-    }
-
-    if (!satker) {
-      return NextResponse.json(
-        { error: 'Satuan kerja (Satker) wajib dipilih.' },
+        { error: 'Kedinasan wajib diisi.' },
         { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
@@ -179,10 +172,15 @@ export async function POST(req: NextRequest) {
     const rankObj = TNI_RANKS.find(r => r.name === pangkat);
     const pangkat_level = rankObj ? rankObj.level : (matra === 'NON_TNI' ? 8 : 10);
 
+    const cleanSatker = satker && String(satker).trim() ? String(satker).trim() : 'Mabes TNI';
+    const cleanSatuan = satuan && String(satuan).trim() ? String(satuan).trim() : cleanSatker;
+    const cleanNegara = negara_instansi && String(negara_instansi).trim() ? String(negara_instansi).trim() : 'Indonesia';
+
     // Calculate instansi category and seat color alias
-    const kategori_instansi = getInstansiCategory(matra || satker);
+    const kategori_instansi = getInstansiCategory(matra || cleanSatker);
     const warna_kursi = getSeatColorAlias(kategori_instansi);
 
+    // Accommodation is decided after check-in, default to 0/false on public registration
     const wantsAccommodation = butuh_akomodasi === true || butuh_akomodasi === 1 || butuh_akomodasi === '1' || butuh_akomodasi === 'true' || butuh_akomodasi === 'ya' || butuh_akomodasi === 'Ya';
 
     // Sanitize user inputs safely and persist atomically with retry & post-insert verification
@@ -193,9 +191,9 @@ export async function POST(req: NextRequest) {
       pangkat: escapeHtml(pangkat),
       pangkat_level,
       jabatan: escapeHtml(jabatan),
-      satker: escapeHtml(satker),
-      satuan: escapeHtml(satuan || satker),
-      negara_instansi: escapeHtml(negara_instansi || 'Indonesia / TNI - Kemhan RI'),
+      satker: escapeHtml(cleanSatker),
+      satuan: escapeHtml(cleanSatuan),
+      negara_instansi: escapeHtml(cleanNegara),
       no_hp: no_hp ? escapeHtml(no_hp) : undefined,
       email: escapeHtml(email),
       butuh_akomodasi: wantsAccommodation ? 1 : 0,

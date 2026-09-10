@@ -310,10 +310,11 @@ export default function WebsiteCMSPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
                 {[
                   { field: 'label_nama' as keyof SiteSettings, label: 'Label Nama Lengkap' },
+                  { field: 'label_negara' as keyof SiteSettings, label: 'Label Negara' },
                   { field: 'label_matra' as keyof SiteSettings, label: 'Label Matra / Kategori' },
                   { field: 'label_pangkat' as keyof SiteSettings, label: 'Label Pangkat Kedinasan' },
                   { field: 'label_nrp' as keyof SiteSettings, label: 'Label NRP / NIP' },
-                  { field: 'label_jabatan' as keyof SiteSettings, label: 'Label Jabatan Kedinasan' },
+                  { field: 'label_jabatan' as keyof SiteSettings, label: 'Label Kedinasan' },
                   { field: 'label_satker' as keyof SiteSettings, label: 'Label Satker / Kesatuan Asal' },
                   { field: 'label_email' as keyof SiteSettings, label: 'Label Alamat Email' },
                   { field: 'label_phone' as keyof SiteSettings, label: 'Label Nomor WhatsApp / HP' },

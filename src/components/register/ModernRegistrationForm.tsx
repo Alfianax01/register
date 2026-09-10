@@ -13,7 +13,7 @@ import {
   User,
   Shield,
   Briefcase,
-  Building2,
+  Globe,
   Phone,
   Mail,
   CheckCircle2,
@@ -31,14 +31,14 @@ const INITIAL_FORM_DATA = {
   nama: '',
   no_hp: '',
   email: '',
-  negara_instansi: 'Indonesia / TNI - Kemhan RI',
+  negara_instansi: 'Indonesia',
   matra: 'AD' as MatraType,
   nrp: '',
   pangkat: 'Jenderal TNI',
   jabatan: '',
-  satker: 'Mabes TNI AD (Jakarta Pusat)',
-  satuan: 'Staf Umum Kasad',
-  butuh_akomodasi: 'ya'
+  satker: 'Mabes TNI',
+  satuan: 'Staf Umum',
+  butuh_akomodasi: 'tidak'
 };
 
 interface ModernRegistrationFormProps {
@@ -119,6 +119,12 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       }
     }
 
+    if (field === 'negara_instansi') {
+      if (!val.trim()) {
+        err = 'Negara wajib diisi.';
+      }
+    }
+
     if (field === 'nrp') {
       if (val.trim() && formData.matra !== 'NON_TNI' && !isValidNRP(val)) {
         err = 'Format NRP tidak valid (5-20 karakter alfanumerik).';
@@ -126,7 +132,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     }
 
     if (field === 'jabatan' && !val.trim()) {
-      err = 'Jabatan dinas wajib diisi.';
+      err = 'Kedinasan wajib diisi.';
     }
 
     setErrors(prev => {
@@ -154,8 +160,8 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       ...prev,
       matra,
       pangkat: ranks[0]?.name || '',
-      satker: firstSatker?.name || '',
-      satuan: firstSatker?.satuans[0] || '',
+      satker: firstSatker?.name || 'Mabes TNI',
+      satuan: firstSatker?.satuans[0] || 'Staf Umum',
       nrp: prev.nrp === 'NON-TNI' ? '' : prev.nrp
     }));
   };
@@ -164,10 +170,11 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     const isNamaValid = validateField('nama', formData.nama);
     const isEmailValid = validateField('email', formData.email);
     const isPhoneValid = validateField('no_hp', formData.no_hp);
+    const isNegaraValid = validateField('negara_instansi', formData.negara_instansi);
     const isNrpValid = !formData.nrp?.trim() || validateField('nrp', formData.nrp);
     const isJabatanValid = validateField('jabatan', formData.jabatan);
 
-    return isNamaValid && isEmailValid && isPhoneValid && isNrpValid && isJabatanValid;
+    return isNamaValid && isEmailValid && isPhoneValid && isNegaraValid && isNrpValid && isJabatanValid;
   };
 
   const handleSubmit = async () => {
@@ -186,14 +193,14 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         nama: formData.nama.trim(),
         no_hp: formData.no_hp ? formData.no_hp.trim() : undefined,
         email: formData.email.trim(),
-        negara_instansi: formData.negara_instansi.trim(),
+        negara_instansi: formData.negara_instansi.trim() || 'Indonesia',
         matra: formData.matra,
         pangkat: formData.pangkat.trim(),
         nrp: formData.nrp.trim(),
         jabatan: formData.jabatan.trim(),
-        satker: formData.satker.trim(),
-        satuan: formData.satuan.trim(),
-        butuh_akomodasi: formData.butuh_akomodasi === 'ya'
+        satker: formData.satker?.trim() || 'Mabes TNI',
+        satuan: formData.satuan?.trim() || 'Staf Umum',
+        butuh_akomodasi: false
       };
 
       console.log('Frontend Submit Payload:', payload);
@@ -289,7 +296,6 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           {/* Nama Lengkap */}
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Nama Lengkap <span className="text-rose-500">*</span>
               {formLabels.label_nama || 'Nama Lengkap'} <span className="text-rose-500">*</span>
             </label>
             <Input
@@ -313,7 +319,6 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           {/* Nomor WhatsApp (Opsional) */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Nomor WhatsApp (Opsional)
               {formLabels.label_phone || 'Nomor WhatsApp (Opsional)'}
             </label>
             <div className="relative">
@@ -338,7 +343,6 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           {/* Email */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Alamat Email <span className="text-rose-500">*</span>
               {formLabels.label_email || 'Alamat Email'} <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -361,20 +365,6 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               </p>
             )}
           </div>
-
-          {/* Asal Negara / Instansi */}
-          <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Asal Negara / Instansi Induk
-            </label>
-            <Input
-              name="negara_instansi"
-              value={formData.negara_instansi}
-              onChange={handleInputChange}
-              placeholder="Indonesia / TNI - Kemhan RI"
-              className="text-xs sm:text-sm"
-            />
-          </div>
         </div>
       </div>
 
@@ -389,12 +379,37 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               Data Kedinasan &amp; Penugasan
             </h2>
             <p className="text-xs text-slate-500">
-              Kualifikasi kepangkatan militer dan penempatan satuan dinas peserta
+              Kualifikasi kepangkatan militer dan penempatan kedinasan peserta
             </p>
           </div>
         </div>
 
-        {/* Matra Selector Pills */}
+        {/* 1. Negara */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+            {formLabels.label_negara || 'Negara'} <span className="text-rose-500">*</span>
+          </label>
+          <div className="relative">
+            <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Input
+              name="negara_instansi"
+              value={formData.negara_instansi}
+              onChange={handleInputChange}
+              placeholder="Contoh: Indonesia"
+              required
+              className="pl-9 text-xs sm:text-sm"
+            />
+          </div>
+          {errors.negara_instansi ? (
+            <p className="text-[11px] text-rose-600 mt-1">{errors.negara_instansi}</p>
+          ) : (
+            <p className="text-[11px] text-slate-500 mt-1">
+              Asal negara perwakilan delegasi atau dinas resmi.
+            </p>
+          )}
+        </div>
+
+        {/* 2. Matra Selector Pills */}
         <div>
           <label className="block text-xs font-semibold text-slate-800 mb-2">
             {formLabels.label_matra || 'Matra / Kategori Kedinasan'} <span className="text-rose-500">*</span>
@@ -428,10 +443,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Pangkat */}
+          {/* 3. Pangkat */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Pangkat / Golongan <span className="text-rose-500">*</span>
               {formLabels.label_pangkat || 'Pangkat / Golongan'} <span className="text-rose-500">*</span>
             </label>
             <select
@@ -449,7 +463,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
             </select>
           </div>
 
-          {/* NRP / NIP */}
+          {/* 4. NRP / NIP */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               {formLabels.label_nrp || 'NRP / NIP (Opsional)'}
@@ -470,11 +484,10 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
             )}
           </div>
 
-          {/* Jabatan */}
+          {/* 5. Kedinasan */}
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Jabatan Kedinasan <span className="text-rose-500">*</span>
-              {formLabels.label_jabatan || 'Jabatan Kedinasan'} <span className="text-rose-500">*</span>
+              {formLabels.label_jabatan || 'Kedinasan'} <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <Briefcase className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -482,111 +495,18 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 name="jabatan"
                 value={formData.jabatan}
                 onChange={handleInputChange}
-                placeholder="Contoh: Panglima Kodam / Asops Kasad / Pejabat Tinggi"
+                placeholder="Contoh: Panglima Kodam / Asops Kasad / Pejabat Kementerian"
                 required
                 className="pl-9 text-xs sm:text-sm"
               />
             </div>
-            {errors.jabatan && (
+            {errors.jabatan ? (
               <p className="text-[11px] text-rose-600 mt-1">{errors.jabatan}</p>
+            ) : (
+              <p className="text-[11px] text-slate-500 mt-1">
+                Tuliskan jabatan kedinasan atau penugasan resmi saat ini.
+              </p>
             )}
-          </div>
-
-          {/* Satker */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Satuan Kerja (Satker) <span className="text-rose-500">*</span>
-              {formLabels.label_satker || 'Satuan Kerja (Satker)'} <span className="text-rose-500">*</span>
-            </label>
-            <select
-              name="satker"
-              value={formData.satker}
-              onChange={(e) => {
-                const newSatker = e.target.value;
-                const found = availableSatkers.find(s => s.name === newSatker);
-                setFormData(prev => ({
-                  ...prev,
-                  satker: newSatker,
-                  satuan: found?.satuans[0] || ''
-                }));
-              }}
-              aria-label="Pilih Satuan Kerja"
-              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
-            >
-              {availableSatkers.map(s => (
-                <option key={s.id} value={s.name}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sub-Satuan */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Sub-Satuan / Detasemen
-            </label>
-            <select
-              name="satuan"
-              value={formData.satuan}
-              onChange={handleInputChange}
-              aria-label="Pilih Sub-Satuan atau Detasemen"
-              className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
-            >
-              {availableSatuans.map(sub => (
-                <option key={sub} value={sub}>
-                  {sub}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Kebutuhan Akomodasi Wisma */}
-        <div className="pt-3 border-t border-slate-100">
-          <label className="block text-xs font-semibold text-slate-800 mb-2">
-            {formLabels.label_akomodasi || 'Kebutuhan Akomodasi / Menginap'} <span className="text-rose-500">*</span>
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <button
-              type="button"
-              onClick={() => setFormData(prev => ({ ...prev, butuh_akomodasi: 'ya' }))}
-              className={`flex items-start gap-2.5 p-3 rounded-lg border text-left transition-all ${
-                formData.butuh_akomodasi === 'ya'
-                  ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600 text-blue-950'
-                  : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-              }`}
-            >
-              <div className={`w-4 h-4 mt-0.5 rounded-full border flex items-center justify-center shrink-0 ${
-                formData.butuh_akomodasi === 'ya' ? 'border-blue-600 bg-blue-600' : 'border-slate-300'
-              }`}>
-                {formData.butuh_akomodasi === 'ya' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-              </div>
-              <div>
-                <span className="text-xs font-bold block">Ya, Butuh Penginapan / Wisma</span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">Kamar wisma akan dialokasikan otomatis sesuai kepangkatan dinas</span>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setFormData(prev => ({ ...prev, butuh_akomodasi: 'tidak' }))}
-              className={`flex items-start gap-2.5 p-3 rounded-lg border text-left transition-all ${
-                formData.butuh_akomodasi === 'tidak'
-                  ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600 text-blue-950'
-                  : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-              }`}
-            >
-              <div className={`w-4 h-4 mt-0.5 rounded-full border flex items-center justify-center shrink-0 ${
-                formData.butuh_akomodasi === 'tidak' ? 'border-blue-600 bg-blue-600' : 'border-slate-300'
-              }`}>
-                {formData.butuh_akomodasi === 'tidak' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-              </div>
-              <div>
-                <span className="text-xs font-bold block">Tidak Menginap</span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">Peserta hadir pulang-pergi (PP) / akomodasi mandiri</span>
-              </div>
-            </button>
           </div>
         </div>
       </div>
@@ -656,22 +576,22 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 <span className="text-slate-500 block">WhatsApp / HP:</span>
                 <span className="font-mono text-slate-900">{formData.no_hp || '(Tidak diisi)'}</span>
               </div>
-              <div>
+              <div className="col-span-2">
                 <span className="text-slate-500 block">Alamat Email:</span>
                 <span className="font-mono text-slate-900">{formData.email || '-'}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block">Instansi / Negara:</span>
-                <span className="text-slate-900">{formData.negara_instansi || '-'}</span>
               </div>
             </div>
           </div>
 
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
             <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-200">
-              Data Kedinasan
+              Data Kedinasan &amp; Penugasan
             </h4>
             <div className="grid grid-cols-2 gap-2">
+              <div>
+                <span className="text-slate-500 block">Negara:</span>
+                <span className="font-semibold text-slate-900">{formData.negara_instansi || '-'}</span>
+              </div>
               <div>
                 <span className="text-slate-500 block">Matra Dinas:</span>
                 <span className="font-bold text-slate-900">{formData.matra}</span>
@@ -684,28 +604,16 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
                 <span className="text-slate-500 block">NRP / NIP:</span>
                 <span className="font-mono font-semibold text-slate-900">{formData.nrp || '-'}</span>
               </div>
-              <div>
-                <span className="text-slate-500 block">Jabatan Dinas:</span>
-                <span className="font-semibold text-slate-900">{formData.jabatan || '-'}</span>
-              </div>
               <div className="col-span-2">
-                <span className="text-slate-500 block">Satuan Kerja / Detasemen:</span>
-                <span className="text-slate-900">{formData.satker} &bull; {formData.satuan}</span>
-              </div>
-              <div className="col-span-2 pt-2 border-t border-slate-200/80">
-                <span className="text-slate-500 block">Kebutuhan Akomodasi:</span>
-                <span className="font-semibold text-slate-900">
-                  {formData.butuh_akomodasi === 'ya'
-                    ? 'Ya — Membutuhkan Penginapan (Dialokasikan Otomatis)'
-                    : 'Tidak Menginap (Pulang-Pergi / Mandiri)'}
-                </span>
+                <span className="text-slate-500 block">Kedinasan:</span>
+                <span className="font-semibold text-slate-900">{formData.jabatan || '-'}</span>
               </div>
             </div>
           </div>
 
           <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-[11px] leading-relaxed">
             <p>
-              <strong>Informasi Alokasi Otomatis:</strong> Nomor kursi pleno Gedung Ahmad Yani dan penempatan kamar wisma akan langsung dialokasikan secara otomatis pada E-Ticket resmi Anda setelah pendaftaran dikirimkan.
+              <strong>Informasi Alokasi Otomatis:</strong> Nomor kursi pleno Gedung Ahmad Yani akan langsung dialokasikan secara otomatis pada E-Ticket resmi Anda setelah pendaftaran dikirimkan. Penempatan akomodasi/wisma akan diproses oleh panitia saat pelaksanaan check-in.
             </p>
           </div>
 
