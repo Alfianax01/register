@@ -9,6 +9,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { getSiteSettings } from '@/lib/settings/siteSettings';
+import { HeroLogo } from '@/components/home/HeroLogo';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,23 +34,19 @@ export default async function HomePage() {
         {settings.hero_banner && (
           <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/70 to-white/90 pointer-events-none" />
         )}
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5 sm:space-y-6">
-          {/* Logo Hero Jika Ada */}
-          {settings.hero_logo && (
-            <div className="flex justify-center pb-1">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={settings.hero_logo}
-                alt="Logo Hero"
-                className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-xl"
-              />
-            </div>
-          )}
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-7">
+          {/* Logo Hero Branding Container & Official Badge */}
+          <div className="flex flex-col items-center gap-4 sm:gap-5 pb-1">
+            <HeroLogo
+              logoUrl={settings.hero_logo}
+              altText={`Lambang Resmi ${settings.hero_title || 'TNI'}`}
+            />
 
-          {/* Official Institution Badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-blue-50 border border-blue-200 text-[#1E40AF] text-[12px] sm:text-[13px] font-medium tracking-wide">
-            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1E40AF]" />
-            <span>MARKAS BESAR TENTARA NASIONAL INDONESIA</span>
+            {/* Official Institution Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200 text-[#1E40AF] text-[12px] sm:text-[13px] font-semibold tracking-wide shadow-2xs">
+              <Shield className="w-4 h-4 text-[#1E40AF] flex-shrink-0" />
+              <span>MARKAS BESAR TENTARA NASIONAL INDONESIA</span>
+            </div>
           </div>
 
           {/* Main Title */}

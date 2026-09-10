@@ -160,23 +160,27 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
 
       {/* Preview Area */}
       {hasImage && (
-        <div className="relative inline-flex group">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={value}
-            alt={`Preview ${label}`}
-            className="max-h-24 max-w-[180px] object-contain rounded-lg border border-slate-200 bg-slate-50 shadow-xs p-1"
-          />
-          {/* Tombol Hapus overlay */}
-          <button
-            type="button"
-            onClick={handleRemove}
-            title="Hapus gambar"
-            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-xs opacity-0 group-hover:opacity-100 focus:opacity-100"
-            aria-label="Hapus gambar"
-          >
-            <X className="w-3 h-3" />
-          </button>
+        <div className="relative inline-flex flex-col gap-1 group">
+          <div className="relative inline-flex items-center justify-center p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={value}
+              alt={`Preview ${label}`}
+              className="max-h-24 max-w-[200px] object-contain bg-transparent block select-none"
+              style={{ backgroundColor: 'transparent', objectFit: 'contain' }}
+            />
+            {/* Tombol Hapus overlay */}
+            <button
+              type="button"
+              onClick={handleRemove}
+              title="Hapus gambar"
+              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-xs opacity-0 group-hover:opacity-100 focus:opacity-100"
+              aria-label="Hapus gambar"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+          <span className="text-[10px] text-emerald-600 font-medium">✓ Gambar terpilih</span>
         </div>
       )}
 

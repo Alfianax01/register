@@ -6,6 +6,7 @@ import { Shield, Ticket } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [navbarLogo, setNavbarLogo] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     // Load dynamic site settings if configured
@@ -14,6 +15,7 @@ export const Navbar: React.FC = () => {
       .then(data => {
         if (data?.settings?.navbar_logo) {
           setNavbarLogo(data.settings.navbar_logo);
+          setImgError(false);
         }
       })
       .catch(() => {});
@@ -22,28 +24,30 @@ export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 w-full h-[72px] bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
-        {/* Brand: [Logo] Portal RAPIM 2026 */}
+        {/* Brand: [LOGO] TENTARA NASIONAL INDONESIA Portal RAPIM 2026 */}
         <Link
           href="/"
-          className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none"
+          className="flex items-center gap-[12px] group focus:outline-none"
         >
-          {navbarLogo ? (
+          {navbarLogo && !imgError ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={navbarLogo}
-              alt="Logo RAPIM TNI 2026"
-              className="w-10 h-10 object-contain rounded-lg flex-shrink-0"
+              alt="Logo Tentara Nasional Indonesia"
+              onError={() => setImgError(true)}
+              className="w-[44px] h-[44px] object-contain flex-shrink-0 bg-transparent block select-none"
+              style={{ width: '44px', height: '44px', objectFit: 'contain', backgroundColor: 'transparent' }}
             />
           ) : (
-            <div className="w-10 h-10 rounded-lg bg-[#1E40AF] flex items-center justify-center text-white shadow-xs group-hover:bg-[#1d4ed8] transition-colors flex-shrink-0">
-              <Shield className="w-5 h-5 stroke-[2.2]" />
+            <div className="w-[44px] h-[44px] rounded-xl bg-[#1E40AF] flex items-center justify-center text-white shadow-xs group-hover:bg-[#1d4ed8] transition-colors flex-shrink-0">
+              <Shield className="w-6 h-6 stroke-[2.2]" />
             </div>
           )}
-          <div className="min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block leading-none truncate">
-              Tentara Nasional Indonesia
+          <div className="min-w-0 flex flex-col justify-center">
+            <span className="text-[11px] font-bold text-[#475569] uppercase tracking-wider block leading-tight truncate">
+              TENTARA NASIONAL INDONESIA
             </span>
-            <span className="text-[14px] sm:text-[16px] font-bold text-[#0F172A] block leading-tight mt-1 truncate">
+            <span className="text-[15px] sm:text-[16px] font-extrabold text-[#0F172A] block leading-tight mt-0.5 truncate">
               Portal RAPIM 2026
             </span>
           </div>

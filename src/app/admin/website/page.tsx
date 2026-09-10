@@ -15,8 +15,10 @@ import {
   ExternalLink,
   Sparkles,
   Building,
-  Images
+  Images,
+  Shield
 } from 'lucide-react';
+import { TniEmblem } from '@/components/emblems/TniEmblem';
 import { SiteSettings, DEFAULT_SITE_SETTINGS } from '@/types/settings';
 
 export default function WebsiteCMSPage() {
@@ -442,6 +444,123 @@ export default function WebsiteCMSPage() {
                   )}
                 </Card>
               </div>
+
+              {/* ==========================================================
+                  CARD: Pratinjau Branding Langsung (Live Preview)
+                  ========================================================== */}
+              <Card className="p-5 sm:p-6 bg-white border border-slate-200 rounded-xl space-y-6 shadow-xs">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-bold text-slate-900">Pratinjau Branding Langsung (Live Preview)</h2>
+                      <p className="text-xs text-slate-500">Tampilan real-time Navbar & Hero Logo sebelum perubahan disimpan</p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                    Real-time Preview
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Preview 1: Navbar Logo Preview */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-700 block">
+                        Navbar Logo Preview
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">44px × 44px | gap 12px</span>
+                    </div>
+                    <div className="border border-slate-200 rounded-xl overflow-hidden shadow-xs bg-slate-50">
+                      <div className="bg-slate-100 px-3 py-1.5 border-b border-slate-200 text-[10px] text-slate-500 font-mono flex items-center gap-1.5">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-red-400" />
+                          <div className="w-2 h-2 rounded-full bg-amber-400" />
+                          <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                        </div>
+                        <span>Navbar Publik (Header)</span>
+                      </div>
+                      <div className="p-4 bg-white/95 flex items-center justify-between">
+                        <div className="flex items-center gap-[12px]">
+                          {settings.navbar_logo ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={settings.navbar_logo}
+                              alt="Logo Navbar Preview"
+                              className="w-[44px] h-[44px] object-contain bg-transparent block select-none"
+                              style={{ width: '44px', height: '44px', objectFit: 'contain', backgroundColor: 'transparent' }}
+                            />
+                          ) : (
+                            <div className="w-[44px] h-[44px] rounded-xl bg-[#1E40AF] flex items-center justify-center text-white shadow-xs">
+                              <Shield className="w-6 h-6 stroke-[2.2]" />
+                            </div>
+                          )}
+                          <div className="flex flex-col justify-center">
+                            <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block leading-tight">
+                              TENTARA NASIONAL INDONESIA
+                            </span>
+                            <span className="text-[14px] font-extrabold text-[#0F172A] block leading-tight mt-0.5">
+                              Portal RAPIM 2026
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-[11px] font-semibold text-[#1E40AF] bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg shadow-2xs">
+                          Cari E-Ticket
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Preview 2: Hero Logo Preview */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-700 block">
+                        Hero Logo Preview
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">Container 24px | 96px/72px/64px</span>
+                    </div>
+                    <div className="border border-slate-200 rounded-xl overflow-hidden shadow-xs bg-slate-50">
+                      <div className="bg-slate-100 px-3 py-1.5 border-b border-slate-200 text-[10px] text-slate-500 font-mono flex items-center gap-1.5">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 rounded-full bg-red-400" />
+                          <div className="w-2 h-2 rounded-full bg-amber-400" />
+                          <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                        </div>
+                        <span>Hero Section Branding</span>
+                      </div>
+                      <div className="p-6 bg-gradient-to-b from-white to-[#f8fafc] flex flex-col items-center justify-center text-center space-y-3">
+                        {/* Premium Container */}
+                        <div
+                          className="bg-white border border-[#e2e8f0] rounded-[24px] p-[16px] shadow-sm inline-flex items-center justify-center transition-all hover:shadow-md"
+                          style={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '24px', padding: '16px' }}
+                        >
+                          {settings.hero_logo ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={settings.hero_logo}
+                              alt="Logo Hero Preview"
+                              className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] lg:w-[96px] lg:h-[96px] object-contain bg-transparent block select-none"
+                              style={{ objectFit: 'contain', backgroundColor: 'transparent' }}
+                            />
+                          ) : (
+                            <div className="w-[64px] h-[64px] sm:w-[72px] sm:h-[72px] lg:w-[96px] lg:h-[96px] flex items-center justify-center bg-transparent">
+                              <TniEmblem matra="MABES" size="lg" className="scale-110 sm:scale-125 lg:scale-150" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Institutional Badge */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#1E40AF] text-[11px] font-semibold tracking-wide shadow-2xs">
+                          <Shield className="w-3.5 h-3.5 text-[#1E40AF]" />
+                          <span>MARKAS BESAR TENTARA NASIONAL INDONESIA</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
             </div>
           )}
 
