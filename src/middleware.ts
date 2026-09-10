@@ -45,7 +45,6 @@ export async function middleware(req: NextRequest) {
       '/admin/monitoring',
       '/admin/checkin',
       '/admin/allocation',
-      '/admin/placement'
       '/admin/placement',
       '/admin/dashboard'
     ];

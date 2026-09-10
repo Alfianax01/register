@@ -239,10 +239,8 @@ export class AssignmentService {
 
     if (chosenRoom) {
       const cleanWisma = this.cleanWismaName(chosenRoom.wisma_name);
-      const roomNumber = `${chosenRoom.room_number}${chosenSlot}`;
       const roomNumber = String(chosenRoom.room_number);
       const bedNumber = chosenSlot === 'A' ? 1 : 2;
-      const roomFloor = `Lantai ${chosenRoom.floor}`;
       const roomFloor = `Lantai ${chosenRoom.floor || 1}`;
 
       return {
@@ -252,7 +250,6 @@ export class AssignmentService {
         roomId: chosenRoom.id,
         roomSlot: chosenSlot,
         roomFloor,
-        wismaAssignment: `${cleanWisma} - Kamar ${roomNumber} (${roomFloor})`
         wismaAssignment: `${cleanWisma} - Kamar ${roomNumber} (Bed ${bedNumber})`
       };
     }
@@ -260,7 +257,6 @@ export class AssignmentService {
     // If all pre-seeded rooms are filled, generate a new room number in Wisma Kartika
     const defaultWisma = pLevel <= 2 ? 'Wisma Soedirman' : 'Wisma Kartika';
     const randRoomNum = String(100 + (Math.floor(Math.random() * 20) + 1));
-    const roomNumber = `${randRoomNum}A`;
     const roomNumber = randRoomNum;
 
     return {
@@ -269,7 +265,6 @@ export class AssignmentService {
       bedNumber: 1,
       roomSlot: 'A',
       roomFloor: 'Lantai 1',
-      wismaAssignment: `${defaultWisma} - Kamar ${roomNumber} (Lantai 1)`
       wismaAssignment: `${defaultWisma} - Kamar ${roomNumber} (Bed 1)`
     };
   }
