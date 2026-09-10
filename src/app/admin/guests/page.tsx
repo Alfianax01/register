@@ -98,12 +98,12 @@ export default function GuestsPage() {
         showToast('Gagal memuat data peserta', { type: 'error' });
       }
     } finally {
-      if (!isBackground) setLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchGuests(true);
+    fetchGuests(false);
 
     const interval = setInterval(() => {
       fetchGuests(true);
@@ -507,7 +507,7 @@ export default function GuestsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
-                {loading ? (
+                {loading && guests.length === 0 ? (
                   <tr>
                     <td colSpan={11} className="py-12 text-center text-slate-400 font-mono">
                       <div className="inline-flex items-center gap-2">

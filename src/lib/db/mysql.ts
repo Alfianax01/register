@@ -180,7 +180,6 @@ class MySQLAdapter {
             \`jabatan\` VARCHAR(255) DEFAULT NULL,
             \`kesatuan\` VARCHAR(255) DEFAULT NULL,
             \`status_kehadiran\` ENUM('REGISTRASI','CHECK_IN') NOT NULL DEFAULT 'REGISTRASI',
-            \`status_kehadiran\` VARCHAR(50) NOT NULL DEFAULT 'TEREGISTRASI',
             \`seat_number\` VARCHAR(50) DEFAULT NULL,
             \`seat_block\` VARCHAR(50) DEFAULT NULL,
             \`building\` VARCHAR(100) DEFAULT NULL,
