@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifySessionToken } from '@/lib/security/auth';
 
+import { mysqlAdapter } from '@/lib/db/mysql';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const accommodations = db.getAccommodations();
+    const accommodations = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getAllRooms() : null) || db.getAccommodations();
     return NextResponse.json({ success: true, accommodations });
   } catch (err) {
     return NextResponse.json({ error: 'Gagal memuat denah wisma' }, { status: 500 });

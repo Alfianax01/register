@@ -1,51 +1,117 @@
 import mysql from 'mysql2/promise';
+import {
+  Guest,
+  Seat,
+  AccommodationRoom,
+  CheckinLog,
+  AdminUser,
+  EmailLog,
+  MatraType
+} from '@/types';
+import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
+import bcrypt from 'bcryptjs';
 
 export interface PesertaRow {
-  id: string;
-  nama_lengkap: string;
-  pangkat: string;
-  jabatan: string;
-  instansi: string;
+  id: number | string;
+  registration_id: string;
+  nama: string;
   email: string;
-  no_hp: string | null;
-  kategori_tamu: string;
+  phone: string | null;
+  matra: string | null;
+  pangkat: string | null;
   nrp: string | null;
-  matra: string;
-  qr_token: string;
+  jabatan: string | null;
+  kesatuan: string | null;
+  status_kehadiran: 'REGISTRASI' | 'CHECK_IN';
   seat_number: string | null;
-  seat_assignment?: string | null;
-  wisma_assignment?: string | null;
-  satuan?: string | null;
-  satker?: string | null;
-  status_hadir: 'REGISTRASI' | 'CHECK_IN' | 'BELUM_HADIR' | 'HADIR';
-  pdf_path: string | null;
-  created_at?: string;
-  updated_at?: string;
+  seat_block: string | null;
+  building: string | null;
+  room_name: string | null;
+  wisma_name: string | null;
+  room_number: string | null;
+  bed_number: string | null;
+  status_akomodasi: string | null;
+  checkin_gate: string | null;
+  checkin_time: string | Date | null;
+  email_status: string | null;
+  qr_token: string | null;
+  email_retry_count?: number;
+  last_email_error?: string | null;
+  created_at?: string | Date;
+  updated_at?: string | Date;
 }
 
-export interface KursiRow {
-  id: string;
-  kode_kursi: string;
-  grup: string;
-  status: 'KOSONG' | 'TERISI' | 'RESERVED';
-  peserta_id: string | null;
-  nama_lengkap?: string;
-  pangkat?: string;
-  matra?: string;
-  created_at?: string;
-  updated_at?: string;
-}
+function rowToGuest(r: any): Guest {
+  const isCheckIn = r.status_kehadiran === 'CHECK_IN' || r.status === 'CHECK_IN';
+  const matraVal = (r.matra || 'AD') as MatraType;
+  const kategori_instansi = getInstansiCategory(matraVal);
+  const warna_kursi = getSeatColorAlias(kategori_instansi);
+  const wantsStay = r.status_akomodasi === 'MENGINAP' || (r.wisma_name && r.wisma_name !== 'Tidak Menginap');
 
-export interface CheckinLogRow {
-  id: string;
-  peserta_id: string;
-  waktu_checkin: string;
-  petugas: string;
-  checkpoint: string;
-  nama_lengkap?: string;
-  pangkat?: string;
-  nrp?: string;
-  seat_number?: string;
+  const formattedCheckinTime = r.checkin_time 
+    ? (r.checkin_time instanceof Date ? r.checkin_time.toISOString() : String(r.checkin_time))
+    : undefined;
+
+  return {
+    id: String(r.id),
+    registration_id: r.registration_id || `REG-2026-${String(r.id).padStart(6, '0')}`,
+    nrp: r.nrp || '-',
+    nama: r.nama || r.nama_lengkap || '',
+    matra: matraVal,
+    pangkat: r.pangkat || 'Perwira',
+    pangkat_level: 5,
+    jabatan: r.jabatan || '-',
+    satker: r.kesatuan || r.satker || '-',
+    satuan: r.kesatuan || r.satuan || '-',
+    negara_instansi: r.negara_instansi || 'Indonesia / TNI',
+    no_hp: r.phone || r.no_hp || undefined,
+    phone: r.phone || r.no_hp || undefined,
+    kesatuan: r.kesatuan || r.satuan || undefined,
+    email: r.email || '',
+    butuh_akomodasi: wantsStay ? 1 : 0,
+    status_akomodasi: r.status_akomodasi || (wantsStay ? 'MENGINAP' : 'Tidak Menginap'),
+    tgl_checkin: r.tgl_checkin || '2026-09-04',
+    tgl_checkout: r.tgl_checkout || '2026-09-06',
+    qr_token: r.qr_token || `TNI-2026-${r.registration_id || r.id}`,
+    token: r.qr_token || `TNI-2026-${r.registration_id || r.id}`,
+    token_hash: '',
+    seat_number: r.seat_number || undefined,
+    seat_assignment: r.seat_number || undefined,
+    seat_block: r.seat_block || undefined,
+    building: r.building || 'Gedung Ahmad Yani',
+    room: r.room_name || 'Ruang Sidang Utama',
+    room_name: r.room_name || 'Ruang Sidang Utama',
+    wisma_name: r.wisma_name || (wantsStay ? 'Wisma Kartika' : 'Tidak Menginap'),
+    room_number: r.room_number || undefined,
+    bed_number: r.bed_number || undefined,
+    wisma_assignment: r.wisma_name && r.wisma_name !== 'Tidak Menginap'
+      ? `${r.wisma_name} - Kamar ${r.room_number || '-'}${r.bed_number ? ` (Bed ${r.bed_number})` : ''}`
+      : 'Tidak Menginap',
+    status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
+    checkin_gate: r.checkin_gate || undefined,
+    checkin_time: formattedCheckinTime,
+    waktu_kehadiran_pertama: formattedCheckinTime,
+    email_status: (r.email_status as any) || 'PENDING',
+    email_retry_count: r.email_retry_count ?? 0,
+    last_email_error: r.last_email_error || undefined,
+    emailSent: r.email_status === 'SENT',
+    kategori_instansi,
+    warna_kursi,
+    seatColorAlias: warna_kursi,
+    assignment: r.seat_number ? {
+      id: `assign_${r.id}`,
+      peserta_id: String(r.id),
+      seat_code: r.seat_number,
+      seat_area: r.seat_block || 'Ruang Sidang Utama',
+      gedung: r.building || 'Gedung Ahmad Yani',
+      wisma_name: r.wisma_name || 'Tidak Menginap',
+      room_code: r.room_number || '-',
+      room_floor: 'Lantai 1',
+      assigned_at: r.created_at ? (r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)) : new Date().toISOString()
+    } : undefined,
+    created_at: r.created_at ? (r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)) : new Date().toISOString(),
+    updated_at: r.updated_at ? (r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at)) : new Date().toISOString()
+  };
 }
 
 class MySQLAdapter {
@@ -68,8 +134,6 @@ class MySQLAdapter {
 
     if (!this.pool) {
       const port = Number(process.env.DB_PORT) || 3306;
-      console.log(`[MySQL] Menginisialisasi connection pool ke ${process.env.DB_HOST}:${port}/${process.env.DB_NAME}`);
-
       this.pool = mysql.createPool({
         host: process.env.DB_HOST,
         port: port,
@@ -91,11 +155,7 @@ class MySQLAdapter {
   }
 
   public async initSchema(): Promise<boolean> {
-    if (!this.isConfigured()) {
-      console.log('[MySQL] Database belum dikonfigurasi via environment variable.');
-      return false;
-    }
-
+    if (!this.isConfigured()) return false;
     if (this.initialized || this.isConnecting) return true;
     this.isConnecting = true;
 
@@ -104,193 +164,52 @@ class MySQLAdapter {
       if (!pool) return false;
 
       const connection = await pool.getConnection();
-      console.log('[MySQL] Berhasil terhubung ke database. Memeriksa skema tabel...');
-
       try {
         await connection.query(`
-          CREATE TABLE IF NOT EXISTS \`peserta\` (
-            \`id\` VARCHAR(64) NOT NULL,
-            \`nama_lengkap\` VARCHAR(255) NOT NULL,
-            \`pangkat\` VARCHAR(100) NOT NULL,
-            \`jabatan\` VARCHAR(255) NOT NULL,
-            \`instansi\` VARCHAR(255) NOT NULL,
+          CREATE TABLE IF NOT EXISTS \`guests\` (
+            \`id\` INT(11) NOT NULL AUTO_INCREMENT,
+            \`registration_id\` VARCHAR(100) NOT NULL,
+            \`nama\` VARCHAR(255) NOT NULL,
             \`email\` VARCHAR(255) NOT NULL,
-            \`no_hp\` VARCHAR(50) DEFAULT NULL,
-            \`kategori_tamu\` VARCHAR(50) NOT NULL DEFAULT 'TNI',
-            \`nrp\` VARCHAR(50) DEFAULT NULL,
-            \`matra\` VARCHAR(20) NOT NULL DEFAULT 'AD',
-            \`qr_token\` VARCHAR(100) NOT NULL,
+            \`phone\` VARCHAR(50) DEFAULT NULL,
+            \`matra\` VARCHAR(50) DEFAULT NULL,
+            \`pangkat\` VARCHAR(100) DEFAULT NULL,
+            \`nrp\` VARCHAR(100) DEFAULT NULL,
+            \`jabatan\` VARCHAR(255) DEFAULT NULL,
+            \`kesatuan\` VARCHAR(255) DEFAULT NULL,
+            \`status_kehadiran\` ENUM('REGISTRASI','CHECK_IN') NOT NULL DEFAULT 'REGISTRASI',
             \`seat_number\` VARCHAR(50) DEFAULT NULL,
-            \`seat_assignment\` VARCHAR(50) DEFAULT NULL,
-            \`wisma_assignment\` VARCHAR(100) DEFAULT NULL,
-            \`satker\` VARCHAR(100) DEFAULT NULL,
-            \`satuan\` VARCHAR(100) DEFAULT NULL,
-            \`status_hadir\` VARCHAR(20) NOT NULL DEFAULT 'REGISTRASI',
-            \`pdf_path\` VARCHAR(255) DEFAULT NULL,
+            \`seat_block\` VARCHAR(50) DEFAULT NULL,
+            \`building\` VARCHAR(100) DEFAULT NULL,
+            \`room_name\` VARCHAR(100) DEFAULT NULL,
+            \`wisma_name\` VARCHAR(100) DEFAULT NULL,
+            \`room_number\` VARCHAR(50) DEFAULT NULL,
+            \`bed_number\` VARCHAR(50) DEFAULT NULL,
+            \`status_akomodasi\` VARCHAR(50) DEFAULT 'Tidak Menginap',
+            \`checkin_gate\` VARCHAR(100) DEFAULT NULL,
+            \`checkin_time\` DATETIME DEFAULT NULL,
+            \`email_status\` VARCHAR(50) DEFAULT 'PENDING',
+            \`qr_token\` VARCHAR(100) DEFAULT NULL,
+            \`email_retry_count\` INT DEFAULT 0,
+            \`last_email_error\` TEXT DEFAULT NULL,
             \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (\`id\`),
-            UNIQUE KEY \`idx_peserta_qr_token\` (\`qr_token\`),
-            KEY \`idx_peserta_nrp\` (\`nrp\`),
-            KEY \`idx_peserta_email\` (\`email\`),
-            KEY \`idx_peserta_no_hp\` (\`no_hp\`),
-            KEY \`idx_peserta_status_hadir\` (\`status_hadir\`)
+            UNIQUE KEY \`idx_registration_id\` (\`registration_id\`),
+            KEY \`idx_qr_token\` (\`qr_token\`),
+            KEY \`idx_email\` (\`email\`),
+            KEY \`idx_nrp\` (\`nrp\`),
+            KEY \`idx_status\` (\`status_kehadiran\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
-
-        // Migrasi kolom & status lama ke format baru jika tabel sudah ada
-        try {
-          await connection.query(`
-            UPDATE \`peserta\` SET \`status_hadir\` = 'CHECK_IN' WHERE \`status_hadir\` = 'HADIR';
-          `);
-          await connection.query(`
-            UPDATE \`peserta\` SET \`status_hadir\` = 'REGISTRASI' WHERE \`status_hadir\` = 'BELUM_HADIR';
-          `);
-        } catch {}
-
-        try {
-          await connection.query(`
-            ALTER TABLE \`peserta\` 
-            ADD COLUMN IF NOT EXISTS \`seat_assignment\` VARCHAR(50) DEFAULT NULL,
-            ADD COLUMN IF NOT EXISTS \`wisma_assignment\` VARCHAR(100) DEFAULT NULL,
-            ADD COLUMN IF NOT EXISTS \`satker\` VARCHAR(100) DEFAULT NULL,
-            ADD COLUMN IF NOT EXISTS \`satuan\` VARCHAR(100) DEFAULT NULL,
-            MODIFY COLUMN \`no_hp\` VARCHAR(50) DEFAULT NULL,
-            MODIFY COLUMN \`status_hadir\` VARCHAR(20) NOT NULL DEFAULT 'REGISTRASI';
-          `);
-        } catch {}
-
-        await connection.query(`
-          CREATE TABLE IF NOT EXISTS \`kursi\` (
-            \`id\` VARCHAR(64) NOT NULL,
-            \`kode_kursi\` VARCHAR(20) NOT NULL,
-            \`grup\` VARCHAR(50) NOT NULL,
-            \`status\` VARCHAR(20) NOT NULL DEFAULT 'KOSONG',
-            \`peserta_id\` VARCHAR(64) DEFAULT NULL,
-            \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (\`id\`),
-            UNIQUE KEY \`idx_kursi_kode\` (\`kode_kursi\`),
-            KEY \`idx_kursi_grup\` (\`grup\`),
-            KEY \`idx_kursi_status\` (\`status\`),
-            KEY \`idx_kursi_peserta_id\` (\`peserta_id\`),
-            CONSTRAINT \`fk_kursi_peserta\` 
-              FOREIGN KEY (\`peserta_id\`) REFERENCES \`peserta\` (\`id\`) 
-              ON DELETE SET NULL ON UPDATE CASCADE
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-        `);
-
-        await connection.query(`
-          CREATE TABLE IF NOT EXISTS \`log_checkin\` (
-            \`id\` VARCHAR(64) NOT NULL,
-            \`peserta_id\` VARCHAR(64) NOT NULL,
-            \`waktu_checkin\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            \`petugas\` VARCHAR(100) NOT NULL DEFAULT 'Petugas Gate',
-            \`checkpoint\` VARCHAR(100) NOT NULL DEFAULT 'Gate Utama Hankam',
-            \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (\`id\`),
-            KEY \`idx_log_peserta_id\` (\`peserta_id\`),
-            KEY \`idx_log_waktu_checkin\` (\`waktu_checkin\`),
-            CONSTRAINT \`fk_log_peserta\` 
-              FOREIGN KEY (\`peserta_id\`) REFERENCES \`peserta\` (\`id\`) 
-              ON DELETE CASCADE ON UPDATE CASCADE
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-        `);
-
-        await connection.query(`
-          CREATE TABLE IF NOT EXISTS \`assignments\` (
-            \`id\` VARCHAR(64) NOT NULL,
-            \`peserta_id\` VARCHAR(64) NOT NULL,
-            \`seat_code\` VARCHAR(50) NOT NULL,
-            \`seat_area\` VARCHAR(100) NOT NULL,
-            \`wisma_name\` VARCHAR(100) NOT NULL,
-            \`room_code\` VARCHAR(50) NOT NULL,
-            \`room_floor\` VARCHAR(50) NOT NULL,
-            \`assigned_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (\`id\`),
-            KEY \`idx_assignment_peserta_id\` (\`peserta_id\`),
-            CONSTRAINT \`fk_assignment_peserta\` 
-              FOREIGN KEY (\`peserta_id\`) REFERENCES \`peserta\` (\`id\`) 
-              ON DELETE CASCADE ON UPDATE CASCADE
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-        `);
-
-        // Seed default seats if empty
-        const [existingSeats]: any = await connection.query('SELECT COUNT(*) as count FROM `kursi`');
-        if (existingSeats[0]?.count === 0) {
-          const defaultSeats = [
-            // Grup A
-            ['seat_A_01', 'A-01', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_02', 'A-02', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_03', 'A-03', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_04', 'A-04', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_05', 'A-05', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_06', 'A-06', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_07', 'A-07', 'VVIP Bintang 4', 'KOSONG'],
-            ['seat_A_08', 'A-08', 'VVIP Bintang 4', 'KOSONG'],
-            // Grup B
-            ['seat_B_01', 'B-01', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_02', 'B-02', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_03', 'B-03', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_04', 'B-04', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_05', 'B-05', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_06', 'B-06', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_07', 'B-07', 'VIP Bintang 3-2', 'KOSONG'],
-            ['seat_B_08', 'B-08', 'VIP Bintang 3-2', 'KOSONG'],
-            // Grup C
-            ['seat_C_01', 'C-01', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_02', 'C-02', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_03', 'C-03', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_04', 'C-04', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_05', 'C-05', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_06', 'C-06', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_07', 'C-07', 'Utama Bintang 1', 'KOSONG'],
-            ['seat_C_08', 'C-08', 'Utama Bintang 1', 'KOSONG'],
-            // Grup D
-            ['seat_D_01', 'D-01', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_02', 'D-02', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_03', 'D-03', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_04', 'D-04', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_05', 'D-05', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_06', 'D-06', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_07', 'D-07', 'Pamen Kolonel', 'KOSONG'],
-            ['seat_D_08', 'D-08', 'Pamen Kolonel', 'KOSONG'],
-            // Grup E
-            ['seat_E_01', 'E-01', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_02', 'E-02', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_03', 'E-03', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_04', 'E-04', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_05', 'E-05', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_06', 'E-06', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_07', 'E-07', 'Undangan Kementerian', 'KOSONG'],
-            ['seat_E_08', 'E-08', 'Undangan Kementerian', 'KOSONG'],
-            // Grup F
-            ['seat_F_01', 'F-01', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_02', 'F-02', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_03', 'F-03', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_04', 'F-04', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_05', 'F-05', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_06', 'F-06', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_07', 'F-07', 'Delegasi Kehormatan', 'KOSONG'],
-            ['seat_F_08', 'F-08', 'Delegasi Kehormatan', 'KOSONG']
-          ];
-
-          for (const s of defaultSeats) {
-            await connection.query(
-              'INSERT IGNORE INTO `kursi` (`id`, `kode_kursi`, `grup`, `status`) VALUES (?, ?, ?, ?)',
-              s
-            );
-          }
-        }
 
         this.initialized = true;
-        console.log('[MySQL] Skema tabel tni_rapim_2026 siap.');
         return true;
       } finally {
         connection.release();
       }
     } catch (err) {
-      console.error('[MySQL] Gagal inisialisasi skema tabel:', err);
+      console.error('[MySQL] Gagal initSchema:', err);
       return false;
     } finally {
       this.isConnecting = false;
@@ -298,146 +217,196 @@ class MySQLAdapter {
   }
 
   // ==========================================================
-  // PESERTA CRUD
+  // GUESTS CRUD
   // ==========================================================
-  public async savePeserta(data: PesertaRow): Promise<boolean> {
+  public async createGuest(guest: Partial<Guest>): Promise<Guest> {
     const pool = this.getPool();
-    if (!pool) return false;
-
+    if (!pool) throw new Error('MySQL connection pool not available');
     await this.initSchema();
+
+    let regId = guest.registration_id;
+    if (!regId || !regId.match(/^REG-2026-\d{6}$/)) {
+      const randNum = Math.floor(100000 + Math.random() * 900000);
+      regId = `REG-2026-${randNum}`;
+    }
+
+    const qrToken = guest.qr_token || guest.token || `TNI-2026-${regId}`;
 
     const sql = `
-      INSERT INTO \`peserta\` (
-        \`id\`, \`nama_lengkap\`, \`pangkat\`, \`jabatan\`, \`instansi\`, 
-        \`email\`, \`no_hp\`, \`kategori_tamu\`, \`nrp\`, \`matra\`, 
-        \`qr_token\`, \`seat_number\`, \`status_hadir\`, \`pdf_path\`
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        \`nama_lengkap\` = VALUES(\`nama_lengkap\`),
-        \`pangkat\` = VALUES(\`pangkat\`),
-        \`jabatan\` = VALUES(\`jabatan\`),
-        \`instansi\` = VALUES(\`instansi\`),
-        \`email\` = VALUES(\`email\`),
-        \`no_hp\` = VALUES(\`no_hp\`),
-        \`kategori_tamu\` = VALUES(\`kategori_tamu\`),
-        \`nrp\` = VALUES(\`nrp\`),
-        \`matra\` = VALUES(\`matra\`),
-        \`seat_number\` = VALUES(\`seat_number\`),
-        \`status_hadir\` = VALUES(\`status_hadir\`),
-        \`pdf_path\` = VALUES(\`pdf_path\`);
+      INSERT INTO \`guests\` (
+        \`registration_id\`, \`nama\`, \`email\`, \`phone\`, \`matra\`, 
+        \`pangkat\`, \`nrp\`, \`jabatan\`, \`kesatuan\`, \`status_kehadiran\`, 
+        \`seat_number\`, \`seat_block\`, \`building\`, \`room_name\`, 
+        \`wisma_name\`, \`room_number\`, \`bed_number\`, \`status_akomodasi\`, 
+        \`checkin_gate\`, \`checkin_time\`, \`email_status\`, \`qr_token\`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
 
+    const wantsStay = guest.status_akomodasi === 'MENGINAP' || (guest.wisma_name && guest.wisma_name !== 'Tidak Menginap');
+    const wismaName = wantsStay ? (guest.wisma_name || 'Wisma Kartika') : 'Tidak Menginap';
+    const roomNumber = wantsStay ? (guest.room_number || null) : null;
+    const bedNumber = wantsStay ? (guest.bed_number ? String(guest.bed_number) : '1') : null;
+    const statusAkomodasi = wantsStay ? 'MENGINAP' : 'Tidak Menginap';
+
     const values = [
-      data.id,
-      data.nama_lengkap,
-      data.pangkat,
-      data.jabatan,
-      data.instansi,
-      data.email,
-      data.no_hp,
-      data.kategori_tamu || 'TNI',
-      data.nrp || null,
-      data.matra || 'AD',
-      data.qr_token,
-      data.seat_number || null,
-      data.status_hadir || 'REGISTRASI',
-      data.pdf_path || null
+      regId,
+      guest.nama || '',
+      guest.email || '',
+      guest.phone || guest.no_hp || null,
+      guest.matra || 'AD',
+      guest.pangkat || '',
+      guest.nrp || null,
+      guest.jabatan || '',
+      guest.kesatuan || guest.satuan || guest.satker || '',
+      guest.status_kehadiran || 'REGISTRASI',
+      guest.seat_number || null,
+      guest.seat_block || null,
+      guest.building || 'Gedung Ahmad Yani',
+      guest.room_name || guest.room || 'Ruang Sidang Utama',
+      wismaName,
+      roomNumber,
+      bedNumber,
+      statusAkomodasi,
+      guest.checkin_gate || null,
+      guest.checkin_time ? new Date(guest.checkin_time) : null,
+      guest.email_status || 'PENDING',
+      qrToken
     ];
 
-    try {
-      await pool.execute(sql, values);
-      console.log(`[MySQL] Peserta berhasil disimpan: ${data.nama_lengkap} (${data.id})`);
-      return true;
-    } catch (err) {
-      console.error('[MySQL] Gagal menyimpan peserta:', err);
-      throw err;
+    const [result]: any = await pool.execute(sql, values);
+    const insertId = result.insertId;
+
+    // Update seat if assigned
+    if (guest.seat_number) {
+      try {
+        await pool.execute(
+          'UPDATE `seats` SET `status` = ?, `guest_id` = ?, `guest_name` = ?, `guest_matra` = ? WHERE `seat_number` = ?',
+          ['TERISI', insertId, guest.nama, guest.matra, guest.seat_number]
+        );
+      } catch (err) {}
     }
+
+    // Update accommodation if assigned
+    if (wantsStay && roomNumber) {
+      try {
+        await pool.execute(
+          'UPDATE `accommodations` SET `status` = ?, `guest_id` = ?, `guest_name` = ? WHERE `wisma_name` = ? AND `room_number` = ?',
+          ['TERISI', insertId, guest.nama, wismaName, roomNumber]
+        );
+      } catch (err) {}
+    }
+
+    const created = await this.getGuestById(insertId);
+    if (!created) throw new Error('Failed to retrieve newly created guest');
+    return created;
   }
 
-  public async getPesertaById(id: string): Promise<PesertaRow | null> {
+  public async getGuestById(id: number | string): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `peserta` WHERE `id` = ? LIMIT 1', [id]);
-      return rows[0] || null;
+      const [rows]: any = await pool.execute('SELECT * FROM `guests` WHERE `id` = ? LIMIT 1', [id]);
+      if (!rows || rows.length === 0) return null;
+      return rowToGuest(rows[0]);
     } catch (err) {
-      console.error('[MySQL] Gagal getPesertaById:', err);
+      console.error('[MySQL] Gagal getGuestById:', err);
       return null;
     }
   }
 
-  public async getPesertaByToken(qr_token: string): Promise<PesertaRow | null> {
+  public async getGuestByToken(token: string): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `peserta` WHERE `qr_token` = ? LIMIT 1', [qr_token]);
-      return rows[0] || null;
+      const [rows]: any = await pool.execute(
+        'SELECT * FROM `guests` WHERE `qr_token` = ? OR `registration_id` = ? LIMIT 1',
+        [token, token]
+      );
+      if (!rows || rows.length === 0) return null;
+      return rowToGuest(rows[0]);
     } catch (err) {
-      console.error('[MySQL] Gagal getPesertaByToken:', err);
+      console.error('[MySQL] Gagal getGuestByToken:', err);
       return null;
     }
   }
 
-  public async getPesertaByNRP(nrp: string): Promise<PesertaRow | null> {
+  public async getGuestByRegistrationId(regId: string): Promise<Guest | null> {
+    return this.getGuestByToken(regId);
+  }
+
+  public async getGuestByNRP(nrp: string): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `peserta` WHERE `nrp` = ? LIMIT 1', [nrp]);
-      return rows[0] || null;
+      const [rows]: any = await pool.execute(
+        'SELECT * FROM `guests` WHERE `nrp` = ? LIMIT 1',
+        [nrp]
+      );
+      if (!rows || rows.length === 0) return null;
+      return rowToGuest(rows[0]);
     } catch (err) {
-      console.error('[MySQL] Gagal getPesertaByNRP:', err);
+      console.error('[MySQL] Gagal getGuestByNRP:', err);
       return null;
     }
   }
 
-  public async getPesertaByPhone(no_hp: string): Promise<PesertaRow | null> {
+  public async getGuestByPhone(phone: string): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `peserta` WHERE `no_hp` = ? LIMIT 1', [no_hp]);
-      return rows[0] || null;
+      const [rows]: any = await pool.execute(
+        'SELECT * FROM `guests` WHERE `phone` = ? LIMIT 1',
+        [phone]
+      );
+      if (!rows || rows.length === 0) return null;
+      return rowToGuest(rows[0]);
     } catch (err) {
-      console.error('[MySQL] Gagal getPesertaByPhone:', err);
+      console.error('[MySQL] Gagal getGuestByPhone:', err);
       return null;
     }
   }
 
-  public async getPesertaByEmail(email: string): Promise<PesertaRow | null> {
+  public async getGuestByEmail(email: string): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `peserta` WHERE `email` = ? LIMIT 1', [email]);
-      return rows[0] || null;
+      const [rows]: any = await pool.execute(
+        'SELECT * FROM `guests` WHERE `email` = ? LIMIT 1',
+        [email]
+      );
+      if (!rows || rows.length === 0) return null;
+      return rowToGuest(rows[0]);
     } catch (err) {
-      console.error('[MySQL] Gagal getPesertaByEmail:', err);
+      console.error('[MySQL] Gagal getGuestByEmail:', err);
       return null;
     }
   }
 
-  public async searchPeserta(query: string): Promise<PesertaRow[]> {
+  public async searchGuests(query: string): Promise<Guest[]> {
     const pool = this.getPool();
     if (!pool) return [];
     await this.initSchema();
 
     const searchTerm = `%${query}%`;
     const sql = `
-      SELECT * FROM \`peserta\` 
-      WHERE \`nama_lengkap\` LIKE ? 
+      SELECT * FROM \`guests\` 
+      WHERE \`nama\` LIKE ? 
          OR \`nrp\` LIKE ? 
-         OR \`no_hp\` LIKE ? 
+         OR \`phone\` LIKE ? 
          OR \`email\` LIKE ? 
          OR \`jabatan\` LIKE ? 
-         OR \`instansi\` LIKE ? 
+         OR \`kesatuan\` LIKE ? 
+         OR \`registration_id\` LIKE ?
          OR \`qr_token\` LIKE ?
       ORDER BY \`created_at\` DESC
       LIMIT 100;
@@ -445,21 +414,21 @@ class MySQLAdapter {
 
     try {
       const [rows]: any = await pool.execute(sql, [
-        searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm
+        searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm
       ]);
-      return rows || [];
+      return (rows || []).map(rowToGuest);
     } catch (err) {
-      console.error('[MySQL] Gagal searchPeserta:', err);
+      console.error('[MySQL] Gagal searchGuests:', err);
       return [];
     }
   }
 
-  public async getAllPeserta(filters?: { matra?: string; status?: string; search?: string }): Promise<PesertaRow[]> {
+  public async getAllGuests(filters?: { matra?: string; status?: string; search?: string }): Promise<Guest[]> {
     const pool = this.getPool();
     if (!pool) return [];
     await this.initSchema();
 
-    let sql = 'SELECT * FROM `peserta` WHERE 1=1';
+    let sql = 'SELECT * FROM `guests` WHERE 1=1';
     const params: any[] = [];
 
     if (filters?.matra) {
@@ -471,13 +440,13 @@ class MySQLAdapter {
       let st = filters.status;
       if (st === 'HADIR') st = 'CHECK_IN';
       if (st === 'BELUM_HADIR') st = 'REGISTRASI';
-      sql += ' AND (`status_hadir` = ? OR (`status_hadir` = "HADIR" AND ? = "CHECK_IN") OR (`status_hadir` = "BELUM_HADIR" AND ? = "REGISTRASI"))';
-      params.push(st, st, st);
+      sql += ' AND `status_kehadiran` = ?';
+      params.push(st);
     }
 
     if (filters?.search) {
       const s = `%${filters.search}%`;
-      sql += ' AND (`nama_lengkap` LIKE ? OR `nrp` LIKE ? OR `no_hp` LIKE ? OR `email` LIKE ? OR `jabatan` LIKE ?)';
+      sql += ' AND (`nama` LIKE ? OR `nrp` LIKE ? OR `phone` LIKE ? OR `email` LIKE ? OR `jabatan` LIKE ?)';
       params.push(s, s, s, s, s);
     }
 
@@ -485,364 +454,352 @@ class MySQLAdapter {
 
     try {
       const [rows]: any = await pool.execute(sql, params);
-      return rows || [];
+      return (rows || []).map(rowToGuest);
     } catch (err) {
-      console.error('[MySQL] Gagal getAllPeserta:', err);
+      console.error('[MySQL] Gagal getAllGuests:', err);
       return [];
     }
   }
 
-  public async updatePeserta(id: string, updates: Partial<PesertaRow>): Promise<PesertaRow | null> {
+  public async updateGuest(idOrToken: string, data: Partial<Guest>): Promise<Guest | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
-    const allowedFields = [
-      'nama_lengkap', 'pangkat', 'jabatan', 'instansi', 'email', 
-      'no_hp', 'kategori_tamu', 'nrp', 'matra', 'seat_number', 
-      'status_hadir', 'pdf_path'
-    ];
+    const existing = await this.getGuestByToken(idOrToken) || await this.getGuestById(idOrToken);
+    if (!existing) return null;
 
-    const setClauses: string[] = [];
+    const fields: string[] = [];
     const values: any[] = [];
 
-    for (const [key, val] of Object.entries(updates)) {
-      if (allowedFields.includes(key) && val !== undefined) {
-        setClauses.push(`\`${key}\` = ?`);
-        values.push(val);
-      }
+    if (data.nama !== undefined) { fields.push('`nama` = ?'); values.push(data.nama); }
+    if (data.email !== undefined) { fields.push('`email` = ?'); values.push(data.email); }
+    if (data.phone !== undefined || data.no_hp !== undefined) { 
+      fields.push('`phone` = ?'); 
+      values.push(data.phone || data.no_hp || null); 
     }
+    if (data.matra !== undefined) { fields.push('`matra` = ?'); values.push(data.matra); }
+    if (data.pangkat !== undefined) { fields.push('`pangkat` = ?'); values.push(data.pangkat); }
+    if (data.nrp !== undefined) { fields.push('`nrp` = ?'); values.push(data.nrp); }
+    if (data.jabatan !== undefined) { fields.push('`jabatan` = ?'); values.push(data.jabatan); }
+    if (data.kesatuan !== undefined || data.satuan !== undefined || data.satker !== undefined) { 
+      fields.push('`kesatuan` = ?'); 
+      values.push(data.kesatuan || data.satuan || data.satker || null); 
+    }
+    if (data.status_kehadiran !== undefined) { 
+      fields.push('`status_kehadiran` = ?'); 
+      values.push(data.status_kehadiran); 
+    }
+    if (data.seat_number !== undefined) { fields.push('`seat_number` = ?'); values.push(data.seat_number); }
+    if (data.seat_block !== undefined) { fields.push('`seat_block` = ?'); values.push(data.seat_block); }
+    if (data.building !== undefined) { fields.push('`building` = ?'); values.push(data.building); }
+    if (data.room_name !== undefined || data.room !== undefined) { 
+      fields.push('`room_name` = ?'); 
+      values.push(data.room_name || data.room || null); 
+    }
+    if (data.wisma_name !== undefined) { fields.push('`wisma_name` = ?'); values.push(data.wisma_name); }
+    if (data.room_number !== undefined) { fields.push('`room_number` = ?'); values.push(data.room_number); }
+    if (data.bed_number !== undefined) { 
+      fields.push('`bed_number` = ?'); 
+      values.push(data.bed_number ? String(data.bed_number) : null); 
+    }
+    if (data.status_akomodasi !== undefined) { fields.push('`status_akomodasi` = ?'); values.push(data.status_akomodasi); }
+    if (data.checkin_gate !== undefined) { fields.push('`checkin_gate` = ?'); values.push(data.checkin_gate); }
+    if (data.checkin_time !== undefined) { 
+      fields.push('`checkin_time` = ?'); 
+      values.push(data.checkin_time ? new Date(data.checkin_time) : null); 
+    }
+    if (data.email_status !== undefined) { fields.push('`email_status` = ?'); values.push(data.email_status); }
+    if (data.email_retry_count !== undefined) { fields.push('`email_retry_count` = ?'); values.push(data.email_retry_count); }
+    if (data.last_email_error !== undefined) { fields.push('`last_email_error` = ?'); values.push(data.last_email_error); }
 
-    if (setClauses.length === 0) return this.getPesertaById(id);
+    if (fields.length === 0) return existing;
 
-    values.push(id);
-    const sql = `UPDATE \`peserta\` SET ${setClauses.join(', ')} WHERE \`id\` = ?;`;
+    values.push(existing.id);
+    const sql = `UPDATE \`guests\` SET ${fields.join(', ')} WHERE \`id\` = ?`;
 
     try {
       await pool.execute(sql, values);
-      return await this.getPesertaById(id);
+      return await this.getGuestById(existing.id);
     } catch (err) {
-      console.error('[MySQL] Gagal updatePeserta:', err);
-      throw err;
+      console.error('[MySQL] Gagal updateGuest:', err);
+      return null;
     }
   }
 
-  public async updatePdfPath(id: string, pdf_path: string): Promise<boolean> {
-    const pool = this.getPool();
-    if (!pool) return false;
-    try {
-      await pool.execute('UPDATE `peserta` SET `pdf_path` = ? WHERE `id` = ?', [pdf_path, id]);
-      return true;
-    } catch (err) {
-      console.error('[MySQL] Gagal updatePdfPath:', err);
-      return false;
-    }
-  }
-
-  public async deletePeserta(id: string): Promise<boolean> {
+  public async deleteGuest(id: string): Promise<boolean> {
     const pool = this.getPool();
     if (!pool) return false;
     await this.initSchema();
 
-    const connection = await pool.getConnection();
     try {
-      await connection.beginTransaction();
-
-      // Free seat
-      await connection.execute(
-        'UPDATE `kursi` SET `status` = \'KOSONG\', `peserta_id` = NULL WHERE `peserta_id` = ?',
-        [id]
-      );
-
-      // Delete checkin logs
-      await connection.execute('DELETE FROM `log_checkin` WHERE `peserta_id` = ?', [id]);
-
-      // Delete participant
-      await connection.execute('DELETE FROM `peserta` WHERE `id` = ?', [id]);
-
-      await connection.commit();
-      console.log(`[MySQL] Peserta berhasil dihapus: ${id}`);
+      await pool.execute('UPDATE `seats` SET `status` = "KOSONG", `guest_id` = NULL, `guest_name` = NULL, `guest_matra` = NULL WHERE `guest_id` = ?', [id]);
+      await pool.execute('UPDATE `accommodations` SET `status` = "KOSONG", `guest_id` = NULL, `guest_name` = NULL WHERE `guest_id` = ?', [id]);
+      await pool.execute('DELETE FROM `guests` WHERE `id` = ?', [id]);
       return true;
     } catch (err) {
-      await connection.rollback();
-      console.error('[MySQL] Gagal deletePeserta:', err);
+      console.error('[MySQL] Gagal deleteGuest:', err);
       return false;
-    } finally {
-      connection.release();
     }
   }
 
   // ==========================================================
-  // KURSI CRUD & ALLOCATION
+  // CHECK-IN GATE
   // ==========================================================
-  public async getKursiList(): Promise<KursiRow[]> {
+  public async recordCheckin(
+    tokenOrId: string,
+    gate: string = 'Gate Utama Hankam',
+    petugas: string = 'Petugas Gate'
+  ): Promise<{ success: boolean; guest?: Guest; error?: string }> {
+    const pool = this.getPool();
+    if (!pool) return { success: false, error: 'Database MySQL tidak terhubung' };
+    await this.initSchema();
+
+    const guest = (await this.getGuestByToken(tokenOrId)) || (await this.getGuestById(tokenOrId));
+    if (!guest) {
+      return { success: false, error: 'Data peserta tidak ditemukan dengan token atau ID tersebut' };
+    }
+
+    if (guest.status_kehadiran === 'CHECK_IN') {
+      return {
+        success: true,
+        guest,
+        error: `Peserta ${guest.nama} sudah melakukan check-in sebelumnya pada ${guest.checkin_time || 'sesi sebelumnya'}.`
+      };
+    }
+
+    const now = new Date();
+    try {
+      await pool.execute(
+        'UPDATE `guests` SET `status_kehadiran` = "CHECK_IN", `checkin_gate` = ?, `checkin_time` = ? WHERE `id` = ?',
+        [gate, now, guest.id]
+      );
+
+      await pool.execute(
+        'INSERT INTO `checkin_logs` (`guest_id`, `registration_id`, `guest_name`, `nrp`, `seat_number`, `gate`, `petugas`, `checkin_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [guest.id, guest.registration_id || null, guest.nama, guest.nrp || null, guest.seat_number || null, gate, petugas, now]
+      );
+
+      const updated = await this.getGuestById(guest.id);
+      return { success: true, guest: updated || undefined };
+    } catch (err: any) {
+      console.error('[MySQL] Gagal recordCheckin:', err);
+      return { success: false, error: err.message || 'Gagal menyimpan check-in ke database' };
+    }
+  }
+
+  // ==========================================================
+  // SEATS & ACCOMMODATIONS
+  // ==========================================================
+  public async getAllSeats(): Promise<Seat[]> {
     const pool = this.getPool();
     if (!pool) return [];
     await this.initSchema();
 
-    const sql = `
-      SELECT 
-        k.id, k.kode_kursi, k.grup, k.status, k.peserta_id,
-        p.nama_lengkap, p.pangkat, p.matra
-      FROM \`kursi\` k
-      LEFT JOIN \`peserta\` p ON k.peserta_id = p.id
-      ORDER BY k.kode_kursi ASC;
-    `;
-
     try {
-      const [rows]: any = await pool.execute(sql);
-      return rows || [];
+      const [rows]: any = await pool.execute('SELECT * FROM `seats` ORDER BY `seat_number` ASC');
+      return (rows || []).map((r: any) => ({
+        id: r.id,
+        group_id: `grp_${r.group_code.toLowerCase()}`,
+        group_code: r.group_code,
+        seat_number: r.seat_number,
+        row_num: 1,
+        col_num: 1,
+        is_reserved: 0,
+        status: r.status,
+        colorAlias: null,
+        peserta_id: r.guest_id ? String(r.guest_id) : null,
+        nama_lengkap: r.guest_name || undefined,
+        matra: r.guest_matra || undefined
+      }));
     } catch (err) {
-      console.error('[MySQL] Gagal getKursiList:', err);
+      console.error('[MySQL] Gagal getAllSeats:', err);
       return [];
     }
   }
 
-  public async assignKursi(kode_kursi: string, peserta_id: string | null): Promise<boolean> {
-    const pool = this.getPool();
-    if (!pool) return false;
-    await this.initSchema();
-
-    const connection = await pool.getConnection();
-    try {
-      await connection.beginTransaction();
-
-      // 1. If peserta_id already has another seat, free that seat
-      if (peserta_id) {
-        await connection.execute(
-          'UPDATE `kursi` SET `status` = \'KOSONG\', `peserta_id` = NULL WHERE `peserta_id` = ? AND `kode_kursi` != ?',
-          [peserta_id, kode_kursi]
-        );
-      }
-
-      // 2. If target seat is currently held by someone else, clear their seat_number
-      const [existingTarget]: any = await connection.execute(
-        'SELECT `peserta_id` FROM `kursi` WHERE `kode_kursi` = ?',
-        [kode_kursi]
-      );
-      const prevPesertaId = existingTarget[0]?.peserta_id;
-      if (prevPesertaId && prevPesertaId !== peserta_id) {
-        await connection.execute(
-          'UPDATE `peserta` SET `seat_number` = NULL WHERE `id` = ?',
-          [prevPesertaId]
-        );
-      }
-
-      // 3. Update target seat
-      if (peserta_id) {
-        await connection.execute(
-          'UPDATE `kursi` SET `status` = \'TERISI\', `peserta_id` = ? WHERE `kode_kursi` = ?',
-          [peserta_id, kode_kursi]
-        );
-        await connection.execute(
-          'UPDATE `peserta` SET `seat_number` = ? WHERE `id` = ?',
-          [kode_kursi, peserta_id]
-        );
-      } else {
-        await connection.execute(
-          'UPDATE `kursi` SET `status` = \'KOSONG\', `peserta_id` = NULL WHERE `kode_kursi` = ?',
-          [kode_kursi]
-        );
-        if (prevPesertaId) {
-          await connection.execute(
-            'UPDATE `peserta` SET `seat_number` = NULL WHERE `id` = ?',
-            [prevPesertaId]
-          );
-        }
-      }
-
-      await connection.commit();
-      console.log(`[MySQL] Kursi ${kode_kursi} berhasil dialokasikan untuk ${peserta_id || 'KOSONG'}`);
-      return true;
-    } catch (err) {
-      await connection.rollback();
-      console.error('[MySQL] Gagal assignKursi:', err);
-      return false;
-    } finally {
-      connection.release();
-    }
-  }
-
-  // ==========================================================
-  // CHECK-IN & LOGS
-  // ==========================================================
-  public async recordCheckin(
-    peserta_id: string,
-    petugas: string = 'Petugas Gate',
-    checkpoint: string = 'Gate Utama Hankam'
-  ): Promise<{ alreadyCheckedIn: boolean; firstTimestamp?: string }> {
-    const pool = this.getPool();
-    if (!pool) return { alreadyCheckedIn: false };
-    await this.initSchema();
-
-    const connection = await pool.getConnection();
-    try {
-      await connection.beginTransaction();
-
-      // Check current presence status
-      const [pRows]: any = await connection.execute(
-        'SELECT `status_hadir` FROM `peserta` WHERE `id` = ? LIMIT 1',
-        [peserta_id]
-      );
-
-      const isHadir = pRows[0]?.status_hadir === 'HADIR';
-
-      if (isHadir) {
-        // Fetch first checkin timestamp
-        const [logRows]: any = await connection.execute(
-          'SELECT `waktu_checkin` FROM `log_checkin` WHERE `peserta_id` = ? ORDER BY `waktu_checkin` ASC LIMIT 1',
-          [peserta_id]
-        );
-        await connection.commit();
-        return {
-          alreadyCheckedIn: true,
-          firstTimestamp: logRows[0]?.waktu_checkin
-        };
-      }
-
-      // Mark as HADIR
-      await connection.execute(
-        'UPDATE `peserta` SET `status_hadir` = \'HADIR\' WHERE `id` = ?',
-        [peserta_id]
-      );
-
-      // Insert log
-      const logId = `chk_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      await connection.execute(
-        'INSERT INTO `log_checkin` (`id`, `peserta_id`, `petugas`, `checkpoint`) VALUES (?, ?, ?, ?)',
-        [logId, peserta_id, petugas, checkpoint]
-      );
-
-      await connection.commit();
-      console.log(`[MySQL] Checkin sukses tercatat: Peserta ${peserta_id} oleh ${petugas}`);
-      return { alreadyCheckedIn: false };
-    } catch (err) {
-      await connection.rollback();
-      console.error('[MySQL] Gagal recordCheckin:', err);
-      throw err;
-    } finally {
-      connection.release();
-    }
-  }
-
-  public async getCheckinLogs(limit: number = 50): Promise<CheckinLogRow[]> {
+  public async getAllRooms(): Promise<AccommodationRoom[]> {
     const pool = this.getPool();
     if (!pool) return [];
     await this.initSchema();
 
-    const sql = `
-      SELECT 
-        l.id, l.peserta_id, l.waktu_checkin, l.petugas, l.checkpoint,
-        p.nama_lengkap, p.pangkat, p.nrp, p.seat_number
-      FROM \`log_checkin\` l
-      LEFT JOIN \`peserta\` p ON l.peserta_id = p.id
-      ORDER BY l.waktu_checkin DESC
-      LIMIT ?;
-    `;
+    try {
+      const [rows]: any = await pool.execute('SELECT * FROM `accommodations` ORDER BY `wisma_name` ASC, `room_number` ASC');
+      const roomMap = new Map<string, AccommodationRoom>();
+
+      for (const r of rows) {
+        const key = `${r.wisma_name}_${r.room_number}`;
+        if (!roomMap.has(key)) {
+          roomMap.set(key, {
+            id: r.id,
+            wisma_name: r.wisma_name,
+            room_number: r.room_number,
+            floor: 1,
+            capacity: 2,
+            slot_a_guest_id: r.bed_slot === 'A' && r.guest_id ? String(r.guest_id) : undefined,
+            slot_a_guest_name: r.bed_slot === 'A' ? (r.guest_name || undefined) : undefined,
+            slot_b_guest_id: r.bed_slot === 'B' && r.guest_id ? String(r.guest_id) : undefined,
+            slot_b_guest_name: r.bed_slot === 'B' ? (r.guest_name || undefined) : undefined
+          });
+        } else {
+          const rm = roomMap.get(key)!;
+          if (r.bed_slot === 'B') {
+            rm.slot_b_guest_id = r.guest_id ? String(r.guest_id) : undefined;
+            rm.slot_b_guest_name = r.guest_name || undefined;
+          } else {
+            rm.slot_a_guest_id = r.guest_id ? String(r.guest_id) : undefined;
+            rm.slot_a_guest_name = r.guest_name || undefined;
+          }
+        }
+      }
+
+      return Array.from(roomMap.values());
+    } catch (err) {
+      console.error('[MySQL] Gagal getAllRooms:', err);
+      return [];
+    }
+  }
+
+  public async getCheckinLogs(limit: number = 50): Promise<CheckinLog[]> {
+    const pool = this.getPool();
+    if (!pool) return [];
+    await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute(sql, [limit]);
-      return rows || [];
+      const [rows]: any = await pool.execute('SELECT * FROM `checkin_logs` ORDER BY `checkin_time` DESC LIMIT ?', [limit]);
+      return (rows || []).map((r: any) => ({
+        id: String(r.id),
+        peserta_id: String(r.guest_id),
+        waktu_checkin: r.checkin_time instanceof Date ? r.checkin_time.toISOString() : String(r.checkin_time),
+        petugas: r.petugas,
+        checkpoint: r.gate,
+        nama_lengkap: r.guest_name,
+        nrp: r.nrp || undefined,
+        seat_number: r.seat_number || undefined
+      }));
     } catch (err) {
       console.error('[MySQL] Gagal getCheckinLogs:', err);
       return [];
     }
   }
 
-  // ==========================================================
-  // STATISTIK
-  // ==========================================================
-  public async getStats(): Promise<any> {
+  public async getAdminByUsername(username: string): Promise<AdminUser | null> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [pStats]: any = await pool.query(`
-        SELECT 
-          COUNT(*) as total_peserta,
-          SUM(CASE WHEN \`status_hadir\` = 'HADIR' THEN 1 ELSE 0 END) as total_hadir,
-          SUM(CASE WHEN \`status_hadir\` != 'HADIR' THEN 1 ELSE 0 END) as total_belum_hadir,
-          SUM(CASE WHEN \`matra\` = 'AD' THEN 1 ELSE 0 END) as total_ad,
-          SUM(CASE WHEN \`matra\` = 'AL' THEN 1 ELSE 0 END) as total_al,
-          SUM(CASE WHEN \`matra\` = 'AU' THEN 1 ELSE 0 END) as total_au,
-          SUM(CASE WHEN \`matra\` = 'MABES' THEN 1 ELSE 0 END) as total_mabes,
-          SUM(CASE WHEN \`matra\` = 'NON_TNI' THEN 1 ELSE 0 END) as total_sipil
-        FROM \`peserta\`;
-      `);
-
-      const [kStats]: any = await pool.query(`
-        SELECT 
-          COUNT(*) as total_kursi,
-          SUM(CASE WHEN \`status\` = 'TERISI' THEN 1 ELSE 0 END) as kursi_terisi,
-          SUM(CASE WHEN \`status\` = 'KOSONG' THEN 1 ELSE 0 END) as kursi_kosong
-        FROM \`kursi\`;
-      `);
-
+      const [rows]: any = await pool.execute('SELECT * FROM `admins` WHERE `username` = ? LIMIT 1', [username]);
+      if (!rows || rows.length === 0) return null;
+      const r = rows[0];
       return {
-        peserta: pStats[0] || {},
-        kursi: kStats[0] || {}
+        id: r.id,
+        username: r.username,
+        nama: r.nama,
+        role: r.role,
+        password_hash: r.password_hash,
+        created_at: r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)
       };
     } catch (err) {
-      console.error('[MySQL] Gagal getStats:', err);
+      console.error('[MySQL] Gagal getAdminByUsername:', err);
       return null;
     }
   }
 
-  // ==========================================================
-  // ASSIGNMENTS
-  // ==========================================================
-  public async saveAssignment(assignment: any): Promise<boolean> {
-    const pool = this.getPool();
-    if (!pool) return false;
-    await this.initSchema();
-
-    const sql = `
-      INSERT INTO \`assignments\` (
-        \`id\`, \`peserta_id\`, \`seat_code\`, \`seat_area\`, 
-        \`wisma_name\`, \`room_code\`, \`room_floor\`, \`assigned_at\`
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        \`seat_code\` = VALUES(\`seat_code\`),
-        \`seat_area\` = VALUES(\`seat_area\`),
-        \`wisma_name\` = VALUES(\`wisma_name\`),
-        \`room_code\` = VALUES(\`room_code\`),
-        \`room_floor\` = VALUES(\`room_floor\`),
-        \`assigned_at\` = VALUES(\`assigned_at\`);
-    `;
-
-    try {
-      await pool.execute(sql, [
-        assignment.id,
-        assignment.peserta_id,
-        assignment.seat_code,
-        assignment.seat_area,
-        assignment.wisma_name,
-        assignment.room_code,
-        assignment.room_floor,
-        assignment.assigned_at || new Date().toISOString().slice(0, 19).replace('T', ' ')
-      ]);
-      return true;
-    } catch (err) {
-      console.error('[MySQL] Gagal saveAssignment:', err);
-      return false;
-    }
-  }
-
-  public async getAssignmentByGuestId(guestId: string): Promise<any | null> {
+  public async addEmailLog(log: { recipient: string; subject: string; status: string; error_message?: string }): Promise<any> {
     const pool = this.getPool();
     if (!pool) return null;
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `assignments` WHERE `peserta_id` = ? LIMIT 1', [guestId]);
-      return rows[0] || null;
+      const [res]: any = await pool.execute(
+        'INSERT INTO `email_logs` (`recipient`, `subject`, `status`, `error_message`) VALUES (?, ?, ?, ?)',
+        [log.recipient, log.subject, log.status, log.error_message || null]
+      );
+      return { id: res.insertId, ...log, sent_at: new Date().toISOString() };
     } catch (err) {
-      console.error('[MySQL] Gagal getAssignmentByGuestId:', err);
+      console.error('[MySQL] Gagal addEmailLog:', err);
       return null;
     }
+  }
+
+  public async getEmailLogs(recipient?: string, limit: number = 50): Promise<EmailLog[]> {
+    const pool = this.getPool();
+    if (!pool) return [];
+    await this.initSchema();
+
+    try {
+      let sql = 'SELECT * FROM `email_logs`';
+      const params: any[] = [];
+      if (recipient) {
+        sql += ' WHERE `recipient` = ?';
+        params.push(recipient);
+      }
+      sql += ' ORDER BY `sent_at` DESC LIMIT ?';
+      params.push(limit);
+
+      const [rows]: any = await pool.execute(sql, params);
+      return (rows || []).map((r: any) => ({
+        id: String(r.id),
+        email: r.recipient,
+        subject: r.subject,
+        status: r.status as any,
+        error_message: r.error_message || undefined,
+        sent_at: r.sent_at instanceof Date ? r.sent_at.toISOString() : String(r.sent_at)
+      }));
+    } catch (err) {
+      console.error('[MySQL] Gagal getEmailLogs:', err);
+      return [];
+    }
+  }
+
+  // ==========================================================
+  // BACKWARDS COMPATIBILITY ALIASES FOR LEGACY ROUTES
+  // ==========================================================
+  public async getPesertaByToken(token: string): Promise<Guest | null> {
+    return this.getGuestByToken(token);
+  }
+
+  public async getPesertaById(id: string): Promise<Guest | null> {
+    return this.getGuestById(id);
+  }
+
+  public async getAllPeserta(filters?: any): Promise<Guest[]> {
+    return this.getAllGuests(filters);
+  }
+
+  public async savePeserta(data: any): Promise<Guest | null> {
+    if (data.id) {
+      const existing = await this.getGuestById(data.id);
+      if (existing) {
+        return this.updateGuest(data.id, data);
+      }
+    }
+    return this.createGuest(data);
+  }
+
+  public async updatePeserta(id: string, data: any): Promise<Guest | null> {
+    return this.updateGuest(id, data);
+  }
+
+  public async deletePeserta(id: string): Promise<boolean> {
+    return this.deleteGuest(id);
+  }
+
+  public async saveAssignment(assignment: any): Promise<boolean> {
+    const id = assignment.guest_id || assignment.peserta_id;
+    if (id) {
+      await this.updateGuest(id, {
+        seat_number: assignment.seat_number || assignment.seat_code,
+        seat_block: assignment.seat_block || assignment.seat_row,
+        wisma_name: assignment.wisma_name,
+        room_number: assignment.room_number || assignment.room_code,
+        bed_number: assignment.bed_number,
+        status_akomodasi: assignment.status_akomodasi || (assignment.wisma_name && assignment.wisma_name !== 'Tidak Menginap' ? 'MENGINAP' : 'TIDAK_MENGINAP')
+      } as any);
+    }
+    return true;
   }
 }
 
 export const mysqlAdapter = new MySQLAdapter();
-

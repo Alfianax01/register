@@ -24,10 +24,13 @@ export interface Guest {
   jabatan: string;
   satker: string;
   satuan: string;
+  kesatuan?: string;
   negara_instansi: string;
   no_hp?: string;
+  phone?: string;
   email: string;
   butuh_akomodasi: number; // 0 or 1
+  status_akomodasi?: string; // 'MENGINAP' | 'Tidak Menginap'
   tgl_checkin?: string;
   tgl_checkout?: string;
   catatan_khusus?: string;
@@ -38,16 +41,19 @@ export interface Guest {
   seat_group_id?: string;
   seat_number?: string;
   seat_assignment?: string;
-  seat_block?: 'A' | 'B' | 'C' | 'D' | 'E';
+  seat_block?: 'A' | 'B' | 'C' | 'D' | 'E' | string;
   building?: string;
   room?: string;
+  room_name?: string;
   wisma_name?: string;
   room_id?: string;
   room_number?: string;
   room_slot?: 'A' | 'B';
-  bed_number?: number;
+  bed_number?: number | string;
   wisma_assignment?: string;
   status_kehadiran: 'REGISTRASI' | 'CHECK_IN';
+  checkin_gate?: string;
+  checkin_time?: string;
   waktu_kehadiran_pertama?: string;
   token?: string;
   emailSent?: boolean;

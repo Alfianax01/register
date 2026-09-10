@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { mysqlAdapter } from '@/lib/db/mysql';
 import { comparePassword, createSessionToken } from '@/lib/security/auth';
 import { checkRateLimit } from '@/lib/security/sanitizer';
 
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Username dan password wajib diisi' }, { status: 400 });
     }
 
-    const admin = db.findAdminByUsername(username);
+    const admin = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getAdminByUsername(username) : null) || db.findAdminByUsername(username);
     if (!admin) {
       return NextResponse.json({ error: 'Kombinasi akun atau kata sandi dinas tidak valid' }, { status: 401 });
     }

@@ -264,6 +264,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Save to MySQL Database
+    // Sync to MySQL Database if needed
     if (mysqlAdapter.isConfigured()) {
       try {
         await mysqlAdapter.savePeserta({
@@ -283,8 +284,11 @@ export async function POST(req: NextRequest) {
           pdf_path: pdfPath
         });
         console.log(`[MySQL] Data peserta tersimpan permanen di database: ${newGuest.id}`);
+        await mysqlAdapter.updateGuest(newGuest.id, newGuest);
+        console.log(`[MySQL] Data peserta tersimpan permanen di database rapim_tni: ${newGuest.id} (${newGuest.registration_id})`);
       } catch (mysqlErr) {
         console.error('[MySQL Error] Gagal menyimpan peserta ke MySQL:', mysqlErr);
+        console.error('[MySQL Error] Gagal sinkronisasi peserta ke MySQL:', mysqlErr);
       }
     }
 

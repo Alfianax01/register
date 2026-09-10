@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifySessionToken } from '@/lib/security/auth';
 
+import { mysqlAdapter } from '@/lib/db/mysql';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
     const groups = db.getSeatGroups();
-    const seats = db.getSeats();
+    const seats = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getAllSeats() : null) || db.getSeats();
     return NextResponse.json({ success: true, groups, seats });
   } catch (err) {
     return NextResponse.json({ error: 'Gagal memuat denah kursi' }, { status: 500 });

@@ -882,6 +882,29 @@ class DatabaseManager {
 
   public async getGuestsAsync(): Promise<Guest[]> {
     this.ensureInitialized();
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myGuests = await mysqlAdapter.getAllGuests();
+        if (myGuests && myGuests.length > 0) {
+          this.data!.guests = myGuests;
+          return myGuests;
+        } else if (this.data && Array.isArray(this.data.guests) && this.data.guests.length > 0) {
+          // One-time initial seed migration to MySQL if table is currently empty
+          for (const g of this.data.guests) {
+            try {
+              await mysqlAdapter.createGuest(g);
+            } catch {}
+          }
+          const seeded = await mysqlAdapter.getAllGuests();
+          if (seeded && seeded.length > 0) {
+            this.data!.guests = seeded;
+            return seeded;
+          }
+        }
+      } catch (err) {
+        console.warn('[MySQL] Error in getGuestsAsync, falling back to cache:', err);
+      }
+    }
     if (postgresAdapter.isAvailable()) {
       try {
         const pgGuests = await postgresAdapter.getAllGuests();
@@ -902,6 +925,14 @@ class DatabaseManager {
   }
 
   public async findGuestByIdAsync(id: string): Promise<Guest | undefined> {
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myGuest = await mysqlAdapter.getGuestById(id);
+        if (myGuest) return myGuest;
+      } catch (err) {
+        console.warn('[MySQL] Error in findGuestByIdAsync:', err);
+      }
+    }
     const local = this.findGuestById(id);
     if (local) return local;
 
@@ -1077,11 +1108,10 @@ class DatabaseManager {
     const token = generateSecureToken();
     const token_hash = hashToken(token);
 
-    const randSuffix = Math.floor(100000 + Math.random() * 900000);
-    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' && guestData.nrp.toUpperCase() !== 'NON-TNI'
-      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}-${randSuffix}`
-      : `REG-2026-${Date.now().toString().slice(-4)}-${randSuffix}`);
-    const ticketId = guestData.ticket_id || `TCK-2026-${Date.now().toString().slice(-4)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    // Format auto-generate: REG-2026-XXXXXX (6 digit unik)
+    const randCode = Math.floor(100000 + Math.random() * 900000);
+    const regId = guestData.registration_id || `REG-2026-${randCode}`;
+    const ticketId = guestData.ticket_id || `TCK-2026-${randCode}`;
 
     const katInstansi = guestData.kategori_instansi || getInstansiCategory(guestData.matra || guestData.satker);
     const warnaKursi = guestData.warna_kursi || getSeatColorAlias(katInstansi);
@@ -1111,9 +1141,43 @@ class DatabaseManager {
     // Auto-allocate seat, wisma and room immediately upon registration
     try {
       const wantsAccom = Boolean(newGuest.butuh_akomodasi === 1 || newGuest.butuh_akomodasi);
-      const alloc = AssignmentService.assignGuestOnRegistration(newGuest.id, wantsAccom);
-      if (alloc.success && alloc.guest) {
-        Object.assign(newGuest, alloc.guest);
+      const seatAlloc = AssignmentService.allocateSeat(newGuest);
+      const accomAlloc = AssignmentService.allocateAccommodation(newGuest, wantsAccom);
+
+      newGuest.seat_number = seatAlloc.seatNumber;
+      newGuest.seat_assignment = seatAlloc.seatNumber;
+      newGuest.seat_block = seatAlloc.seatBlock;
+      newGuest.building = seatAlloc.building;
+      newGuest.room = seatAlloc.room;
+      newGuest.room_name = seatAlloc.room;
+      newGuest.seat_group_id = seatAlloc.seatGroupId;
+
+      newGuest.wisma_name = accomAlloc.wismaName;
+      newGuest.room_number = accomAlloc.wismaName === 'Tidak Menginap' ? undefined : (accomAlloc.roomNumber || undefined);
+      newGuest.bed_number = accomAlloc.wismaName === 'Tidak Menginap' ? undefined : (accomAlloc.bedNumber || undefined);
+      newGuest.wisma_assignment = accomAlloc.wismaAssignment;
+      newGuest.status_akomodasi = accomAlloc.wismaName !== 'Tidak Menginap' ? 'MENGINAP' : 'Tidak Menginap';
+      newGuest.assignment = {
+        id: `assign_${newGuest.id}`,
+        peserta_id: newGuest.id,
+        seat_code: seatAlloc.seatNumber,
+        seat_area: seatAlloc.room,
+        gedung: seatAlloc.building,
+        building: seatAlloc.building,
+        room: seatAlloc.room,
+        seat_row: seatAlloc.seatNumber.split('-')[0],
+        seat_num: seatAlloc.seatNumber.split('-')[1] || '01',
+        wisma_name: accomAlloc.wismaName,
+        room_code: accomAlloc.roomNumber,
+        room_number: accomAlloc.roomNumber,
+        bed_number: accomAlloc.bedNumber,
+        room_floor: accomAlloc.roomFloor,
+        assigned_at: now
+      };
+
+      this.assignSeat(seatAlloc.seatNumber, newGuest.id);
+      if (accomAlloc.roomId && accomAlloc.roomSlot) {
+        this.assignRoom(accomAlloc.roomId, accomAlloc.roomSlot, newGuest.id);
       }
     } catch (allocErr) {
       console.error('[Database] Auto-allocation on createGuestAsync failed:', allocErr);
@@ -1134,6 +1198,33 @@ class DatabaseManager {
       }
     }
 
+    // Persist directly to MySQL database (rapim_tni) as PRIMARY engine
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const savedMySQL = await mysqlAdapter.createGuest(newGuest);
+        if (savedMySQL) {
+          this.data!.guests.unshift(savedMySQL);
+          this.persist();
+          console.log('[MySQL] Berhasil simpan ke rapim_tni:', {
+            id: savedMySQL.id,
+            registration_id: savedMySQL.registration_id,
+            nama: savedMySQL.nama,
+            seat_number: savedMySQL.seat_number,
+            seat_block: savedMySQL.seat_block,
+            building: savedMySQL.building,
+            room_name: savedMySQL.room_name,
+            wisma_name: savedMySQL.wisma_name,
+            room_number: savedMySQL.room_number,
+            bed_number: savedMySQL.bed_number,
+            status_akomodasi: savedMySQL.status_akomodasi
+          });
+          return savedMySQL;
+        }
+      } catch (myErr) {
+        console.error('[MySQL] Gagal createGuestAsync ke MySQL rapim_tni:', myErr);
+      }
+    }
+
     console.log("Database Result (insertResult):", {
       id: newGuest.id,
       registration_id: newGuest.registration_id,
@@ -1143,11 +1234,27 @@ class DatabaseManager {
       token: newGuest.qr_token,
       created_at: newGuest.created_at
     });
+    // Fallback: in-memory & atomic JSON file
+    this.data!.guests.unshift(newGuest);
+    this.persist();
+
+    // Fallback: Postgres if configured
+    if (postgresAdapter.isAvailable()) {
+      postgresAdapter.saveGuest(newGuest, 3).catch(console.error);
+    }
 
     return newGuest;
   }
 
   public async findGuestByTokenAsync(token: string): Promise<Guest | undefined> {
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myGuest = await mysqlAdapter.getGuestByToken(token);
+        if (myGuest) return myGuest;
+      } catch (err) {
+        console.warn('[MySQL] Error in findGuestByTokenAsync:', err);
+      }
+    }
     const local = this.findGuestByToken(token);
     if (local) return local;
 
@@ -1170,6 +1277,14 @@ class DatabaseManager {
   }
 
   public async findGuestByNRPAsync(nrp: string): Promise<Guest | undefined> {
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myGuest = await mysqlAdapter.getGuestByNRP(nrp);
+        if (myGuest) return myGuest;
+      } catch (err) {
+        console.warn('[MySQL] Error in findGuestByNRPAsync:', err);
+      }
+    }
     const local = this.findGuestByNRP(nrp);
     if (local) return local;
 
@@ -1185,6 +1300,14 @@ class DatabaseManager {
   }
 
   public async findGuestByPhoneAsync(phone: string): Promise<Guest | undefined> {
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myGuest = await mysqlAdapter.getGuestByPhone(phone);
+        if (myGuest) return myGuest;
+      } catch (err) {
+        console.warn('[MySQL] Error in findGuestByPhoneAsync:', err);
+      }
+    }
     const local = this.findGuestByPhone(phone);
     if (local) return local;
 
@@ -1200,6 +1323,14 @@ class DatabaseManager {
   }
 
   public async findGuestByEmailAsync(email: string): Promise<Guest | undefined> {
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myGuest = await mysqlAdapter.getGuestByEmail(email);
+        if (myGuest) return myGuest;
+      } catch (err) {
+        console.warn('[MySQL] Error in findGuestByEmailAsync:', err);
+      }
+    }
     const local = this.findGuestByEmail(email);
     if (local) return local;
 
@@ -1217,6 +1348,18 @@ class DatabaseManager {
   public async searchGuestsAsync(query: string): Promise<Guest[]> {
     this.ensureInitialized();
     const clean = query.trim().toLowerCase();
+    
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        const myResults = await mysqlAdapter.searchGuests(clean);
+        if (myResults && myResults.length > 0) {
+          return myResults;
+        }
+      } catch (err) {
+        console.warn('[MySQL] Error in searchGuestsAsync:', err);
+      }
+    }
+
     if (!clean) return this.data!.guests.slice(0, 50);
 
     // If Postgres is available, combine or query Postgres
@@ -1276,6 +1419,7 @@ class DatabaseManager {
         seat_number: updated.seat_number,
         status_hadir: updated.status_kehadiran === 'CHECK_IN' ? 'HADIR' : 'BELUM_HADIR',
       }).catch(err => console.error('[MySQL] updatePeserta error:', err));
+      mysqlAdapter.updateGuest(id, updated).catch(err => console.error('[MySQL] updateGuest error:', err));
     }
 
     console.log("DATA TERSIMPAN:", {
@@ -1317,6 +1461,7 @@ class DatabaseManager {
 
     if (mysqlAdapter.isConfigured()) {
       mysqlAdapter.deletePeserta(id).catch(err => console.error('[MySQL] deletePeserta error:', err));
+      mysqlAdapter.deleteGuest(id).catch(err => console.error('[MySQL] deleteGuest error:', err));
     }
 
     console.log("DATA TERHAPUS:", {

@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         wisma_name: guest.wisma_name || 'Tidak Menginap',
         room_code: guest.room_number || '-',
         room_number: guest.room_number || '-',
-        bed_number: guest.bed_number || 0,
+        bed_number: guest.bed_number ? Number(guest.bed_number) : undefined,
         room_floor: guest.wisma_name === 'Tidak Menginap' ? 'Tidak Menginap' : 'Lantai 1',
         assigned_at: guest.created_at || new Date().toISOString()
       };
@@ -101,6 +101,7 @@ export async function POST(req: NextRequest) {
         if (assignment) {
           await mysqlAdapter.saveAssignment(assignment);
         }
+        await mysqlAdapter.recordCheckin(guest.qr_token || guest.registration_id || guest.id, checkpoint, adminUser.nama);
       } catch (mysqlErr) {
         console.error('[MySQL Checkin Error]:', mysqlErr);
       }

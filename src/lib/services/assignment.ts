@@ -61,15 +61,28 @@ export class AssignmentService {
 
     // 5. Sipil / Non-TNI / Kementerian / Mabes non-VIP -> Blok E
     return 'E';
+    // 5. Sipil / Kementerian / Mabes / Non-TNI / VIP -> Blok A VIP
+    return 'A';
+  }
+
+  public static getBlockName(seatBlock: 'A' | 'B' | 'C' | 'D' | 'E' | string): string {
+    switch (seatBlock) {
+      case 'A': return 'Blok A VIP';
+      case 'B': return 'Blok B TNI AD';
+      case 'C': return 'Blok C TNI AL';
+      case 'D': return 'Blok D TNI AU';
+      default: return `Blok ${seatBlock}`;
+    }
   }
 
   /**
    * Get seat area / room description based on seat block
    * Blok A (VIP) -> Area VVIP
+   * Blok A (VIP) -> Ruang Sidang Utama (Area VIP)
    * Blok B-E -> Ruang Sidang Utama
    */
   public static getSeatRoom(seatBlock: 'A' | 'B' | 'C' | 'D' | 'E'): string {
-    if (seatBlock === 'A') return 'Area VVIP';
+    if (seatBlock === 'A') return 'Ruang Sidang Utama (VIP)';
     return 'Ruang Sidang Utama';
   }
 
@@ -225,9 +238,9 @@ export class AssignmentService {
 
     if (chosenRoom) {
       const cleanWisma = this.cleanWismaName(chosenRoom.wisma_name);
-      const roomNumber = `${chosenRoom.room_number}${chosenSlot}`;
+      const roomNumber = String(chosenRoom.room_number);
       const bedNumber = chosenSlot === 'A' ? 1 : 2;
-      const roomFloor = `Lantai ${chosenRoom.floor}`;
+      const roomFloor = `Lantai ${chosenRoom.floor || 1}`;
 
       return {
         wismaName: cleanWisma,
@@ -236,14 +249,14 @@ export class AssignmentService {
         roomId: chosenRoom.id,
         roomSlot: chosenSlot,
         roomFloor,
-        wismaAssignment: `${cleanWisma} - Kamar ${roomNumber} (${roomFloor})`
+        wismaAssignment: `${cleanWisma} - Kamar ${roomNumber} (Bed ${bedNumber})`
       };
     }
 
     // If all pre-seeded rooms are filled, generate a new room number in Wisma Kartika
     const defaultWisma = pLevel <= 2 ? 'Wisma Soedirman' : 'Wisma Kartika';
     const randRoomNum = String(100 + (Math.floor(Math.random() * 20) + 1));
-    const roomNumber = `${randRoomNum}A`;
+    const roomNumber = randRoomNum;
 
     return {
       wismaName: defaultWisma,
@@ -251,7 +264,7 @@ export class AssignmentService {
       bedNumber: 1,
       roomSlot: 'A',
       roomFloor: 'Lantai 1',
-      wismaAssignment: `${defaultWisma} - Kamar ${roomNumber} (Lantai 1)`
+      wismaAssignment: `${defaultWisma} - Kamar ${roomNumber} (Bed 1)`
     };
   }
 

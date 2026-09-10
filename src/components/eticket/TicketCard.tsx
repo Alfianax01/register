@@ -195,6 +195,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       )}
 
       {/* 5. CHECK-IN INFO (Hanya Tampil SETELAH Check-In Berhasil) */}
+      {/* 5. CHECK-IN INFO (Tampil SETELAH Check-In Berhasil) */}
       {isCheckIn && (
         <div className="py-1 pb-3 border-b border-slate-100">
           <div className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
@@ -203,6 +204,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               <div>
                 <span className="text-[10px] text-emerald-800 uppercase font-bold block">
                   Verifikasi Gerbang (Check-In Info)
+                  Verifikasi Gerbang (Check-In Terverifikasi)
                 </span>
                 <span className="text-xs font-semibold text-slate-900">
                   {checkinDetails?.gate || 'Gate Masuk: Gate A — Utama'} &bull; {checkinDetails?.waktu || 'Telah Hadir'}
@@ -217,88 +219,95 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </div>
       )}
 
-      {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Hanya Tampil SETELAH Check-In Berhasil) */}
-      {isCheckIn && (
-        <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Penempatan Peserta (Resmi Terdaftar)
+      {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Tampil Lengkap Bahkan Sebelum Check-In) */}
+      <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <Armchair className="w-3.5 h-3.5 text-blue-600" />
+            <span>Penempatan Kursi & Akomodasi</span>
+          </span>
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+            isCheckIn 
+              ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' 
+              : 'text-blue-700 bg-blue-50 border border-blue-200'
+          }`}>
+            {isCheckIn ? 'Check-In Terverifikasi' : 'Alokasi Resmi'}
+          </span>
+        </div>
+
+        {/* Baris 1: Nomor Kursi | Gedung | Ruangan */}
+        <div className="grid grid-cols-3 gap-2">
+          {/* Kolom 1: Kursi */}
+          <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-200 text-center flex flex-col justify-between shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 block mb-0.5">
+              Nomor Kursi
             </span>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-              Check-In Terverifikasi
+            <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
+              {seat || guest.seat_number || 'A-01'}
+            </span>
+            <span className="text-[10px] text-blue-800 font-semibold block pt-0.5">
+              {guest.seat_block ? `Blok ${guest.seat_block}` : 'Sidang Pleno'}
             </span>
           </div>
 
-          {/* Baris 1: Nomor Kursi | Gedung | Ruangan */}
-          <div className="grid grid-cols-3 gap-2">
-            {/* Kolom 1: Kursi */}
-            <div className="p-2.5 rounded-xl bg-blue-50/40 border border-blue-100 text-center flex flex-col justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                Nomor Kursi
-              </span>
-              <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
-                {seat || 'A-01'}
-              </span>
-              <span className="text-[10px] text-blue-700/80 font-medium block pt-0.5">
-                Sidang Pleno
-              </span>
-            </div>
-
-            {/* Kolom 2: Gedung */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                Gedung
-              </span>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung}>
-                {gedung}
-              </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-                Pusat Sidang
-              </span>
-            </div>
-
-            {/* Kolom 3: Ruangan */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                Ruangan
-              </span>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={ruangan}>
-                {ruangan}
-              </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-                Lantai 1
-              </span>
-            </div>
+          {/* Kolom 2: Gedung */}
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Gedung
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung || guest.building || 'Gedung Ahmad Yani'}>
+              {gedung || guest.building || 'Gedung Ahmad Yani'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              Mabes TNI
+            </span>
           </div>
 
-          {/* Baris 2: Wisma | Nomor Kamar */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                Wisma Akomodasi
-              </span>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma}>
-                {wisma || 'Wisma Kartika'}
-              </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-                Mess Perwira
-              </span>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                Nomor Kamar
-              </span>
-              <span className="text-xs sm:text-sm font-bold font-mono text-slate-900 block truncate">
-                {room && room !== '-' ? `Kamar ${room}` : 'Tidak Menginap'}
-              </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-                Kamar Resmi
-              </span>
-            </div>
+          {/* Kolom 3: Ruangan */}
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Ruangan
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={ruangan || guest.room_name || guest.room || 'Ruang Sidang Utama'}>
+              {ruangan || guest.room_name || guest.room || 'Ruang Sidang Utama'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              Lantai 1
+            </span>
           </div>
         </div>
-      )}
+
+        {/* Baris 2: Wisma | Nomor Kamar */}
+        <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Wisma Akomodasi
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma || guest.wisma_name || 'Tidak Menginap'}>
+              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' 
+                ? 'Tidak Menginap' 
+                : (wisma || guest.wisma_name || 'Wisma Kartika')}
+            </span>
+            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' ? 'Tanpa Penginapan' : 'Mess Resmi TNI'}
+            </span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              Nomor Kamar & Bed
+            </span>
+            <span className="text-xs sm:text-sm font-bold font-mono text-slate-900 block truncate">
+              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' || (!guest.room_number && !room)
+                ? 'Tidak Menginap'
+                : `Kamar ${room || guest.room_number}${guest.bed_number ? ` (Bed ${guest.bed_number})` : ''}`}
+            </span>
+            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' ? 'Status: Mandiri' : 'Kamar Ditentukan'}
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* 7. INFORMASI EVENT */}
       <div className="pt-2 text-xs text-slate-500 space-y-1.5 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
