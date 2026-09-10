@@ -1,26 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifySessionToken } from '@/lib/security/auth';
+import { Guest } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const search = searchParams.get('q')?.toLowerCase() || '';
+    const search = searchParams.get('q')?.trim() || '';
     const matra = searchParams.get('matra') || '';
     const status = searchParams.get('status') || '';
     const group = searchParams.get('group') || '';
 
-    let guests = search ? await db.searchGuestsAsync(search) : await db.getGuestsAsync();
+    let guests: Guest[] = [];
 
-    if (search && guests.length === 0) {
-      // Direct exact match check as fallback
-      const byNrp = await db.findGuestByNRPAsync(search);
-      if (byNrp) guests = [byNrp];
-      else {
-        const byToken = await db.findGuestByTokenAsync(search);
-        if (byToken) guests = [byToken];
+    if (!search) {
+      guests = await db.getAllGuests();
+    } else {
+      guests = await db.searchGuests(search);
+      if (!guests || guests.length === 0) {
+        // Fallback exact match by NRP
+        const byNrp = await db.getGuestByNRP(search);
+        if (byNrp) {
+          guests = [byNrp];
+        } else {
+          // Fallback exact match by Token
+          const byToken = await db.getGuestByToken(search);
+          if (byToken) {
+            guests = [byToken];
+          } else {
+            guests = [];
+          }
+        }
       }
     }
 
@@ -29,9 +41,10 @@ export async function GET(req: NextRequest) {
     }
 
     if (status) {
-      if (status === 'CHECK-IN' || status === 'CHECK_IN') {
+      const st = status.toUpperCase();
+      if (st === 'CHECK-IN' || st === 'CHECK_IN' || st === 'HADIR') {
         guests = guests.filter(g => g.status_kehadiran === 'CHECK-IN' || g.status_kehadiran === 'CHECK_IN');
-      } else if (status === 'TEREGISTRASI' || status === 'REGISTRASI') {
+      } else if (st === 'TEREGISTRASI' || st === 'REGISTRASI' || st === 'BELUM_HADIR') {
         guests = guests.filter(g => g.status_kehadiran === 'TEREGISTRASI' || g.status_kehadiran === 'REGISTRASI');
       } else {
         guests = guests.filter(g => (g.status_kehadiran as string) === status);
@@ -42,15 +55,33 @@ export async function GET(req: NextRequest) {
       guests = guests.filter(g => g.seat_group_id === group);
     }
 
+    // Fast mapping without N+1 database queries
     const sanitizedGuests = guests.map(g => {
-      const assignment = g.assignment || db.findAssignmentByGuestId(g.id);
       const seatBlock = g.seat_block || (g.seat_number ? g.seat_number.split('-')[0] : 'A');
-      const building = g.building || assignment?.gedung || assignment?.building || 'Gedung Ahmad Yani';
-      const room = g.room || assignment?.seat_area || assignment?.room || (seatBlock === 'A' ? 'Area VVIP' : 'Ruang Sidang Utama');
+      const building = g.building || 'Gedung Ahmad Yani';
+      const room = g.room || g.room_name || (seatBlock === 'A' ? 'Area VVIP' : 'Ruang Sidang Utama');
       const isTidakMenginap = g.butuh_akomodasi === 0 || g.wisma_name === 'Tidak Menginap';
-      const wisma_name = isTidakMenginap ? 'Tidak Menginap' : (g.wisma_name || assignment?.wisma_name || 'Wisma Kartika');
-      const room_number = isTidakMenginap ? '-' : (g.room_number || assignment?.room_code || '101A');
-      const bed_number = isTidakMenginap ? 0 : (g.bed_number || assignment?.bed_number || 1);
+      const wisma_name = isTidakMenginap ? 'Tidak Menginap' : (g.wisma_name || 'Wisma Kartika');
+      const room_number = isTidakMenginap ? '-' : (g.room_number || '-');
+      const bed_number = isTidakMenginap ? 0 : (g.bed_number ? Number(g.bed_number) : 1);
+
+      const assignment = g.assignment || (g.seat_number ? {
+        id: `assign_${g.id}`,
+        peserta_id: g.id,
+        seat_code: g.seat_number,
+        seat_area: room,
+        gedung: building,
+        building: building,
+        room: room,
+        seat_row: seatBlock,
+        seat_num: g.seat_number.split('-')[1] || '01',
+        wisma_name: wisma_name,
+        room_code: room_number,
+        room_number: room_number,
+        bed_number: bed_number,
+        room_floor: isTidakMenginap ? 'Tidak Menginap' : 'Lantai 1',
+        assigned_at: g.created_at || new Date().toISOString()
+      } : undefined);
 
       return {
         ...g,
@@ -60,7 +91,7 @@ export async function GET(req: NextRequest) {
         wisma_name,
         room_number,
         bed_number,
-        assignment: assignment || g.assignment
+        assignment
       };
     });
 
@@ -70,7 +101,12 @@ export async function GET(req: NextRequest) {
       }
     });
   } catch (err) {
-    return NextResponse.json({ error: 'Gagal memuat daftar tamu' }, { status: 500 });
+    console.error('[API /api/guests]', err);
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Gagal memuat daftar tamu',
+      details: err instanceof Error ? err.message : String(err)
+    }, { status: 500 });
   }
 }
 

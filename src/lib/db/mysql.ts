@@ -42,7 +42,7 @@ export interface PesertaRow {
 }
 
 function rowToGuest(r: any): Guest {
-  const isCheckIn = r.status_kehadiran === 'CHECK_IN' || r.status === 'CHECK_IN';
+  const isCheckIn = r.status_kehadiran === 'CHECK_IN' || r.status_kehadiran === 'CHECK-IN' || r.status === 'CHECK_IN';
   const matraVal = (r.matra || 'AD') as MatraType;
   const kategori_instansi = getInstansiCategory(matraVal);
   const warna_kursi = getSeatColorAlias(kategori_instansi);
@@ -406,10 +406,12 @@ class MySQLAdapter {
 
   public async searchGuests(query: string): Promise<Guest[]> {
     const pool = this.getPool();
-    if (!pool) return [];
+    if (!pool) {
+      throw new Error('MySQL connection pool not available');
+    }
     await this.initSchema();
 
-    const searchTerm = `%${query}%`;
+    const searchTerm = `%${query.trim()}%`;
     const sql = `
       SELECT * FROM \`guests\` 
       WHERE \`nama\` LIKE ? 
@@ -421,7 +423,7 @@ class MySQLAdapter {
          OR \`registration_id\` LIKE ?
          OR \`qr_token\` LIKE ?
       ORDER BY \`created_at\` DESC
-      LIMIT 100;
+      LIMIT 150;
     `;
 
     try {
@@ -431,13 +433,15 @@ class MySQLAdapter {
       return (rows || []).map(rowToGuest);
     } catch (err) {
       console.error('[MySQL] Gagal searchGuests:', err);
-      return [];
+      throw err;
     }
   }
 
   public async getAllGuests(filters?: { matra?: string; status?: string; search?: string }): Promise<Guest[]> {
     const pool = this.getPool();
-    if (!pool) return [];
+    if (!pool) {
+      throw new Error('MySQL connection pool not available');
+    }
     await this.initSchema();
 
     let sql = 'SELECT * FROM `guests` WHERE 1=1';
@@ -449,17 +453,21 @@ class MySQLAdapter {
     }
 
     if (filters?.status) {
-      let st = filters.status;
-      if (st === 'HADIR') st = 'CHECK_IN';
-      if (st === 'BELUM_HADIR') st = 'REGISTRASI';
-      sql += ' AND `status_kehadiran` = ?';
-      params.push(st);
+      const st = filters.status.toUpperCase();
+      if (st === 'CHECK-IN' || st === 'CHECK_IN' || st === 'HADIR') {
+        sql += " AND (`status_kehadiran` = 'CHECK_IN' OR `status_kehadiran` = 'CHECK-IN')";
+      } else if (st === 'TEREGISTRASI' || st === 'REGISTRASI' || st === 'BELUM_HADIR') {
+        sql += " AND (`status_kehadiran` = 'REGISTRASI' OR `status_kehadiran` = 'TEREGISTRASI')";
+      } else {
+        sql += ' AND `status_kehadiran` = ?';
+        params.push(filters.status);
+      }
     }
 
     if (filters?.search) {
-      const s = `%${filters.search}%`;
-      sql += ' AND (`nama` LIKE ? OR `nrp` LIKE ? OR `phone` LIKE ? OR `email` LIKE ? OR `jabatan` LIKE ?)';
-      params.push(s, s, s, s, s);
+      const s = `%${filters.search.trim()}%`;
+      sql += ' AND (`nama` LIKE ? OR `nrp` LIKE ? OR `phone` LIKE ? OR `email` LIKE ? OR `jabatan` LIKE ? OR `kesatuan` LIKE ? OR `registration_id` LIKE ? OR `qr_token` LIKE ?)';
+      params.push(s, s, s, s, s, s, s, s);
     }
 
     sql += ' ORDER BY `created_at` DESC;';
@@ -469,7 +477,7 @@ class MySQLAdapter {
       return (rows || []).map(rowToGuest);
     } catch (err) {
       console.error('[MySQL] Gagal getAllGuests:', err);
-      return [];
+      throw err;
     }
   }
 
@@ -588,7 +596,7 @@ class MySQLAdapter {
     const now = new Date();
     try {
       await pool.execute(
-        'UPDATE `guests` SET `status_kehadiran` = "CHECK-IN", `checkin_gate` = ?, `checkin_time` = ? WHERE `id` = ?',
+        'UPDATE `guests` SET `status_kehadiran` = "CHECK_IN", `checkin_gate` = ?, `checkin_time` = ? WHERE `id` = ?',
         [gate, now, guest.id]
       );
 

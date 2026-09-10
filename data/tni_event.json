@@ -12,6 +12,8 @@
       "satker": "Kodam III/Slw",
       "satuan": "Kodam III/Slw",
       "negara_instansi": "Indonesia / TNI",
+      "no_hp": "-",
+      "phone": "-",
       "kesatuan": "Kodam III/Slw",
       "email": "hendra.pratama@test.mil.id",
       "butuh_akomodasi": 1,
@@ -29,9 +31,11 @@
       "room_name": "Ruang Sidang Utama",
       "wisma_name": "Wisma Gatot Subroto",
       "room_number": "302",
-      "bed_number": 1,
+      "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 302 (Bed 1)",
-      "status_kehadiran": "TEREGISTRASI",
+      "status_kehadiran": "CHECK-IN",
+      "guest_status": "TEREGISTRASI",
+      "waktu_kehadiran_pertama": "2026-09-10T14:53:46.675Z",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -42,82 +46,16 @@
         "id": "assign_112",
         "peserta_id": "112",
         "seat_code": "B-26",
-        "seat_area": "Ruang Sidang Utama",
+        "seat_area": "B",
         "gedung": "Gedung Ahmad Yani",
-        "building": "Gedung Ahmad Yani",
-        "room": "Ruang Sidang Utama",
-        "seat_row": "B",
-        "seat_num": "26",
         "wisma_name": "Wisma Gatot Subroto",
         "room_code": "302",
-        "room_number": "302",
-        "bed_number": 1,
-        "room_floor": "Lantai 3",
-        "assigned_at": "2026-09-10T02:16:24.946Z"
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-10T02:16:24.000Z"
       },
+      "registered_at": "2026-09-10T02:16:24.000Z",
       "created_at": "2026-09-10T02:16:24.000Z",
-      "updated_at": "2026-09-10T02:16:25.127Z",
-      "room_id": "room_mess_302",
-      "room_slot": "A",
-      "seat_group_id": "grp_b"
-    },
-    {
-      "nrp": "12093847",
-      "nama": "Mayor Inf Hendra Pratama",
-      "matra": "AD",
-      "pangkat": "Mayor (AD)",
-      "pangkat_level": 7,
-      "jabatan": "Danyonif",
-      "satker": "Kodam III/Slw",
-      "satuan": "Kodam III/Slw",
-      "negara_instansi": "Indonesia / TNI - Kemhan RI",
-      "email": "hendra.pratama@test.mil.id",
-      "butuh_akomodasi": 1,
-      "kategori_instansi": "ANGKATAN_DARAT",
-      "warna_kursi": "green",
-      "seatColorAlias": "green",
-      "id": "guest_1789006584644_tiwyixk",
-      "registration_id": "REG-2026-756151",
-      "ticket_id": "TCK-2026-756151",
-      "qr_token": "92cf3d88-d098-4c72-a240-937d38d08d80",
-      "token_hash": "f5ed6642a02524f277f0055fb0d3e883fcb4a12157abc2a3f54639c628e136e1",
-      "status_kehadiran": "TEREGISTRASI",
-      "email_status": "PENDING",
-      "email_retry_count": 0,
-      "emailSent": false,
-      "created_at": "2026-09-10T02:16:24.643Z",
-      "updated_at": "2026-09-10T02:16:24.643Z",
-      "seat_number": "B-26",
-      "seat_assignment": "B-26",
-      "seat_block": "B",
-      "building": "Gedung Ahmad Yani",
-      "room": "Ruang Sidang Utama",
-      "room_name": "Ruang Sidang Utama",
-      "seat_group_id": "grp_b",
-      "wisma_name": "Wisma Gatot Subroto",
-      "room_number": "301",
-      "bed_number": 2,
-      "wisma_assignment": "Wisma Gatot Subroto - Kamar 301 (Bed 2)",
-      "status_akomodasi": "MENGINAP",
-      "assignment": {
-        "id": "assign_guest_1789006584644_tiwyixk",
-        "peserta_id": "guest_1789006584644_tiwyixk",
-        "seat_code": "B-26",
-        "seat_area": "Ruang Sidang Utama",
-        "gedung": "Gedung Ahmad Yani",
-        "building": "Gedung Ahmad Yani",
-        "room": "Ruang Sidang Utama",
-        "seat_row": "B",
-        "seat_num": "26",
-        "wisma_name": "Wisma Gatot Subroto",
-        "room_code": "301",
-        "room_number": "301",
-        "bed_number": 2,
-        "room_floor": "Lantai 3",
-        "assigned_at": "2026-09-10T02:16:24.643Z"
-      },
-      "room_id": "room_mess_301",
-      "room_slot": "B"
+      "updated_at": "2026-09-10T14:53:46.675Z"
     },
     {
       "id": "111",
@@ -131,6 +69,8 @@
       "satker": "Setjen Kemhan",
       "satuan": "Setjen Kemhan",
       "negara_instansi": "Indonesia / TNI",
+      "no_hp": "-",
+      "phone": "-",
       "kesatuan": "Setjen Kemhan",
       "email": "azmialfian631@gmail.com",
       "butuh_akomodasi": 1,
@@ -144,13 +84,17 @@
       "seat_assignment": "E-11",
       "seat_block": "E",
       "building": "Gedung Ahmad Yani",
-      "room": "Ruang Sidang Utama",
+      "room": "Ruang Sidang Utama (VIP)",
       "room_name": "Ruang Sidang Utama (VIP)",
       "wisma_name": "Wisma Gatot Subroto",
       "room_number": "301",
-      "bed_number": 1,
+      "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 301 (Bed 1)",
-      "status_kehadiran": "TEREGISTRASI",
+      "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
+      "checkin_gate": "GATE_UTAMA",
+      "checkin_time": "2026-09-10T06:57:36.000Z",
+      "waktu_kehadiran_pertama": "2026-09-10T06:57:36.000Z",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -161,82 +105,16 @@
         "id": "assign_111",
         "peserta_id": "111",
         "seat_code": "E-11",
-        "seat_area": "Ruang Sidang Utama",
+        "seat_area": "E",
         "gedung": "Gedung Ahmad Yani",
-        "building": "Gedung Ahmad Yani",
-        "room": "Ruang Sidang Utama",
-        "seat_row": "E",
-        "seat_num": "11",
         "wisma_name": "Wisma Gatot Subroto",
         "room_code": "301",
-        "room_number": "301",
-        "bed_number": 1,
-        "room_floor": "Lantai 3",
-        "assigned_at": "2026-09-10T01:42:47.134Z"
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-10T01:42:47.000Z"
       },
+      "registered_at": "2026-09-10T01:42:47.000Z",
       "created_at": "2026-09-10T01:42:47.000Z",
-      "updated_at": "2026-09-10T01:42:47.502Z",
-      "seat_group_id": "grp_e",
-      "room_id": "room_mess_301",
-      "room_slot": "A"
-    },
-    {
-      "nrp": "-",
-      "nama": "Alip",
-      "matra": "NON_TNI",
-      "pangkat": "Menteri / Pejabat Setingkat Menteri",
-      "pangkat_level": 1,
-      "jabatan": "-",
-      "satker": "Kementerian Pertahanan RI (Kemhan)",
-      "satuan": "Setjen Kemhan",
-      "negara_instansi": "Indonesia / TNI - Kemhan RI",
-      "email": "azmialfian631@gmail.com",
-      "butuh_akomodasi": 1,
-      "kategori_instansi": "SIPIL",
-      "warna_kursi": "gold",
-      "seatColorAlias": "gold",
-      "id": "guest_1789004567047_rdxz9ln",
-      "registration_id": "REG-2026-631588",
-      "ticket_id": "TCK-2026-631588",
-      "qr_token": "1ba75684-3cbc-4bbb-9bf3-7709ec72d536",
-      "token_hash": "cc19233f922b8a37334fed6898bdf3f6771eaaa6d40f5589b9445422c06bc74e",
-      "status_kehadiran": "TEREGISTRASI",
-      "email_status": "PENDING",
-      "email_retry_count": 0,
-      "emailSent": false,
-      "created_at": "2026-09-10T01:42:47.046Z",
-      "updated_at": "2026-09-10T01:42:47.046Z",
-      "seat_number": "A-36",
-      "seat_assignment": "A-36",
-      "seat_block": "A",
-      "building": "Gedung Ahmad Yani",
-      "room": "Ruang Sidang Utama (VIP)",
-      "room_name": "Ruang Sidang Utama (VIP)",
-      "seat_group_id": "grp_a",
-      "wisma_name": "Wisma Gatot Subroto",
-      "room_number": "208",
-      "bed_number": 2,
-      "wisma_assignment": "Wisma Gatot Subroto - Kamar 208 (Bed 2)",
-      "status_akomodasi": "MENGINAP",
-      "assignment": {
-        "id": "assign_guest_1789004567047_rdxz9ln",
-        "peserta_id": "guest_1789004567047_rdxz9ln",
-        "seat_code": "A-36",
-        "seat_area": "Ruang Sidang Utama (VIP)",
-        "gedung": "Gedung Ahmad Yani",
-        "building": "Gedung Ahmad Yani",
-        "room": "Ruang Sidang Utama (VIP)",
-        "seat_row": "A",
-        "seat_num": "36",
-        "wisma_name": "Wisma Gatot Subroto",
-        "room_code": "208",
-        "room_number": "208",
-        "bed_number": 2,
-        "room_floor": "Lantai 2",
-        "assigned_at": "2026-09-10T01:42:47.046Z"
-      },
-      "room_id": "room_mess_208",
-      "room_slot": "B"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "107",
@@ -272,6 +150,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 208 (Bed 2)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate 1 Utama Hankam",
       "checkin_time": "2026-09-10T01:20:18.000Z",
       "waktu_kehadiran_pertama": "2026-09-10T01:20:18.000Z",
@@ -292,8 +171,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:20:18.000Z"
       },
+      "registered_at": "2026-09-10T01:20:18.000Z",
       "created_at": "2026-09-10T01:20:18.000Z",
-      "updated_at": "2026-09-10T01:20:18.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "108",
@@ -327,6 +207,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -344,8 +225,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:20:18.000Z"
       },
+      "registered_at": "2026-09-10T01:20:18.000Z",
       "created_at": "2026-09-10T01:20:18.000Z",
-      "updated_at": "2026-09-10T01:20:18.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "109",
@@ -379,6 +261,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -396,8 +279,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:20:18.000Z"
       },
+      "registered_at": "2026-09-10T01:20:18.000Z",
       "created_at": "2026-09-10T01:20:18.000Z",
-      "updated_at": "2026-09-10T01:20:18.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "110",
@@ -433,6 +317,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 208 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -450,8 +335,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:20:18.000Z"
       },
+      "registered_at": "2026-09-10T01:20:18.000Z",
       "created_at": "2026-09-10T01:20:18.000Z",
-      "updated_at": "2026-09-10T01:20:18.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "94",
@@ -485,6 +371,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -505,8 +392,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "95",
@@ -540,6 +428,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -557,8 +446,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "96",
@@ -592,6 +482,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -612,8 +503,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "97",
@@ -649,6 +541,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -669,8 +562,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "98",
@@ -706,6 +600,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -723,8 +618,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "99",
@@ -758,6 +654,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -778,8 +675,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "100",
@@ -815,6 +713,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -832,8 +731,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "101",
@@ -867,6 +767,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -887,8 +788,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "102",
@@ -924,6 +826,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -941,8 +844,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "103",
@@ -967,17 +871,18 @@
       "qr_token": "1a18a8a9-dcdc-4377-94ae-e3218021161f",
       "token": "1a18a8a9-dcdc-4377-94ae-e3218021161f",
       "token_hash": "",
-      "seat_number": "E-01",
-      "seat_assignment": "E-01",
-      "seat_block": "E",
+      "seat_number": "C-22",
+      "seat_assignment": "C-22",
+      "seat_block": "C",
       "building": "Gedung Ahmad Yani",
       "room": "Ruang Sidang Utama",
       "room_name": "Ruang Sidang Utama",
-      "wisma_name": "Wisma Kartika",
-      "room_number": "101",
-      "bed_number": "1",
-      "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
+      "wisma_name": "Wisma Gatot Subroto",
+      "room_number": "302",
+      "bed_number": "2",
+      "wisma_assignment": "Wisma Gatot Subroto - Kamar 302 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -987,16 +892,17 @@
       "assignment": {
         "id": "assign_103",
         "peserta_id": "103",
-        "seat_code": "E-01",
-        "seat_area": "E",
+        "seat_code": "C-22",
+        "seat_area": "C",
         "gedung": "Gedung Ahmad Yani",
-        "wisma_name": "Wisma Kartika",
-        "room_code": "101",
+        "wisma_name": "Wisma Gatot Subroto",
+        "room_code": "302",
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "104",
@@ -1032,6 +938,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -1049,8 +956,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "105",
@@ -1084,6 +992,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -1101,8 +1010,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "106",
@@ -1136,6 +1046,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -1156,8 +1067,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:35.000Z"
       },
+      "registered_at": "2026-09-10T01:18:35.000Z",
       "created_at": "2026-09-10T01:18:35.000Z",
-      "updated_at": "2026-09-10T01:18:35.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "2",
@@ -1193,6 +1105,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 207 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1210,8 +1123,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "3",
@@ -1245,6 +1159,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1262,8 +1177,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "4",
@@ -1299,6 +1215,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 206 (Bed 2)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T15:02:30.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T15:02:30.000Z",
@@ -1319,8 +1236,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "5",
@@ -1356,6 +1274,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 206 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1373,8 +1292,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "6",
@@ -1408,6 +1328,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1425,8 +1346,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "7",
@@ -1462,6 +1384,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 205 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1479,8 +1402,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "8",
@@ -1516,6 +1440,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 205 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1533,8 +1458,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "9",
@@ -1570,6 +1496,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 204 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1587,8 +1514,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "10",
@@ -1622,6 +1550,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1639,8 +1568,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "11",
@@ -1676,6 +1606,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 203 (Bed 2)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T14:49:56.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T14:49:56.000Z",
@@ -1696,8 +1627,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "12",
@@ -1733,6 +1665,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 203 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1750,8 +1683,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "13",
@@ -1787,6 +1721,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 202 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1804,8 +1739,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "14",
@@ -1839,6 +1775,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1856,8 +1793,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "15",
@@ -1893,6 +1831,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 201 (Bed 2)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T14:35:26.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T14:35:26.000Z",
@@ -1913,8 +1852,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "16",
@@ -1950,6 +1890,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 201 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -1967,8 +1908,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "17",
@@ -2004,6 +1946,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 108 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "BOUNCED",
       "email_retry_count": 0,
       "emailSent": false,
@@ -2021,8 +1964,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "18",
@@ -2058,6 +2002,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 107 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2075,8 +2020,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "19",
@@ -2110,6 +2056,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2127,8 +2074,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "20",
@@ -2164,6 +2112,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 107 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T14:11:10.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T14:11:10.000Z",
@@ -2184,8 +2133,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "21",
@@ -2221,6 +2171,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 106 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2238,8 +2189,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "22",
@@ -2273,6 +2225,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2290,8 +2243,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "23",
@@ -2327,6 +2281,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 106 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2344,8 +2299,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "24",
@@ -2381,6 +2337,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 105 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2398,8 +2355,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "25",
@@ -2435,6 +2393,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 105 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2452,8 +2411,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "26",
@@ -2487,6 +2447,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2504,8 +2465,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "27",
@@ -2541,6 +2503,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 104 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2558,8 +2521,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "28",
@@ -2595,6 +2559,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 104 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2612,8 +2577,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "29",
@@ -2647,6 +2613,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2664,8 +2631,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "30",
@@ -2701,6 +2669,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 103 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2718,8 +2687,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "31",
@@ -2755,6 +2725,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 103 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2772,8 +2743,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "32",
@@ -2809,6 +2781,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 102 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "BOUNCED",
       "email_retry_count": 0,
       "emailSent": false,
@@ -2826,8 +2799,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "33",
@@ -2863,6 +2837,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 102 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2880,8 +2855,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "34",
@@ -2915,6 +2891,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2932,8 +2909,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "35",
@@ -2969,6 +2947,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 101 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -2986,8 +2965,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "36",
@@ -3023,6 +3003,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Gatot Subroto - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3040,8 +3021,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "37",
@@ -3077,6 +3059,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 208 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "BOUNCED",
       "email_retry_count": 0,
       "emailSent": false,
@@ -3094,8 +3077,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "38",
@@ -3131,6 +3115,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 208 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3148,8 +3133,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "39",
@@ -3183,6 +3169,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3200,8 +3187,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "40",
@@ -3237,6 +3225,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 207 (Bed 2)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T13:58:43.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T13:58:43.000Z",
@@ -3257,8 +3246,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "41",
@@ -3294,6 +3284,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 207 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3311,8 +3302,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "42",
@@ -3348,6 +3340,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 206 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "BOUNCED",
       "email_retry_count": 0,
       "emailSent": false,
@@ -3365,8 +3358,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "43",
@@ -3402,6 +3396,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 206 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3419,8 +3414,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "44",
@@ -3454,6 +3450,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3471,8 +3468,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "45",
@@ -3508,6 +3506,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 205 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3525,8 +3524,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "46",
@@ -3562,6 +3562,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 205 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3579,8 +3580,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "47",
@@ -3616,6 +3618,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 204 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3633,8 +3636,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "48",
@@ -3668,6 +3672,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3685,8 +3690,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "49",
@@ -3722,6 +3728,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 204 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3739,8 +3746,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "50",
@@ -3776,6 +3784,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 203 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3793,8 +3802,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "51",
@@ -3828,6 +3838,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3845,8 +3856,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "52",
@@ -3882,6 +3894,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 203 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3899,8 +3912,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "53",
@@ -3936,6 +3950,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 202 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -3953,8 +3968,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "54",
@@ -3988,6 +4004,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4005,8 +4022,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "55",
@@ -4042,6 +4060,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 202 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4059,8 +4078,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "56",
@@ -4096,6 +4116,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 201 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4113,8 +4134,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "57",
@@ -4148,6 +4170,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4165,8 +4188,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "58",
@@ -4202,6 +4226,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 201 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4219,8 +4244,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "59",
@@ -4256,6 +4282,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 108 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4273,8 +4300,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "60",
@@ -4308,6 +4336,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4325,8 +4354,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "61",
@@ -4362,6 +4392,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 107 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4379,8 +4410,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "62",
@@ -4416,6 +4448,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 107 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4433,8 +4466,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "63",
@@ -4468,6 +4502,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4485,8 +4520,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "64",
@@ -4522,6 +4558,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 106 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4539,8 +4576,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "65",
@@ -4576,6 +4614,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 106 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4593,8 +4632,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "66",
@@ -4628,6 +4668,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4645,8 +4686,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "67",
@@ -4682,6 +4724,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 105 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4699,8 +4742,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "68",
@@ -4736,6 +4780,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 105 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4753,8 +4798,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "69",
@@ -4790,6 +4836,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 104 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4807,8 +4854,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "70",
@@ -4842,6 +4890,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4859,8 +4908,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "71",
@@ -4896,6 +4946,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 104 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4913,8 +4964,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "72",
@@ -4950,6 +5002,7 @@
       "bed_number": "2",
       "wisma_assignment": "Wisma Kartika - Kamar 103 (Bed 2)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -4967,8 +5020,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "73",
@@ -5002,6 +5056,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -5019,8 +5074,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "74",
@@ -5054,6 +5110,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -5071,8 +5128,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "75",
@@ -5108,6 +5166,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T13:21:30.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T13:21:30.000Z",
@@ -5128,8 +5187,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "76",
@@ -5163,6 +5223,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -5180,8 +5241,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "77",
@@ -5217,6 +5279,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T12:40:37.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T12:40:37.000Z",
@@ -5237,8 +5300,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "78",
@@ -5274,6 +5338,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "SENT",
       "email_retry_count": 0,
       "emailSent": true,
@@ -5291,8 +5356,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "79",
@@ -5324,6 +5390,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T12:18:37.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T12:18:37.000Z",
@@ -5344,8 +5411,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "80",
@@ -5377,6 +5445,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T11:24:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T11:24:47.000Z",
@@ -5397,8 +5466,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "81",
@@ -5434,6 +5504,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T07:22:09.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T07:22:09.000Z",
@@ -5454,8 +5525,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "82",
@@ -5491,6 +5563,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-05T02:46:22.000Z",
       "waktu_kehadiran_pertama": "2026-09-05T02:46:22.000Z",
@@ -5511,8 +5584,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "83",
@@ -5548,6 +5622,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T16:08:32.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T16:08:32.000Z",
@@ -5568,8 +5643,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "84",
@@ -5605,6 +5681,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T15:37:55.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T15:37:55.000Z",
@@ -5625,8 +5702,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "85",
@@ -5662,6 +5740,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T09:03:27.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T09:03:27.000Z",
@@ -5682,8 +5761,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "86",
@@ -5719,6 +5799,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-07T11:15:44.000Z",
       "waktu_kehadiran_pertama": "2026-09-07T11:15:44.000Z",
@@ -5739,8 +5820,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "87",
@@ -5774,6 +5856,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "TEREGISTRASI",
+      "guest_status": "TEREGISTRASI",
       "email_status": "PENDING",
       "email_retry_count": 0,
       "emailSent": false,
@@ -5791,8 +5874,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "88",
@@ -5828,6 +5912,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T14:42:05.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T14:42:05.000Z",
@@ -5848,8 +5933,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "89",
@@ -5885,6 +5971,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T14:24:07.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T14:24:07.000Z",
@@ -5905,8 +5992,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "90",
@@ -5942,6 +6030,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T14:15:24.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T14:15:24.000Z",
@@ -5962,8 +6051,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "91",
@@ -5999,6 +6089,7 @@
       "bed_number": "1",
       "wisma_assignment": "Wisma Kartika - Kamar 101 (Bed 1)",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T13:53:00.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T13:53:00.000Z",
@@ -6019,8 +6110,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "92",
@@ -6054,6 +6146,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -6074,8 +6167,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     },
     {
       "id": "93",
@@ -6109,6 +6203,7 @@
       "wisma_name": "Tidak Menginap",
       "wisma_assignment": "Tidak Menginap",
       "status_kehadiran": "CHECK-IN",
+      "guest_status": "CHECK-IN",
       "checkin_gate": "Gate Utama Hankam",
       "checkin_time": "2026-09-04T12:50:47.000Z",
       "waktu_kehadiran_pertama": "2026-09-04T12:50:47.000Z",
@@ -6129,8 +6224,9 @@
         "room_floor": "Lantai 1",
         "assigned_at": "2026-09-10T01:18:34.000Z"
       },
+      "registered_at": "2026-09-10T01:18:34.000Z",
       "created_at": "2026-09-10T01:18:34.000Z",
-      "updated_at": "2026-09-10T01:18:34.000Z"
+      "updated_at": "2026-09-10T14:48:36.000Z"
     }
   ],
   "seat_groups": [
@@ -9538,6 +9634,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1789052026675_7r2cx",
+      "guest_id": "112",
+      "guest_nama": "Mayor Inf Hendra Pratama",
+      "guest_nrp": "12093847",
+      "guest_pangkat": "Mayor (AD)",
+      "guest_matra": "AD",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_gate",
+      "scanned_by_admin_name": "Petugas Lapangan",
+      "scanned_at": "2026-09-10T14:53:46.675Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1789000421199_wpubr",
       "guest_id": "guest_1788999927208_29a0t5i",
       "guest_nama": "Budi",
@@ -10037,6 +10147,15 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1789052026723_8uq3",
+      "admin_id": "admin_gate",
+      "admin_username": "petugas_gate",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Mayor Inf Hendra Pratama (Mayor (AD) / NRP 12093847) di Gate 1: Pintu Masuk Utama - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-10T14:53:46.723Z"
+    },
     {
       "id": "aud_1789048853024_s4d1",
       "admin_id": "admin_super",
@@ -12540,6 +12659,17 @@
     }
   ],
   "email_logs": [
+    {
+      "id": "elog_1789052026761_98upc",
+      "guest_id": "112",
+      "email": "hendra.pratama@test.mil.id",
+      "subject": "[RAPIM TNI 2026] Informasi Kursi & Akomodasi — Mayor Inf Hendra Pratama",
+      "status": "SENT",
+      "error_message": "[DEV MODE SIMULATED POST CHECK-IN]",
+      "message_id": "sim_post_1789052026761",
+      "provider": "simulated_dev_mode",
+      "sent_at": "2026-09-10T14:53:46.761Z"
+    },
     {
       "id": "elog_1789006585119_90xny",
       "guest_id": "112",

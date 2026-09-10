@@ -62,6 +62,7 @@ export default function GuestsPage() {
   const [resendingGuest, setResendingGuest] = useState<Guest | null>(null);
   const [resendEmail, setResendEmail] = useState('');
   const [resendingLoading, setResendingLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchGuests = async (isBackground: boolean = false) => {
     try {
@@ -78,12 +79,21 @@ export default function GuestsPage() {
       if (res.ok) {
         const data = await res.json();
         setGuests(data.guests || []);
+        setFetchError(null);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        const msg = errData.error || 'Gagal memuat data direktori peserta';
+        setFetchError(msg);
+        if (!isBackground) {
+          showToast(msg, { type: 'error' });
+        }
       }
       if (meRes.ok) {
         const meData = await meRes.json();
         setCurrentUser(meData.user);
       }
-    } catch {
+    } catch (err) {
+      setFetchError('Tidak dapat terhubung ke server');
       if (!isBackground) {
         showToast('Gagal memuat data peserta', { type: 'error' });
       }
@@ -503,6 +513,22 @@ export default function GuestsPage() {
                       <div className="inline-flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
                         <span>Memuat data direktori peserta...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : fetchError && guests.length === 0 ? (
+                  <tr>
+                    <td colSpan={11} className="py-12 text-center text-rose-600">
+                      <div className="inline-flex flex-col items-center gap-2">
+                        <AlertCircle className="w-5 h-5 text-rose-500" />
+                        <span className="font-semibold">{fetchError}</span>
+                        <button
+                          type="button"
+                          onClick={() => fetchGuests(false)}
+                          className="mt-1 px-3 py-1 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors cursor-pointer"
+                        >
+                          Coba Muat Ulang
+                        </button>
                       </div>
                     </td>
                   </tr>

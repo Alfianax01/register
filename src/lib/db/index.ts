@@ -880,11 +880,11 @@ class DatabaseManager {
     return this.data!.guests;
   }
 
-  public async getGuestsAsync(): Promise<Guest[]> {
+  public async getAllGuests(filters?: { matra?: string; status?: string; search?: string }): Promise<Guest[]> {
     this.ensureInitialized();
     if (mysqlAdapter.isConfigured()) {
       try {
-        const myGuests = await mysqlAdapter.getAllGuests();
+        const myGuests = await mysqlAdapter.getAllGuests(filters);
         if (myGuests && myGuests.length > 0) {
           this.data!.guests = myGuests;
           return myGuests;
@@ -895,14 +895,15 @@ class DatabaseManager {
               await mysqlAdapter.createGuest(g);
             } catch {}
           }
-          const seeded = await mysqlAdapter.getAllGuests();
+          const seeded = await mysqlAdapter.getAllGuests(filters);
           if (seeded && seeded.length > 0) {
             this.data!.guests = seeded;
             return seeded;
           }
         }
       } catch (err) {
-        console.warn('[MySQL] Error in getGuestsAsync, falling back to cache:', err);
+        console.error('[MySQL] Error in getAllGuests:', err);
+        throw err;
       }
     }
     if (postgresAdapter.isAvailable()) {
@@ -913,10 +914,43 @@ class DatabaseManager {
           return pgGuests;
         }
       } catch (err) {
-        console.warn('[PostgreSQL] Error in getGuestsAsync, falling back to cache:', err);
+        console.error('[PostgreSQL] Error in getAllGuests:', err);
+        throw err;
       }
     }
     return this.data!.guests;
+  }
+
+  public async getGuestsAsync(): Promise<Guest[]> {
+    return this.getAllGuests();
+  }
+
+  public async searchGuests(query: string): Promise<Guest[]> {
+    this.ensureInitialized();
+    if (mysqlAdapter.isConfigured()) {
+      try {
+        return await mysqlAdapter.searchGuests(query);
+      } catch (err) {
+        console.error('[MySQL] Error in searchGuests:', err);
+        throw err;
+      }
+    }
+    return this.searchGuestsAsync(query);
+  }
+
+  public async getGuestByNRP(nrp: string): Promise<Guest | null> {
+    const res = await this.findGuestByNRPAsync(nrp);
+    return res || null;
+  }
+
+  public async getGuestByToken(token: string): Promise<Guest | null> {
+    const res = await this.findGuestByTokenAsync(token);
+    return res || null;
+  }
+
+  public async getGuestById(id: string): Promise<Guest | null> {
+    const res = await this.findGuestByIdAsync(id);
+    return res || null;
   }
 
   public findGuestById(id: string): Guest | undefined {
