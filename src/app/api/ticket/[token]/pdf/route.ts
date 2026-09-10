@@ -18,6 +18,23 @@ export async function GET(
     // Check MySQL first if available
     let guest: any = null;
     if (mysqlAdapter.isConfigured()) {
+      const p = await mysqlAdapter.getPesertaByToken(token);
+      if (p) {
+        guest = {
+          id: p.id,
+          nama: p.nama_lengkap,
+          pangkat: p.pangkat,
+          nrp: p.nrp,
+          jabatan: p.jabatan,
+          instansi: p.instansi,
+          kategori_tamu: p.kategori_tamu,
+          matra: p.matra,
+          seat_number: p.seat_number,
+          qr_token: p.qr_token,
+          registration_id: `REG-${p.nrp || p.id.slice(-6).toUpperCase()}`,
+          created_at: p.created_at
+        };
+      }
       guest = await mysqlAdapter.getGuestByToken(token);
     }
 

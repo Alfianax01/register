@@ -41,6 +41,7 @@ export interface Guest {
   seat_group_id?: string;
   seat_number?: string;
   seat_assignment?: string;
+  seat_block?: 'A' | 'B' | 'C' | 'D' | 'E';
   seat_block?: 'A' | 'B' | 'C' | 'D' | 'E' | string;
   building?: string;
   room?: string;
@@ -49,6 +50,7 @@ export interface Guest {
   room_id?: string;
   room_number?: string;
   room_slot?: 'A' | 'B';
+  bed_number?: number;
   bed_number?: number | string;
   wisma_assignment?: string;
   status_kehadiran: 'REGISTRASI' | 'CHECK_IN';

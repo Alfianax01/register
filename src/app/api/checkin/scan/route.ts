@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
         wisma_name: guest.wisma_name || 'Tidak Menginap',
         room_code: guest.room_number || '-',
         room_number: guest.room_number || '-',
+        bed_number: guest.bed_number || 0,
         bed_number: guest.bed_number ? Number(guest.bed_number) : undefined,
         room_floor: guest.wisma_name === 'Tidak Menginap' ? 'Tidak Menginap' : 'Lantai 1',
         assigned_at: guest.created_at || new Date().toISOString()

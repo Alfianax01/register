@@ -57,6 +57,32 @@ export async function POST(
     let guest: Guest | null = null;
 
     if (mysqlAdapter.isConfigured()) {
+      const p = await mysqlAdapter.getPesertaByToken(token);
+      if (p) {
+        guest = {
+          id: p.id,
+          nama: p.nama_lengkap,
+          pangkat: p.pangkat,
+          pangkat_level: 5,
+          nrp: p.nrp || '',
+          jabatan: p.jabatan,
+          satker: p.instansi,
+          satuan: p.instansi,
+          negara_instansi: p.instansi,
+          email: p.email,
+          no_hp: p.no_hp || undefined,
+          matra: (p.matra as any) || 'AD',
+          butuh_akomodasi: 0,
+          seat_number: p.seat_number || undefined,
+          status_kehadiran: p.status_hadir === 'HADIR' ? 'CHECK_IN' : 'REGISTRASI',
+          qr_token: p.qr_token,
+          token: p.qr_token,
+          token_hash: '',
+          registration_id: `REG-${p.nrp || p.id.slice(-6).toUpperCase()}`,
+          created_at: p.created_at || new Date().toISOString(),
+          updated_at: p.updated_at || new Date().toISOString()
+        };
+      }
       guest = await mysqlAdapter.getGuestByToken(token);
     }
 
