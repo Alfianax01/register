@@ -82,9 +82,6 @@ export async function GET(
       }).replace('.', ':') + ' WIB';
 
       checkinDetails = {
-        gate: log?.checkpoint_name || 'Gate 1: Pintu Masuk Utama (Absensi Awal)',
-        waktu: waktuFormatted,
-        petugas: log?.scanned_by_admin_name || 'Gate Scanner 01'
         gate: log?.checkpoint_name || 'Gate 1 (Pintu Utama)',
         waktu: `${checkinTanggal}, ${checkinJam}`,
         tanggal: checkinTanggal,

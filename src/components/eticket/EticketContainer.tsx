@@ -219,14 +219,12 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
       <TicketCard
         guest={guest}
         qrCodeUrl={qrCodeUrl}
-        status={isCheckIn ? 'CHECK_IN' : 'REGISTRASI'}
         status={effectiveStatus}
         seat={guest.seat_number || guest.seat_assignment || guest.assignment?.seat_code || 'A-01'}
         gedung={guest.building || guest.assignment?.gedung || 'Gedung Ahmad Yani'}
         ruangan={guest.room || guest.assignment?.seat_area || 'Ruang Sidang Utama'}
         wisma={guest.wisma_name || guest.assignment?.wisma_name || (guest.butuh_akomodasi ? 'Wisma Kartika' : 'Tidak Menginap')}
         room={guest.room_number || guest.assignment?.room_code || (guest.butuh_akomodasi ? '101A' : '-')}
-        checkinDetails={(guest as any).checkin_details || checkinDetails}
         checkinDetails={effectiveCheckinDetails}
       />
 

@@ -2,14 +2,11 @@
 
 import React from 'react';
 import { Guest } from '@/types';
-import { CheckCircle2, Clock, Calendar, MapPin, Building, ShieldCheck, Armchair } from 'lucide-react';
-import { MATRA_COLORS, getMatraColor, safeMatraBg } from '@/constants/matraColors';
 import {
   CheckCircle2,
   Clock,
   Calendar,
   MapPin,
-  Building,
   ShieldCheck,
   Armchair,
   DoorClosed,
@@ -21,7 +18,6 @@ import { formatIndonesianDate, formatIndonesianTimeWIB } from '@/lib/utils/forma
 export interface TicketCardProps {
   guest: Guest;
   qrCodeUrl: string;
-  status: 'REGISTRASI' | 'CHECK_IN';
   status: 'TEREGISTRASI' | 'CHECK-IN' | 'REGISTRASI' | 'CHECK_IN';
   seat: string;
   gedung?: string;
@@ -39,16 +35,8 @@ export interface TicketCardProps {
 
 /**
  * Komponen Tunggal (Reusable) TicketCard untuk E-Ticket RAPIM TNI 2026.
- * Sesuai hierarki diagram UI/UX & V4 State Machine:
  * Sesuai hierarki diagram UI/UX & Prompt V6 State Machine:
  * 1. HEADER (RAPIM TNI 2026)
- * 2. STATUS BADGE [TERDAFTAR / CHECK-IN BERHASIL]
- * 3. QR CODE (dengan overlay status SUDAH DIGUNAKAN via opacity transition)
- * 4. IDENTITAS PESERTA (Nama, NRP, Matra, Jabatan/Kesatuan)
- * 5. HINT BOX (Hanya jika belum check-in: Background warning 8%, border 20%, radius 10px)
- * 6. CHECK-IN INFO (Hanya jika sudah check-in)
- * 7. PENEMPATAN PESERTA (Hanya jika sudah check-in: Kursi | Gedung | Ruangan & Wisma | Kamar)
- * 8. INFORMASI EVENT (Tanggal, Lokasi)
  * 2. STATUS BADGE [🟡 TEREGISTRASI / 🟢 CHECK-IN BERHASIL]
  * 3. WAKTU REGISTRASI CARD (Icon 📅🕒, format Indonesia + WIB, tampil di kedua status)
  * 4. QR CODE (dengan overlay status SUDAH DIGUNAKAN saat CHECK-IN)
@@ -69,7 +57,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
   room,
   checkinDetails
 }) => {
-  const isCheckIn = status === 'CHECK_IN';
   const isCheckIn = status === 'CHECK_IN' || status === 'CHECK-IN';
   const matraSpec = getMatraColor(guest?.matra || guest?.kategori_instansi);
 
@@ -108,31 +95,24 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       </div>
 
       {/* 2. STATUS BADGE */}
-      <div className="flex justify-center pb-3 border-b border-slate-100">
       <div className="flex justify-center pb-1">
         <div
           className={`inline-flex items-center gap-2 px-5 py-1.5 rounded-[20px] font-bold text-xs tracking-wider uppercase transition-colors duration-300 ${
             isCheckIn
-              ? 'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30'
-              : 'bg-amber-500/15 text-amber-700 border border-amber-500/30'
               ? 'bg-emerald-500/15 text-emerald-800 border border-emerald-500/30'
               : 'bg-amber-500/15 text-amber-800 border border-amber-500/30'
           }`}
         >
           {isCheckIn ? (
-            <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
             <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
           ) : (
-            <Clock className="w-4 h-4 stroke-[2.5]" />
             <Clock className="w-4 h-4 text-amber-600 stroke-[2.5]" />
           )}
-          <span>{isCheckIn ? 'CHECK-IN BERHASIL' : 'TERDAFTAR'}</span>
           <span>{isCheckIn ? 'CHECK-IN BERHASIL' : 'TEREGISTRASI'}</span>
         </div>
       </div>
 
-      {/* 3. QR CODE */}
-      {/* 3. WAKTU REGISTRASI CARD (Design Token: bg-secondary, radius 10px, padding 12px 16px) */}
+      {/* 3. WAKTU REGISTRASI CARD (Design Token: bg-secondary, radius 10px, padding 10px 14px) */}
       <div
         style={{
           backgroundColor: '#f8fafc',
@@ -165,6 +145,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       <div className="py-1 pb-3 border-b border-slate-100 flex flex-col items-center justify-center">
         <div className="relative w-[200px] h-[200px] p-2.5 bg-white rounded-xl border-2 border-slate-200/90 shadow-xs flex items-center justify-center overflow-hidden">
           {qrCodeUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={qrCodeUrl}
               alt={`QR Code ${guest.nama}`}
@@ -198,7 +179,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </p>
       </div>
 
-      {/* 4. IDENTITAS PESERTA */}
       {/* 5. IDENTITAS PESERTA */}
       <div className="py-1 pb-3 border-b border-slate-100 space-y-2.5">
         <div className="text-center">
@@ -210,7 +190,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </h2>
           <div className="flex items-center justify-center gap-1.5 mt-1 text-xs text-slate-600 font-medium">
             <span>{guest.pangkat}</span>
-            {guest.nrp && (
             {guest.nrp && guest.nrp !== '-' && (
               <>
                 <span>&bull;</span>
@@ -248,7 +227,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </div>
       </div>
 
-      {/* HINT BOX (Sebelum Check-In: Muncul saat belum scan QR di Gate) */}
       {/* 6. HINT BOX (Sebelum Check-In: Muncul saat status TEREGISTRASI) */}
       {!isCheckIn && (
         <div
@@ -272,27 +250,8 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </div>
       )}
 
-      {/* 5. CHECK-IN INFO (Hanya Tampil SETELAH Check-In Berhasil) */}
-      {/* 5. CHECK-IN INFO (Tampil SETELAH Check-In Berhasil) */}
       {/* 7. CHECK-IN INFO (Hanya Tampil SETELAH Check-In Berhasil: 📅 Tanggal + 🕒 Jam + 🚪 Gate + 👤 Petugas) */}
       {isCheckIn && (
-        <div className="py-1 pb-3 border-b border-slate-100">
-          <div className="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <div>
-                <span className="text-[10px] text-emerald-800 uppercase font-bold block">
-                  Verifikasi Gerbang (Check-In Info)
-                  Verifikasi Gerbang (Check-In Terverifikasi)
-                </span>
-                <span className="text-xs font-semibold text-slate-900">
-                  {checkinDetails?.gate || 'Gate Masuk: Gate A — Utama'} &bull; {checkinDetails?.waktu || 'Telah Hadir'}
-                  {checkinDetails?.petugas ? ` &bull; Petugas: ${checkinDetails.petugas}` : ''}
-                </span>
-              </div>
-            </div>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full shrink-0">
-              VALID
         <div
           style={{
             backgroundColor: '#ecfdf5',
@@ -363,56 +322,19 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </div>
       )}
 
-      {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Hanya Tampil SETELAH Check-In) */}
       {/* 8. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Hanya Tampil SETELAH Check-In) */}
       {isCheckIn && (
         <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
           <div className="flex items-center justify-between">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-            <Armchair className="w-3.5 h-3.5 text-blue-600" />
-            <span>Penempatan Kursi & Akomodasi</span>
-          </span>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-            isCheckIn 
-              ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' 
-              : 'text-blue-700 bg-blue-50 border border-blue-200'
-          }`}>
-            {isCheckIn ? 'Check-In Terverifikasi' : 'Alokasi Resmi'}
-          </span>
-        </div>
-
-        {/* Baris 1: Nomor Kursi | Gedung | Ruangan */}
-        <div className="grid grid-cols-3 gap-2">
-          {/* Kolom 1: Kursi */}
-          <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-200 text-center flex flex-col justify-between shadow-2xs">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 block mb-0.5">
-              Nomor Kursi
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Armchair className="w-3.5 h-3.5 text-blue-600" />
               <span>Penempatan Kursi & Akomodasi</span>
             </span>
-            <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
-              {seat || guest.seat_number || 'A-01'}
             <span className="text-[10px] font-bold px-2 py-0.5 rounded text-emerald-700 bg-emerald-50 border border-emerald-200">
               Check-In Terverifikasi
             </span>
-            <span className="text-[10px] text-blue-800 font-semibold block pt-0.5">
-              {guest.seat_block ? `Blok ${guest.seat_block}` : 'Sidang Pleno'}
-            </span>
           </div>
 
-          {/* Kolom 2: Gedung */}
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Gedung
-            </span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung || guest.building || 'Gedung Ahmad Yani'}>
-              {gedung || guest.building || 'Gedung Ahmad Yani'}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-              Mabes TNI
-            </span>
-          </div>
           {/* Baris 1: Nomor Kursi | Gedung | Ruangan */}
           <div className="grid grid-cols-3 gap-2">
             {/* Kolom 1: Kursi */}
@@ -428,19 +350,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               </span>
             </div>
 
-          {/* Kolom 3: Ruangan */}
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Ruangan
-            </span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={ruangan || guest.room_name || guest.room || 'Ruang Sidang Utama'}>
-              {ruangan || guest.room_name || guest.room || 'Ruang Sidang Utama'}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-              Lantai 1
-            </span>
-          </div>
-        </div>
             {/* Kolom 2: Gedung */}
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
@@ -454,20 +363,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
               </span>
             </div>
 
-        {/* Baris 2: Wisma | Nomor Kamar */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Wisma Akomodasi
-            </span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma || guest.wisma_name || 'Tidak Menginap'}>
-              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' 
-                ? 'Tidak Menginap' 
-                : (wisma || guest.wisma_name || 'Wisma Kartika')}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' ? 'Tanpa Penginapan' : 'Mess Resmi TNI'}
-            </span>
             {/* Kolom 3: Ruangan */}
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
@@ -482,18 +377,6 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             </div>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Nomor Kamar & Bed
-            </span>
-            <span className="text-xs sm:text-sm font-bold font-mono text-slate-900 block truncate">
-              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' || (!guest.room_number && !room)
-                ? 'Tidak Menginap'
-                : `Kamar ${room || guest.room_number}${guest.bed_number ? ` (Bed ${guest.bed_number})` : ''}`}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
-              {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' ? 'Status: Mandiri' : 'Kamar Ditentukan'}
-            </span>
           {/* Baris 2: Wisma | Nomor Kamar */}
           <div className="grid grid-cols-2 gap-2 pt-1">
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
@@ -525,10 +408,8 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             </div>
           </div>
         </div>
-      </div>
       )}
 
-      {/* 7. INFORMASI EVENT */}
       {/* 9. INFORMASI EVENT */}
       <div className="pt-2 text-xs text-slate-500 space-y-1.5 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
         <div className="flex items-center gap-2">
