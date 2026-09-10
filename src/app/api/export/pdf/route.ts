@@ -28,7 +28,6 @@ export async function GET(req: NextRequest) {
       try {
         const pesertaList = await mysqlAdapter.getAllPeserta();
         if (pesertaList && pesertaList.length > 0) {
-          guests = pesertaList.map(p => ({
           guests = pesertaList.map((p: any) => ({
             id: p.id,
             nama: p.nama_lengkap,

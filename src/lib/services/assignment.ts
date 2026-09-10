@@ -81,8 +81,7 @@ export class AssignmentService {
    * Blok A (VIP) -> Ruang Sidang Utama (Area VIP)
    * Blok B-E -> Ruang Sidang Utama
    */
-  public static getSeatRoom(seatBlock: 'A' | 'B' | 'C' | 'D' | 'E'): string {
-    if (seatBlock === 'A') return 'Area VVIP';
+  public static getSeatRoom(seatBlock: 'A' | 'B' | 'C' | 'D' | 'E' | string): string {
     if (seatBlock === 'A') return 'Ruang Sidang Utama (VIP)';
     return 'Ruang Sidang Utama';
   }

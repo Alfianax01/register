@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const accommodations = db.getAccommodations();
     const accommodations = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getAllRooms() : null) || db.getAccommodations();
     return NextResponse.json({ success: true, accommodations });
   } catch (err) {

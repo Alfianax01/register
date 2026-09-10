@@ -9,7 +9,6 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const groups = db.getSeatGroups();
-    const seats = db.getSeats();
     const seats = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getAllSeats() : null) || db.getSeats();
     return NextResponse.json({ success: true, groups, seats });
   } catch (err) {
