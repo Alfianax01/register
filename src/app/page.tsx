@@ -22,6 +22,20 @@ export default async function HomePage() {
           ========================================================================= */}
       <section className="relative py-12 sm:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5 sm:space-y-6">
+      <section
+        className="relative py-12 sm:py-20"
+        style={settings.hero_banner ? {
+          backgroundImage: `url(${settings.hero_banner})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        } : undefined}
+      >
+        {/* Overlay gradient jika ada hero banner */}
+        {settings.hero_banner && (
+          <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/70 to-white/90 pointer-events-none" />
+        )}
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5 sm:space-y-6">
           {/* Logo Hero Jika Ada */}
           {settings.hero_logo && (
             <div className="flex justify-center pb-1">

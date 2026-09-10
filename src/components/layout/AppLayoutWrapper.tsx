@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 
@@ -8,9 +9,39 @@ interface AppLayoutWrapperProps {
   children: React.ReactNode;
 }
 
+/** Fungsi helper untuk set favicon dinamis dari base64 data URI atau URL */
+function setDynamicFavicon(faviconValue: string) {
+  if (!faviconValue) return;
+  try {
+    // Hapus link favicon yang sudah ada
+    const existing = document.querySelectorAll("link[rel~='icon']");
+    existing.forEach(el => el.parentNode?.removeChild(el));
+
+    // Buat link baru
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = faviconValue.startsWith('data:image/svg') ? 'image/svg+xml' : 'image/png';
+    link.href = faviconValue;
+    document.head.appendChild(link);
+  } catch {
+    // Abaikan error jika DOM belum siap
+  }
+}
+
 export const AppLayoutWrapper: React.FC<AppLayoutWrapperProps> = ({ children }) => {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith('/admin');
+
+  useEffect(() => {
+    // Fetch favicon dari settings website secara asynchronous
+    fetch('/api/settings/website')
+      .then(res => res.json())
+      .then(data => {
+        const favicon = data?.settings?.favicon;
+        if (favicon) setDynamicFavicon(favicon);
+      })
+      .catch(() => {}); // Gagal fetch: biarkan favicon default dari /favicon.ico
+  }, []);
 
   if (isAdminRoute) {
     return (

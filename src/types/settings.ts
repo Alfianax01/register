@@ -8,6 +8,10 @@ export interface SiteSettings {
   navbar_logo: string;
   hero_logo: string;
 
+  // Media Assets
+  favicon: string;      // base64 data URI — ikon tab browser
+  hero_banner: string;  // base64 data URI (terkompresi) — background hero section
+
   // Form Registration Labels
   label_nama: string;
   label_matra: string;
@@ -28,6 +32,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   event_date: '4 – 5 September 2026',
   navbar_logo: '',
   hero_logo: '',
+  favicon: '',
+  hero_banner: '',
 
   label_nama: 'Nama Lengkap & Gelar',
   label_matra: 'Matra / Kategori',

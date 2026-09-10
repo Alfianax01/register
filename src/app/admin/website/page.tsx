@@ -6,6 +6,7 @@ import { AdminHeader } from '@/components/layout/AdminHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 import {
   Globe,
   FileText,
@@ -18,6 +19,7 @@ import {
   Building,
   Calendar,
   Image as ImageIcon
+  Images
 } from 'lucide-react';
 import { SiteSettings, DEFAULT_SITE_SETTINGS } from '@/types/settings';
 
@@ -25,6 +27,7 @@ export default function WebsiteCMSPage() {
   const { showToast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'landing' | 'labels'>('landing');
+  const [activeTab, setActiveTab] = useState<'landing' | 'labels' | 'media'>('landing');
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -103,11 +106,18 @@ export default function WebsiteCMSPage() {
     }
   };
 
+  const tabs: { key: 'landing' | 'labels' | 'media'; label: string; icon: React.ReactNode }[] = [
+    { key: 'landing', label: 'Landing Page & Branding', icon: <Globe className="w-4 h-4 text-blue-600" /> },
+    { key: 'labels', label: 'Label Form Registrasi', icon: <FileText className="w-4 h-4 text-emerald-600" /> },
+    { key: 'media', label: 'Media & Aset Gambar', icon: <Images className="w-4 h-4 text-violet-600" /> },
+  ];
+
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
       <AdminHeader
         title="Manajemen Konten & Website"
         subtitle="Kelola branding landing page, informasi kegiatan, dan penyesuaian label formulir pendaftaran."
+        subtitle="Kelola branding landing page, informasi kegiatan, media aset gambar, dan penyesuaian label formulir pendaftaran."
         user={currentUser}
       />
 
@@ -141,6 +151,22 @@ export default function WebsiteCMSPage() {
               <FileText className="w-4 h-4 text-emerald-600" />
               <span>Label Form Registrasi</span>
             </button>
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-lg flex-wrap">
+            {tabs.map(tab => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-md text-xs font-semibold transition-all ${
+                  activeTab === tab.key
+                    ? 'bg-white text-blue-800 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
 
           {/* Action Buttons */}
@@ -182,9 +208,14 @@ export default function WebsiteCMSPage() {
 
         {/* Tab Content Form */}
         <form onSubmit={handleSave} className="space-y-6">
+
+          {/* ================================================================
+              TAB: Landing Page & Branding
+              ================================================================ */}
           {activeTab === 'landing' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Card 1: Branding & Hero */}
+              {/* Card 1: Hero Section & Judul */}
               <Card className="p-5 sm:p-6 bg-white border border-slate-200 rounded-xl space-y-4 shadow-xs">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                   <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center font-bold">
@@ -239,6 +270,7 @@ export default function WebsiteCMSPage() {
               </Card>
 
               {/* Card 2: Lokasi, Tanggal & Logo */}
+              {/* Card 2: Jadwal, Lokasi & Info Acara */}
               <Card className="p-5 sm:p-6 bg-white border border-slate-200 rounded-xl space-y-4 shadow-xs">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                   <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold">
@@ -247,6 +279,8 @@ export default function WebsiteCMSPage() {
                   <div>
                     <h2 className="text-sm font-bold text-slate-900">Jadwal, Lokasi & Logo</h2>
                     <p className="text-xs text-slate-500">Parameter pelaksanaan dan lambang kedinasan</p>
+                    <h2 className="text-sm font-bold text-slate-900">Jadwal & Lokasi Acara</h2>
+                    <p className="text-xs text-slate-500">Parameter pelaksanaan yang tampil di landing page</p>
                   </div>
                 </div>
 
@@ -284,10 +318,17 @@ export default function WebsiteCMSPage() {
                     </label>
                     <input
                       type="text"
+                  {/* Logo Navbar langsung di sini sebagai quick access */}
+                  <div className="pt-2 border-t border-slate-100">
+                    <ImageUploadField
+                      label="Logo Navbar (Quick Upload)"
                       value={settings.navbar_logo}
                       onChange={(e) => handleInputChange('navbar_logo', e.target.value)}
                       className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none font-mono"
                       placeholder="/tni.png atau https://..."
+                      onChange={(val) => handleInputChange('navbar_logo', val)}
+                      maxInputSizeKB={500}
+                      hint="Tampil di pojok kiri navbar publik. Maks 500KB."
                     />
                   </div>
 
@@ -309,6 +350,9 @@ export default function WebsiteCMSPage() {
             </div>
           )}
 
+          {/* ================================================================
+              TAB: Label Form Registrasi
+              ================================================================ */}
           {activeTab === 'labels' && (
             <Card className="p-5 sm:p-6 bg-white border border-slate-200 rounded-xl space-y-5 shadow-xs">
               <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
@@ -333,18 +377,45 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+                {[
+                  { field: 'label_nama' as keyof SiteSettings, label: 'Label Nama Lengkap' },
+                  { field: 'label_matra' as keyof SiteSettings, label: 'Label Matra / Kategori' },
+                  { field: 'label_pangkat' as keyof SiteSettings, label: 'Label Pangkat Kedinasan' },
+                  { field: 'label_nrp' as keyof SiteSettings, label: 'Label NRP / NIP' },
+                  { field: 'label_jabatan' as keyof SiteSettings, label: 'Label Jabatan Kedinasan' },
+                  { field: 'label_satker' as keyof SiteSettings, label: 'Label Satker / Kesatuan Asal' },
+                  { field: 'label_email' as keyof SiteSettings, label: 'Label Alamat Email' },
+                  { field: 'label_phone' as keyof SiteSettings, label: 'Label Nomor WhatsApp / HP' },
+                ].map(({ field, label }) => (
+                  <div key={field}>
+                    <label className="font-semibold text-slate-700 block mb-1">{label}</label>
+                    <input
+                      type="text"
+                      value={settings[field]}
+                      onChange={(e) => handleInputChange(field, e.target.value)}
+                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                    />
+                  </div>
+                ))}
 
                 <div>
+                <div className="md:col-span-2">
                   <label className="font-semibold text-slate-700 block mb-1">
                     Label Matra / Kategori
+                    Label Kebutuhan Penginapan (Mess / Wisma)
                   </label>
                   <input
                     type="text"
                     value={settings.label_matra}
                     onChange={(e) => handleInputChange('label_matra', e.target.value)}
+                    value={settings.label_akomodasi}
+                    onChange={(e) => handleInputChange('label_akomodasi', e.target.value)}
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+              </div>
+            </Card>
+          )}
 
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">
@@ -357,6 +428,18 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+          {/* ================================================================
+              TAB: Media & Aset Gambar
+              ================================================================ */}
+          {activeTab === 'media' && (
+            <div className="space-y-6">
+              {/* Info Banner */}
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-800">
+                <p className="font-semibold mb-1">ℹ️ Cara Kerja Upload Gambar</p>
+                <p className="text-blue-700">
+                  Gambar disimpan sebagai base64 di database — tidak ada file eksternal yang perlu dikelola. Hero Banner dikompres otomatis di browser sebelum dikirim supaya ukuran data tetap efisien.
+                </p>
+              </div>
 
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">
@@ -369,6 +452,18 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Card: Logo & Ikon */}
+                <Card className="p-5 sm:p-6 bg-white border border-slate-200 rounded-xl space-y-5 shadow-xs">
+                  <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+                    <div className="w-8 h-8 rounded-lg bg-violet-50 text-violet-700 flex items-center justify-center">
+                      <Images className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-bold text-slate-900">Logo & Ikon</h2>
+                      <p className="text-xs text-slate-500">Gambar berukuran kecil untuk identitas portal</p>
+                    </div>
+                  </div>
 
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">
@@ -381,6 +476,14 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+                  <div className="space-y-5">
+                    <ImageUploadField
+                      label="Logo Navbar"
+                      value={settings.navbar_logo}
+                      onChange={(val) => handleInputChange('navbar_logo', val)}
+                      maxInputSizeKB={500}
+                      hint="Tampil di pojok kiri navbar halaman publik. Rekomendasikan format PNG/SVG transparan."
+                    />
 
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">
@@ -393,6 +496,15 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+                    <div className="border-t border-slate-100 pt-5">
+                      <ImageUploadField
+                        label="Logo Hero"
+                        value={settings.hero_logo}
+                        onChange={(val) => handleInputChange('hero_logo', val)}
+                        maxInputSizeKB={500}
+                        hint="Tampil di atas judul utama di landing page. Format PNG/SVG dengan background transparan."
+                      />
+                    </div>
 
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">
@@ -405,6 +517,18 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+                    <div className="border-t border-slate-100 pt-5">
+                      <ImageUploadField
+                        label="Favicon (Ikon Tab Browser)"
+                        value={settings.favicon}
+                        onChange={(val) => handleInputChange('favicon', val)}
+                        maxInputSizeKB={100}
+                        hint="Tampil di tab browser. Gunakan file ICO, PNG 32×32, atau SVG. Maks 100KB."
+                        aspectHint="32×32 px"
+                      />
+                    </div>
+                  </div>
+                </Card>
 
                 <div>
                   <label className="font-semibold text-slate-700 block mb-1">
@@ -415,6 +539,28 @@ export default function WebsiteCMSPage() {
                     value={settings.label_phone}
                     onChange={(e) => handleInputChange('label_phone', e.target.value)}
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                {/* Card: Hero Banner */}
+                <Card className="p-5 sm:p-6 bg-white border border-slate-200 rounded-xl space-y-5 shadow-xs">
+                  <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+                    <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+                      <Images className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-bold text-slate-900">Hero Banner</h2>
+                      <p className="text-xs text-slate-500">Background section utama landing page</p>
+                    </div>
+                  </div>
+
+                  <ImageUploadField
+                    label="Gambar Background Hero"
+                    value={settings.hero_banner}
+                    onChange={(val) => handleInputChange('hero_banner', val)}
+                    maxInputSizeKB={3072}
+                    compress={true}
+                    maxWidth={1280}
+                    quality={0.75}
+                    hint="Otomatis dikompres & di-resize ke maks 1280px lebar. File asli maks 3MB (hasil setelah kompresi jauh lebih kecil)."
+                    aspectHint="1920×1080 px (16:9)"
                   />
                 </div>
 
@@ -429,8 +575,26 @@ export default function WebsiteCMSPage() {
                     className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
+                  {/* Preview hero banner yang lebih besar */}
+                  {settings.hero_banner && (
+                    <div className="mt-2">
+                      <p className="text-[11px] text-slate-500 mb-1.5 font-medium">Preview tampilan hero:</p>
+                      <div
+                        className="w-full h-28 rounded-lg border border-slate-200 bg-cover bg-center bg-no-repeat relative overflow-hidden"
+                        style={{ backgroundImage: `url(${settings.hero_banner})` }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-white/60 flex items-end p-3">
+                          <p className="text-[10px] font-semibold text-slate-800 bg-white/80 px-2 py-0.5 rounded">
+                            {settings.hero_title || 'Judul Acara'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Card>
               </div>
             </Card>
+            </div>
           )}
 
           {/* Bottom Save Bar */}

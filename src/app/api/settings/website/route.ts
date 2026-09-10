@@ -4,6 +4,9 @@ import { verifySessionToken } from '@/lib/security/auth';
 import { SESSION_COOKIE_NAME } from '@/lib/security/session';
 
 export const dynamic = 'force-dynamic';
+// Body size limit untuk App Router Next.js 14 (App Router tidak support export const config)
+// Payload base64 gambar terkompresi biasanya < 500KB — default Next.js 4MB sudah cukup.
+// Jika upload gambar besar gagal (413 error), set NEXT_BODY_SIZE_LIMIT env var di .env.local.
 
 export async function GET() {
   try {
