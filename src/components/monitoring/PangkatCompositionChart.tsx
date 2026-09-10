@@ -13,6 +13,7 @@ export const PangkatCompositionChart: React.FC<PangkatCompositionProps> = ({ pan
     { label: 'Perwira Pertama (PAMA Kapten/Lettu/Letda)', count: pangkatCount.PAMA || 0, color: 'bg-cyan-500', textColor: 'text-slate-900' },
     { label: 'Bintara & Tamtama Pendukung', count: pangkatCount.BINTARA_TAMTAMA || 0, color: 'bg-indigo-500', textColor: 'text-slate-900' },
     { label: 'Pejabat Sipil / Diplomatik / Asing', count: pangkatCount.SIPIL || 0, color: 'bg-slate-400', textColor: 'text-slate-900' },
+    { label: 'Pejabat K/L / Diplomatik / Asing', count: pangkatCount.SIPIL || 0, color: 'bg-slate-400', textColor: 'text-slate-900' },
   ];
 
   return (

@@ -27,6 +27,9 @@ export function applyGuestFilters(guests: Guest[], options: GuestFilterOptions =
   // Normalisasi status lama jika ada
   if (status === 'HADIR') status = 'CHECK_IN';
   if (status === 'BELUM_HADIR') status = 'REGISTRASI';
+  // Normalisasi status jika ada
+  if (status === 'HADIR' || status === 'CHECK_IN') status = 'CHECK-IN';
+  if (status === 'BELUM_HADIR' || status === 'REGISTRASI') status = 'TEREGISTRASI';
 
   const dateFrom = options.dateFrom ? new Date(options.dateFrom).getTime() : null;
   const dateTo = options.dateTo ? new Date(options.dateTo).getTime() : null;
@@ -67,6 +70,8 @@ export function applyGuestFilters(guests: Guest[], options: GuestFilterOptions =
       let guestStatus = (g.status_kehadiran || '').toUpperCase();
       if (guestStatus === 'HADIR') guestStatus = 'CHECK_IN';
       if (guestStatus === 'BELUM_HADIR') guestStatus = 'REGISTRASI';
+      if (guestStatus === 'HADIR' || guestStatus === 'CHECK_IN') guestStatus = 'CHECK-IN';
+      if (guestStatus === 'BELUM_HADIR' || guestStatus === 'REGISTRASI') guestStatus = 'TEREGISTRASI';
 
       if (guestStatus !== status) {
         return false;

@@ -50,7 +50,7 @@ export const DEFAULT_MATRA_SPEC: MatraColorSpec = {
 export const MATRA_COLOR_SPECS: Record<MatraColorKey, MatraColorSpec> = {
   SIPIL: {
     key: 'SIPIL',
-    label: 'Sipil / Non-TNI',
+    label: 'K/L (Kementerian/Lembaga)',
     hex: MATRA_COLORS.SIPIL.hex,
     bgHex: MATRA_COLORS.SIPIL.hex,
     borderHex: '#A17D16',

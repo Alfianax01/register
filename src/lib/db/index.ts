@@ -804,7 +804,7 @@ class DatabaseManager {
         id: `chk_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         guest_id: g.id,
         guest_nama: g.nama,
-        guest_nrp: g.nrp,
+        guest_nrp: g.nrp || '-',
         guest_pangkat: g.pangkat,
         guest_matra: g.matra,
         checkpoint_code: 'GATE_UTAMA',
@@ -1123,7 +1123,7 @@ class DatabaseManager {
       ticket_id: ticketId,
       qr_token: token,
       token_hash: token_hash,
-      status_kehadiran: 'REGISTRASI',
+      status_kehadiran: 'TEREGISTRASI',
       email_status: 'PENDING',
       email_retry_count: 0,
       emailSent: false,
@@ -1771,7 +1771,7 @@ class DatabaseManager {
       id: `chk_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       guest_id: guest.id,
       guest_nama: guest.nama,
-      guest_nrp: guest.nrp,
+      guest_nrp: guest.nrp || '-',
       guest_pangkat: guest.pangkat,
       guest_matra: guest.matra,
       checkpoint_code: cp.code,
@@ -1786,6 +1786,7 @@ class DatabaseManager {
 
     // Update guest presence
     guest.status_kehadiran = 'CHECK_IN';
+    guest.status_kehadiran = 'CHECK-IN';
     if (!guest.waktu_kehadiran_pertama) {
       guest.waktu_kehadiran_pertama = now;
     }

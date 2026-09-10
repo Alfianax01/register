@@ -68,6 +68,7 @@ export const GuestVerifyModal: React.FC<GuestVerifyModalProps> = ({
               <div className="flex items-center gap-2">
                 <Badge variant={guest.matra === 'AD' ? 'ad' : guest.matra === 'AL' ? 'al' : guest.matra === 'AU' ? 'au' : guest.matra === 'NON_TNI' || guest.matra === 'SIPIL' ? 'gold' : 'slate'} size="sm">
                   {guest.matra}
+                  {guest.matra === 'NON_TNI' ? 'K/L' : guest.matra}
                 </Badge>
                 <span className="text-xs font-semibold text-slate-700">
                   {guest.pangkat} &bull; <span className="font-mono text-slate-500">NRP {guest.nrp}</span>

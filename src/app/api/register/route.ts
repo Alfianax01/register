@@ -118,16 +118,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate NRP for military members
-    if (matra !== 'NON_TNI' && !isValidNRP(nrp)) {
+    // Validate NRP for military members (opsional, jika diisi divalidasi)
+    const cleanNrp = nrp ? String(nrp).trim() : '';
+    if (cleanNrp && cleanNrp !== '-' && cleanNrp.toUpperCase() !== 'NON-TNI' && matra !== 'NON_TNI' && !isValidNRP(cleanNrp)) {
       return NextResponse.json(
-        { error: 'Format NRP tidak valid. Gunakan 5-20 karakter angka/huruf resmi prajurit.' },
+        { error: 'Format NRP tidak valid. Gunakan 5-20 karakter alfanumerik prajurit.' },
         { status: 400, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
       );
     }
 
-    // Check duplicate NRP - ONLY for military with valid NRP (never for civilian/placeholder)
-    const cleanNrp = nrp ? String(nrp).trim() : '';
+    // Check duplicate NRP - ONLY for military with valid NRP (never for placeholder)
     if (matra !== 'NON_TNI' && cleanNrp && cleanNrp !== '-' && cleanNrp.toUpperCase() !== 'NON-TNI') {
       const existing = await db.findGuestByNRPAsync(cleanNrp);
       if (existing) {
@@ -247,9 +247,9 @@ export async function POST(req: NextRequest) {
         nrp: newGuest.nrp,
         jabatan: newGuest.jabatan,
         instansi: newGuest.negara_instansi || newGuest.satker,
-        kategori_tamu: newGuest.matra === 'NON_TNI' ? 'Undangan Sipil' : 'Prajurit TNI',
+        kategori_tamu: newGuest.matra === 'NON_TNI' ? 'Undangan K/L' : 'Prajurit TNI',
         matra: newGuest.matra,
-        status: 'REGISTRASI',
+        status: 'TEREGISTRASI',
         seat_number: newGuest.seat_number,
         gedung: newGuest.assignment?.gedung || 'Gedung Ahmad Yani',
         wisma_name: newGuest.assignment?.wisma_name,
@@ -264,7 +264,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Save to MySQL Database
-    // Sync to MySQL Database if needed
     if (mysqlAdapter.isConfigured()) {
       try {
         await mysqlAdapter.savePeserta({
@@ -275,19 +274,17 @@ export async function POST(req: NextRequest) {
           instansi: newGuest.negara_instansi || newGuest.satker,
           email: newGuest.email,
           no_hp: newGuest.no_hp || '-',
-          kategori_tamu: newGuest.matra === 'NON_TNI' ? 'SIPIL' : 'TNI',
+          kategori_tamu: newGuest.matra === 'NON_TNI' ? 'K/L' : 'TNI',
           nrp: newGuest.nrp || null,
           matra: newGuest.matra,
           qr_token: newGuest.qr_token,
           seat_number: newGuest.seat_number || null,
-          status_hadir: 'BELUM_HADIR',
+          status_hadir: 'TEREGISTRASI',
           pdf_path: pdfPath
         });
-        console.log(`[MySQL] Data peserta tersimpan permanen di database: ${newGuest.id}`);
         await mysqlAdapter.updateGuest(newGuest.id, newGuest);
         console.log(`[MySQL] Data peserta tersimpan permanen di database rapim_tni: ${newGuest.id} (${newGuest.registration_id})`);
       } catch (mysqlErr) {
-        console.error('[MySQL Error] Gagal menyimpan peserta ke MySQL:', mysqlErr);
         console.error('[MySQL Error] Gagal sinkronisasi peserta ke MySQL:', mysqlErr);
       }
     }

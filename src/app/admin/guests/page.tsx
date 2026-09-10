@@ -293,6 +293,29 @@ export default function GuestsPage() {
     };
   };
 
+  const formatRegDate = (dateStr?: string) => {
+    if (!dateStr) return { date: '-', time: '-' };
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return { date: '-', time: '-' };
+      const datePart = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).format(d).replace(/\//g, '-');
+      const timePart = new Intl.DateTimeFormat('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(d).replace('.', ':');
+      return { date: datePart, time: timePart };
+    } catch {
+      return { date: '-', time: '-' };
+    }
+  };
+
   const renderMatraBadge = (matra?: string | null) => {
     const spec = getMatraColor(matra);
     const shortLabel = spec.key === 'TNI_AD' ? 'TNI AD' :
@@ -312,7 +335,7 @@ export default function GuestsPage() {
   };
 
   const renderStatusBadge = (status: string) => {
-    if (status === 'CHECK_IN') {
+    if (status === 'CHECK_IN' || status === 'CHECK-IN') {
       return (
         <span
           className="inline-flex items-center justify-center gap-1.5 w-24 py-1 rounded-full text-[10px] font-black text-white bg-[#16A34A] shadow-xs"
@@ -327,10 +350,10 @@ export default function GuestsPage() {
     return (
       <span
         className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded-full text-[10px] font-bold text-white bg-[#D97706] shadow-xs"
-        title="Peserta Terdaftar (Belum Check-In di Gate)"
+        title="Peserta Teregistrasi (Belum Check-In di Gate)"
       >
         <Clock className="w-3 h-3 stroke-[2.5]" />
-        <span>REGISTRASI</span>
+        <span>TEREGISTRASI</span>
       </span>
     );
   };
@@ -425,7 +448,7 @@ export default function GuestsPage() {
               <option value="AL">TNI AL</option>
               <option value="AU">TNI AU</option>
               <option value="MABES">Mabes TNI</option>
-              <option value="NON_TNI">Non-TNI / Sipil</option>
+              <option value="NON_TNI">K/L (Kementerian/Lembaga)</option>
             </select>
 
             {/* Status Filter */}
@@ -436,8 +459,8 @@ export default function GuestsPage() {
               className="bg-white text-slate-700 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
               <option value="">Semua Status Presensi</option>
-              <option value="REGISTRASI">Registrasi</option>
-              <option value="CHECK_IN">Check-In</option>
+              <option value="TEREGISTRASI">Teregistrasi</option>
+              <option value="CHECK-IN">Check-In</option>
             </select>
 
             <span className="ml-auto text-[11px] text-slate-500 font-mono">
@@ -449,7 +472,7 @@ export default function GuestsPage() {
         {/* Compact Guests Table */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-xs">
           <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
-            <table className="w-full min-w-[1440px] table-fixed text-left text-xs border-collapse">
+            <table className="w-full min-w-[1640px] table-fixed text-left text-xs border-collapse">
               <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/95">
                   <th className="py-2.5 px-3 w-[50px] text-center sticky left-0 z-30 bg-slate-50 border-r border-slate-200/80">No</th>
@@ -463,13 +486,15 @@ export default function GuestsPage() {
                   <th className="py-2.5 px-3 w-[85px] text-center">Kamar</th>
                   <th className="py-2.5 px-3 w-[140px] text-center">Status Alokasi</th>
                   <th className="py-2.5 px-3 w-[125px] text-center">Status Kehadiran</th>
+                  <th className="py-2.5 px-3 w-[110px] text-center">Tgl Registrasi</th>
+                  <th className="py-2.5 px-3 w-[95px] text-center">Jam Registrasi</th>
                   <th className="py-2.5 px-3 w-[110px] text-center sticky right-0 z-30 bg-slate-50 border-l border-slate-200/80 shadow-[-2px_0_4px_rgba(0,0,0,0.03)]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading ? (
                   <tr>
-                    <td colSpan={12} className="py-12 text-center text-slate-400 font-mono">
+                    <td colSpan={14} className="py-12 text-center text-slate-400 font-mono">
                       <div className="inline-flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
                         <span>Memuat data direktori peserta...</span>
@@ -478,7 +503,7 @@ export default function GuestsPage() {
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
-                    <td colSpan={12} className="py-12 text-center text-slate-400">
+                    <td colSpan={14} className="py-12 text-center text-slate-400">
                       Tidak ada peserta yang cocok dengan filter pencarian.
                     </td>
                   </tr>
@@ -586,7 +611,17 @@ export default function GuestsPage() {
                           {renderStatusBadge(g.status_kehadiran)}
                         </td>
 
-                        {/* 12. Aksi (Sticky Kanan) */}
+                        {/* 12. Tanggal Registrasi */}
+                        <td className="py-2 px-3 text-center font-mono text-[11px] text-slate-700">
+                          {formatRegDate(g.created_at).date}
+                        </td>
+
+                        {/* 13. Jam Registrasi */}
+                        <td className="py-2 px-3 text-center font-mono text-[11px] font-semibold text-slate-800">
+                          {formatRegDate(g.created_at).time}
+                        </td>
+
+                        {/* 14. Aksi (Sticky Kanan) */}
                         <td className="py-2 px-3 text-center sticky right-0 z-10 bg-white group-hover:bg-blue-50/40 border-l border-slate-100 shadow-[-2px_0_4px_rgba(0,0,0,0.03)]">
                           <div className="flex items-center justify-center gap-1">
                             {/* Lihat Detail */}
@@ -769,10 +804,22 @@ export default function GuestsPage() {
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                   <span>4. Kehadiran & Verifikasi Gate</span>
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-0.5">
                   <div>
                     <span className="text-slate-400 text-[10px] block">Status Kehadiran</span>
                     <div className="pt-1">{renderStatusBadge(viewingGuest.status_kehadiran)}</div>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">Waktu Registrasi</span>
+                    <p className="font-mono text-[11px] text-slate-800">
+                      {viewingGuest.created_at
+                        ? new Date(viewingGuest.created_at).toLocaleString('id-ID', {
+                            timeZone: 'Asia/Jakarta',
+                            dateStyle: 'medium',
+                            timeStyle: 'short'
+                          })
+                        : '-'}
+                    </p>
                   </div>
                   <div>
                     <span className="text-slate-400 text-[10px] block">Gate Check-In</span>
@@ -915,7 +962,7 @@ export default function GuestsPage() {
                   <option value="AL">TNI AL (Angkatan Laut)</option>
                   <option value="AU">TNI AU (Angkatan Udara)</option>
                   <option value="MABES">Mabes TNI</option>
-                  <option value="NON_TNI">Undangan Sipil / Non-TNI</option>
+                  <option value="NON_TNI">K/L (Kementerian/Lembaga)</option>
                 </select>
               </div>
 

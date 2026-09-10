@@ -87,7 +87,8 @@ function rowToGuest(r: any): Guest {
     wisma_assignment: r.wisma_name && r.wisma_name !== 'Tidak Menginap'
       ? `${r.wisma_name} - Kamar ${r.room_number || '-'}${r.bed_number ? ` (Bed ${r.bed_number})` : ''}`
       : 'Tidak Menginap',
-    status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
+    status_kehadiran: isCheckIn ? 'CHECK-IN' : 'TEREGISTRASI',
+    guest_status: isCheckIn ? 'CHECK-IN' : 'TEREGISTRASI',
     checkin_gate: r.checkin_gate || undefined,
     checkin_time: formattedCheckinTime,
     waktu_kehadiran_pertama: formattedCheckinTime,
@@ -178,6 +179,7 @@ class MySQLAdapter {
             \`jabatan\` VARCHAR(255) DEFAULT NULL,
             \`kesatuan\` VARCHAR(255) DEFAULT NULL,
             \`status_kehadiran\` ENUM('REGISTRASI','CHECK_IN') NOT NULL DEFAULT 'REGISTRASI',
+            \`status_kehadiran\` VARCHAR(50) NOT NULL DEFAULT 'TEREGISTRASI',
             \`seat_number\` VARCHAR(50) DEFAULT NULL,
             \`seat_block\` VARCHAR(50) DEFAULT NULL,
             \`building\` VARCHAR(100) DEFAULT NULL,
@@ -200,6 +202,15 @@ class MySQLAdapter {
             KEY \`idx_email\` (\`email\`),
             KEY \`idx_nrp\` (\`nrp\`),
             KEY \`idx_status\` (\`status_kehadiran\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`site_settings\` (
+            \`setting_key\` VARCHAR(100) NOT NULL,
+            \`setting_value\` TEXT DEFAULT NULL,
+            \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`setting_key\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
@@ -571,7 +582,7 @@ class MySQLAdapter {
     const now = new Date();
     try {
       await pool.execute(
-        'UPDATE `guests` SET `status_kehadiran` = "CHECK_IN", `checkin_gate` = ?, `checkin_time` = ? WHERE `id` = ?',
+        'UPDATE `guests` SET `status_kehadiran` = "CHECK-IN", `checkin_gate` = ?, `checkin_time` = ? WHERE `id` = ?',
         [gate, now, guest.id]
       );
 
@@ -799,6 +810,47 @@ class MySQLAdapter {
       } as any);
     }
     return true;
+  }
+
+  public async getSiteSettings(): Promise<Record<string, string> | null> {
+    if (!this.isConfigured()) return null;
+    await this.initSchema();
+    const pool = this.getPool();
+    if (!pool) return null;
+
+    try {
+      const [rows] = await pool.query('SELECT setting_key, setting_value FROM site_settings');
+      if (!Array.isArray(rows)) return null;
+      const res: Record<string, string> = {};
+      for (const r of rows as any[]) {
+        res[r.setting_key] = r.setting_value;
+      }
+      return res;
+    } catch (err) {
+      console.warn('[MySQL] Failed to get site_settings:', err);
+      return null;
+    }
+  }
+
+  public async saveSiteSettings(settings: Record<string, string>): Promise<boolean> {
+    if (!this.isConfigured()) return false;
+    await this.initSchema();
+    const pool = this.getPool();
+    if (!pool) return false;
+
+    try {
+      const entries = Object.entries(settings);
+      for (const [k, v] of entries) {
+        await pool.query(
+          'INSERT INTO site_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)',
+          [k, v ?? '']
+        );
+      }
+      return true;
+    } catch (err) {
+      console.error('[MySQL] Failed to save site_settings:', err);
+      return false;
+    }
   }
 }
 

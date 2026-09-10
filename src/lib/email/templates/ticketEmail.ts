@@ -7,9 +7,9 @@ export interface TicketEmailTemplateProps {
 
 export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplateProps): string {
   // Determine military theme color based on matra/role:
-  // TNI AD -> hijau, TNI AL -> biru tua, TNI AU -> biru muda, Mabes TNI -> emas, Sipil -> abu elegan
+  // TNI AD -> hijau, TNI AL -> biru tua, TNI AU -> biru muda, Mabes TNI -> emas, K/L -> abu elegan
   let primaryColor = '#1E3A8A';
-  let matraBadgeText = 'UNDANGAN KEMENTERIAN / SIPIL';
+  let matraBadgeText = 'UNDANGAN K/L (KEMENTERIAN/LEMBAGA)';
 
   switch (guest.matra) {
     case 'AD':
@@ -32,6 +32,8 @@ export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplat
     default:
       primaryColor = '#475569'; // Sipil / Kementerian Abu Elegan
       matraBadgeText = 'UNDANGAN SIPIL / NON-TNI';
+      primaryColor = '#475569'; // K/L Abu Elegan
+      matraBadgeText = 'UNDANGAN K/L (KEMENTERIAN/LEMBAGA)';
       break;
   }
 
@@ -123,6 +125,7 @@ export function generateTicketEmailHtml({ guest, ticketUrl }: TicketEmailTemplat
               </h2>
               <p style="margin: 0 0 16px 0; font-size: 13px; font-weight: 600; color: #1e40af;">
                 ${guest.pangkat} &bull; ${guest.matra === 'NON_TNI' ? 'Undangan Sipil / Non-TNI' : `Matra ${guest.matra}`}
+                ${guest.pangkat} &bull; ${guest.matra === 'NON_TNI' ? 'Undangan K/L (Kementerian/Lembaga)' : `Matra ${guest.matra}`}
               </p>
 
               <!-- Two Column Details: Jabatan & Instansi -->

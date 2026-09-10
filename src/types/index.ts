@@ -14,7 +14,7 @@ export interface PangkatItem {
 
 export interface Guest {
   id: string;
-  nrp: string;
+  nrp?: string;
   nama: string;
   gelar_depan?: string;
   gelar_belakang?: string;
@@ -51,7 +51,8 @@ export interface Guest {
   room_slot?: 'A' | 'B';
   bed_number?: number | string;
   wisma_assignment?: string;
-  status_kehadiran: 'REGISTRASI' | 'CHECK_IN';
+  status_kehadiran: 'TEREGISTRASI' | 'CHECK-IN' | 'REGISTRASI' | 'CHECK_IN';
+  guest_status?: 'TEREGISTRASI' | 'CHECK-IN' | 'REGISTRASI' | 'CHECK_IN';
   checkin_gate?: string;
   checkin_time?: string;
   waktu_kehadiran_pertama?: string;
@@ -111,7 +112,7 @@ export interface Seat {
   kategori_instansi?: string;
   warna?: string;
   colorAlias?: string | null;
-  guest_status?: 'REGISTRASI' | 'CHECK_IN';
+  guest_status?: 'TEREGISTRASI' | 'CHECK-IN' | 'REGISTRASI' | 'CHECK_IN';
   status?: 'KOSONG' | 'ASSIGNED' | 'CHECK_IN';
   is_reserved: number;
 }

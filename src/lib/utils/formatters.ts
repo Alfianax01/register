@@ -89,7 +89,7 @@ export function getMatraBadgeInfo(matra: MatraType): {
     case 'NON_TNI':
     default:
       return {
-        label: 'Tamu Non-TNI / Tamu Negara',
+        label: 'K/L (Kementerian/Lembaga)',
         badgeClass: 'bg-slate-900 text-slate-300 border-slate-600',
         borderClass: 'border-slate-600',
         textColor: 'text-slate-300',

@@ -46,7 +46,8 @@ export async function middleware(req: NextRequest) {
       '/admin/checkin',
       '/admin/allocation',
       '/admin/placement',
-      '/admin/dashboard'
+      '/admin/dashboard',
+      '/admin/website'
     ];
 
     const isAllowed = allowedAdminRoutes.some(

@@ -29,7 +29,13 @@ export async function GET(req: NextRequest) {
     }
 
     if (status) {
-      guests = guests.filter(g => g.status_kehadiran === status);
+      if (status === 'CHECK-IN' || status === 'CHECK_IN') {
+        guests = guests.filter(g => g.status_kehadiran === 'CHECK-IN' || g.status_kehadiran === 'CHECK_IN');
+      } else if (status === 'TEREGISTRASI' || status === 'REGISTRASI') {
+        guests = guests.filter(g => g.status_kehadiran === 'TEREGISTRASI' || g.status_kehadiran === 'REGISTRASI');
+      } else {
+        guests = guests.filter(g => (g.status_kehadiran as string) === status);
+      }
     }
 
     if (group) {

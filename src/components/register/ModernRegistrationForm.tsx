@@ -57,14 +57,25 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
 
   // Form State: Always starts clean
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [formLabels, setFormLabels] = useState<Record<string, string>>({});
 
   // Clear any residual session draft on mount
+  // Clear any residual session draft on mount and load site settings
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem(DRAFT_STORAGE_KEY);
       }
     } catch {}
+
+    fetch('/api/settings/website')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.settings) {
+          setFormLabels(data.settings);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const availableRanks = useMemo(() => {
@@ -109,9 +120,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     }
 
     if (field === 'nrp') {
-      if (!val.trim()) {
-        err = 'NRP / NIP wajib diisi.';
-      } else if (formData.matra !== 'NON_TNI' && !isValidNRP(val)) {
+      if (val.trim() && formData.matra !== 'NON_TNI' && !isValidNRP(val)) {
         err = 'Format NRP tidak valid (5-20 karakter alfanumerik).';
       }
     }
@@ -147,7 +156,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       pangkat: ranks[0]?.name || '',
       satker: firstSatker?.name || '',
       satuan: firstSatker?.satuans[0] || '',
-      nrp: matra === 'NON_TNI' ? (prev.nrp === 'NON-TNI' ? '' : prev.nrp) : (prev.nrp === 'NON-TNI' ? '' : prev.nrp)
+      nrp: prev.nrp === 'NON-TNI' ? '' : prev.nrp
     }));
   };
 
@@ -155,7 +164,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     const isNamaValid = validateField('nama', formData.nama);
     const isEmailValid = validateField('email', formData.email);
     const isPhoneValid = validateField('no_hp', formData.no_hp);
-    const isNrpValid = validateField('nrp', formData.nrp);
+    const isNrpValid = !formData.nrp?.trim() || validateField('nrp', formData.nrp);
     const isJabatanValid = validateField('jabatan', formData.jabatan);
 
     return isNamaValid && isEmailValid && isPhoneValid && isNrpValid && isJabatanValid;
@@ -281,6 +290,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Nama Lengkap <span className="text-rose-500">*</span>
+              {formLabels.label_nama || 'Nama Lengkap'} <span className="text-rose-500">*</span>
             </label>
             <Input
               name="nama"
@@ -304,6 +314,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Nomor WhatsApp (Opsional)
+              {formLabels.label_phone || 'Nomor WhatsApp (Opsional)'}
             </label>
             <div className="relative">
               <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -328,6 +339,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Alamat Email <span className="text-rose-500">*</span>
+              {formLabels.label_email || 'Alamat Email'} <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -385,7 +397,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         {/* Matra Selector Pills */}
         <div>
           <label className="block text-xs font-semibold text-slate-800 mb-2">
-            Matra / Kategori Kedinasan <span className="text-rose-500">*</span>
+            {formLabels.label_matra || 'Matra / Kategori Kedinasan'} <span className="text-rose-500">*</span>
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {[
@@ -393,7 +405,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               { code: 'AL' as MatraType, label: 'TNI AL', color: 'bg-[#475569]' },
               { code: 'AU' as MatraType, label: 'TNI AU', color: 'bg-[#2563EB]' },
               { code: 'MABES' as MatraType, label: 'Mabes TNI', color: 'bg-slate-800' },
-              { code: 'NON_TNI' as MatraType, label: 'Sipil / Non-TNI', color: 'bg-slate-600' }
+              { code: 'NON_TNI' as MatraType, label: 'K/L (Kementerian/Lembaga)', color: 'bg-slate-600' }
             ].map(m => {
               const isSelected = formData.matra === m.code;
               return (
@@ -420,6 +432,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Pangkat / Golongan <span className="text-rose-500">*</span>
+              {formLabels.label_pangkat || 'Pangkat / Golongan'} <span className="text-rose-500">*</span>
             </label>
             <select
               name="pangkat"
@@ -439,21 +452,20 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           {/* NRP / NIP */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              NRP / NIP <span className="text-rose-500">*</span>
+              {formLabels.label_nrp || 'NRP / NIP (Opsional)'}
             </label>
             <Input
               name="nrp"
               value={formData.nrp}
               onChange={handleInputChange}
-              placeholder={formData.matra === 'NON_TNI' ? 'Nomor NIP atau tanda pengenal' : 'Nomor Registrasi Pokok (NRP)'}
-              required
+              placeholder={formData.matra === 'NON_TNI' ? 'Nomor NIP atau tanda pengenal (opsional)' : 'Nomor Registrasi Pokok / NRP (opsional)'}
               className="text-xs sm:text-sm font-mono"
             />
             {errors.nrp ? (
               <p className="text-[11px] text-rose-600 mt-1">{errors.nrp}</p>
             ) : (
               <p className="text-[11px] text-slate-500 mt-1">
-                {formData.matra === 'NON_TNI' ? 'Gunakan tanda strip (-) jika tidak memiliki NIP' : 'Wajib 5-20 digit angka resmi prajurit'}
+                {formData.matra === 'NON_TNI' ? 'Kosongkan jika tidak memiliki NIP/identitas' : 'Dapat dikosongkan jika belum memiliki NRP'}
               </p>
             )}
           </div>
@@ -462,6 +474,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Jabatan Kedinasan <span className="text-rose-500">*</span>
+              {formLabels.label_jabatan || 'Jabatan Kedinasan'} <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <Briefcase className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -483,6 +496,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Satuan Kerja (Satker) <span className="text-rose-500">*</span>
+              {formLabels.label_satker || 'Satuan Kerja (Satker)'} <span className="text-rose-500">*</span>
             </label>
             <select
               name="satker"
@@ -531,7 +545,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
         {/* Kebutuhan Akomodasi Wisma */}
         <div className="pt-3 border-t border-slate-100">
           <label className="block text-xs font-semibold text-slate-800 mb-2">
-            Kebutuhan Akomodasi / Menginap <span className="text-rose-500">*</span>
+            {formLabels.label_akomodasi || 'Kebutuhan Akomodasi / Menginap'} <span className="text-rose-500">*</span>
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <button

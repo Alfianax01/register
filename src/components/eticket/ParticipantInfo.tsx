@@ -19,6 +19,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
         return { bg: 'bg-amber-700', text: 'text-white', label: 'Mabes TNI' };
       default:
         return { bg: 'bg-slate-700', text: 'text-white', label: 'Kementerian / Sipil' };
+        return { bg: 'bg-slate-700', text: 'text-white', label: 'K/L (Kementerian/Lembaga)' };
     }
   };
 

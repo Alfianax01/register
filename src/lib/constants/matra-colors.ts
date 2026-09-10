@@ -83,7 +83,7 @@ export const MATRA_COLORS: Record<KategoriInstansi, MatraColorDefinition> = {
   },
   SIPIL: {
     alias: 'gold',
-    label: 'Sipil / Non-TNI',
+    label: 'K/L (Kementerian/Lembaga)',
     bgHex: OFFICIAL_MATRA_COLORS.SIPIL.hex, // #C9A227
     borderHex: '#A17D16',
     textHex: '#FFFFFF',

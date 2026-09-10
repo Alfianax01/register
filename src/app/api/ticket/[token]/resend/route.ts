@@ -166,7 +166,7 @@ export async function POST(
         nrp: guest.nrp,
         jabatan: guest.jabatan,
         instansi: guest.negara_instansi || guest.satker || 'Mabes TNI',
-        kategori_tamu: guest.matra === 'NON_TNI' ? 'Undangan Sipil' : 'Prajurit TNI',
+        kategori_tamu: guest.matra === 'NON_TNI' ? 'Undangan K/L' : 'Prajurit TNI',
         matra: guest.matra,
         seat_number: guest.seat_number,
         registration_id: guest.registration_id,

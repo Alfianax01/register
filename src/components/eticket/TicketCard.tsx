@@ -219,9 +219,10 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         </div>
       )}
 
-      {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Tampil Lengkap Bahkan Sebelum Check-In) */}
-      <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
-        <div className="flex items-center justify-between">
+      {/* 6. PENEMPATAN PESERTA (Kursi, Gedung, Wisma, Kamar — Hanya Tampil SETELAH Check-In) */}
+      {isCheckIn && (
+        <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
+          <div className="flex items-center justify-between">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <Armchair className="w-3.5 h-3.5 text-blue-600" />
             <span>Penempatan Kursi & Akomodasi</span>
@@ -308,6 +309,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </div>
         </div>
       </div>
+      )}
 
       {/* 7. INFORMASI EVENT */}
       <div className="pt-2 text-xs text-slate-500 space-y-1.5 bg-slate-50/50 p-3 rounded-xl border border-slate-100">

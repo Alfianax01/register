@@ -238,6 +238,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
                                c === 'C' ? 'Blok C — TNI AU' :
                                c === 'D' ? 'Blok D — MABES/Kemen' :
                                (c === 'VIP' || c === 'E' || grp.name.includes('VIP')) ? 'Blok VIP — SIPIL' :
+                               (c === 'VIP' || c === 'E' || grp.name.includes('VIP')) ? 'Blok VIP — K/L' :
                                grp.name;
 
           return (
@@ -290,6 +291,7 @@ export const SeatingGridView: React.FC<SeatingGridViewProps> = ({
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border" style={{ backgroundColor: OFFICIAL_COLORS.SIPIL.hex, borderColor: '#A17D16' }} />
             <span className="font-semibold text-slate-800">Sipil / VIP</span>
+            <span className="font-semibold text-slate-800">K/L / VIP</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-3.5 h-3.5 rounded-md shadow-2xs border border-slate-300" style={{ backgroundColor: OFFICIAL_COLORS.KEMENTERIAN.hex }} />
