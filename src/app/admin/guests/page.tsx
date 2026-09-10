@@ -63,8 +63,10 @@ export default function GuestsPage() {
   const [resendEmail, setResendEmail] = useState('');
   const [resendingLoading, setResendingLoading] = useState(false);
 
+  const fetchGuests = async () => {
   const fetchGuests = async (isBackground: boolean = false) => {
     try {
+      setLoading(true);
       if (!isBackground) setLoading(true);
       let query = `/api/guests?q=${encodeURIComponent(searchTerm)}`;
       if (filterMatra) query += `&matra=${filterMatra}`;
@@ -84,15 +86,19 @@ export default function GuestsPage() {
         setCurrentUser(meData.user);
       }
     } catch {
+      showToast('Gagal memuat data peserta', { type: 'error' });
       if (!isBackground) {
         showToast('Gagal memuat data peserta', { type: 'error' });
       }
     } finally {
+      setLoading(false);
       if (!isBackground) setLoading(false);
     }
   };
 
   useEffect(() => {
+    fetchGuests();
+  }, [filterMatra, filterStatus]);
     fetchGuests(false);
     const interval = setInterval(() => {
       fetchGuests(true);
@@ -102,6 +108,7 @@ export default function GuestsPage() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    fetchGuests();
     fetchGuests(false);
   };
 
@@ -393,6 +400,7 @@ export default function GuestsPage() {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={fetchGuests}
                 onClick={() => fetchGuests(false)}
                 disabled={loading}
                 className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200"
@@ -475,12 +483,28 @@ export default function GuestsPage() {
           </div>
         </Card>
 
+        {/* Compact Guests Table */}
         {/* Compact Guests Table (8 Kolom Sederhana) */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-xs">
           <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
+            <table className="w-full min-w-[1640px] table-fixed text-left text-xs border-collapse">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/95">
+                  <th className="py-2.5 px-3 w-[50px] text-center sticky left-0 z-30 bg-slate-50 border-r border-slate-200/80">No</th>
+                  <th className="py-2.5 px-3 w-[220px] sticky left-[50px] z-30 bg-slate-50 border-r border-slate-200/80 shadow-[2px_0_4px_rgba(0,0,0,0.03)]">Nama Peserta</th>
+                  <th className="py-2.5 px-3 w-[85px] text-center">Matra</th>
+                  <th className="py-2.5 px-3 w-[130px]">Pangkat</th>
+                  <th className="py-2.5 px-3 w-[95px] text-center">Kursi</th>
+                  <th className="py-2.5 px-3 w-[140px]">Gedung</th>
+                  <th className="py-2.5 px-3 w-[150px]">Ruangan</th>
+                  <th className="py-2.5 px-3 w-[135px]">Wisma</th>
+                  <th className="py-2.5 px-3 w-[85px] text-center">Kamar</th>
+                  <th className="py-2.5 px-3 w-[140px] text-center">Status Alokasi</th>
+                  <th className="py-2.5 px-3 w-[125px] text-center">Status Kehadiran</th>
+                  <th className="py-2.5 px-3 w-[110px] text-center">Tgl Registrasi</th>
+                  <th className="py-2.5 px-3 w-[95px] text-center">Jam Registrasi</th>
+                  <th className="py-2.5 px-3 w-[110px] text-center sticky right-0 z-30 bg-slate-50 border-l border-slate-200/80 shadow-[-2px_0_4px_rgba(0,0,0,0.03)]">Aksi</th>
                   <th className="py-2.5 px-4">Nama</th>
                   <th className="py-2.5 px-3 text-center w-[90px]">Matra</th>
                   <th className="py-2.5 px-3 w-[150px]">Pangkat</th>
@@ -494,6 +518,7 @@ export default function GuestsPage() {
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading ? (
                   <tr>
+                    <td colSpan={14} className="py-12 text-center text-slate-400 font-mono">
                     <td colSpan={8} className="py-12 text-center text-slate-400 font-mono">
                       <div className="inline-flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
@@ -503,13 +528,20 @@ export default function GuestsPage() {
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
+                    <td colSpan={14} className="py-12 text-center text-slate-400">
                     <td colSpan={8} className="py-12 text-center text-slate-400">
                       Tidak ada peserta yang cocok dengan filter pencarian.
                     </td>
                   </tr>
                 ) : (
+                  guests.map((g, idx) => {
+                    const alokasi = getStatusAlokasi(g);
                   guests.map((g) => {
                     const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
+                    const gedung = g.building || g.assignment?.gedung || g.assignment?.building || 'Gedung Ahmad Yani';
+                    const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
+                    const wisma = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
+                    const kamar = g.butuh_akomodasi === 0 ? '-' : (g.room_number || g.assignment?.room_code || '-');
                     const tempat = g.building || g.assignment?.seat_area || g.room || 'Gedung Ahmad Yani';
                     const kamar = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.room_number || g.assignment?.room_code || '-');
 
@@ -518,6 +550,13 @@ export default function GuestsPage() {
                         key={g.id}
                         className="hover:bg-blue-50/40 transition-colors group"
                       >
+                        {/* 1. No (Sticky Kiri) */}
+                        <td className="py-2 px-3 text-center font-mono text-slate-400 text-[11px] sticky left-0 z-10 bg-white group-hover:bg-blue-50/40 border-r border-slate-100">
+                          {idx + 1}
+                        </td>
+
+                        {/* 2. Nama Peserta (Sticky Kiri) */}
+                        <td className="py-2 px-3 max-w-[220px] sticky left-[50px] z-10 bg-white group-hover:bg-blue-50/40 border-r border-slate-100 shadow-[2px_0_4px_rgba(0,0,0,0.03)]">
                         {/* 1. Nama */}
                         <td className="py-2.5 px-4">
                           <div className="flex items-center gap-1.5">
@@ -555,16 +594,23 @@ export default function GuestsPage() {
                           <span className="text-[11px] text-slate-500 font-mono block">NRP: {g.nrp || '-'}</span>
                         </td>
 
+                        {/* 3. Matra */}
+                        <td className="py-2 px-3 text-center">
                         {/* 2. Matra */}
                         <td className="py-2.5 px-3 text-center">
                           {renderMatraBadge(g.matra)}
                         </td>
 
+                        {/* 4. Pangkat */}
+                        <td className="py-2 px-3 text-slate-800 font-medium truncate" title={g.pangkat}>
                         {/* 3. Pangkat */}
                         <td className="py-2.5 px-3 text-slate-800 font-medium truncate" title={g.pangkat}>
                           {g.pangkat}
                         </td>
 
+                        {/* 5. Nomor Kursi */}
+                        <td className="py-2 px-3 text-center">
+                          <span className="inline-block px-2 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
                         {/* 4. No Kursi */}
                         <td className="py-2.5 px-3 text-center">
                           <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
@@ -572,21 +618,57 @@ export default function GuestsPage() {
                           </span>
                         </td>
 
+                        {/* 6. Gedung */}
+                        <td className="py-2 px-3 text-slate-700 font-medium truncate" title={gedung}>
+                          {gedung}
                         {/* 5. Tempat */}
                         <td className="py-2.5 px-4 text-slate-700 font-medium truncate" title={tempat}>
                           {tempat}
                         </td>
 
+                        {/* 7. Ruangan */}
+                        <td className="py-2 px-3 text-slate-600 truncate" title={ruangan}>
+                          {ruangan}
+                        </td>
+
+                        {/* 8. Wisma */}
+                        <td className="py-2 px-3 text-slate-700 truncate" title={wisma}>
+                          {wisma}
+                        </td>
+
+                        {/* 9. Kamar */}
+                        <td className="py-2 px-3 text-center font-mono text-xs font-semibold text-slate-800">
                         {/* 6. Nomor Kamar */}
                         <td className="py-2.5 px-3 text-center font-mono text-xs font-semibold text-slate-800">
                           {kamar}
                         </td>
 
+                        {/* 10. Status Alokasi */}
+                        <td className="py-2 px-3 text-center">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] border ${alokasi.badgeClass}`}>
+                            {alokasi.status}
+                          </span>
+                        </td>
+
+                        {/* 11. Status Kehadiran */}
+                        <td className="py-2 px-3 text-center">
                         {/* 7. Status */}
                         <td className="py-2.5 px-3 text-center">
                           {renderStatusBadge(g.status_kehadiran)}
                         </td>
 
+                        {/* 12. Tanggal Registrasi */}
+                        <td className="py-2 px-3 text-center font-mono text-[11px] text-slate-700">
+                          {formatRegDate(g.created_at).date}
+                        </td>
+
+                        {/* 13. Jam Registrasi */}
+                        <td className="py-2 px-3 text-center font-mono text-[11px] font-semibold text-slate-800">
+                          {formatRegDate(g.created_at).time}
+                        </td>
+
+                        {/* 14. Aksi (Sticky Kanan) */}
+                        <td className="py-2 px-3 text-center sticky right-0 z-10 bg-white group-hover:bg-blue-50/40 border-l border-slate-100 shadow-[-2px_0_4px_rgba(0,0,0,0.03)]">
                         {/* 8. Aksi */}
                         <td className="py-2.5 px-3 text-center">
                           <div className="flex items-center justify-center gap-1">
