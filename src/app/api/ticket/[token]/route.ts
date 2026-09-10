@@ -67,11 +67,29 @@ export async function GET(
             hour: '2-digit',
             minute: '2-digit'
           }) + ' WIB';
+      const checkinDateObj = guest.waktu_kehadiran_pertama ? new Date(guest.waktu_kehadiran_pertama) : new Date();
+      const checkinTanggal = checkinDateObj.toLocaleDateString('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+      const checkinJam = checkinDateObj.toLocaleTimeString('id-ID', {
+        timeZone: 'Asia/Jakarta',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).replace('.', ':') + ' WIB';
 
       checkinDetails = {
         gate: log?.checkpoint_name || 'Gate 1: Pintu Masuk Utama (Absensi Awal)',
         waktu: waktuFormatted,
         petugas: log?.scanned_by_admin_name || 'Gate Scanner 01'
+        gate: log?.checkpoint_name || 'Gate 1 (Pintu Utama)',
+        waktu: `${checkinTanggal}, ${checkinJam}`,
+        tanggal: checkinTanggal,
+        jam: checkinJam,
+        petugas: log?.scanned_by_admin_name || 'Petugas Scanner 01'
       };
     }
 
@@ -105,6 +123,7 @@ export async function GET(
         qr_token: guest.qr_token,
         status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
         waktu_kehadiran_pertama: isCheckIn ? guest.waktu_kehadiran_pertama : null,
+        registered_at: (guest as any).registered_at || guest.created_at,
         created_at: guest.created_at,
         seat_number: assignmentData.seat_code,
         seat_assignment: assignmentData.seat_code,

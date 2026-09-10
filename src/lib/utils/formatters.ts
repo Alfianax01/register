@@ -32,6 +32,22 @@ export function formatDateID(isoString?: string): string {
   }
 }
 
+export function formatIndonesianDate(isoString?: string, monthFormat: 'long' | 'short' = 'long'): string {
+  if (!isoString) return '-';
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return String(isoString);
+    return new Intl.DateTimeFormat('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      day: '2-digit',
+      month: monthFormat,
+      year: 'numeric'
+    }).format(d);
+  } catch {
+    return String(isoString);
+  }
+}
+
 export function formatTimeID(isoString?: string): string {
   if (!isoString) return '-';
   try {
@@ -43,6 +59,23 @@ export function formatTimeID(isoString?: string): string {
     }).format(d);
   } catch {
     return isoString;
+  }
+}
+
+export function formatIndonesianTimeWIB(isoString?: string): string {
+  if (!isoString) return '-';
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return String(isoString);
+    const timeFormatted = new Intl.DateTimeFormat('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(d).replace('.', ':');
+    return `${timeFormatted} WIB`;
+  } catch {
+    return String(isoString);
   }
 }
 

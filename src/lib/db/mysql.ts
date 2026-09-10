@@ -110,6 +110,7 @@ function rowToGuest(r: any): Guest {
       room_floor: 'Lantai 1',
       assigned_at: r.created_at ? (r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)) : new Date().toISOString()
     } : undefined,
+    registered_at: r.registered_at ? (r.registered_at instanceof Date ? r.registered_at.toISOString() : String(r.registered_at)) : (r.created_at ? (r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)) : new Date().toISOString()),
     created_at: r.created_at ? (r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)) : new Date().toISOString(),
     updated_at: r.updated_at ? (r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at)) : new Date().toISOString()
   };

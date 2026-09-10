@@ -1130,6 +1130,7 @@ class DatabaseManager {
       kategori_instansi: katInstansi,
       warna_kursi: warnaKursi,
       seatColorAlias: warnaKursi,
+      registered_at: now,
       created_at: now,
       updated_at: now
     };

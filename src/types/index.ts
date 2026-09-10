@@ -65,6 +65,7 @@ export interface Guest {
   warna_kursi?: 'green' | 'blue' | 'gray' | 'white' | 'purple' | 'gold';
   seatColorAlias?: string;
   assignment?: Assignment;
+  registered_at?: string;
   created_at: string;
   updated_at: string;
 }
