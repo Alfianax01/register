@@ -1,12 +1,11 @@
 'use client';
 
-import React from 'react';
-import React, { useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 
 interface AppLayoutWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 /** Fungsi helper untuk set favicon dinamis dari base64 data URI atau URL */
@@ -28,7 +27,7 @@ function setDynamicFavicon(faviconValue: string) {
   }
 }
 
-export const AppLayoutWrapper: React.FC<AppLayoutWrapperProps> = ({ children }) => {
+export const AppLayoutWrapper: FC<AppLayoutWrapperProps> = ({ children }) => {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith('/admin');
 

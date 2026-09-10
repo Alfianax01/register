@@ -20,8 +20,6 @@ export default async function HomePage() {
       {/* =========================================================================
           HERO EVENT SECTION (Satu-Satunya Konten di Landing Page)
           ========================================================================= */}
-      <section className="relative py-12 sm:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5 sm:space-y-6">
       <section
         className="relative py-12 sm:py-20"
         style={settings.hero_banner ? {
