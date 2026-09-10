@@ -20,7 +20,6 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
   const [guest, setGuest] = useState<Guest | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [checkinDetails, setCheckinDetails] = useState<any>(null);
-  const [simulatedStatus, setSimulatedStatus] = useState<'AUTO' | 'TEREGISTRASI' | 'CHECK_IN'>('AUTO');
 
   // Status tracker untuk mendeteksi perubahan status real-time
   const prevStatusRef = useRef<string | null>(null);
@@ -145,21 +144,11 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
     );
   }
 
-  const isCheckIn = guest.status_kehadiran === 'CHECK_IN';
   const isActualCheckIn = guest.status_kehadiran === 'CHECK_IN' || guest.status_kehadiran === 'CHECK-IN' || (guest as any).status_kehadiran === 'HADIR';
-  const effectiveStatus: 'TEREGISTRASI' | 'CHECK-IN' = simulatedStatus === 'AUTO'
-    ? (isActualCheckIn ? 'CHECK-IN' : 'TEREGISTRASI')
-    : (simulatedStatus === 'CHECK_IN' ? 'CHECK-IN' : 'TEREGISTRASI');
-
+  const effectiveStatus: 'TEREGISTRASI' | 'CHECK-IN' = isActualCheckIn ? 'CHECK-IN' : 'TEREGISTRASI';
   const isEffectiveCheckIn = effectiveStatus === 'CHECK-IN';
 
-  // Check-In Details fallback jika belum ada data riil checkin
-  const effectiveCheckinDetails = checkinDetails || (isEffectiveCheckIn ? {
-    gate: 'Gate 1 (Pintu Utama)',
-    tanggal: '09 September 2026',
-    jam: '09:28 WIB',
-    petugas: 'Sertu Budi Santoso / Scanner 01'
-  } : null);
+  const effectiveCheckinDetails = checkinDetails || null;
 
   return (
     <div className="w-full max-w-[520px] mx-auto px-3 sm:px-4 py-6 space-y-5">
@@ -182,37 +171,6 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
           <RotateCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
           <span>{refreshing ? 'Memperbarui...' : 'Segarkan Status'}</span>
         </button>
-      </div>
-
-      {/* Interactive State Toggle Bar (Prompt V6: TEREGISTRASI ↔ CHECK-IN) */}
-      <div className="flex items-center justify-between p-2.5 px-3 rounded-xl bg-slate-100/90 border border-slate-200 text-xs no-print">
-        <span className="text-[11px] font-semibold text-slate-600">
-          Uji Coba Status E-Ticket:
-        </span>
-        <div className="flex items-center gap-1.5 p-0.5 bg-white rounded-lg border border-slate-200">
-          <button
-            type="button"
-            onClick={() => setSimulatedStatus('TEREGISTRASI')}
-            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-              !isEffectiveCheckIn
-                ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            🟡 TEREGISTRASI
-          </button>
-          <button
-            type="button"
-            onClick={() => setSimulatedStatus('CHECK_IN')}
-            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-              isEffectiveCheckIn
-                ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-            }`}
-          >
-            🟢 CHECK-IN
-          </button>
-        </div>
       </div>
 
       {/* Single Unified Ticket Card (No layout shift, identical DOM structure) */}
