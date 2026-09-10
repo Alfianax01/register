@@ -6,7 +6,6 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['mysql2', 'pg', 'pdfkit', 'nodemailer', 'bcryptjs'],
-    workerThreads: true,
     workerThreads: false,
   },
   webpack: (config) => {
