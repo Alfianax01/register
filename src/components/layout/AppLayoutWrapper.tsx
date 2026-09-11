@@ -52,8 +52,14 @@ export const AppLayoutWrapper: FC<AppLayoutWrapperProps> = ({ children }) => {
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-[#f8fafc]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-primary focus:text-white focus:rounded-xl focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary font-semibold text-xs sm:text-sm transition-all"
+      >
+        Lewati ke konten utama
+      </a>
       <Navbar />
-      <main className="flex-1 flex flex-col w-full">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col w-full outline-none">
         {children}
       </main>
     </div>
