@@ -1,6 +1,62 @@
 {
   "guests": [
     {
+      "id": "115",
+      "registration_id": "REG-2026-893386",
+      "nrp": "-",
+      "nama": "Fandi",
+      "matra": "NON_TNI",
+      "pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "pangkat_level": 5,
+      "jabatan": "-",
+      "satker": "Kementerian Pertahanan RI (Kemhan)",
+      "satuan": "Kementerian Pertahanan RI (Kemhan)",
+      "negara_instansi": "Indonesia / TNI",
+      "no_hp": "-",
+      "phone": "-",
+      "kesatuan": "Kementerian Pertahanan RI (Kemhan)",
+      "email": "fandidwikuntotes@gmail.com",
+      "butuh_akomodasi": 0,
+      "status_akomodasi": "Tidak Menginap",
+      "tgl_checkin": "2026-09-04",
+      "tgl_checkout": "2026-09-06",
+      "qr_token": "06331e9c-438e-49ad-a830-dff0611a8237",
+      "token": "06331e9c-438e-49ad-a830-dff0611a8237",
+      "token_hash": "",
+      "seat_number": "E-13",
+      "seat_assignment": "E-13",
+      "seat_block": "E",
+      "building": "Gedung Ahmad Yani",
+      "room": "Ruang Sidang Utama (VIP)",
+      "room_name": "Ruang Sidang Utama (VIP)",
+      "wisma_name": "Tidak Menginap",
+      "room_number": "-",
+      "wisma_assignment": "Tidak Menginap",
+      "status_kehadiran": "CHECK-IN",
+      "guest_status": "TEREGISTRASI",
+      "waktu_kehadiran_pertama": "2026-09-11T11:11:36.286Z",
+      "email_status": "SENT",
+      "email_retry_count": 0,
+      "emailSent": true,
+      "kategori_instansi": "SIPIL",
+      "warna_kursi": "gold",
+      "seatColorAlias": "gold",
+      "assignment": {
+        "id": "assign_115",
+        "peserta_id": "115",
+        "seat_code": "E-13",
+        "seat_area": "E",
+        "gedung": "Gedung Ahmad Yani",
+        "wisma_name": "Tidak Menginap",
+        "room_code": "-",
+        "room_floor": "Lantai 1",
+        "assigned_at": "2026-09-11T11:09:53.000Z"
+      },
+      "registered_at": "2026-09-11T11:09:53.000Z",
+      "created_at": "2026-09-11T11:09:53.000Z",
+      "updated_at": "2026-09-11T11:11:36.286Z"
+    },
+    {
       "id": "114",
       "registration_id": "REG-2026-886812",
       "nrp": "1987010101",
@@ -8180,7 +8236,17 @@
       "seat_number": "E-13",
       "row_num": 2,
       "col_num": 5,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "115",
+      "peserta_id": "115",
+      "guest_name": "Fandi",
+      "guest_rank": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "guest_status": "CHECK_IN",
+      "kategori_instansi": "SIPIL",
+      "colorAlias": "gold",
+      "warna": "gold",
+      "status": "CHECK_IN"
     },
     {
       "id": "seat_e_14",
@@ -9636,6 +9702,20 @@
   ],
   "checkin_logs": [
     {
+      "id": "chk_1789125096286_6bjy6",
+      "guest_id": "115",
+      "guest_nama": "Fandi",
+      "guest_nrp": "-",
+      "guest_pangkat": "Menteri / Pejabat Setingkat Menteri",
+      "guest_matra": "NON_TNI",
+      "checkpoint_code": "GATE_UTAMA",
+      "checkpoint_name": "Gate 1: Pintu Masuk Utama (Absensi Awal)",
+      "scanned_by_admin_id": "admin_super",
+      "scanned_by_admin_name": "Letkol Chb Radityo (Super Admin IT)",
+      "scanned_at": "2026-09-11T11:11:36.286Z",
+      "ip_address": "::1"
+    },
+    {
       "id": "chk_1789053977695_c4edl",
       "guest_id": "113",
       "guest_nama": "Aji",
@@ -10149,6 +10229,24 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1789125096324_9p39",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "CHECKIN_SCAN",
+      "details": "Check-in tamu Fandi (Menteri / Pejabat Setingkat Menteri / NRP -) di GATE_UTAMA - FIRST SCAN",
+      "ip_address": "::1",
+      "created_at": "2026-09-11T11:11:36.324Z"
+    },
+    {
+      "id": "aud_1789125012885_9fj4",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-11T11:10:12.885Z"
+    },
     {
       "id": "aud_1789124303212_p4zx",
       "admin_id": "admin_super",
@@ -12780,9 +12878,48 @@
       "bed_number": 0,
       "room_floor": "Tidak Menginap",
       "assigned_at": "2026-09-11T10:28:08.524Z"
+    },
+    {
+      "id": "assign_115",
+      "peserta_id": "115",
+      "seat_code": "E-13",
+      "seat_area": "Ruang Sidang Utama",
+      "gedung": "Gedung Ahmad Yani",
+      "building": "Gedung Ahmad Yani",
+      "room": "Ruang Sidang Utama",
+      "seat_row": "E",
+      "seat_num": "13",
+      "wisma_name": "Tidak Menginap",
+      "room_code": "-",
+      "room_number": "-",
+      "bed_number": 0,
+      "room_floor": "Tidak Menginap",
+      "assigned_at": "2026-09-11T11:09:53.837Z"
     }
   ],
   "email_logs": [
+    {
+      "id": "elog_1789125096415_u9sk3",
+      "guest_id": "115",
+      "email": "fandidwikuntotes@gmail.com",
+      "subject": "[RAPIM TNI 2026] Informasi Kursi & Akomodasi — Fandi",
+      "status": "SENT",
+      "error_message": "[DEV MODE SIMULATED POST CHECK-IN]",
+      "message_id": "sim_post_1789125096415",
+      "provider": "simulated_dev_mode",
+      "sent_at": "2026-09-11T11:11:36.415Z"
+    },
+    {
+      "id": "elog_1789124994135_xk05p",
+      "guest_id": "115",
+      "email": "fandidwikuntotes@gmail.com",
+      "subject": "[RAPIM TNI 2026] E-Ticket Registrasi - Menteri / Pejabat Setingkat Menteri Fandi",
+      "status": "SENT",
+      "error_message": "[DEV MODE SIMULATED]",
+      "message_id": "sim_1789124994135_sncm",
+      "provider": "simulated_dev_mode",
+      "sent_at": "2026-09-11T11:09:54.135Z"
+    },
     {
       "id": "elog_1789122488758_p6uda",
       "guest_id": "guest_1789122488476_zq8x5n3",

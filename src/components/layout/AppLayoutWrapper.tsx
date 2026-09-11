@@ -10,18 +10,21 @@ interface AppLayoutWrapperProps {
 
 /** Fungsi helper untuk set favicon dinamis dari base64 data URI atau URL */
 function setDynamicFavicon(faviconValue: string) {
-  if (!faviconValue) return;
+  if (!faviconValue || typeof document === 'undefined') return;
   try {
-    // Hapus link favicon yang sudah ada
-    const existing = document.querySelectorAll("link[rel~='icon']");
-    existing.forEach(el => el.parentNode?.removeChild(el));
-
-    // Buat link baru
-    const link = document.createElement('link');
-    link.rel = 'icon';
-    link.type = faviconValue.startsWith('data:image/svg') ? 'image/svg+xml' : 'image/png';
-    link.href = faviconValue;
-    document.head.appendChild(link);
+    const existing = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    if (existing) {
+      existing.href = faviconValue;
+      if (faviconValue.startsWith('data:image/svg')) {
+        existing.type = 'image/svg+xml';
+      }
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = faviconValue.startsWith('data:image/svg') ? 'image/svg+xml' : 'image/png';
+      link.href = faviconValue;
+      document.head.appendChild(link);
+    }
   } catch {
     // Abaikan error jika DOM belum siap
   }

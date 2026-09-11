@@ -157,7 +157,9 @@ export default function GuestsPage() {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      if (a.parentNode) {
+        a.parentNode.removeChild(a);
+      }
 
       showToast(isExcel ? '✓ Excel berhasil dibuat' : '✓ PDF berhasil dibuat', { type: 'success' });
     } catch {
