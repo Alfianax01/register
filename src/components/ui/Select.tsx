@@ -21,19 +21,19 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={selectId} className="block text-[14px] font-medium text-slate-700 select-none">
-            {label} {required && <span className="text-[#1E40AF] font-bold">*</span>}
+          <label htmlFor={selectId} className="block text-sm font-semibold text-slate-800 select-none">
+            {label} {required && <span className="text-primary font-bold">*</span>}
           </label>
         )}
-        <div className="relative rounded-md">
+        <div className="relative rounded-xl">
           <select
             ref={ref}
             id={selectId}
             required={required}
             className={twMerge(
               clsx(
-                'block w-full rounded-md bg-white text-slate-900 border text-[15px] h-[50px] px-3.5 pr-10 appearance-none transition-colors cursor-pointer shadow-sm',
-                'focus:outline-none focus:border-[#1E40AF] focus:ring-2 focus:ring-[#1E40AF]/15',
+                'block w-full rounded-xl bg-white text-slate-900 border text-base h-[50px] px-3.5 pr-10 appearance-none transition-colors cursor-pointer shadow-xs',
+                'focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20',
                 error
                   ? 'border-rose-500 text-rose-900 focus:border-rose-600'
                   : 'border-slate-200 hover:border-slate-300',
@@ -47,7 +47,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               children
             ) : (
               options.map(opt => (
-                <option key={opt.value} value={opt.value} className="bg-white text-slate-900 py-1">
+                <option key={opt.value} value={opt.value} className="bg-white text-slate-900 py-1 text-base">
                   {opt.label}
                 </option>
               ))
@@ -60,11 +60,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </div>
         </div>
         {error ? (
-          <p className="text-[13px] text-rose-600 font-medium animate-in fade-in duration-150">
+          <p className="text-xs sm:text-sm text-rose-600 font-medium animate-in fade-in duration-150">
             {error}
           </p>
         ) : helperText ? (
-          <p className="text-[13px] text-slate-500">
+          <p className="text-xs sm:text-sm text-slate-500">
             {helperText}
           </p>
         ) : null}

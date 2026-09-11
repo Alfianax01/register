@@ -23,7 +23,7 @@ export const CheckInDetails: React.FC<CheckInDetailsProps> = ({ details }) => {
           <h4 className="text-sm font-bold text-emerald-950">
             CHECK-IN BERHASIL TERVERIFIKASI
           </h4>
-          <span className="text-[11px] text-emerald-700 font-medium">
+          <span className="text-xs text-emerald-700 font-medium">
             Tanda kehadiran fisik resmi di lokasi
           </span>
         </div>
@@ -32,7 +32,7 @@ export const CheckInDetails: React.FC<CheckInDetailsProps> = ({ details }) => {
       {/* Grid Informasi Detail */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
         <div className="p-2.5 rounded-lg bg-white/80 border border-emerald-200/60 space-y-0.5">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold flex items-center gap-1">
+          <span className="text-slate-500 text-xs uppercase font-semibold flex items-center gap-1">
             <MapPin className="w-3 h-3 text-emerald-600" />
             <span>Gate Masuk</span>
           </span>
@@ -40,7 +40,7 @@ export const CheckInDetails: React.FC<CheckInDetailsProps> = ({ details }) => {
         </div>
 
         <div className="p-2.5 rounded-lg bg-white/80 border border-emerald-200/60 space-y-0.5">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold flex items-center gap-1">
+          <span className="text-slate-500 text-xs uppercase font-semibold flex items-center gap-1">
             <Clock className="w-3 h-3 text-emerald-600" />
             <span>Waktu Kehadiran</span>
           </span>
@@ -48,7 +48,7 @@ export const CheckInDetails: React.FC<CheckInDetailsProps> = ({ details }) => {
         </div>
 
         <div className="p-2.5 rounded-lg bg-white/80 border border-emerald-200/60 space-y-0.5">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold flex items-center gap-1">
+          <span className="text-slate-500 text-xs uppercase font-semibold flex items-center gap-1">
             <UserCheck className="w-3 h-3 text-emerald-600" />
             <span>Petugas Scanner</span>
           </span>

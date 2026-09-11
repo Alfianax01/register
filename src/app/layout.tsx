@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
 import { ToastProvider } from '@/components/ui/Toast';
 import { AppLayoutWrapper } from '@/components/layout/AppLayoutWrapper';
+import { ViewTransitions } from 'next-view-transitions';
 
 export const metadata: Metadata = {
   title: 'TNI Event Pass — E-Registrasi & Check-In Modern RAPIM 2026',
@@ -11,20 +13,29 @@ export const metadata: Metadata = {
   }
 };
 
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-ibm-plex-sans',
+  display: 'swap',
+});
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
-      <body className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
-        <ToastProvider>
-          <AppLayoutWrapper>
-            {children}
-          </AppLayoutWrapper>
-        </ToastProvider>
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang="id" className={ibmPlexSans.variable}>
+        <body className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 font-sans selection:bg-primary selection:text-white">
+          <ToastProvider>
+            <AppLayoutWrapper>
+              {children}
+            </AppLayoutWrapper>
+          </ToastProvider>
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

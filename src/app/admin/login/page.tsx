@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Shield, Lock, User, KeyRound, AlertCircle, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Login Box */}
-        <Card className="p-6 sm:p-7 shadow-xs">
+        <Card className="p-6 sm:p-8 rounded-2xl border-slate-200/90 shadow-card bg-white">
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
               label="Nama Akun Dinas (Username)"
@@ -102,46 +102,46 @@ export default function AdminLoginPage() {
             <Button
               type="submit"
               variant="primary"
-              size="md"
+              size="lg"
               isLoading={loading}
-              className="w-full text-xs font-semibold h-[42px] mt-1"
+              className="w-full text-sm font-bold h-12 mt-2 rounded-xl"
             >
-              <Lock className="w-3.5 h-3.5 mr-1.5" />
+              <Lock className="w-4 h-4 mr-2" />
               <span>Masuk Sistem</span>
             </Button>
           </form>
 
           {/* Testing helper accounts */}
           <div className="mt-6 pt-5 border-t border-slate-100 space-y-2">
-            <span className="text-[11px] font-medium text-slate-500 block">
+            <span className="text-xs font-semibold text-slate-500 block">
               Pilih Akun Demo Cepat:
             </span>
             <div className="grid grid-cols-1 gap-1.5 text-xs">
               <button
                 type="button"
                 onClick={() => fillCredentials('superadmin', 'tni2026prima')}
-                className="text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
+                className="text-left px-3 py-2 rounded-xl bg-slate-50 min-h-[44px] py-2.5 px-3.5 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
               >
                 <span><strong>Super Admin</strong> (Letkol Radityo)</span>
-                <span className="font-mono text-[11px] text-blue-600 font-medium">superadmin</span>
+                <span className="font-mono text-xs font-semibold text-blue-600 font-medium">superadmin</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials('panitiagate', 'gatepass2026')}
-                className="text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
+                className="text-left px-3 py-2 rounded-xl bg-slate-50 min-h-[44px] py-2.5 px-3.5 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
               >
                 <span><strong>Panitia Gate</strong> (Kapten Hendro)</span>
-                <span className="font-mono text-[11px] text-emerald-600 font-medium">panitiagate</span>
+                <span className="font-mono text-xs font-semibold text-emerald-600 font-medium">panitiagate</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => fillCredentials('panitiawisma', 'wismapass2026')}
-                className="text-left px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
+                className="text-left px-3 py-2 rounded-xl bg-slate-50 min-h-[44px] py-2.5 px-3.5 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
               >
                 <span><strong>Panitia Akomodasi</strong> (Mayor Anita)</span>
-                <span className="font-mono text-[11px] text-indigo-600 font-medium">panitiawisma</span>
+                <span className="font-mono text-xs font-semibold text-indigo-600 font-medium">panitiawisma</span>
               </button>
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function AdminLoginPage() {
         <div className="text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 font-medium transition-colors min-h-[44px] py-2 px-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Kembali ke Halaman Registrasi</span>

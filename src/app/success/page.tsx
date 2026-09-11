@@ -7,7 +7,7 @@ import { TicketActions } from '@/components/ticket/TicketActions';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle2, RotateCw, ArrowLeft, Search } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -102,28 +102,28 @@ function SuccessContent() {
   return (
     <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div className="max-w-md mx-auto flex items-center justify-between no-print">
-        <Link href="/" className="inline-flex items-center text-xs text-slate-500 hover:text-slate-900 font-medium">
+        <Link href="/" className="inline-flex items-center text-xs sm:text-sm text-slate-500 hover:text-slate-900 font-semibold min-h-[44px] py-2 px-1">
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           <span>Kembali ke Beranda</span>
         </Link>
         <button
           onClick={() => fetchTicket(activeToken)}
-          className="inline-flex items-center text-xs text-blue-600 hover:text-blue-700 font-medium"
+          className="inline-flex items-center text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-semibold min-h-[44px] py-2 px-1"
         >
           <RotateCw className="w-3 h-3 mr-1" />
           <span>Segarkan Data</span>
         </button>
       </div>
 
-      <div className="max-w-md mx-auto p-4 rounded-lg bg-emerald-50 border border-emerald-200 flex items-start gap-3 shadow-xs no-print">
-        <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+      <div className="max-w-md mx-auto p-5 rounded-2xl bg-emerald-50/90 border border-emerald-200 flex items-start gap-3.5 shadow-card no-print">
+        <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-xs">
           <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
         </div>
         <div className="space-y-0.5">
-          <h2 className="text-[14px] font-semibold text-emerald-950">
+          <h2 className="text-base font-bold text-emerald-950">
             Pendaftaran Berhasil Terverifikasi
           </h2>
-          <p className="text-[12px] text-emerald-800 leading-relaxed">
+          <p className="text-sm text-emerald-800 leading-relaxed">
             Kartu peserta resmi atas nama <strong>{guest.nama}</strong> telah terbit. Simpan QR Code di bawah ini untuk ditunjukkan di gerbang masuk.
           </p>
         </div>

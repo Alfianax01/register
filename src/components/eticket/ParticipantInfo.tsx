@@ -30,7 +30,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
       {/* Nama Lengkap & Matra */}
       <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3.5">
         <div className="min-w-0 flex-1">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
             Nama Lengkap
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug mt-0.5 break-words">
@@ -44,7 +44,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
         </div>
 
         <span
-          className={`px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wider uppercase flex-shrink-0 shadow-xs ${matraBadge.bg} ${matraBadge.text}`}
+          className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wider uppercase flex-shrink-0 shadow-xs ${matraBadge.bg} ${matraBadge.text}`}
         >
           {matraBadge.label}
         </span>
@@ -53,7 +53,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
       {/* Grid Informasi Kedinasan */}
       <div className="grid grid-cols-2 gap-3 text-xs">
         <div className="space-y-1">
-          <span className="text-slate-500 font-medium text-[11px] uppercase flex items-center gap-1">
+          <span className="text-slate-500 font-medium text-xs uppercase flex items-center gap-1">
             <Award className="w-3.5 h-3.5 text-blue-600" />
             <span>Pangkat</span>
           </span>
@@ -61,7 +61,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
         </div>
 
         <div className="space-y-1">
-          <span className="text-slate-500 font-medium text-[11px] uppercase flex items-center gap-1">
+          <span className="text-slate-500 font-medium text-xs uppercase flex items-center gap-1">
             <Shield className="w-3.5 h-3.5 text-blue-600" />
             <span>Matra</span>
           </span>
@@ -69,7 +69,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
         </div>
 
         <div className="space-y-1">
-          <span className="text-slate-500 font-medium text-[11px] uppercase flex items-center gap-1">
+          <span className="text-slate-500 font-medium text-xs uppercase flex items-center gap-1">
             <Building2 className="w-3.5 h-3.5 text-blue-600" />
             <span>Kesatuan / Satker</span>
           </span>
@@ -77,7 +77,7 @@ export const ParticipantInfo: React.FC<ParticipantInfoProps> = ({ guest }) => {
         </div>
 
         <div className="space-y-1">
-          <span className="text-slate-500 font-medium text-[11px] uppercase flex items-center gap-1">
+          <span className="text-slate-500 font-medium text-xs uppercase flex items-center gap-1">
             <Briefcase className="w-3.5 h-3.5 text-blue-600" />
             <span>Jabatan Dinas</span>
           </span>

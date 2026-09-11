@@ -14,16 +14,16 @@ export const Card: React.FC<CardProps> = ({
   variant = 'default',
   ...props
 }) => {
-  const base = 'rounded-lg border transition-all';
+  const base = 'rounded-xl border transition-all';
 
   const variants: Record<CardVariant, string> = {
-    default: 'bg-white border-slate-200/80 text-[#0F172A] shadow-sm',
-    subtle: 'bg-slate-50/70 border-slate-200/60 text-[#0F172A]',
-    elevated: 'bg-white border-slate-200/80 text-[#0F172A] shadow-md',
-    flat: 'bg-white border-slate-200 text-[#0F172A]',
-    interactive: 'bg-white border-slate-200/80 text-[#0F172A] shadow-sm hover:shadow-md hover:border-slate-300 cursor-pointer',
-    'gold-border': 'bg-white border-slate-200/80 text-[#0F172A] shadow-sm',
-    glass: 'bg-white/95 backdrop-blur-md border-slate-200 text-[#0F172A] shadow-sm'
+    default: 'bg-white border-slate-200/90 shadow-card text-slate-900',
+    subtle: 'bg-slate-50/80 border-slate-200/60 text-slate-900',
+    elevated: 'bg-white border-slate-200 shadow-card-hover text-slate-900',
+    flat: 'bg-white border-slate-200 text-slate-900',
+    interactive: 'bg-white border-slate-200 shadow-card hover:shadow-card-hover hover:border-blue-300 cursor-pointer text-slate-900',
+    'gold-border': 'bg-white border-blue-200 shadow-card text-slate-900',
+    glass: 'bg-white/95 backdrop-blur-md border-slate-200 shadow-card text-slate-900'
   };
 
   return (

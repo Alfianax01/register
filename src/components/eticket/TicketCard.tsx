@@ -78,18 +78,18 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       className="bg-white border border-slate-200/80 p-6 space-y-4 select-none transition-all duration-300"
       style={{
         borderRadius: '16px',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
+        boxShadow: '0 4px 20px -2px rgba(15, 23, 42, 0.08)'
       }}
     >
       {/* 1. HEADER */}
       <div className="text-center space-y-1 pb-3 border-b border-slate-100">
-        <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-[20px] bg-blue-50 border border-blue-200/80 text-[#1E3A8A] text-[10px] font-bold tracking-widest uppercase">
+        <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-[20px] bg-blue-50 border border-blue-200/80 text-[#1E3A8A] text-xs font-bold tracking-widest uppercase">
           <span>TNI EVENT PASS &bull; RAPIM 2026</span>
         </div>
-        <h1 className="text-lg sm:text-xl font-black text-[#1E3A8A] tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-black text-primary tracking-tight">
           RAPIM TNI 2026
         </h1>
-        <p className="text-[11px] text-slate-500 font-medium">
+        <p className="text-xs text-slate-500 font-medium">
           Rapat Pimpinan Tentara Nasional Indonesia
         </p>
       </div>
@@ -125,7 +125,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
         className="flex items-center justify-between text-xs transition-all"
       >
         <div className="flex items-center gap-1.5 text-slate-500">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Waktu Registrasi
           </span>
         </div>
@@ -169,12 +169,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             <span className="text-[12px] font-black text-white tracking-wider uppercase drop-shadow-sm">
               SUDAH DIGUNAKAN
             </span>
-            <span className="text-[10px] text-emerald-200 font-medium mt-0.5">
+            <span className="text-xs text-emerald-200 font-medium mt-0.5">
               Terverifikasi di Gate
             </span>
           </div>
         </div>
-        <p className="text-[11px] font-mono text-slate-400 mt-2">
+        <p className="text-xs font-mono text-slate-400 mt-2">
           {guest.qr_token ? `${guest.qr_token.substring(0, 18)}...` : 'ID: VALID-TICKET'}
         </p>
       </div>
@@ -182,7 +182,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       {/* 5. IDENTITAS PESERTA */}
       <div className="py-1 pb-3 border-b border-slate-100 space-y-2.5">
         <div className="text-center">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
             Nama Peserta
           </span>
           <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
@@ -201,7 +201,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
         <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
           <div className="bg-slate-50 p-2.5 rounded-lg">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">
+            <span className="text-xs text-slate-400 font-bold uppercase block mb-0.5">
               Matra Kedinasan
             </span>
             <span className="font-semibold text-slate-800 flex items-center gap-1.5">
@@ -214,7 +214,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           </div>
 
           <div className="bg-slate-50 p-2.5 rounded-lg">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block mb-0.5">
+            <span className="text-xs text-slate-400 font-bold uppercase block mb-0.5">
               Jabatan / Kesatuan
             </span>
             <span
@@ -244,7 +244,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
             <Clock className="w-3.5 h-3.5 stroke-[2.5] text-amber-600" />
             <span>Belum Check-In</span>
           </div>
-          <p className="text-[11px] text-amber-900/80 mt-1 leading-relaxed font-medium">
+          <p className="text-xs text-amber-900/80 mt-1 leading-relaxed font-medium">
             Penempatan kursi dan akomodasi akan muncul setelah scan QR di lokasi.
           </p>
         </div>
@@ -264,11 +264,11 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           className="space-y-2.5 transition-all"
         >
           <div className="flex items-center justify-between pb-2 border-b border-emerald-200/70">
-            <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Informasi Check-In Resmi</span>
             </span>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full">
               TERVERIFIKASI
             </span>
           </div>
@@ -277,44 +277,44 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
             {/* 📅 Tanggal Check-In */}
             <div className="bg-white/90 p-2 rounded-lg border border-emerald-200/60">
-              <span className="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
                 <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                 <span>Tanggal</span>
               </span>
-              <p className="font-bold text-slate-900 mt-0.5 text-[11px] truncate" title={checkinDate}>
+              <p className="font-bold text-slate-900 mt-0.5 text-xs truncate" title={checkinDate}>
                 {checkinDate}
               </p>
             </div>
 
             {/* 🕒 Jam Check-In */}
             <div className="bg-white/90 p-2 rounded-lg border border-emerald-200/60">
-              <span className="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
                 <Clock className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                 <span>Waktu</span>
               </span>
-              <p className="font-bold text-slate-900 mt-0.5 text-[11px] font-mono truncate" title={checkinTime}>
+              <p className="font-bold text-slate-900 mt-0.5 text-xs font-mono truncate" title={checkinTime}>
                 {checkinTime}
               </p>
             </div>
 
             {/* 🚪 Gate Masuk */}
             <div className="bg-white/90 p-2 rounded-lg border border-emerald-200/60">
-              <span className="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
                 <DoorClosed className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                 <span>Gate Masuk</span>
               </span>
-              <p className="font-bold text-slate-900 mt-0.5 text-[11px] truncate" title={checkinGate}>
+              <p className="font-bold text-slate-900 mt-0.5 text-xs truncate" title={checkinGate}>
                 {checkinGate}
               </p>
             </div>
 
             {/* 👤 Petugas Scanner */}
             <div className="bg-white/90 p-2 rounded-lg border border-emerald-200/60">
-              <span className="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
                 <UserCheck className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                 <span>Petugas</span>
               </span>
-              <p className="font-bold text-slate-900 mt-0.5 text-[11px] truncate" title={checkinOfficer}>
+              <p className="font-bold text-slate-900 mt-0.5 text-xs truncate" title={checkinOfficer}>
                 {checkinOfficer}
               </p>
             </div>
@@ -326,11 +326,11 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       {isCheckIn && (
         <div className="py-1 pb-3 border-b border-slate-100 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Armchair className="w-3.5 h-3.5 text-blue-600" />
               <span>Penempatan Kursi & Akomodasi</span>
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded text-emerald-700 bg-emerald-50 border border-emerald-200">
+            <span className="text-xs font-bold px-2 py-0.5 rounded text-emerald-700 bg-emerald-50 border border-emerald-200">
               Check-In Terverifikasi
             </span>
           </div>
@@ -339,39 +339,39 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           <div className="grid grid-cols-3 gap-2">
             {/* Kolom 1: Kursi */}
             <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-200 text-center flex flex-col justify-between shadow-2xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 block mb-0.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-700 block mb-0.5">
                 Nomor Kursi
               </span>
               <span className="text-base sm:text-lg font-black text-[#1E3A8A] font-mono block">
                 {seat || guest.seat_number || 'A-01'}
               </span>
-              <span className="text-[10px] text-blue-800 font-semibold block pt-0.5">
+              <span className="text-xs text-blue-800 font-semibold block pt-0.5">
                 {guest.seat_block ? `Blok ${guest.seat_block}` : 'Sidang Pleno'}
               </span>
             </div>
 
             {/* Kolom 2: Gedung */}
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
                 Gedung
               </span>
               <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={gedung || guest.building || 'Gedung Ahmad Yani'}>
                 {gedung || guest.building || 'Gedung Ahmad Yani'}
               </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              <span className="text-xs text-slate-500 font-medium block pt-0.5">
                 Mabes TNI
               </span>
             </div>
 
             {/* Kolom 3: Ruangan */}
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-center flex flex-col justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
                 Ruangan
               </span>
               <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={ruangan || guest.room_name || guest.room || 'Ruang Sidang Utama'}>
                 {ruangan || guest.room_name || guest.room || 'Ruang Sidang Utama'}
               </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              <span className="text-xs text-slate-500 font-medium block pt-0.5">
                 Lantai 1
               </span>
             </div>
@@ -380,7 +380,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           {/* Baris 2: Wisma | Nomor Kamar */}
           <div className="grid grid-cols-2 gap-2 pt-1">
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
                 Wisma Akomodasi
               </span>
               <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate" title={wisma || guest.wisma_name || 'Tidak Menginap'}>
@@ -388,13 +388,13 @@ export const TicketCard: React.FC<TicketCardProps> = ({
                   ? 'Tidak Menginap' 
                   : (wisma || guest.wisma_name || 'Wisma Kartika')}
               </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              <span className="text-xs text-slate-500 font-medium block pt-0.5">
                 {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' ? 'Tanpa Penginapan' : 'Mess Resmi TNI'}
               </span>
             </div>
 
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
                 Nomor Kamar & Bed
               </span>
               <span className="text-xs sm:text-sm font-bold font-mono text-slate-900 block truncate">
@@ -402,7 +402,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
                   ? 'Tidak Menginap'
                   : `Kamar ${room || guest.room_number}${guest.bed_number ? ` (Bed ${guest.bed_number})` : ''}`}
               </span>
-              <span className="text-[10px] text-slate-500 font-medium block pt-0.5">
+              <span className="text-xs text-slate-500 font-medium block pt-0.5">
                 {guest.butuh_akomodasi === 0 || guest.wisma_name === 'Tidak Menginap' ? 'Status: Mandiri' : 'Kamar Ditentukan'}
               </span>
             </div>

@@ -1,10 +1,10 @@
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { ShieldAlert, Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 text-center">
-      <div className="max-w-md w-full bg-white border border-slate-200/90 rounded-2xl p-8 sm:p-10 shadow-xs space-y-6">
+      <div className="max-w-md w-full bg-white border border-slate-200/90 rounded-2xl p-8 sm:p-10 shadow-card space-y-6">
         <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center mx-auto">
           <ShieldAlert className="w-8 h-8 text-slate-600" />
         </div>
@@ -24,14 +24,14 @@ export default function NotFound() {
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
           <Link
             href="/"
-            className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1E40AF] hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 px-5 h-12 rounded-xl bg-[#1E40AF] hover:bg-blue-700 text-white text-sm font-bold shadow-xs hover:shadow-card transition-all"
           >
             <Home className="w-4 h-4" />
             <span>Kembali ke Beranda</span>
           </Link>
         </div>
 
-        <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+        <div className="pt-4 border-t border-slate-100 text-xs text-slate-400 font-medium">
           Markas Besar Tentara Nasional Indonesia &bull; Cilangkap
         </div>
       </div>

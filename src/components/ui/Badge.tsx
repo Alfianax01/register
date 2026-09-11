@@ -18,25 +18,25 @@ export const Badge: React.FC<BadgeProps> = ({
   size = 'md',
   className
 }) => {
-  const base = 'inline-flex items-center font-medium rounded-sm border select-none';
+  const base = 'inline-flex items-center font-semibold rounded-md border select-none';
 
   const variants: Record<BadgeVariant, string> = {
-    neutral: 'bg-slate-100 text-[#64748B] border-slate-200/80',
-    primary: 'bg-blue-50 text-[#1E40AF] border-blue-200',
-    accent: 'bg-blue-50 text-[#2563EB] border-blue-200',
-    success: 'bg-emerald-50 text-[#22A559] border-emerald-200',
+    neutral: 'bg-slate-100 text-slate-700 border-slate-200/80',
+    primary: 'bg-blue-50 text-primary border-blue-200',
+    accent: 'bg-blue-50 text-accent border-blue-200',
+    success: 'bg-emerald-50 text-success border-emerald-200',
     warning: 'bg-amber-50 text-amber-800 border-amber-200',
     danger: 'bg-rose-50 text-rose-700 border-rose-200',
-    ad: 'bg-[#22A559]/10 text-[#156E3B] border-[#22A559]/30 font-semibold',
-    al: 'bg-[#9CA3AF]/20 text-[#334155] border-[#9CA3AF]/40 font-semibold',
-    au: 'bg-[#2563EB]/10 text-[#1D4ED8] border-[#2563EB]/30 font-semibold',
-    gold: 'bg-[#C9A227]/10 text-[#8F6F12] border-[#C9A227]/30 font-semibold',
-    slate: 'bg-slate-100 text-[#0F172A] border-slate-200'
+    ad: 'bg-emerald-500/10 text-emerald-800 border-emerald-500/30',
+    al: 'bg-slate-200/50 text-slate-800 border-slate-300',
+    au: 'bg-sky-500/10 text-sky-800 border-sky-500/30',
+    gold: 'bg-amber-500/10 text-amber-900 border-amber-500/30',
+    slate: 'bg-slate-100 text-slate-900 border-slate-200'
   };
 
   const sizes: Record<BadgeSize, string> = {
-    sm: 'text-[12px] px-2 py-0.5',
-    md: 'text-[13px] px-2.5 py-1'
+    sm: 'text-xs px-2.5 py-0.5',
+    md: 'text-sm px-3 py-1'
   };
 
   return (

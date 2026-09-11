@@ -6,7 +6,7 @@ import { TicketCard } from './TicketCard';
 import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { RotateCw, Printer, Download, ArrowLeft, ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 interface EticketContainerProps {
   initialToken: string;
@@ -211,7 +211,7 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
       </div>
 
       {/* Footer Branding */}
-      <p className="text-center text-[11px] text-slate-400 font-medium">
+      <p className="text-center text-xs text-slate-400 font-medium">
         Markas Besar Tentara Nasional Indonesia &bull; Sistem Terpadu RAPIM 2026
       </p>
     </div>

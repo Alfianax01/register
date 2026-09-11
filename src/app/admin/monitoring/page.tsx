@@ -8,6 +8,8 @@ import { PangkatCompositionChart } from '@/components/monitoring/PangkatComposit
 import { OfficialReportPrint } from '@/components/monitoring/OfficialReportPrint';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { CardSkeleton } from '@/components/ui/Skeleton';
+import { Link } from 'next-view-transitions';
 import { useToast } from '@/components/ui/Toast';
 import { formatTimeID } from '@/lib/utils/formatters';
 import { Guest, CheckinLog } from '@/types';
@@ -137,14 +139,14 @@ export default function MonitoringPage() {
               </span>
               <span>Stream Kehadiran Aktif (Sinkron 6 Detik)</span>
             </div>
-            <a 
+            <Link 
               href="/admin/settings"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs text-slate-700 font-medium transition-colors border border-slate-200"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs text-slate-700 font-semibold transition-colors border border-slate-200"
               title="Status Integrasi MySQL phpMyAdmin"
             >
               <Database className="w-3.5 h-3.5 text-blue-600" />
               <span>Status MySQL phpMyAdmin</span>
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2.5">
@@ -153,7 +155,7 @@ export default function MonitoringPage() {
               size="md"
               onClick={() => handleExport('excel')}
               disabled={exportingExcel || loading}
-              className="text-xs h-[38px] gap-1.5 text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+              className="text-xs h-10 gap-2 text-slate-700 bg-white border-slate-200 hover:bg-slate-50 font-semibold px-3.5"
               title="Ekspor Spreadsheet (.xlsx) Resmi"
             >
               {exportingExcel ? (
@@ -169,7 +171,7 @@ export default function MonitoringPage() {
               size="md"
               onClick={() => handleExport('pdf')}
               disabled={exportingPdf || loading}
-              className="text-xs h-[38px] gap-1.5 text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+              className="text-xs h-10 gap-2 text-slate-700 bg-white border-slate-200 hover:bg-slate-50 font-semibold px-3.5"
               title="Unduh Lembar Presensi Resmi PDF (Landscape)"
             >
               {exportingPdf ? (
@@ -184,7 +186,7 @@ export default function MonitoringPage() {
               variant="primary"
               size="md"
               onClick={handlePrintOfficialReport}
-              className="text-xs font-semibold h-[38px]"
+              className="text-xs font-semibold h-10 px-4"
             >
               <Printer className="w-3.5 h-3.5 mr-1.5" />
               <span>Cetak Laporan</span>
@@ -194,7 +196,7 @@ export default function MonitoringPage() {
               variant="ghost"
               size="md"
               onClick={fetchStatsAndData}
-              className="text-xs h-[38px] px-2.5 text-slate-500 hover:text-slate-800"
+              className="h-10 w-10 p-0 text-slate-500 hover:text-slate-800 flex items-center justify-center"
             >
               <RotateCw className="w-3.5 h-3.5" />
             </Button>
@@ -202,7 +204,11 @@ export default function MonitoringPage() {
         </div>
 
         {/* Top KPI Cards */}
-        {stats && <StatOverviewCards stats={stats} />}
+        {stats ? (
+          <StatOverviewCards stats={stats} />
+        ) : loading ? (
+          <CardSkeleton count={5} />
+        ) : null}
 
         {/* Charts & Activity Ticker Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -228,13 +234,13 @@ export default function MonitoringPage() {
 
           {/* Live Recent Check-in Feed */}
           <div className="lg:col-span-4">
-            <Card className="p-5 h-full flex flex-col bg-white border border-slate-200 shadow-xs">
+            <Card className="p-5 h-full flex flex-col bg-white border border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-200">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                 <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                   <Radio className="w-4 h-4 text-emerald-600" />
                   <span>Presensi Terkini</span>
                 </h3>
-                <span className="text-[11px] text-slate-500 font-mono">Live</span>
+                <span className="text-xs text-slate-500 font-mono font-semibold">Live</span>
               </div>
 
               <div className="space-y-2 flex-1 overflow-y-auto max-h-[290px] pr-1 text-xs">
@@ -246,17 +252,17 @@ export default function MonitoringPage() {
                   recentLogs.map((log) => (
                     <div
                       key={log.id}
-                      className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between hover:border-slate-300 transition-colors"
+                      className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between hover:border-slate-300 transition-colors"
                     >
                       <div className="min-w-0 pr-2">
-                        <strong className="text-slate-900 font-medium truncate block">
+                        <strong className="text-slate-900 font-semibold text-xs truncate block">
                           {log.guest_nama}
                         </strong>
-                        <span className="text-[11px] text-slate-500 block">
+                        <span className="text-xs text-slate-500 block">
                           {log.guest_pangkat} ({log.guest_matra})
                         </span>
                       </div>
-                      <div className="text-right flex-shrink-0 font-mono text-[10px] text-slate-400">
+                      <div className="text-right flex-shrink-0 font-mono text-xs text-slate-400 font-medium">
                         {formatTimeID(log.scanned_at)}
                       </div>
                     </div>

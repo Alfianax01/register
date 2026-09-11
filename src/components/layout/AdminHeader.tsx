@@ -42,14 +42,13 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   };
 
   return (
-    <header className="min-h-14 bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 flex items-center justify-between flex-shrink-0 z-10">
+    <header className="min-h-16 bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between flex-shrink-0 z-10">
       <div className="flex items-center gap-3 min-w-0">
-        {/* Mobile Drawer Trigger Button */}
         {handleToggle && (
           <button
             type="button"
             onClick={handleToggle}
-            className="lg:hidden p-1.5 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0"
+            className="lg:hidden w-11 h-11 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
             aria-label="Buka Navigasi Admin"
           >
             <Menu className="w-5 h-5" />
@@ -57,11 +56,11 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         )}
 
         <div className="min-w-0">
-          <h1 className="text-sm font-semibold text-slate-900 leading-tight truncate">
+          <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight truncate">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-[11px] text-slate-500 leading-none mt-0.5 truncate hidden sm:block">
+            <p className="text-xs text-slate-500 font-medium leading-none mt-1 truncate hidden sm:block">
               {subtitle}
             </p>
           )}
@@ -74,10 +73,10 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         {user && (
           <div className="flex items-center gap-2.5 pl-3 sm:pl-4 border-l border-slate-200">
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-medium text-slate-900 block leading-tight truncate max-w-[160px]">
+              <span className="text-sm font-semibold text-slate-900 block leading-tight truncate max-w-[160px]">
                 {user.nama}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono leading-none">
+              <span className="text-xs text-slate-500 font-mono leading-none">
                 @{user.username}
               </span>
             </div>

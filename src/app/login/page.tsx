@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Head from 'next/head';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -65,7 +65,7 @@ export default function LoginPage() {
               <Shield className="w-6 h-6 stroke-[2.2]" />
             </div>
             <div className="space-y-0.5">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block">
                 MABES TENTARA NASIONAL INDONESIA
               </span>
               <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -78,7 +78,7 @@ export default function LoginPage() {
           </div>
 
           {/* Kotak Form Login */}
-          <Card className="p-6 sm:p-7 shadow-xs border-slate-200/90 bg-white rounded-2xl">
+          <Card className="p-6 sm:p-8 rounded-2xl border-slate-200/90 shadow-card bg-white">
             <form onSubmit={handleLogin} className="space-y-4">
               <Input
                 label="Nama Akun Dinas (Username)"
@@ -122,7 +122,7 @@ export default function LoginPage() {
 
             {/* Quick Demo Helper */}
             <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
                 Pilih Akun Dinas (Demo Quick-Fill):
               </span>
               <div className="grid grid-cols-1 gap-1.5 text-xs">
@@ -133,9 +133,9 @@ export default function LoginPage() {
                 >
                   <div>
                     <span className="font-semibold block text-slate-900 group-hover:text-blue-700">Super Admin</span>
-                    <span className="text-[11px] text-slate-500">Letkol Radityo (Akses Penuh)</span>
+                    <span className="text-xs text-slate-500">Letkol Radityo (Akses Penuh)</span>
                   </div>
-                  <span className="font-mono text-[11px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                  <span className="font-mono text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
                     superadmin
                   </span>
                 </button>
@@ -147,9 +147,9 @@ export default function LoginPage() {
                 >
                   <div>
                     <span className="font-semibold block text-slate-900 group-hover:text-emerald-700">Panitia Gate</span>
-                    <span className="text-[11px] text-slate-500">Kapten Hendro (Presensi & Scanner)</span>
+                    <span className="text-xs text-slate-500">Kapten Hendro (Presensi & Scanner)</span>
                   </div>
-                  <span className="font-mono text-[11px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                  <span className="font-mono text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
                     panitiagate
                   </span>
                 </button>
@@ -161,9 +161,9 @@ export default function LoginPage() {
                 >
                   <div>
                     <span className="font-semibold block text-slate-900 group-hover:text-indigo-700">Panitia Akomodasi</span>
-                    <span className="text-[11px] text-slate-500">Mayor Anita (Penempatan Kamar & Kursi)</span>
+                    <span className="text-xs text-slate-500">Mayor Anita (Penempatan Kamar & Kursi)</span>
                   </div>
-                  <span className="font-mono text-[11px] text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                  <span className="font-mono text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
                     panitiawisma
                   </span>
                 </button>
@@ -174,7 +174,7 @@ export default function LoginPage() {
           <div className="text-center">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 font-medium transition-colors min-h-[44px] py-2 px-3"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Kembali ke Beranda Publik</span>

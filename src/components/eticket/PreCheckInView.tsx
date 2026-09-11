@@ -10,13 +10,13 @@ export const PreCheckInView: React.FC = () => {
           <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-2">
             <Armchair className="w-4 h-4 stroke-[2.2]" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">
             Nomor Kursi
           </span>
           <span className="text-base sm:text-lg font-bold text-amber-900 block mt-1">
             Belum Dialokasikan
           </span>
-          <span className="text-[11px] text-slate-500 block mt-0.5">
+          <span className="text-xs text-slate-500 block mt-0.5">
             Ditetapkan otomatis saat check-in
           </span>
         </div>
@@ -25,13 +25,13 @@ export const PreCheckInView: React.FC = () => {
           <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-2">
             <Building2 className="w-4 h-4 stroke-[2.2]" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">
             Akomodasi
           </span>
           <span className="text-base sm:text-lg font-bold text-amber-900 block mt-1">
             Menunggu Check In
           </span>
-          <span className="text-[11px] text-slate-500 block mt-0.5">
+          <span className="text-xs text-slate-500 block mt-0.5">
             Wisma &amp; kamar disiapkan sistem
           </span>
         </div>
@@ -47,10 +47,10 @@ export const PreCheckInView: React.FC = () => {
             <h4 className="text-sm font-bold text-[#78350F] tracking-wide">
               MENUNGGU VERIFIKASI KEHADIRAN
             </h4>
-            <p className="text-xs sm:text-[13px] text-[#92400E] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#92400E] leading-relaxed">
               Silakan tunjukkan QR Code di atas kepada petugas saat kedatangan di Gate Gedung Ahmad Yani.
             </p>
-            <p className="text-[11px] text-[#B45309] font-medium pt-1">
+            <p className="text-xs text-[#B45309] font-medium pt-1">
               💡 <em>Penetapan nomor kursi dan wisma kamar akan muncul secara otomatis di layar ini setelah verifikasi check-in gate.</em>
             </p>
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -79,7 +79,7 @@ export default function TicketSearchPage() {
         <div>
           <Link
             href="/"
-            className="inline-flex items-center text-[14px] font-medium text-[#64748B] hover:text-[#0F172A] transition-colors"
+            className="inline-flex items-center text-sm sm:text-base font-medium text-[#64748B] hover:text-[#0F172A] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             <span>Kembali ke Halaman Pendaftaran</span>
@@ -87,21 +87,21 @@ export default function TicketSearchPage() {
         </div>
 
         {/* Search Input Box */}
-        <Card className="p-6 sm:p-8 bg-white border border-slate-200/90 shadow-md rounded-lg space-y-6">
+        <Card className="p-6 sm:p-8 bg-white border border-slate-200/90 shadow-md rounded-2xl shadow-card space-y-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Badge variant="primary" size="sm">
                 Layanan Mandiri
               </Badge>
               <span className="text-xs text-slate-400">&bull;</span>
-              <span className="text-[13px] text-[#64748B] font-medium">
+              <span className="text-xs sm:text-sm text-[#64748B] font-medium">
                 Pencarian Tiket Peserta
               </span>
             </div>
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-[#0F172A] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">
               Cari E-Ticket Peserta Acara
             </h1>
-            <p className="text-[14px] text-[#475569] leading-relaxed">
+            <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
               Temukan E-Ticket resmi Anda menggunakan NRP/NIP, nomor WhatsApp, alamat email, atau kode QR token.
             </p>
           </div>
@@ -135,7 +135,7 @@ export default function TicketSearchPage() {
             </div>
 
             {error && (
-              <div className="p-3.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-[13px] flex items-start gap-2.5">
+              <div className="p-3.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-2.5">
                 <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-500 mt-0.5" />
                 <div className="flex-1">
                   <p>{error}</p>
@@ -184,19 +184,19 @@ export default function TicketSearchPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
               <div className="p-2.5 rounded-md bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 text-[#0F172A]">
                 <Award className="w-4 h-4 text-[#1E40AF] flex-shrink-0" />
-                <span className="text-[13px] font-medium">NRP / NIP Prajurit</span>
+                <span className="text-xs sm:text-sm font-medium">NRP / NIP Prajurit</span>
               </div>
               <div className="p-2.5 rounded-md bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 text-[#0F172A]">
                 <Phone className="w-4 h-4 text-[#16A34A] flex-shrink-0" />
-                <span className="text-[13px] font-medium">Nomor WhatsApp / HP</span>
+                <span className="text-xs sm:text-sm font-medium">Nomor WhatsApp / HP</span>
               </div>
               <div className="p-2.5 rounded-md bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 text-[#0F172A]">
                 <Mail className="w-4 h-4 text-[#2563EB] flex-shrink-0" />
-                <span className="text-[13px] font-medium">Alamat Email Terdaftar</span>
+                <span className="text-xs sm:text-sm font-medium">Alamat Email Terdaftar</span>
               </div>
               <div className="p-2.5 rounded-md bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 text-[#0F172A]">
                 <QrCode className="w-4 h-4 text-slate-700 flex-shrink-0" />
-                <span className="text-[13px] font-medium">QR Token / ID Registrasi</span>
+                <span className="text-xs sm:text-sm font-medium">QR Token / ID Registrasi</span>
               </div>
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function TicketSearchPage() {
         {!loading && searched && results.length > 0 && (
           <div className="space-y-4 animate-in fade-in duration-200">
             <div className="flex items-center justify-between px-1">
-              <p className="text-[14px] font-medium text-slate-700">
+              <p className="text-sm sm:text-base font-medium text-slate-700">
                 Ditemukan <span className="font-bold text-[#1E40AF]">{results.length}</span> peserta:
               </p>
               <span className="text-xs text-slate-500">Pilih peserta untuk melihat E-Ticket</span>
@@ -250,25 +250,25 @@ export default function TicketSearchPage() {
                             {guest.matra === 'NON_TNI' ? 'K/L' : `TNI ${guest.matra}`}
                           </Badge>
                           {isCheckIn ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                               <UserCheck className="w-3 h-3" /> CHECK_IN &bull; Hadir di Acara
                               <UserCheck className="w-3 h-3" /> CHECK-IN &bull; Hadir di Acara
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                               REGISTRASI &bull; Terdaftar Resmi
                               TEREGISTRASI &bull; Terdaftar Resmi
                             </span>
                           )}
                         </div>
-                        <p className="text-[14px] text-slate-600 font-medium">
+                        <p className="text-sm sm:text-base text-slate-600 font-medium">
                           {guest.pangkat} &bull; <span className="font-mono text-slate-800 font-semibold">{guest.nrp}</span>
                         </p>
                       </div>
 
                       {guest.registration_id && (
                         <div className="text-left sm:text-right">
-                          <span className="text-[11px] text-slate-400 block font-mono">No. Registrasi</span>
+                          <span className="text-xs text-slate-400 block font-mono">No. Registrasi</span>
                           <span className="text-xs font-mono font-semibold text-slate-700">
                             {guest.registration_id}
                           </span>
@@ -324,7 +324,7 @@ export default function TicketSearchPage() {
               <h3 className="text-[17px] font-bold text-slate-900">
                 Data Peserta Tidak Ditemukan
               </h3>
-              <p className="text-[13px] text-slate-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 Tidak ada data pendaftaran yang cocok dengan pencarian <strong className="text-slate-800 font-mono">&ldquo;{query}&rdquo;</strong>.
               </p>
             </div>
@@ -358,8 +358,8 @@ export default function TicketSearchPage() {
 
         {/* Registration CTA link footer */}
         <div className="pt-2 text-center">
-          <span className="text-[13px] text-[#64748B]">Belum melakukan registrasi acara? </span>
-          <Link href="/" className="text-[13px] font-semibold text-[#1E40AF] hover:underline">
+          <span className="text-xs sm:text-sm text-[#64748B]">Belum melakukan registrasi acara? </span>
+          <Link href="/" className="text-xs sm:text-sm font-semibold text-[#1E40AF] hover:underline">
             Buka Formulir Pendaftaran &rarr;
           </Link>
         </div>

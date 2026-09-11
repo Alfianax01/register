@@ -44,7 +44,7 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({
       </div>
 
       <div className="space-y-1">
-        <span className="font-mono text-[11px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-md border border-slate-200 inline-block">
+        <span className="font-mono text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-md border border-slate-200 inline-block">
           ID: {token ? `${token.substring(0, 18)}...` : 'TNI-QR-CODE'}
         </span>
         <p className="text-[12px] text-slate-500 max-w-[320px] mx-auto">

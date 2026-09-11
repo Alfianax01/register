@@ -17,11 +17,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-[14px] font-medium text-slate-700 select-none">
-            {label} {required && <span className="text-[#1E40AF] font-bold">*</span>}
+          <label htmlFor={inputId} className="block text-sm font-semibold text-slate-800 select-none">
+            {label} {required && <span className="text-primary font-bold">*</span>}
           </label>
         )}
-        <div className="relative rounded-md">
+        <div className="relative rounded-xl">
           {leftIcon && (
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               {leftIcon}
@@ -33,9 +33,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             required={required}
             className={twMerge(
               clsx(
-                'block w-full rounded-md bg-white text-slate-900 border text-[15px] h-[50px] transition-colors',
+                'block w-full rounded-xl bg-white text-slate-900 border text-base h-[50px] transition-colors',
                 'placeholder:text-slate-400',
-                'focus:outline-none focus:border-[#1E40AF] focus:ring-2 focus:ring-[#1E40AF]/15 shadow-sm',
+                'focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-xs',
                 leftIcon ? 'pl-10' : 'pl-3.5',
                 rightIcon ? 'pr-10' : 'pr-3.5',
                 error
@@ -55,11 +55,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error ? (
-          <p id={`${inputId}-error`} className="text-[13px] text-rose-600 font-medium animate-in fade-in duration-150">
+          <p id={`${inputId}-error`} className="text-xs sm:text-sm text-rose-600 font-medium animate-in fade-in duration-150">
             {error}
           </p>
         ) : helperText ? (
-          <p id={`${inputId}-desc`} className="text-[13px] text-slate-500">
+          <p id={`${inputId}-desc`} className="text-xs sm:text-sm text-slate-500">
             {helperText}
           </p>
         ) : null}

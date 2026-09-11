@@ -72,22 +72,22 @@ export const StatOverviewCards: React.FC<StatOverviewProps> = ({ stats }) => {
         return (
           <Card
             key={card.title}
-            className={`p-3 sm:p-4 bg-white border border-slate-200 shadow-xs hover:border-slate-300 transition-colors ${
+            className={`p-4 sm:p-5 bg-white border border-slate-200/90 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 ${
               isLastOdd ? 'col-span-2 lg:col-span-1' : ''
             }`}
           >
             <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-              <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 uppercase tracking-wide truncate">
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider truncate">
                 {card.title}
               </span>
-              <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg ${card.iconBg} flex items-center justify-center flex-shrink-0`}>
-                <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${card.iconColor}`} />
+              <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${card.iconBg} flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-4 h-4 sm:w-4.5 sm:h-4.5 ${card.iconColor}`} />
               </div>
             </div>
             <div className={`text-xl sm:text-2xl font-bold font-mono ${card.valueColor}`}>
               {card.value}
             </div>
-            <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
+            <span className="text-xs text-slate-500 mt-1.5 block truncate">
               {card.subtext}
             </span>
           </Card>

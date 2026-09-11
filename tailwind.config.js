@@ -18,6 +18,7 @@ module.exports = {
         dark: "#0F172A", // Dark Slate 900
         accent: "#2563EB", // Accent Blue 600
         success: "#16A34A", // Success Green 600
+        warning: "#F59E0B", // Warning Amber 500
         neutral: "#64748B", // Neutral Slate 500
         slate: {
           50: "#f8fafc",
@@ -34,7 +35,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ["'IBM Plex Sans'", "Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ["var(--font-ibm-plex-sans)", "'IBM Plex Sans'", "Inter", "system-ui", "-apple-system", "sans-serif"],
         mono: ["'JetBrains Mono'", "SF Mono", "Menlo", "Consolas", "monospace"]
       },
       borderRadius: {
@@ -48,7 +49,8 @@ module.exports = {
       boxShadow: {
         sm: "0 1px 2px 0 rgba(15, 23, 42, 0.05)",
         md: "0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05)",
-        card: "0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03)",
+        card: "0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06)",
+        "card-hover": "0 4px 12px -2px rgba(15, 23, 42, 0.10)",
       }
     },
   },

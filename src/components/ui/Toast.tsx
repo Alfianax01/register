@@ -55,33 +55,33 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <ToastContext.Provider value={{ showToast, dismissToast }}>
       {children}
       {/* Toast Container */}
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
         {toasts.map(toast => {
           const icons = {
-            success: <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />,
-            error: <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />,
-            info: <Info className="w-4 h-4 text-blue-600 flex-shrink-0" />,
-            loading: <Loader2 className="w-4 h-4 text-blue-600 animate-spin flex-shrink-0" />
+            success: <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />,
+            error: <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />,
+            info: <Info className="w-5 h-5 text-primary flex-shrink-0" />,
+            loading: <Loader2 className="w-5 h-5 text-primary animate-spin flex-shrink-0" />
           };
 
           return (
             <div
               key={toast.id}
-              className="pointer-events-auto flex items-start gap-3 p-3.5 rounded-lg bg-white border border-slate-200 shadow-lg shadow-slate-900/5 text-slate-800 text-xs transition-all animate-in slide-in-from-bottom-2 duration-150"
+              className="pointer-events-auto flex items-start gap-3 p-4 rounded-xl bg-white border border-slate-200 shadow-card-hover text-slate-800 text-sm transition-all animate-in slide-in-from-bottom-2 duration-200"
             >
               <div className="mt-0.5">{icons[toast.type]}</div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-900 leading-tight">{toast.title}</p>
+                <p className="font-bold text-slate-900 leading-tight text-sm">{toast.title}</p>
                 {toast.message && (
-                  <p className="text-slate-500 mt-0.5 leading-normal">{toast.message}</p>
+                  <p className="text-slate-500 mt-1 leading-normal text-xs sm:text-sm">{toast.message}</p>
                 )}
               </div>
               <button
                 onClick={() => dismissToast(toast.id)}
-                className="text-slate-400 hover:text-slate-600 p-0.5 rounded"
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-md transition-colors"
                 aria-label="Tutup"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           );
@@ -98,4 +98,3 @@ export function useToast() {
   }
   return context;
 }
-

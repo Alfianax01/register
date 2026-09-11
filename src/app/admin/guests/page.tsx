@@ -34,7 +34,8 @@ import {
   User,
   Phone
 } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
+import { TableSkeleton } from '@/components/ui/Skeleton';
 
 export default function GuestsPage() {
   const { showToast } = useToast();
@@ -344,7 +345,7 @@ export default function GuestsPage() {
                        spec.key === 'KEMENTERIAN' ? 'KEMEN' : 'TNI';
     return (
       <span
-        className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black text-white shadow-2xs"
+        className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold text-white shadow-xs"
         style={{ backgroundColor: safeMatraBg(matra) }}
       >
         {shortLabel}
@@ -356,10 +357,10 @@ export default function GuestsPage() {
     if (status === 'CHECK_IN' || status === 'CHECK-IN') {
       return (
         <span
-          className="inline-flex items-center justify-center gap-1.5 w-24 py-1 rounded-full text-[10px] font-black text-white bg-[#16A34A] shadow-xs"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-[#16A34A] shadow-xs"
           title="Peserta telah Check-In di Gate"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
           <span>CHECK-IN</span>
         </span>
       );
@@ -367,10 +368,10 @@ export default function GuestsPage() {
 
     return (
       <span
-        className="inline-flex items-center justify-center gap-1 w-24 py-1 rounded-full text-[10px] font-bold text-white bg-[#D97706] shadow-xs"
+        className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-[#D97706] shadow-xs"
         title="Peserta Teregistrasi (Belum Check-In di Gate)"
       >
-        <Clock className="w-3 h-3 stroke-[2.5]" />
+        <Clock className="w-3.5 h-3.5 stroke-[2.5]" />
         <span>TEREGISTRASI</span>
       </span>
     );
@@ -386,17 +387,17 @@ export default function GuestsPage() {
 
       <div className="p-4 sm:p-6 space-y-4 max-w-[1600px] w-full mx-auto">
         {/* Top Actions & Filters Card */}
-        <Card className="p-4 bg-white border border-slate-200 shadow-xs space-y-3">
+        <Card className="p-4 sm:p-5 bg-white border border-slate-200 shadow-card rounded-2xl space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Search Input */}
             <form onSubmit={handleSearchSubmit} className="relative flex-1 w-full sm:max-w-md">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="Cari Nama, NRP, Jabatan, atau Token..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all placeholder:text-slate-400"
+                className="w-full pl-10 pr-3 h-11 text-xs sm:text-sm border border-slate-200 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all placeholder:text-slate-400"
               />
             </form>
 
@@ -404,10 +405,10 @@ export default function GuestsPage() {
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <Button
                 variant="outline"
-                size="sm"
+                size="md"
                 onClick={() => fetchGuests(false)}
                 disabled={loading}
-                className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200"
+                className="gap-2 text-xs font-semibold text-slate-700 bg-white border-slate-200 h-11 px-3.5"
                 title="Muat ulang direktori data peserta"
               >
                 <RotateCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -416,10 +417,10 @@ export default function GuestsPage() {
 
               <Button
                 variant="outline"
-                size="sm"
+                size="md"
                 onClick={() => handleExport('excel')}
                 disabled={exportingExcel || loading}
-                className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                className="gap-2 text-xs font-semibold text-slate-700 bg-white border-slate-200 hover:bg-slate-50 h-11 px-3.5"
                 title="Ekspor Spreadsheet (.xlsx) Resmi"
               >
                 {exportingExcel ? (
@@ -432,10 +433,10 @@ export default function GuestsPage() {
 
               <Button
                 variant="outline"
-                size="sm"
+                size="md"
                 onClick={() => handleExport('pdf')}
                 disabled={exportingPdf || loading}
-                className="gap-1.5 text-xs text-slate-700 bg-white border-slate-200 hover:bg-slate-50"
+                className="gap-2 text-xs font-semibold text-slate-700 bg-white border-slate-200 hover:bg-slate-50 h-11 px-3.5"
                 title="Unduh Lembar Presensi Resmi PDF (Landscape)"
               >
                 {exportingPdf ? (
@@ -449,9 +450,9 @@ export default function GuestsPage() {
           </div>
 
           {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
-            <span className="text-slate-500 text-[11px] font-medium flex items-center gap-1 mr-1">
-              <Filter className="w-3 h-3 text-slate-400" /> Filter:
+          <div className="flex flex-wrap items-center gap-2.5 pt-3 border-t border-slate-100 text-xs">
+            <span className="text-slate-500 text-xs font-semibold flex items-center gap-1.5 mr-1">
+              <Filter className="w-3.5 h-3.5 text-slate-400" /> Filter:
             </span>
 
             {/* Matra Filter */}
@@ -459,7 +460,7 @@ export default function GuestsPage() {
               value={filterMatra}
               onChange={(e) => setFilterMatra(e.target.value)}
               aria-label="Filter Matra"
-              className="bg-white text-slate-700 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+              className="bg-white text-slate-700 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer min-h-[38px]"
             >
               <option value="">Semua Matra</option>
               <option value="AD">TNI AD</option>
@@ -474,25 +475,25 @@ export default function GuestsPage() {
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               aria-label="Filter Status"
-              className="bg-white text-slate-700 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+              className="bg-white text-slate-700 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer min-h-[38px]"
             >
               <option value="">Semua Status Presensi</option>
               <option value="TEREGISTRASI">Teregistrasi</option>
               <option value="CHECK-IN">Check-In</option>
             </select>
 
-            <span className="ml-auto text-[11px] text-slate-500 font-mono">
-              Total: <strong>{guests.length}</strong> Peserta
+            <span className="ml-auto text-xs text-slate-500 font-mono font-medium">
+              Total: <strong className="text-slate-900">{guests.length}</strong> Peserta
             </span>
           </div>
         </Card>
 
         {/* Guests Table (11 Kolom Sesuai Spesifikasi) */}
-        <Card className="overflow-hidden bg-white border border-slate-200 shadow-xs">
+        <Card className="overflow-hidden bg-white border border-slate-200 shadow-card rounded-2xl">
           <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
-                <tr className="text-slate-600 uppercase font-semibold text-[10px] tracking-wider bg-slate-50/95">
+                <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
                   <th className="py-2.5 px-4 min-w-[200px]">Nama Peserta</th>
                   <th className="py-2.5 px-3 text-center w-[85px]">Matra</th>
                   <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
@@ -509,33 +510,56 @@ export default function GuestsPage() {
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading && guests.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-12 text-center text-slate-400 font-mono">
-                      <div className="inline-flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
-                        <span>Memuat data direktori peserta...</span>
-                      </div>
+                    <td colSpan={11} className="p-0">
+                      <TableSkeleton columns={11} rows={8} />
                     </td>
                   </tr>
                 ) : fetchError && guests.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-12 text-center text-rose-600">
-                      <div className="inline-flex flex-col items-center gap-2">
-                        <AlertCircle className="w-5 h-5 text-rose-500" />
-                        <span className="font-semibold">{fetchError}</span>
-                        <button
-                          type="button"
+                    <td colSpan={11} className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mb-3">
+                          <AlertCircle className="w-6 h-6 text-rose-600" />
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-900 mb-1">Gagal Memuat Data</h4>
+                        <p className="text-xs text-slate-500 mb-4">{fetchError}</p>
+                        <Button
+                          variant="primary"
+                          size="sm"
                           onClick={() => fetchGuests(false)}
-                          className="mt-1 px-3 py-1 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors cursor-pointer"
+                          className="gap-2"
                         >
-                          Coba Muat Ulang
-                        </button>
+                          <RotateCw className="w-4 h-4" />
+                          <span>Coba Muat Ulang</span>
+                        </Button>
                       </div>
                     </td>
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-12 text-center text-slate-400">
-                      Tidak ada peserta yang cocok dengan filter pencarian.
+                    <td colSpan={11} className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                          <Search className="w-6 h-6 text-slate-400" />
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-900 mb-1">Tidak Ada Peserta Ditemukan</h4>
+                        <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                          Tidak ditemukan data peserta yang cocok dengan kata kunci atau filter yang dipilih.
+                        </p>
+                        {(searchTerm || filterMatra || filterStatus) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSearchTerm('');
+                              setFilterMatra('');
+                              setFilterStatus('');
+                            }}
+                          >
+                            Reset Semua Filter
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -562,7 +586,7 @@ export default function GuestsPage() {
                             </span>
                             {g.email_status === 'BOUNCED' ? (
                               <span
-                                className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded flex-shrink-0 gap-0.5"
+                                className="inline-flex items-center px-1.5 py-0.5 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded flex-shrink-0 gap-0.5"
                                 title={`Email Bounced: ${g.last_email_error || 'Alamat ditolak server tujuan'}`}
                               >
                                 <AlertCircle className="w-2.5 h-2.5 text-rose-500" />
@@ -570,7 +594,7 @@ export default function GuestsPage() {
                               </span>
                             ) : g.email_status === 'FAILED' ? (
                               <span
-                                className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded flex-shrink-0 gap-0.5"
+                                className="inline-flex items-center px-1.5 py-0.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded flex-shrink-0 gap-0.5"
                                 title={`Email Gagal Terkirim: ${g.last_email_error || 'Gagal via SMTP'}`}
                               >
                                 <AlertCircle className="w-2.5 h-2.5 text-amber-500" />
@@ -578,14 +602,14 @@ export default function GuestsPage() {
                               </span>
                             ) : (g.email_status === 'SENT' || g.emailSent) ? (
                               <span
-                                className="inline-flex items-center text-[10px] text-emerald-600 flex-shrink-0"
+                                className="inline-flex items-center text-xs text-emerald-600 flex-shrink-0"
                                 title="E-Ticket telah terkirim via email"
                               >
                                 <Mail className="w-3 h-3" />
                               </span>
                             ) : null}
                           </div>
-                          <span className="text-[11px] text-slate-500 font-mono block">NRP: {g.nrp || '-'}</span>
+                          <span className="text-xs text-slate-500 font-mono block">NRP: {g.nrp || '-'}</span>
                         </td>
 
                         {/* 2. Matra */}
@@ -622,7 +646,7 @@ export default function GuestsPage() {
 
                         {/* 8. Status Alokasi */}
                         <td className="py-2.5 px-3 text-center">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] border ${alokasi.badgeClass}`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs border ${alokasi.badgeClass}`}>
                             {alokasi.status}
                           </span>
                         </td>
@@ -633,7 +657,7 @@ export default function GuestsPage() {
                         </td>
 
                         {/* 10. Tgl Registrasi */}
-                        <td className="py-2.5 px-3 text-center font-mono text-[11px] text-slate-700">
+                        <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700">
                           {formatRegDate(g.created_at).date}
                         </td>
 
@@ -644,30 +668,30 @@ export default function GuestsPage() {
                             <button
                               type="button"
                               onClick={() => setViewingGuest(g)}
-                              className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                              className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                               title="Lihat Profil & Detail Lengkap"
                             >
-                              <Eye className="w-3.5 h-3.5" />
+                              <Eye className="w-4 h-4" />
                             </button>
 
                             {/* Edit Profil */}
                             <button
                               type="button"
                               onClick={() => openEditModal(g)}
-                              className="p-1.5 text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded transition-colors"
+                              className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
                               title="Sunting Informasi Peserta"
                             >
-                              <Edit2 className="w-3.5 h-3.5" />
+                              <Edit2 className="w-4 h-4" />
                             </button>
 
                             {/* Hapus Peserta */}
                             <button
                               type="button"
                               onClick={() => setDeletingGuest(g)}
-                              className="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                              className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                               title="Hapus Data Peserta"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -715,36 +739,36 @@ export default function GuestsPage() {
             <div className="space-y-3 text-xs">
               {/* 1. IDENTITAS */}
               <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-2">
-                <span className="text-slate-500 font-bold uppercase text-[10px] tracking-wider block border-b border-slate-100 pb-1">
+                <span className="text-slate-500 font-bold uppercase text-xs tracking-wider block border-b border-slate-100 pb-1">
                   1. Identitas Peserta
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Nama Lengkap</span>
+                    <span className="text-slate-400 text-xs block">Nama Lengkap</span>
                     <p className="font-semibold text-slate-800">{viewingGuest.nama}</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">NRP / NIP</span>
+                    <span className="text-slate-400 text-xs block">NRP / NIP</span>
                     <p className="font-mono font-semibold text-slate-800">{viewingGuest.nrp || '-'}</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Pangkat & Matra</span>
+                    <span className="text-slate-400 text-xs block">Pangkat & Matra</span>
                     <p className="font-semibold text-slate-800">{viewingGuest.pangkat} ({viewingGuest.matra})</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Jabatan Kedinasan</span>
+                    <span className="text-slate-400 text-xs block">Jabatan Kedinasan</span>
                     <p className="font-semibold text-slate-800">{viewingGuest.jabatan || '-'}</p>
                   </div>
                   <div className="sm:col-span-2">
-                    <span className="text-slate-400 text-[10px] block">Kesatuan / Satker</span>
+                    <span className="text-slate-400 text-xs block">Kesatuan / Satker</span>
                     <p className="font-semibold text-slate-800">{viewingGuest.kesatuan || viewingGuest.satuan || viewingGuest.satker || '-'}</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Instansi / Negara</span>
+                    <span className="text-slate-400 text-xs block">Instansi / Negara</span>
                     <p className="font-semibold text-slate-800">{viewingGuest.negara_instansi || 'Indonesia / TNI'}</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Kontak WhatsApp & Email</span>
+                    <span className="text-slate-400 text-xs block">Kontak WhatsApp & Email</span>
                     <p className="font-mono text-slate-800">{viewingGuest.no_hp || viewingGuest.phone || '-'}</p>
                     <p className="text-slate-600 truncate">{viewingGuest.email || '-'}</p>
                   </div>
@@ -753,26 +777,26 @@ export default function GuestsPage() {
 
               {/* 2. PENEMPATAN ACARA */}
               <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-lg space-y-2">
-                <span className="text-blue-700 font-bold uppercase text-[10px] tracking-wider block border-b border-blue-100 pb-1 flex items-center gap-1.5">
+                <span className="text-blue-700 font-bold uppercase text-xs tracking-wider block border-b border-blue-100 pb-1 flex items-center gap-1.5">
                   <Armchair className="w-3.5 h-3.5" />
                   <span>2. Penempatan Acara (Sidang Pleno)</span>
                 </span>
                 <div className="grid grid-cols-3 gap-2 pt-0.5 text-center">
                   <div className="p-2 bg-white rounded-md border border-blue-100 shadow-2xs">
-                    <span className="text-[10px] text-slate-400 block">Nomor Kursi</span>
+                    <span className="text-xs text-slate-400 block">Nomor Kursi</span>
                     <p className="font-mono font-bold text-base text-blue-900">
                       {viewingGuest.seat_number || viewingGuest.seat_assignment || 'Belum Ditentukan'}
                     </p>
-                    <span className="text-[9px] text-blue-600 block">{viewingGuest.seat_block ? `Blok ${viewingGuest.seat_block}` : 'Blok Terpilih'}</span>
+                    <span className="text-xs text-blue-600 block">{viewingGuest.seat_block ? `Blok ${viewingGuest.seat_block}` : 'Blok Terpilih'}</span>
                   </div>
                   <div className="p-2 bg-white rounded-md border border-blue-100 shadow-2xs">
-                    <span className="text-[10px] text-slate-400 block">Gedung</span>
+                    <span className="text-xs text-slate-400 block">Gedung</span>
                     <p className="font-semibold text-slate-800 truncate" title={viewingGuest.building || 'Gedung Ahmad Yani'}>
                       {viewingGuest.building || 'Gedung Ahmad Yani'}
                     </p>
                   </div>
                   <div className="p-2 bg-white rounded-md border border-blue-100 shadow-2xs">
-                    <span className="text-[10px] text-slate-400 block">Ruangan</span>
+                    <span className="text-xs text-slate-400 block">Ruangan</span>
                     <p className="font-semibold text-slate-800 truncate" title={viewingGuest.room_name || viewingGuest.room || 'Ruang Sidang Utama'}>
                       {viewingGuest.room_name || viewingGuest.room || 'Ruang Sidang Utama'}
                     </p>
@@ -782,13 +806,13 @@ export default function GuestsPage() {
 
               {/* 3. AKOMODASI */}
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
-                <span className="text-slate-600 font-bold uppercase text-[10px] tracking-wider block border-b border-slate-200 pb-1 flex items-center gap-1.5">
+                <span className="text-slate-600 font-bold uppercase text-xs tracking-wider block border-b border-slate-200 pb-1 flex items-center gap-1.5">
                   <Building className="w-3.5 h-3.5" />
                   <span>3. Akomodasi & Penginapan</span>
                 </span>
                 <div className="grid grid-cols-3 gap-2 pt-0.5">
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Wisma</span>
+                    <span className="text-slate-400 text-xs block">Wisma</span>
                     <p className="font-semibold text-slate-800">
                       {viewingGuest.butuh_akomodasi === 0 || viewingGuest.wisma_name === 'Tidak Menginap'
                         ? 'Tidak Menginap'
@@ -796,7 +820,7 @@ export default function GuestsPage() {
                     </p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Nomor Kamar</span>
+                    <span className="text-slate-400 text-xs block">Nomor Kamar</span>
                     <p className="font-mono font-semibold text-slate-800">
                       {viewingGuest.butuh_akomodasi === 0 || viewingGuest.wisma_name === 'Tidak Menginap'
                         ? '-'
@@ -804,7 +828,7 @@ export default function GuestsPage() {
                     </p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Bed</span>
+                    <span className="text-slate-400 text-xs block">Bed</span>
                     <p className="font-mono font-semibold text-slate-800">
                       {viewingGuest.butuh_akomodasi === 0 || viewingGuest.wisma_name === 'Tidak Menginap'
                         ? '-'
@@ -816,18 +840,18 @@ export default function GuestsPage() {
 
               {/* 4. KEHADIRAN */}
               <div className="p-3 bg-white border border-slate-200 rounded-lg space-y-2">
-                <span className="text-slate-600 font-bold uppercase text-[10px] tracking-wider block border-b border-slate-100 pb-1 flex items-center gap-1.5">
+                <span className="text-slate-600 font-bold uppercase text-xs tracking-wider block border-b border-slate-100 pb-1 flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                   <span>4. Kehadiran & Verifikasi Gate</span>
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-0.5">
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Status Kehadiran</span>
+                    <span className="text-slate-400 text-xs block">Status Kehadiran</span>
                     <div className="pt-1">{renderStatusBadge(viewingGuest.status_kehadiran)}</div>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Waktu Registrasi</span>
-                    <p className="font-mono text-[11px] text-slate-800">
+                    <span className="text-slate-400 text-xs block">Waktu Registrasi</span>
+                    <p className="font-mono text-xs text-slate-800">
                       {viewingGuest.created_at
                         ? new Date(viewingGuest.created_at).toLocaleString('id-ID', {
                             timeZone: 'Asia/Jakarta',
@@ -838,12 +862,12 @@ export default function GuestsPage() {
                     </p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Gate Check-In</span>
+                    <span className="text-slate-400 text-xs block">Gate Check-In</span>
                     <p className="font-semibold text-slate-800">{viewingGuest.checkin_gate || '-'}</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] block">Waktu Check-In</span>
-                    <p className="font-mono text-[11px] text-slate-800">
+                    <span className="text-slate-400 text-xs block">Waktu Check-In</span>
+                    <p className="font-mono text-xs text-slate-800">
                       {viewingGuest.checkin_time || viewingGuest.waktu_kehadiran_pertama 
                         ? new Date(viewingGuest.checkin_time || viewingGuest.waktu_kehadiran_pertama!).toLocaleString('id-ID')
                         : '-'}
@@ -851,11 +875,11 @@ export default function GuestsPage() {
                   </div>
                 </div>
                 {viewingGuest.waktu_kehadiran_pertama && (
-                  <p className="text-[11px] text-emerald-700 font-medium pt-1">
+                  <p className="text-xs text-emerald-700 font-medium pt-1">
                     Waktu Scan Presensi: {new Date(viewingGuest.waktu_kehadiran_pertama).toLocaleString('id-ID')}
                   </p>
                 )}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
                   <span>Token: {viewingGuest.qr_token}</span>
                   <span>ID: {viewingGuest.registration_id || '-'}</span>
                 </div>
@@ -1087,7 +1111,7 @@ export default function GuestsPage() {
                 <p className="font-bold text-slate-900 text-sm">
                   {deletingGuest.nama} ({deletingGuest.pangkat} &bull; NRP {deletingGuest.nrp || '-'})
                 </p>
-                <p className="text-[11px] text-rose-700 leading-relaxed">
+                <p className="text-xs text-rose-700 leading-relaxed">
                   Menghapus peserta ini akan mengosongkan kursi {deletingGuest.seat_number ? `(${deletingGuest.seat_number})` : ''} dan mencabut keabsahan E-Ticket serta QR Code terkait.
                 </p>
               </div>
@@ -1137,20 +1161,20 @@ export default function GuestsPage() {
                   {resendingGuest.nama} ({resendingGuest.pangkat})
                 </div>
                 {resendingGuest.email_status === 'BOUNCED' ? (
-                  <span className="px-1.5 py-0.5 text-[10px] font-bold text-rose-700 bg-rose-100 border border-rose-300 rounded">
+                  <span className="px-1.5 py-0.5 text-xs font-bold text-rose-700 bg-rose-100 border border-rose-300 rounded">
                     BOUNCED
                   </span>
                 ) : resendingGuest.email_status === 'FAILED' ? (
-                  <span className="px-1.5 py-0.5 text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-300 rounded">
+                  <span className="px-1.5 py-0.5 text-xs font-bold text-amber-700 bg-amber-100 border border-amber-300 rounded">
                     FAILED
                   </span>
                 ) : (
-                  <span className="px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 rounded">
+                  <span className="px-1.5 py-0.5 text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 rounded">
                     {resendingGuest.email_status || 'READY'}
                   </span>
                 )}
               </div>
-              <div className="text-slate-500 font-mono text-[11px]">
+              <div className="text-slate-500 font-mono text-xs">
                 NRP: {resendingGuest.nrp || '-'} &bull; Kursi: {resendingGuest.seat_number || 'Belum diatur'}
               </div>
             </div>
@@ -1161,7 +1185,7 @@ export default function GuestsPage() {
                   <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                   <span>Peringatan: Alamat Email Sebelumnya Memantul (BOUNCED)</span>
                 </div>
-                <p className="text-[11px] text-rose-600 leading-relaxed">
+                <p className="text-xs text-rose-600 leading-relaxed">
                   Server mail penerima menolak alamat ini ({resendingGuest.last_email_error || '550 Recipient address rejected: User unknown'}).
                   <strong className="block mt-0.5 font-semibold text-rose-800">Mohon perbaiki alamat email peserta di bawah ke alamat yang valid sebelum menekan Kirimkan E-Ticket.</strong>
                 </p>
@@ -1179,7 +1203,7 @@ export default function GuestsPage() {
                 placeholder="nama@tni.mil.id"
                 required
               />
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Lampiran PDF resmi E-Ticket A4 bertanda tangan digital akan otomatis di-generate dan dilampirkan via SMTP.
               </p>
             </div>

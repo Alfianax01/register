@@ -23,7 +23,7 @@ export const AssignmentCards: React.FC<AssignmentCardsProps> = ({ assignment }) 
             <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
               <Armchair className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-500 block mb-0.5">
+            <span className="text-xs font-bold tracking-wider uppercase text-slate-500 block mb-0.5">
               Nomor Kursi
             </span>
             <div className="text-2xl sm:text-3xl font-black text-[#1E3A8A] font-mono">
@@ -33,7 +33,7 @@ export const AssignmentCards: React.FC<AssignmentCardsProps> = ({ assignment }) 
               Gedung: <span className="text-blue-700">{assignment.gedung || 'Ahmad Yani'}</span>
             </div>
           </div>
-          <div className="text-[11px] font-medium text-slate-600 mt-2 pt-2 border-t border-slate-100 flex items-center justify-center gap-2">
+          <div className="text-xs font-medium text-slate-600 mt-2 pt-2 border-t border-slate-100 flex items-center justify-center gap-2">
             <span>Baris: <strong className="text-slate-900">{assignment.seat_row || (assignment.seat_code ? assignment.seat_code.split('-')[0] : 'A')}</strong></span>
             <span>&bull;</span>
             <span>Nomor: <strong className="text-slate-900">{assignment.seat_num || (assignment.seat_code ? assignment.seat_code.split('-')[1] : '06')}</strong></span>
@@ -46,14 +46,14 @@ export const AssignmentCards: React.FC<AssignmentCardsProps> = ({ assignment }) 
             <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
               <Building2 className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-500 block mb-0.5">
+            <span className="text-xs font-bold tracking-wider uppercase text-slate-500 block mb-0.5">
               Akomodasi
             </span>
             <div className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
               {assignment.wisma_name || 'Wisma Sudirman'}
             </div>
           </div>
-          <div className="text-[11px] font-medium text-emerald-700 mt-2 pt-2 border-t border-slate-100">
+          <div className="text-xs font-medium text-emerald-700 mt-2 pt-2 border-t border-slate-100">
             Akomodasi Resmi Delegasi
           </div>
         </div>
@@ -64,14 +64,14 @@ export const AssignmentCards: React.FC<AssignmentCardsProps> = ({ assignment }) 
             <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
               <Bed className="w-5 h-5 stroke-[2.2]" />
             </div>
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-500 block mb-0.5">
+            <span className="text-xs font-bold tracking-wider uppercase text-slate-500 block mb-0.5">
               Kamar
             </span>
             <div className="text-2xl sm:text-3xl font-black text-indigo-900 font-mono">
               {assignment.room_code || '203'}
             </div>
           </div>
-          <div className="text-[11px] font-medium text-slate-600 mt-2 pt-2 border-t border-slate-100">
+          <div className="text-xs font-medium text-slate-600 mt-2 pt-2 border-t border-slate-100">
             {assignment.room_floor || 'Lantai 2'}
           </div>
         </div>
