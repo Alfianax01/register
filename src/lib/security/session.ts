@@ -1,13 +1,18 @@
 import { AdminRole, AdminUser } from '@/types';
 
-export const SESSION_SECRET =
-  process.env.SESSION_SECRET ||
-  (process.env.NODE_ENV === 'production'
-    ? (() => {
-        console.warn('[SECURITY WARNING] SESSION_SECRET is not set in environment variables! Please set SESSION_SECRET for production.');
-        return 'tni-event-super-secret-key-2026-cilangkap';
-      })()
-    : 'tni-event-super-secret-key-2026-cilangkap');
+function getSessionSecret(): string {
+  if (process.env.SESSION_SECRET) {
+    return process.env.SESSION_SECRET;
+  }
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'SESSION_SECRET is not set in environment variables! SESSION_SECRET must be explicitly set in production.'
+    );
+  }
+  return 'tni-event-super-secret-key-2026-cilangkap';
+}
+
+export const SESSION_SECRET = getSessionSecret();
 export const SESSION_COOKIE_NAME = 'tni_session';
 
 export interface SessionPayload {
