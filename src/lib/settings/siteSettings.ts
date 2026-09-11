@@ -33,6 +33,20 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     // File belum ada, wajar pada inisialisasi awal
   }
 
+  // Sanitasi data terpotong dari MySQL (jika kolom sebelumnya bertipe TEXT 65535 bytes)
+  if (dbSettings) {
+    for (const key of ['hero_logo', 'navbar_logo', 'hero_banner', 'favicon']) {
+      const dbVal = dbSettings[key];
+      const fileVal = fileSettings[key];
+      if (dbVal && dbVal.length === 65535 && fileVal && fileVal.length > 65535) {
+        console.warn(`[SiteSettings] Terdeteksi nilai ${key} terpotong di MySQL (65535). Memperbaiki dengan data file lokal (${fileVal.length}).`);
+        dbSettings[key] = fileVal;
+        // Simpan versi utuh kembali ke MySQL yang sekarang sudah LONGTEXT
+        mysqlAdapter.saveSiteSettings({ [key]: fileVal }).catch(() => {});
+      }
+    }
+  }
+
   // Gabungkan dengan prioritas: Default < File < DB
   const merged: SiteSettings = {
     ...DEFAULT_SITE_SETTINGS,

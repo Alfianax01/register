@@ -19,7 +19,7 @@ export default async function HomePage() {
   return (
     <div className="w-full flex-1 flex flex-col justify-center bg-gradient-to-b from-white via-slate-50/50 to-slate-100/50">
       <section
-        className="relative py-14 sm:py-24"
+        className="relative py-10 sm:py-16"
         style={settings.hero_banner ? {
           backgroundImage: `url(${settings.hero_banner})`,
           backgroundSize: 'cover',
@@ -30,16 +30,16 @@ export default async function HomePage() {
         {settings.hero_banner && (
           <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/75 to-white/95 pointer-events-none" />
         )}
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-7 sm:space-y-8">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5 sm:space-y-6">
           {/* Logo Hero Branding Container & Official Badge */}
-          <div className="flex flex-col items-center gap-5 sm:gap-6 pb-1">
+          <div className="flex flex-col items-center gap-3.5 sm:gap-4 pb-1">
             <HeroLogo
               logoUrl={settings.hero_logo}
               altText={`Lambang Resmi ${settings.hero_title || 'TNI'}`}
             />
 
             {/* Official Institution Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200/80 text-primary text-xs sm:text-sm font-bold tracking-wider shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-primary text-xs sm:text-sm font-bold tracking-wider shadow-2xs">
               <Shield className="w-4 h-4 text-primary flex-shrink-0" />
               <span>MARKAS BESAR TENTARA NASIONAL INDONESIA</span>
             </div>

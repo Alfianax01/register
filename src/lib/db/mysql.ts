@@ -323,11 +323,18 @@ class MySQLAdapter {
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`site_settings\` (
             \`setting_key\` VARCHAR(100) NOT NULL,
-            \`setting_value\` TEXT DEFAULT NULL,
+            \`setting_value\` LONGTEXT DEFAULT NULL,
             \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (\`setting_key\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
+
+        // Migrasi otomatis jika tabel lama masih menggunakan tipe TEXT (maks 64KB)
+        try {
+          await connection.query('ALTER TABLE `site_settings` MODIFY COLUMN `setting_value` LONGTEXT DEFAULT NULL');
+        } catch (_) {
+          // Abaikan jika sudah LONGTEXT
+        }
 
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`admins\` (

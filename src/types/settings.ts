@@ -31,9 +31,9 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   event_theme: 'TNI Modern, Tangguh, dan Adaptif Menuju Indonesia Emas 2045',
   event_location: 'Gedung Ahmad Yani, Mabes TNI Cilangkap, Jakarta Timur',
   event_date: '4 – 5 September 2026',
-  navbar_logo: '',
-  hero_logo: '',
-  favicon: '',
+  navbar_logo: '/images/logo-tni-rapim.png',
+  hero_logo: '/images/logo-tni-rapim.png',
+  favicon: '/favicon.ico',
   hero_banner: '',
 
   label_nama: 'Nama Lengkap & Gelar',
