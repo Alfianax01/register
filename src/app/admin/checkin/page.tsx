@@ -30,35 +30,17 @@ export default function CheckinPage() {
   const [verifyResult, setVerifyResult] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recentLogs, setRecentLogs] = useState<CheckinLog[]>([]);
-  const [stats, setStats] = useState({
-    total: 0,
-    present: 0,
-    absent: 0,
-    percentage: 0
-  });
 
-  const fetchLogsAndStats = async () => {
+  const fetchRecentLogs = async () => {
     try {
-      const [logsRes, statsRes, meRes] = await Promise.all([
+      const [logsRes, meRes] = await Promise.all([
         fetch('/api/checkin/logs?limit=15'),
-        fetch('/api/stats'),
         fetch('/api/auth/me')
       ]);
 
       if (logsRes.ok) {
         const logsData = await logsRes.json();
         setRecentLogs(logsData.logs || []);
-      }
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        if (statsData.success && statsData.stats) {
-          setStats({
-            total: statsData.stats.totalGuests || 0,
-            present: statsData.stats.presentGuests || 0,
-            absent: statsData.stats.absentGuests || 0,
-            percentage: statsData.stats.percentagePresent || 0
-          });
-        }
       }
       if (meRes.ok) {
         const meData = await meRes.json();
@@ -68,8 +50,8 @@ export default function CheckinPage() {
   };
 
   useEffect(() => {
-    fetchLogsAndStats();
-    const interval = setInterval(fetchLogsAndStats, 8000);
+    fetchRecentLogs();
+    const interval = setInterval(fetchRecentLogs, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -107,7 +89,7 @@ export default function CheckinPage() {
 
       setVerifyResult(data);
       setIsModalOpen(true);
-      fetchLogsAndStats();
+      fetchRecentLogs();
     } catch (err: any) {
       setErrorMsg('Gagal terhubung ke basis data presensi.');
     } finally {
@@ -126,76 +108,6 @@ export default function CheckinPage() {
       />
 
       <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6">
-        {/* 1. Statistik Kehadiran Grid: 2 Kolom Mobile, 4 Kolom Desktop */}
-        <section aria-label="Statistik Kehadiran">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <Card className="p-3.5 sm:p-4 bg-white border border-slate-200/80 shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                  Total Undangan
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Users className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 leading-tight">
-                {stats.total}
-              </div>
-              <span className="text-[10px] text-slate-400 mt-1 block">Peserta terdaftar</span>
-            </Card>
-
-            <Card className="p-3.5 sm:p-4 bg-white border border-emerald-200/80 shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-emerald-700 uppercase tracking-wider">
-                  Telah Hadir
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-600 leading-tight">
-                {stats.present}
-              </div>
-              <span className="text-[10px] text-emerald-600/80 mt-1 block">Sudah check-in gate</span>
-            </Card>
-
-            <Card className="p-3.5 sm:p-4 bg-white border border-slate-200/80 shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                  Belum Hadir
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                  <Clock className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-slate-700 leading-tight">
-                {stats.absent}
-              </div>
-              <span className="text-[10px] text-slate-400 mt-1 block">Menunggu kehadiran</span>
-            </Card>
-
-            <Card className="p-3.5 sm:p-4 bg-white border border-slate-200/80 shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
-                  Persentase
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                </div>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-indigo-600 leading-tight">
-                {stats.percentage}%
-              </div>
-              <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-                <div
-                  className="bg-indigo-600 h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(stats.percentage, 100)}%` }}
-                />
-              </div>
-            </Card>
-          </div>
-        </section>
-
         {/* Checkpoint Dropdown Selector Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-white rounded-xl border border-slate-200/80 shadow-xs">
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -333,7 +245,7 @@ export default function CheckinPage() {
                   <Clock className="w-4 h-4 text-slate-500" />
                   <span>Aktivitas Kehadiran Terkini</span>
                 </h3>
-                <Button variant="ghost" size="sm" onClick={fetchLogsAndStats} className="text-xs text-slate-500 hover:text-slate-800 h-7 px-2">
+                <Button variant="ghost" size="sm" onClick={fetchRecentLogs} className="text-xs text-slate-500 hover:text-slate-800 h-7 px-2">
                   <RotateCw className="w-3.5 h-3.5 mr-1" />
                   <span>Refresh</span>
                 </Button>

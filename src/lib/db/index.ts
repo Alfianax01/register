@@ -886,7 +886,18 @@ class DatabaseManager {
       try {
         const myGuests = await mysqlAdapter.getAllGuests(filters);
         if (myGuests && myGuests.length > 0) {
-          this.data!.guests = myGuests;
+          // Merge in any pending local guests so memory is never wiped blindly
+          const map = new Map<string, any>();
+          for (const g of myGuests) map.set(g.id, g);
+          if (this.data && Array.isArray(this.data.guests)) {
+            for (const localG of this.data.guests) {
+              if (!map.has(localG.id) && !myGuests.some(mg => mg.qr_token === localG.qr_token || mg.registration_id === localG.registration_id)) {
+                map.set(localG.id, localG);
+              }
+            }
+          }
+          const merged = Array.from(map.values());
+          this.data!.guests = merged;
           return myGuests;
         } else if (this.data && Array.isArray(this.data.guests) && this.data.guests.length > 0) {
           // One-time initial seed migration to MySQL if table is currently empty
@@ -1257,6 +1268,7 @@ class DatabaseManager {
         }
       } catch (myErr) {
         console.error('[MySQL] Gagal createGuestAsync ke MySQL rapim_tni:', myErr);
+        throw new Error('Gagal menyimpan pendaftaran ke MySQL: ' + (myErr instanceof Error ? myErr.message : String(myErr)));
       }
     }
 

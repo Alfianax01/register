@@ -37,6 +37,25 @@ export async function middleware(req: NextRequest) {
   }
 
   // 5. Proteksi Seluruh Rute Admin (/admin/*)
+  // 5. Proteksi API Routes yang sensitif (/api/guests, /api/export, /api/checkin, /api/stats)
+  const isProtectedApi =
+    pathname.startsWith('/api/guests') ||
+    pathname.startsWith('/api/export') ||
+    pathname.startsWith('/api/checkin') ||
+    pathname === '/api/stats';
+
+  if (isProtectedApi) {
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Sesi panitia tidak valid atau telah berakhir.' },
+        { status: 401 }
+      );
+    }
+    return NextResponse.next();
+  }
+
+  // 6. Proteksi Seluruh Rute Admin (/admin/*)
   if (pathname.startsWith('/admin/')) {
     // /admin/scanner, /admin/guests, /admin/monitoring, /admin/checkin, /admin/allocation, /admin/placement
     const allowedAdminRoutes = [
@@ -77,7 +96,11 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/login'
+    '/login',
+    '/api/guests/:path*',
+    '/api/export/:path*',
+    '/api/checkin/:path*',
+    '/api/stats'
   ]
 };
 

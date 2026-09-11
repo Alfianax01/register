@@ -34,7 +34,7 @@ const INITIAL_FORM_DATA = {
   negara_instansi: 'Indonesia',
   matra: 'AD' as MatraType,
   nrp: '',
-  pangkat: 'Jenderal TNI',
+  pangkat: '',
   jabatan: '',
   satker: 'Mabes TNI',
   satuan: 'Staf Umum',
@@ -131,8 +131,13 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       }
     }
 
+    if (field === 'pangkat' && !val?.trim()) {
+      err = 'Pangkat kedinasan wajib dipilih.';
+    }
+
     if (field === 'jabatan' && !val.trim()) {
       err = 'Kedinasan wajib diisi.';
+      err = 'Jabatan kedinasan wajib diisi.';
     }
 
     setErrors(prev => {
@@ -159,7 +164,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     setFormData(prev => ({
       ...prev,
       matra,
-      pangkat: ranks[0]?.name || '',
+      pangkat: '',
       satker: firstSatker?.name || 'Mabes TNI',
       satuan: firstSatker?.satuans[0] || 'Staf Umum',
       nrp: prev.nrp === 'NON-TNI' ? '' : prev.nrp
@@ -171,10 +176,11 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
     const isEmailValid = validateField('email', formData.email);
     const isPhoneValid = validateField('no_hp', formData.no_hp);
     const isNegaraValid = validateField('negara_instansi', formData.negara_instansi);
+    const isPangkatValid = validateField('pangkat', formData.pangkat);
     const isNrpValid = !formData.nrp?.trim() || validateField('nrp', formData.nrp);
     const isJabatanValid = validateField('jabatan', formData.jabatan);
 
-    return isNamaValid && isEmailValid && isPhoneValid && isNegaraValid && isNrpValid && isJabatanValid;
+    return isNamaValid && isEmailValid && isPhoneValid && isNegaraValid && isPangkatValid && isNrpValid && isJabatanValid;
   };
 
   const handleSubmit = async () => {
@@ -308,9 +314,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               className="text-xs sm:text-sm"
             />
             {errors.nama ? (
-              <p className="text-[11px] text-rose-600 mt-1">{errors.nama}</p>
+              <p className="text-xs text-rose-600 mt-1">{errors.nama}</p>
             ) : (
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Tuliskan nama lengkap beserta gelar jika ada (maksimal 150 karakter).
               </p>
             )}
@@ -332,9 +338,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               />
             </div>
             {errors.no_hp ? (
-              <p className="text-[11px] text-rose-600 mt-1">{errors.no_hp}</p>
+              <p className="text-xs text-rose-600 mt-1">{errors.no_hp}</p>
             ) : (
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Diisi jika ingin menerima notifikasi e-ticket via WhatsApp.
               </p>
             )}
@@ -358,9 +364,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               />
             </div>
             {errors.email ? (
-              <p className="text-[11px] text-rose-600 mt-1">{errors.email}</p>
+              <p className="text-xs text-rose-600 mt-1">{errors.email}</p>
             ) : (
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Alamat email aktif untuk pengiriman berkas E-Ticket PDF resmi.
               </p>
             )}
@@ -401,9 +407,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
             />
           </div>
           {errors.negara_instansi ? (
-            <p className="text-[11px] text-rose-600 mt-1">{errors.negara_instansi}</p>
+            <p className="text-xs text-rose-600 mt-1">{errors.negara_instansi}</p>
           ) : (
-            <p className="text-[11px] text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Asal negara perwakilan delegasi atau dinas resmi.
             </p>
           )}
@@ -455,12 +461,16 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               aria-label="Pilih Pangkat atau Golongan"
               className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
+              <option value="">-- Pilih Pangkat Kedinasan --</option>
               {availableRanks.map(r => (
                 <option key={r.id} value={r.name}>
                   {r.name} ({r.golongan})
                 </option>
               ))}
             </select>
+            {errors.pangkat && (
+              <p className="text-xs text-rose-600 mt-1">{errors.pangkat}</p>
+            )}
           </div>
 
           {/* 4. NRP / NIP */}
@@ -476,18 +486,18 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               className="text-xs sm:text-sm font-mono"
             />
             {errors.nrp ? (
-              <p className="text-[11px] text-rose-600 mt-1">{errors.nrp}</p>
+              <p className="text-xs text-rose-600 mt-1">{errors.nrp}</p>
             ) : (
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {formData.matra === 'NON_TNI' ? 'Kosongkan jika tidak memiliki NIP/identitas' : 'Dapat dikosongkan jika belum memiliki NRP'}
               </p>
             )}
           </div>
 
-          {/* 5. Kedinasan */}
+          {/* 5. Jabatan Kedinasan */}
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              {formLabels.label_jabatan || 'Kedinasan'} <span className="text-rose-500">*</span>
+              {formLabels.label_jabatan || 'Jabatan Kedinasan'} <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <Briefcase className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -501,9 +511,9 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
               />
             </div>
             {errors.jabatan ? (
-              <p className="text-[11px] text-rose-600 mt-1">{errors.jabatan}</p>
+              <p className="text-xs text-rose-600 mt-1">{errors.jabatan}</p>
             ) : (
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Tuliskan jabatan kedinasan atau penugasan resmi saat ini.
               </p>
             )}
@@ -564,7 +574,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
       >
         <div className="space-y-4 text-xs">
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
-            <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-200">
+            <h4 className="font-bold text-slate-900 uppercase tracking-wider text-xs pb-1 border-b border-slate-200">
               Data Pribadi
             </h4>
             <div className="grid grid-cols-2 gap-2">
@@ -584,7 +594,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
           </div>
 
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
-            <h4 className="font-bold text-slate-900 uppercase tracking-wider text-[11px] pb-1 border-b border-slate-200">
+            <h4 className="font-bold text-slate-900 uppercase tracking-wider text-xs pb-1 border-b border-slate-200">
               Data Kedinasan &amp; Penugasan
             </h4>
             <div className="grid grid-cols-2 gap-2">
@@ -611,7 +621,7 @@ export const ModernRegistrationForm: React.FC<ModernRegistrationFormProps> = ({
             </div>
           </div>
 
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-[11px] leading-relaxed">
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-xs leading-relaxed">
             <p>
               <strong>Informasi Alokasi Otomatis:</strong> Nomor kursi pleno Gedung Ahmad Yani akan langsung dialokasikan secara otomatis pada E-Ticket resmi Anda setelah pendaftaran dikirimkan. Penempatan akomodasi/wisma akan diproses oleh panitia saat pelaksanaan check-in.
             </p>

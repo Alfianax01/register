@@ -377,6 +377,13 @@ export default function GuestsPage() {
     );
   };
 
+  const kpiTotal = guests.length;
+  const kpiAD = guests.filter(g => (g.matra as string) === 'AD' || (g.matra as string) === 'TNI_AD').length;
+  const kpiAL = guests.filter(g => (g.matra as string) === 'AL' || (g.matra as string) === 'TNI_AL').length;
+  const kpiAU = guests.filter(g => (g.matra as string) === 'AU' || (g.matra as string) === 'TNI_AU').length;
+  const kpiMabes = guests.filter(g => (g.matra as string) === 'MABES' || (g.matra as string) === 'MABES_TNI').length;
+  const kpiKL = guests.filter(g => (g.matra as string) === 'NON_TNI' || (g.matra as string) === 'SIPIL' || (g.matra as string) === 'KEMENTERIAN').length;
+
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
       <AdminHeader
@@ -386,6 +393,34 @@ export default function GuestsPage() {
       />
 
       <div className="p-4 sm:p-6 space-y-4 max-w-[1600px] w-full mx-auto">
+        {/* KPI Matra & Delegasi Summary Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">Total Peserta</span>
+            <span className="text-xl font-bold font-mono text-slate-900 mt-0.5 block">{kpiTotal}</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-emerald-200 shadow-xs">
+            <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider block">TNI AD</span>
+            <span className="text-xl font-bold font-mono text-emerald-700 mt-0.5 block">{kpiAD}</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-blue-200 shadow-xs">
+            <span className="text-[11px] font-semibold text-blue-800 uppercase tracking-wider block">TNI AL</span>
+            <span className="text-xl font-bold font-mono text-blue-800 mt-0.5 block">{kpiAL}</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-sky-200 shadow-xs">
+            <span className="text-[11px] font-semibold text-sky-700 uppercase tracking-wider block">TNI AU</span>
+            <span className="text-xl font-bold font-mono text-sky-700 mt-0.5 block">{kpiAU}</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-rose-200 shadow-xs">
+            <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wider block">Mabes TNI</span>
+            <span className="text-xl font-bold font-mono text-rose-700 mt-0.5 block">{kpiMabes}</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-amber-200 shadow-xs">
+            <span className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider block">K/L & Tamu</span>
+            <span className="text-xl font-bold font-mono text-amber-700 mt-0.5 block">{kpiKL}</span>
+          </div>
+        </div>
+
         {/* Top Actions & Filters Card */}
         <Card className="p-4 sm:p-5 bg-white border border-slate-200 shadow-card rounded-2xl space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -495,6 +530,7 @@ export default function GuestsPage() {
               <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
                   <th className="py-2.5 px-4 min-w-[200px]">Nama Peserta</th>
+                  <th className="py-2.5 px-4 min-w-[200px] sticky left-0 z-30 bg-slate-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Peserta</th>
                   <th className="py-2.5 px-3 text-center w-[85px]">Matra</th>
                   <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
                   <th className="py-2.5 px-3 text-center w-[95px]">No Kursi</th>
@@ -576,7 +612,7 @@ export default function GuestsPage() {
                         className="hover:bg-blue-50/40 transition-colors group"
                       >
                         {/* 1. Nama Peserta */}
-                        <td className="py-2.5 px-4">
+                        <td className="py-2.5 px-4 sticky left-0 z-10 bg-white group-hover:bg-blue-50/95 transition-colors shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
                           <div className="flex items-center gap-1.5">
                             <span
                               className="text-slate-900 font-semibold truncate block"

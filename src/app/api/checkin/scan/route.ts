@@ -37,8 +37,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify admin session from cookie or header (OWASP 9.3)
-    const sessionCookie = req.cookies.get('tni_session')?.value;
+    const sessionCookie = req.cookies.get('tni_session')?.value || req.cookies.get('session_token')?.value;
     const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.json(
+        { error: 'Akses ditolak: Petugas wajib login untuk melakukan pemindaian kehadiran.' },
+        { status: 401 }
+      );
+    }
 
     const body = await req.json();
     const { token, nrp, checkpoint_code } = body;
@@ -67,7 +74,7 @@ export async function POST(req: NextRequest) {
     }
 
     const checkpoint = checkpoint_code || 'Gate 1: Pintu Masuk Utama (Absensi Awal)';
-    const adminUser = session ? { id: session.userId, nama: session.nama } : { id: 'admin_gate', nama: 'Petugas Lapangan' };
+    const adminUser = { id: session.userId, nama: session.nama };
 
     // Record checkin & update status to CHECK_IN
     const result = db.recordCheckin(guest.id, checkpoint, adminUser, ip);

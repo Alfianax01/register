@@ -40,6 +40,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   const menuItems = [
     {
+      href: '/admin/dashboard',
+      label: 'Dashboard Utama',
+      icon: LayoutDashboard,
+      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
+    },
+    {
       href: '/admin/guests',
       label: 'Data Peserta',
       icon: Users,

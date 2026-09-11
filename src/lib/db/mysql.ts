@@ -535,15 +535,6 @@ class MySQLAdapter {
 
     const values = [
       regId,
-      guest.nama || '',
-      guest.email || '',
-      guest.phone || guest.no_hp || null,
-      guest.matra || 'AD',
-      guest.pangkat || '',
-      guest.nrp || null,
-      guest.jabatan || '',
-      guest.kesatuan || guest.satuan || guest.satker || '',
-      guest.status_kehadiran || 'REGISTRASI',
       nama,
       email,
       phone,
@@ -886,6 +877,9 @@ class MySQLAdapter {
       await pool.execute('UPDATE `seats` SET `status` = "KOSONG", `guest_id` = NULL, `guest_name` = NULL, `guest_matra` = NULL WHERE `guest_id` = ?', [id]);
       await pool.execute('UPDATE `accommodations` SET `status` = "KOSONG", `guest_id` = NULL, `guest_name` = NULL WHERE `guest_id` = ?', [id]);
       await pool.execute('DELETE FROM `guests` WHERE `id` = ?', [id]);
+      try {
+        await pool.execute('DELETE FROM `peserta` WHERE `id` = ? OR `qr_token` = ?', [id, id]);
+      } catch (dpErr) {}
       return true;
     } catch (err) {
       console.error('[MySQL] Gagal deleteGuest:', err);
@@ -929,6 +923,15 @@ class MySQLAdapter {
         'UPDATE `guests` SET `status_kehadiran` = "CHECK_IN", `checkin_gate` = ?, `checkin_time` = ? WHERE `id` = ?',
         [gate, now, guest.id]
       );
+
+      try {
+        await pool.execute(
+          'UPDATE `peserta` SET `status_hadir` = "HADIR" WHERE `qr_token` = ? OR `id` = ?',
+          [guest.qr_token || '', String(guest.id)]
+        );
+      } catch (pErr) {
+        console.warn('[MySQL] Warning update status_hadir di tabel peserta:', pErr);
+      }
 
       await pool.execute(
         'INSERT INTO `checkin_logs` (`guest_id`, `registration_id`, `guest_name`, `nrp`, `seat_number`, `gate`, `petugas`, `checkin_time`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',

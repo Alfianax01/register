@@ -7,6 +7,16 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const sessionCookie = req.cookies.get('tni_session')?.value || req.cookies.get('session_token')?.value;
+    const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.json(
+        { success: false, error: 'Akses ditolak: Anda harus login sebagai panitia berwenang untuk mengakses direktori peserta.' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('q')?.trim() || '';
     const matra = searchParams.get('matra') || '';
@@ -112,8 +122,15 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const sessionCookie = req.cookies.get('tni_session')?.value;
+    const sessionCookie = req.cookies.get('tni_session')?.value || req.cookies.get('session_token')?.value;
     const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.json(
+        { success: false, error: 'Akses ditolak: Anda harus login sebagai panitia berwenang.' },
+        { status: 401 }
+      );
+    }
     const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
 
     const body = await req.json();
@@ -129,8 +146,8 @@ export async function PUT(req: NextRequest) {
     }
 
     db.recordAuditLog(
-      session?.userId || 'admin',
-      session?.username || 'admin',
+      session.userId,
+      session.username,
       'UPDATE_GUEST',
       `Pembaruan profil tamu ${updated.nama} (${updated.nrp})`,
       ip
@@ -144,8 +161,15 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const sessionCookie = req.cookies.get('tni_session')?.value;
+    const sessionCookie = req.cookies.get('tni_session')?.value || req.cookies.get('session_token')?.value;
     const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.json(
+        { success: false, error: 'Akses ditolak: Hanya Super Admin / Admin yang dapat menghapus data peserta.' },
+        { status: 401 }
+      );
+    }
     const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
 
     const { searchParams } = new URL(req.url);
@@ -173,8 +197,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     db.recordAuditLog(
-      session?.userId || 'admin',
-      session?.username || 'admin',
+      session.userId,
+      session.username,
       'DELETE_GUEST',
       `Penghapusan data peserta ${guestName}`,
       ip

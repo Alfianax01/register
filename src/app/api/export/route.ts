@@ -3,11 +3,22 @@ import { db } from '@/lib/db';
 import { mysqlAdapter } from '@/lib/db/mysql';
 import { applyGuestFilters } from '@/lib/export/guestFilters';
 import { generateGuestsExcelBuffer } from '@/lib/export/excelExport';
+import { verifySessionToken } from '@/lib/security/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const sessionCookie = req.cookies.get('tni_session')?.value || req.cookies.get('session_token')?.value;
+    const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
+    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN'];
+    if (!session || !validRoles.includes(session.role)) {
+      return NextResponse.json(
+        { success: false, error: 'Akses ditolak: Hanya panitia berwenang yang dapat mengunduh data ekspor.' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
 
     // Ambil parameter filter
