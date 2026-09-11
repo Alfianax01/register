@@ -1781,6 +1781,11 @@ class DatabaseManager {
     return this.data!.checkin_logs.slice(0, limit);
   }
 
+  public getLogByGuestId(guestId: string): CheckinLog | undefined {
+    this.ensureInitialized();
+    return this.data!.checkin_logs.find(l => l.guest_id === guestId);
+  }
+
   public async getCheckinLogsAsync(limit: number = 50): Promise<CheckinLog[]> {
     this.ensureInitialized();
     if (postgresAdapter.isAvailable()) {
