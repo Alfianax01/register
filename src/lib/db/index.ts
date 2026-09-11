@@ -1086,11 +1086,10 @@ class DatabaseManager {
     const token = generateSecureToken();
     const token_hash = hashToken(token);
 
-    const randSuffix = Math.floor(100000 + Math.random() * 900000);
-    const regId = guestData.registration_id || (guestData.nrp && guestData.nrp !== '-' && guestData.nrp.toUpperCase() !== 'NON-TNI'
-      ? `REG-2026-${guestData.nrp.replace(/[^A-Za-z0-9]/g, '')}-${randSuffix}`
-      : `REG-2026-${Date.now().toString().slice(-4)}-${randSuffix}`);
-    const ticketId = guestData.ticket_id || `TCK-2026-${Date.now().toString().slice(-4)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    // Format auto-generate: REG-2026-XXXXXX (6 digit unik)
+    const randCode = Math.floor(100000 + Math.random() * 900000);
+    const regId = guestData.registration_id || `REG-2026-${randCode}`;
+    const ticketId = guestData.ticket_id || `TCK-2026-${randCode}`;
 
     const katInstansi = guestData.kategori_instansi || getInstansiCategory(guestData.matra || guestData.satker);
     const warnaKursi = guestData.warna_kursi || getSeatColorAlias(katInstansi);
