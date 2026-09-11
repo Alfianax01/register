@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
     const rankObj = TNI_RANKS.find(r => r.name === pangkat);
     const pangkat_level = rankObj ? rankObj.level : (matra === 'NON_TNI' ? 8 : 10);
 
-    const cleanSatker = satker && String(satker).trim() ? String(satker).trim() : 'Mabes TNI';
+    const cleanSatker = satker && String(satker).trim() ? String(satker).trim() : (jabatan && String(jabatan).trim() ? String(jabatan).trim() : 'Mabes TNI');
     const cleanSatuan = satuan && String(satuan).trim() ? String(satuan).trim() : cleanSatker;
     const cleanNegara = negara_instansi && String(negara_instansi).trim() ? String(negara_instansi).trim() : 'Indonesia';
 
@@ -262,29 +262,71 @@ export async function POST(req: NextRequest) {
     }
 
     // Save to MySQL Database
+    // Save to MySQL Database (Dual-Layer Sync)
+    const mysqlSyncStatus: {
+      attempted: boolean;
+      configured: boolean;
+      success: boolean;
+      error: string | null;
+      targetTable?: string;
+    } = {
+      attempted: false,
+      configured: mysqlAdapter.isConfigured(),
+      success: false,
+      error: null
+    };
+
     if (mysqlAdapter.isConfigured()) {
+      mysqlSyncStatus.attempted = true;
       try {
         await mysqlAdapter.savePeserta({
-          id: newGuest.id,
+          id: String(newGuest.id),
+          registration_id: newGuest.registration_id,
+          nama: newGuest.nama,
           nama_lengkap: newGuest.nama,
           pangkat: newGuest.pangkat,
           jabatan: newGuest.jabatan,
-          instansi: newGuest.negara_instansi || newGuest.satker,
+          instansi: newGuest.negara_instansi || newGuest.satker || 'Indonesia',
+          satker: newGuest.satker || 'Mabes TNI',
+          satuan: newGuest.satuan || 'Staf Umum',
+          kesatuan: newGuest.satker || newGuest.satuan || 'Mabes TNI',
           email: newGuest.email,
+          phone: newGuest.no_hp || '-',
           no_hp: newGuest.no_hp || '-',
           kategori_tamu: newGuest.matra === 'NON_TNI' ? 'K/L' : 'TNI',
           nrp: newGuest.nrp || null,
           matra: newGuest.matra,
           qr_token: newGuest.qr_token,
           seat_number: newGuest.seat_number || null,
+          seat_block: newGuest.seat_block || null,
+          building: newGuest.building || 'Gedung Ahmad Yani',
+          room_name: newGuest.room || 'Ruang Sidang Utama',
+          wisma_name: newGuest.wisma_name || 'Tidak Menginap',
+          room_number: newGuest.room_number || '-',
+          bed_number: newGuest.bed_number || null,
+          status_akomodasi: newGuest.status_akomodasi || 'Tidak Menginap',
           status_hadir: 'TEREGISTRASI',
+          status_kehadiran: 'REGISTRASI',
           pdf_path: pdfPath
         });
-        await mysqlAdapter.updateGuest(newGuest.id, newGuest);
-        console.log(`[MySQL] Data peserta tersimpan permanen di database rapim_tni: ${newGuest.id} (${newGuest.registration_id})`);
-      } catch (mysqlErr) {
-        console.error('[MySQL Error] Gagal sinkronisasi peserta ke MySQL:', mysqlErr);
+        mysqlSyncStatus.success = true;
+        mysqlSyncStatus.targetTable = 'guests & peserta';
+        console.log(`[MySQL] Data peserta BERHASIL disimpan ke database MySQL: ${newGuest.id} (${newGuest.registration_id})`);
+      } catch (mysqlErr: any) {
+        mysqlSyncStatus.success = false;
+        mysqlSyncStatus.error = mysqlErr?.message || String(mysqlErr);
+        console.error('[MySQL Error] Gagal sinkronisasi peserta ke MySQL:', {
+          error: mysqlErr?.message || mysqlErr,
+          code: mysqlErr?.code,
+          host: process.env.DB_HOST,
+          database: process.env.DB_NAME,
+          hint: process.env.DB_HOST === 'localhost' 
+            ? 'Jika aplikasi jalan di Vercel, localhost tidak bisa diakses dari cloud. Gunakan MySQL Cloud (Aiven, TiDB, PlanetScale, Railway).' 
+            : 'Periksa status server dan kredensial database.'
+        });
       }
+    } else {
+      console.warn('[MySQL Warning] Sinkronisasi dilewati karena konfigurasi MySQL (DB_HOST, DB_USER, DB_NAME) belum lengkap di environment.');
     }
 
     // Generate QR Code PNG Buffer for Email CID embedding (USES newGuest.qr_token FROM DB ONLY, NEVER REGENERATED)
@@ -370,6 +412,7 @@ export async function POST(req: NextRequest) {
       ticketId: newGuest.ticket_id,
       token: newGuest.qr_token,
       emailStatus: emailDeliveryStatus,
+      mysqlSync: mysqlSyncStatus,
       qrCode: qrDataUrl,
       pdfUrl: pdfPath,
       participant: participantData,

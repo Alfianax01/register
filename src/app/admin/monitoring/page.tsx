@@ -17,7 +17,8 @@ import {
   Printer,
   RotateCw,
   Radio,
-  Loader2
+  Loader2,
+  Database
 } from 'lucide-react';
 
 export default function MonitoringPage() {
@@ -128,12 +129,22 @@ export default function MonitoringPage() {
       <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-6 no-print">
         {/* Action Controls & Live Status */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 font-medium">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span>Stream Kehadiran Aktif (Sinkron 6 Detik)</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>Stream Kehadiran Aktif (Sinkron 6 Detik)</span>
+            </div>
+            <a 
+              href="/admin/settings"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-xs text-slate-700 font-medium transition-colors border border-slate-200"
+              title="Status Integrasi MySQL phpMyAdmin"
+            >
+              <Database className="w-3.5 h-3.5 text-blue-600" />
+              <span>Status MySQL phpMyAdmin</span>
+            </a>
           </div>
 
           <div className="flex items-center gap-2.5">

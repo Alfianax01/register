@@ -165,8 +165,30 @@ class MySQLAdapter {
       const pool = this.getPool();
       if (!pool) return false;
 
-      const connection = await pool.getConnection();
+      let connection;
       try {
+        connection = await pool.getConnection();
+      } catch (connErr: any) {
+        // Jika database belum ada di MySQL (ER_BAD_DB_ERROR), coba buat database otomatis
+        if (connErr?.code === 'ER_BAD_DB_ERROR' && process.env.DB_NAME) {
+          console.warn(`[MySQL] Database "${process.env.DB_NAME}" belum ada, membuat otomatis...`);
+          const tempConn = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            port: Number(process.env.DB_PORT) || 3306,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD || '',
+            ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
+          });
+          await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+          await tempConn.end();
+          connection = await pool.getConnection();
+        } else {
+          throw connErr;
+        }
+      }
+
+      try {
+        // 1. Tabel Utama: guests
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`guests\` (
             \`id\` INT(11) NOT NULL AUTO_INCREMENT,
@@ -205,12 +227,131 @@ class MySQLAdapter {
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
+        // 2. Tabel Kompatibilitas phpMyAdmin: peserta (sesuai scripts/schema.sql)
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`peserta\` (
+            \`id\` VARCHAR(64) NOT NULL,
+            \`nama_lengkap\` VARCHAR(255) NOT NULL,
+            \`pangkat\` VARCHAR(100) NOT NULL,
+            \`jabatan\` VARCHAR(255) NOT NULL,
+            \`instansi\` VARCHAR(255) NOT NULL,
+            \`email\` VARCHAR(255) NOT NULL,
+            \`no_hp\` VARCHAR(50) NOT NULL,
+            \`kategori_tamu\` VARCHAR(50) NOT NULL DEFAULT 'TNI',
+            \`nrp\` VARCHAR(50) DEFAULT NULL,
+            \`matra\` VARCHAR(20) NOT NULL DEFAULT 'AD',
+            \`qr_token\` VARCHAR(100) NOT NULL,
+            \`seat_number\` VARCHAR(50) DEFAULT NULL,
+            \`status_hadir\` VARCHAR(20) NOT NULL DEFAULT 'TEREGISTRASI',
+            \`pdf_path\` VARCHAR(255) DEFAULT NULL,
+            \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            UNIQUE KEY \`idx_peserta_qr_token\` (\`qr_token\`),
+            KEY \`idx_peserta_nrp\` (\`nrp\`),
+            KEY \`idx_peserta_email\` (\`email\`),
+            KEY \`idx_peserta_no_hp\` (\`no_hp\`),
+            KEY \`idx_peserta_status_hadir\` (\`status_hadir\`),
+            KEY \`idx_peserta_seat_number\` (\`seat_number\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // 3. Tabel Kursi / Seats
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`kursi\` (
+            \`id\` VARCHAR(64) NOT NULL,
+            \`kode_kursi\` VARCHAR(20) NOT NULL,
+            \`grup\` VARCHAR(50) NOT NULL,
+            \`status\` VARCHAR(20) NOT NULL DEFAULT 'KOSONG',
+            \`peserta_id\` VARCHAR(64) DEFAULT NULL,
+            \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            UNIQUE KEY \`idx_kursi_kode\` (\`kode_kursi\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`seats\` (
+            \`id\` INT(11) NOT NULL AUTO_INCREMENT,
+            \`seat_number\` VARCHAR(50) NOT NULL,
+            \`seat_block\` VARCHAR(50) NOT NULL,
+            \`building\` VARCHAR(100) DEFAULT 'Gedung Ahmad Yani',
+            \`status\` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
+            \`guest_id\` INT(11) DEFAULT NULL,
+            \`guest_name\` VARCHAR(255) DEFAULT NULL,
+            \`guest_matra\` VARCHAR(50) DEFAULT NULL,
+            \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            UNIQUE KEY \`idx_seat_number\` (\`seat_number\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // 4. Tabel Akomodasi
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`accommodations\` (
+            \`id\` INT(11) NOT NULL AUTO_INCREMENT,
+            \`wisma_name\` VARCHAR(100) NOT NULL,
+            \`room_number\` VARCHAR(50) NOT NULL,
+            \`floor\` INT DEFAULT 1,
+            \`capacity\` INT DEFAULT 2,
+            \`status\` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
+            \`guest_id\` INT(11) DEFAULT NULL,
+            \`guest_name\` VARCHAR(255) DEFAULT NULL,
+            \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        // 5. Tabel Log Checkin
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`checkin_logs\` (
+            \`id\` INT(11) NOT NULL AUTO_INCREMENT,
+            \`guest_id\` INT(11) NOT NULL,
+            \`guest_name\` VARCHAR(255) NOT NULL,
+            \`nrp\` VARCHAR(100) DEFAULT NULL,
+            \`seat_number\` VARCHAR(50) DEFAULT NULL,
+            \`gate\` VARCHAR(100) NOT NULL,
+            \`petugas\` VARCHAR(100) NOT NULL,
+            \`checkin_time\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            KEY \`idx_checkin_guest_id\` (\`guest_id\`),
+            KEY \`idx_checkin_time\` (\`checkin_time\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`site_settings\` (
             \`setting_key\` VARCHAR(100) NOT NULL,
             \`setting_value\` TEXT DEFAULT NULL,
             \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (\`setting_key\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`admins\` (
+            \`id\` INT(11) NOT NULL AUTO_INCREMENT,
+            \`username\` VARCHAR(100) NOT NULL,
+            \`password_hash\` VARCHAR(255) NOT NULL,
+            \`nama\` VARCHAR(255) NOT NULL,
+            \`role\` VARCHAR(50) NOT NULL DEFAULT 'ADMIN',
+            \`created_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            UNIQUE KEY \`idx_admin_username\` (\`username\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`email_logs\` (
+            \`id\` INT(11) NOT NULL AUTO_INCREMENT,
+            \`recipient\` VARCHAR(255) NOT NULL,
+            \`subject\` VARCHAR(255) NOT NULL,
+            \`status\` VARCHAR(50) NOT NULL,
+            \`error_message\` TEXT DEFAULT NULL,
+            \`sent_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (\`id\`),
+            KEY \`idx_email_logs_recipient\` (\`recipient\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
@@ -224,6 +365,124 @@ class MySQLAdapter {
       return false;
     } finally {
       this.isConnecting = false;
+    }
+  }
+
+  // ==========================================================
+  // HEALTH CHECK & DIAGNOSTICS
+  // ==========================================================
+  public async testConnection(): Promise<{
+    configured: boolean;
+    connected: boolean;
+    host?: string;
+    port?: number;
+    user?: string;
+    database?: string;
+    tables?: string[];
+    recordCount?: { guests: number; peserta: number };
+    error?: string;
+    code?: string;
+    help?: string;
+  }> {
+    const configured = this.isConfigured();
+    const host = process.env.DB_HOST;
+    const port = Number(process.env.DB_PORT) || 3306;
+    const user = process.env.DB_USER;
+    const database = process.env.DB_NAME;
+
+    if (!configured) {
+      return {
+        configured: false,
+        connected: false,
+        host,
+        port,
+        user,
+        database,
+        error: 'Variabel lingkungan DB_HOST, DB_USER, atau DB_NAME belum lengkap.',
+        help: 'Pastikan file .env.local (lokal) atau Environment Variables di Vercel Dashboard sudah diisi dengan parameter koneksi MySQL yang benar.'
+      };
+    }
+
+    try {
+      const pool = this.getPool();
+      if (!pool) throw new Error('Gagal menginisialisasi MySQL connection pool');
+
+      const conn = await pool.getConnection();
+      try {
+        await conn.query('SELECT 1');
+
+        // Pastikan tabel-tabel utama sudah terinisialisasi
+        await this.initSchema();
+
+        // Ambil daftar tabel yang ada di database
+        const [tablesResult]: any = await conn.query('SHOW TABLES');
+        const tables: string[] = Array.isArray(tablesResult)
+          ? tablesResult.map((row: any) => Object.values(row)[0] as string)
+          : [];
+
+        // Hitung jumlah data peserta di tabel guests dan peserta
+        let guestsCount = 0;
+        let pesertaCount = 0;
+
+        if (tables.includes('guests')) {
+          try {
+            const [cntG]: any = await conn.query('SELECT COUNT(*) as cnt FROM `guests`');
+            guestsCount = cntG[0]?.cnt || 0;
+          } catch {}
+        }
+
+        if (tables.includes('peserta')) {
+          try {
+            const [cntP]: any = await conn.query('SELECT COUNT(*) as cnt FROM `peserta`');
+            pesertaCount = cntP[0]?.cnt || 0;
+          } catch {}
+        }
+
+        return {
+          configured: true,
+          connected: true,
+          host,
+          port,
+          user,
+          database,
+          tables,
+          recordCount: {
+            guests: guestsCount,
+            peserta: pesertaCount
+          }
+        };
+      } finally {
+        conn.release();
+      }
+    } catch (err: any) {
+      const code = err?.code || 'UNKNOWN_ERROR';
+      let help = 'Periksa konfigurasi kredensial dan status server MySQL.';
+
+      if (code === 'ECONNREFUSED') {
+        if (host === 'localhost' || host === '127.0.0.1') {
+          help = 'MySQL lokal di 127.0.0.1:3306 tidak aktif / belum dinyalakan. Buka XAMPP atau Laragon Control Panel, lalu klik "Start" pada modul MySQL.';
+        } else {
+          help = 'Koneksi ke server MySQL cloud ditolak. Pastikan server MySQL aktif dan firewall mengizinkan koneksi port 3306.';
+        }
+      } else if (code === 'ER_ACCESS_DENIED_ERROR') {
+        help = 'Username atau Password MySQL salah. Periksa variabel DB_USER dan DB_PASSWORD di .env.local atau Vercel.';
+      } else if (code === 'ER_BAD_DB_ERROR') {
+        help = `Database "${database}" tidak ditemukan di server MySQL. Silakan buat database tersebut di phpMyAdmin.`;
+      } else if (code === 'ETIMEDOUT' || code === 'ENOTFOUND') {
+        help = `Host "${host}" tidak dapat dijangkau. Jika aplikasi di-deploy di Vercel, jangan gunakan "localhost" — gunakan host MySQL Cloud publik (Aiven, TiDB, PlanetScale, Railway).`;
+      }
+
+      return {
+        configured: true,
+        connected: false,
+        host,
+        port,
+        user,
+        database,
+        error: err?.message || String(err),
+        code,
+        help
+      };
     }
   }
 
@@ -242,6 +501,21 @@ class MySQLAdapter {
     }
 
     const qrToken = guest.qr_token || guest.token || `TNI-2026-${regId}`;
+
+    const nama = guest.nama || (guest as any).nama_lengkap || '';
+    const email = guest.email || '';
+    const phone = guest.phone || guest.no_hp || null;
+    const noHp = phone || '-';
+    const matra = guest.matra || 'AD';
+    const pangkat = guest.pangkat || '';
+    const nrp = guest.nrp || null;
+    const jabatan = guest.jabatan || '';
+    const instansi = (guest as any).instansi || guest.negara_instansi || guest.kesatuan || guest.satker || 'Indonesia';
+    const kesatuan = guest.kesatuan || guest.satker || guest.satuan || instansi;
+    const statusKehadiran = guest.status_kehadiran || (guest as any).status_hadir || 'REGISTRASI';
+    const statusHadir = (guest as any).status_hadir || (statusKehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'TEREGISTRASI');
+    const pdfPath = (guest as any).pdf_path || `/api/ticket/${qrToken}/pdf`;
+    const kategoriTamu = (guest as any).kategori_tamu || (matra === 'NON_TNI' ? 'K/L' : 'TNI');
 
     const sql = `
       INSERT INTO \`guests\` (
@@ -270,6 +544,15 @@ class MySQLAdapter {
       guest.jabatan || '',
       guest.kesatuan || guest.satuan || guest.satker || '',
       guest.status_kehadiran || 'REGISTRASI',
+      nama,
+      email,
+      phone,
+      matra,
+      pangkat,
+      nrp,
+      jabatan,
+      kesatuan,
+      statusKehadiran,
       guest.seat_number || null,
       guest.seat_block || null,
       guest.building || 'Gedung Ahmad Yani',
@@ -287,12 +570,60 @@ class MySQLAdapter {
     const [result]: any = await pool.execute(sql, values);
     const insertId = result.insertId;
 
+    // Sinkronisasi ganda ke tabel `peserta` (kompatibilitas penuh phpMyAdmin / schema.sql)
+    try {
+      await pool.execute(
+        `INSERT INTO \`peserta\` (
+          \`id\`, \`nama_lengkap\`, \`pangkat\`, \`jabatan\`, \`instansi\`, 
+          \`email\`, \`no_hp\`, \`kategori_tamu\`, \`nrp\`, \`matra\`, 
+          \`qr_token\`, \`seat_number\`, \`status_hadir\`, \`pdf_path\`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          \`nama_lengkap\` = VALUES(\`nama_lengkap\`),
+          \`pangkat\` = VALUES(\`pangkat\`),
+          \`jabatan\` = VALUES(\`jabatan\`),
+          \`instansi\` = VALUES(\`instansi\`),
+          \`email\` = VALUES(\`email\`),
+          \`no_hp\` = VALUES(\`no_hp\`),
+          \`kategori_tamu\` = VALUES(\`kategori_tamu\`),
+          \`nrp\` = VALUES(\`nrp\`),
+          \`matra\` = VALUES(\`matra\`),
+          \`seat_number\` = VALUES(\`seat_number\`),
+          \`status_hadir\` = VALUES(\`status_hadir\`),
+          \`pdf_path\` = VALUES(\`pdf_path\`)`,
+        [
+          String(guest.id || insertId),
+          nama,
+          pangkat,
+          jabatan,
+          instansi,
+          email,
+          noHp,
+          kategoriTamu,
+          nrp,
+          matra,
+          qrToken,
+          guest.seat_number || null,
+          statusHadir,
+          pdfPath
+        ]
+      );
+    } catch (pesertaErr) {
+      console.warn('[MySQL] Warning saat insert ke tabel peserta:', pesertaErr);
+    }
+
     // Update seat if assigned
     if (guest.seat_number) {
       try {
         await pool.execute(
           'UPDATE `seats` SET `status` = ?, `guest_id` = ?, `guest_name` = ?, `guest_matra` = ? WHERE `seat_number` = ?',
-          ['TERISI', insertId, guest.nama, guest.matra, guest.seat_number]
+          ['TERISI', insertId, nama, matra, guest.seat_number]
+        );
+      } catch (err) {}
+      try {
+        await pool.execute(
+          'UPDATE `kursi` SET `status` = ?, `peserta_id` = ? WHERE `kode_kursi` = ?',
+          ['TERISI', String(guest.id || insertId), guest.seat_number]
         );
       } catch (err) {}
     }
@@ -797,6 +1128,13 @@ class MySQLAdapter {
   }
 
   public async savePeserta(data: any): Promise<Guest | null> {
+    const token = data.qr_token || data.token || data.registration_id;
+    if (token) {
+      const existing = await this.getGuestByToken(token);
+      if (existing) {
+        return this.updateGuest(existing.id, data);
+      }
+    }
     if (data.id) {
       const existing = await this.getGuestById(data.id);
       if (existing) {

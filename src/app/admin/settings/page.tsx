@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Shield, Server, Database, KeyRound, Clock, UserCheck } from 'lucide-react';
 import { useAdmin } from '@/components/layout/AdminContext';
+import { MySQLStatusCard } from '@/components/admin/MySQLStatusCard';
 
 export default function AdminSettingsPage() {
   const adminCtx = useAdmin();
@@ -104,6 +105,9 @@ export default function AdminSettingsPage() {
           </div>
         </Card>
       </div>
+
+      {/* MySQL phpMyAdmin Health & Sync Status */}
+      <MySQLStatusCard />
     </div>
   );
 }
