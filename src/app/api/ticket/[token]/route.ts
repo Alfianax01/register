@@ -47,8 +47,7 @@ export async function GET(
     // 2. Check-In Details (if checked in)
     let checkinDetails = null;
     if (isCheckIn) {
-      const logs = db.getCheckinLogs();
-      const log = logs.find(l => l.guest_id === guest.id);
+      const log = db.getLogByGuestId(guest.id);
 
       const waktuFormatted = guest.waktu_kehadiran_pertama
         ? new Date(guest.waktu_kehadiran_pertama).toLocaleString('id-ID', {
