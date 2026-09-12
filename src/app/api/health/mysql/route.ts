@@ -39,7 +39,10 @@ export async function GET(req: NextRequest) {
         connected: testResult.connected,
         configured: testResult.configured,
         recordCount: testResult.recordCount,
-        tablesCount: testResult.tables?.length || 0
+        tablesCount: testResult.tables?.length || 0,
+        code: testResult.code,
+        error: testResult.error,
+        help: testResult.help
       },
       {
         status: statusCode,

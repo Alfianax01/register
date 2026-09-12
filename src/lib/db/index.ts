@@ -914,7 +914,7 @@ class DatabaseManager {
         }
       } catch (err) {
         console.error('[MySQL] Error in getAllGuests:', err);
-        throw err;
+        return this.data?.guests || [];
       }
     }
     if (postgresAdapter.isAvailable()) {
