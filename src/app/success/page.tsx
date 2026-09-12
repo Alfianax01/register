@@ -7,7 +7,7 @@ import { TicketActions } from '@/components/ticket/TicketActions';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle2, RotateCw, ArrowLeft, Search } from 'lucide-react';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 
 function SuccessContent() {
   const searchParams = useSearchParams();

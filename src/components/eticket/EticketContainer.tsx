@@ -6,7 +6,7 @@ import { TicketCard } from './TicketCard';
 import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
 import { RotateCw, Printer, Download, ArrowLeft, ShieldCheck } from 'lucide-react';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 
 interface EticketContainerProps {
   initialToken: string;

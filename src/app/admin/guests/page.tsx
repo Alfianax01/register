@@ -34,7 +34,7 @@ import {
   User,
   Phone
 } from 'lucide-react';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 import { TableSkeleton } from '@/components/ui/Skeleton';
 
 export default function GuestsPage() {

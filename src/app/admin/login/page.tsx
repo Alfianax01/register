@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Shield, Lock, User, KeyRound, AlertCircle, ArrowLeft } from 'lucide-react';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const router = useRouter();

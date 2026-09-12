@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 import { Shield, Ticket } from 'lucide-react';
 
 export const Navbar: React.FC = () => {

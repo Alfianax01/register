@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { CardSkeleton } from '@/components/ui/Skeleton';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 import { formatTimeID } from '@/lib/utils/formatters';
 import { Guest, CheckinLog } from '@/types';
 import {

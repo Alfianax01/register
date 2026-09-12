@@ -1,4 +1,4 @@
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 import { ShieldAlert, Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {

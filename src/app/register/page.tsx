@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Link } from 'next-view-transitions';
+import Link from 'next/link';
 import { ModernRegistrationForm } from '@/components/register/ModernRegistrationForm';
 import { Card } from '@/components/ui/Card';
 import { ArrowLeft, Shield, Search } from 'lucide-react';
