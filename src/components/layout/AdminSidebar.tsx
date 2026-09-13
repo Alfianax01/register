@@ -37,6 +37,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const isOpen = propIsOpen !== undefined ? propIsOpen : adminCtx?.isDrawerOpen ?? false;
   const handleClose = propOnClose || adminCtx?.closeDrawer || (() => {});
   const effectiveRole = userRole || adminCtx?.currentUser?.role;
+  const [imgError, setImgError] = React.useState(false);
+  const logoUrl = adminCtx?.siteSettings?.navbar_logo || adminCtx?.siteSettings?.hero_logo;
+
+  React.useEffect(() => {
+    setImgError(false);
+  }, [logoUrl]);
 
   const menuItems = [
     {
@@ -81,16 +87,29 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     <div className="flex flex-col h-full">
       {/* Brand Header */}
       <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-2xs">
-            <Shield className="w-5 h-5 stroke-[2.2]" />
-          </div>
-          <div>
-            <span className="text-sm font-bold text-slate-900 block leading-tight">
+        <div className="flex items-center gap-3 min-w-0">
+          {logoUrl && !imgError ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={logoUrl}
+              alt="Logo"
+              onError={() => setImgError(true)}
+              className="w-10 h-10 rounded-xl object-contain bg-white border border-slate-200 p-0.5 flex-shrink-0 select-none"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-2xs flex-shrink-0">
+              <Shield className="w-5 h-5 stroke-[2.2]" />
+            </div>
+          )}
+          <div className="min-w-0">
+            <span className="text-sm font-bold text-slate-900 block leading-tight truncate">
               Portal Panitia
             </span>
-            <span className="text-xs text-slate-500 font-medium">
-              RAPIM TNI 2026
+            <span
+              className="text-xs text-slate-500 font-medium truncate block max-w-[170px]"
+              title={adminCtx?.siteSettings?.hero_title || 'RAPIM TNI 2026'}
+            >
+              {adminCtx?.siteSettings?.hero_title || 'RAPIM TNI 2026'}
             </span>
           </div>
         </div>

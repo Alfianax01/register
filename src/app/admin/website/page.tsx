@@ -20,9 +20,11 @@ import {
 } from 'lucide-react';
 import { TniEmblem } from '@/components/emblems/TniEmblem';
 import { SiteSettings, DEFAULT_SITE_SETTINGS } from '@/types/settings';
+import { useAdmin } from '@/components/layout/AdminContext';
 
 export default function WebsiteCMSPage() {
   const { showToast } = useToast();
+  const adminCtx = useAdmin();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'landing' | 'labels' | 'media'>('landing');
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
@@ -84,6 +86,7 @@ export default function WebsiteCMSPage() {
         if (data.settings) {
           setSettings(data.settings);
         }
+        await adminCtx?.refreshSiteSettings?.();
         showToast('✓ Pengaturan website berhasil disimpan ke sistem', { type: 'success' });
       } else {
         const err = await res.json().catch(() => ({}));
