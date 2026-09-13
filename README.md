@@ -67,12 +67,25 @@ register/
 ---
 
 ## 🔐 Kredensial Login Panitia (Demo)
+## 🔐 Kredensial Login Panitia
 
 | Role | Username | Password | Hak Akses |
+Kredensial dinas panitia diatur melalui *Environment Variables* atau dikonfigurasi saat inisialisasi database secara aman (password ter-hash dengan algoritma bcrypt + salt):
+
+| Role | Username | Variabel Environment | Hak Akses |
 |---|---|---|---|
 | **Super Admin** | `superadmin` | `tni2026prima` | Akses penuh ke seluruh modul sistem |
 | **Panitia Gate** | `panitiagate` | `gatepass2026` | Scanner Check-In & Pencarian Tamu |
 | **Panitia Akomodasi** | `panitiawisma` | `wismapass2026` | Penempatan Kamar Wisma Penginapan |
+| **Super Admin** | `superadmin` | `ADMIN_SUPERADMIN_PASSWORD` | Akses penuh ke seluruh modul sistem |
+| **Panitia Gate** | `panitiagate` | `ADMIN_GATE_PASSWORD` | Scanner Check-In & Pencarian Tamu |
+| **Panitia Akomodasi** | `panitiawisma` | `ADMIN_WISMA_PASSWORD` | Penempatan Kamar Wisma Penginapan |
+
+> **Catatan Keamanan (Security Hardening):** 
+> - Kata sandi standar telah dirotasi ke passphrase kuat dan seluruh kredensial tersimpan dalam bentuk hash bcrypt.
+> - Endpoint autentikasi dilengkapi proteksi mitigasi brute-force (maksimal 5 kali percobaan gagal sebelum penguncian akun sementara).
+> - Selalu atur variabel environment pada server produksi.
+
 
 ---
 

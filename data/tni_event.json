@@ -10208,7 +10208,7 @@
       "username": "superadmin",
       "nama": "Letkol Chb Radityo (Super Admin IT)",
       "role": "SUPER_ADMIN",
-      "password_hash": "$2a$10$l.EvaBoa6pgu0POoduPOuO.NfrKH1iA2uEATKLacb2JhLqc34YDWC",
+      "password_hash": "$2a$10$/WrFDjCQzLQUHpXX0A3B7.wCvaWhrAgdXSu0q1POEL66XhqBB062S",
       "created_at": "2026-09-04T13:50:47.417Z"
     },
     {
@@ -10216,7 +10216,7 @@
       "username": "panitiagate",
       "nama": "Kapten Inf Hendro (Koordinator Gate 1)",
       "role": "PANITIA_GATE",
-      "password_hash": "$2a$10$l.EvaBoa6pgu0POoduPOuOe3q2vzTuPHaxYMPctWjmpTx3rUh51dC",
+      "password_hash": "$2a$10$/WrFDjCQzLQUHpXX0A3B7.zZywsHyxoULp1nzrPHqI7z.trEbxd7a",
       "created_at": "2026-09-04T13:50:47.417Z"
     },
     {
@@ -10224,11 +10224,47 @@
       "username": "panitiawisma",
       "nama": "Mayor Laut (K) Anita (Koordinator Wisma)",
       "role": "PANITIA_AKOMODASI",
-      "password_hash": "$2a$10$l.EvaBoa6pgu0POoduPOuO3RURtphDAl8HVoRvAhDcCAv9lxL7wHS",
+      "password_hash": "$2a$10$/WrFDjCQzLQUHpXX0A3B7.wH2vLNZPMOsNb5LP.ZKm1aBUseBpIPG",
       "created_at": "2026-09-04T13:50:47.417Z"
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1789310406314_994g",
+      "admin_id": "admin_wisma",
+      "admin_username": "panitiawisma",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai PANITIA_AKOMODASI",
+      "ip_address": "::1",
+      "created_at": "2026-09-13T14:40:06.314Z"
+    },
+    {
+      "id": "aud_1789310406217_x8qw",
+      "admin_id": "admin_gate",
+      "admin_username": "panitiagate",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai PANITIA_GATE",
+      "ip_address": "::1",
+      "created_at": "2026-09-13T14:40:06.217Z"
+    },
+    {
+      "id": "aud_1789310400417_jqg6",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_FAILED",
+      "details": "Kata sandi salah (Percobaan gagal #1)",
+      "ip_address": "::1",
+      "created_at": "2026-09-13T14:40:00.417Z"
+    },
+    {
+      "id": "aud_1789310400299_r2dv",
+      "admin_id": "admin_super",
+      "admin_username": "superadmin",
+      "action": "LOGIN_SUCCESS",
+      "details": "Login berhasil sebagai SUPER_ADMIN",
+      "ip_address": "::1",
+      "created_at": "2026-09-13T14:40:00.299Z"
+    },
     {
       "id": "aud_1789125096324_9p39",
       "admin_id": "admin_super",

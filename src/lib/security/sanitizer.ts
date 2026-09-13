@@ -57,3 +57,35 @@ export function checkRateLimit(ip: string, limit: number = 5, windowMs: number =
   return { allowed: true, remaining: limit - validTimestamps.length };
 }
 
+/**
+ * Dedicated Failed Login Lockout Tracker
+ * Tracks failed login attempts by IP or Username over a specified window (default 15 minutes).
+ */
+const failedLoginStore = new Map<string, number[]>();
+
+export function checkLoginLockout(identifier: string, maxAttempts: number = 5, windowMs: number = 15 * 60 * 1000): { locked: boolean; remainingLockoutMinutes: number } {
+  const now = Date.now();
+  const timestamps = (failedLoginStore.get(identifier) || []).filter(ts => now - ts < windowMs);
+  failedLoginStore.set(identifier, timestamps);
+
+  if (timestamps.length >= maxAttempts) {
+    const oldest = timestamps[0];
+    const remainingMs = (oldest + windowMs) - now;
+    const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60000));
+    return { locked: true, remainingLockoutMinutes: remainingMinutes };
+  }
+
+  return { locked: false, remainingLockoutMinutes: 0 };
+}
+
+export function recordFailedLogin(identifier: string, windowMs: number = 15 * 60 * 1000): number {
+  const now = Date.now();
+  const timestamps = (failedLoginStore.get(identifier) || []).filter(ts => now - ts < windowMs);
+  timestamps.push(now);
+  failedLoginStore.set(identifier, timestamps);
+  return timestamps.length;
+}
+
+export function resetFailedLogin(identifier: string): void {
+  failedLoginStore.delete(identifier);
+}

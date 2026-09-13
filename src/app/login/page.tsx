@@ -45,10 +45,6 @@ export default function LoginPage() {
     }
   };
 
-  const fillCredentials = (u: string, p: string) => {
-    setUsername(u);
-    setPassword(p);
-  };
 
   return (
     <>
@@ -119,56 +115,6 @@ export default function LoginPage() {
                 <span>Masuk ke Panel Admin</span>
               </Button>
             </form>
-
-            {/* Quick Demo Helper */}
-            <div className="mt-6 pt-5 border-t border-slate-100 space-y-2.5">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                Pilih Akun Dinas (Demo Quick-Fill):
-              </span>
-              <div className="grid grid-cols-1 gap-1.5 text-xs">
-                <button
-                  type="button"
-                  onClick={() => fillCredentials('superadmin', 'tni2026prima')}
-                  className="text-left px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors group"
-                >
-                  <div>
-                    <span className="font-semibold block text-slate-900 group-hover:text-blue-700">Super Admin</span>
-                    <span className="text-xs text-slate-500">Letkol Radityo (Akses Penuh)</span>
-                  </div>
-                  <span className="font-mono text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
-                    superadmin
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => fillCredentials('panitiagate', 'gatepass2026')}
-                  className="text-left px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors group"
-                >
-                  <div>
-                    <span className="font-semibold block text-slate-900 group-hover:text-emerald-700">Panitia Gate</span>
-                    <span className="text-xs text-slate-500">Kapten Hendro (Presensi & Scanner)</span>
-                  </div>
-                  <span className="font-mono text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
-                    panitiagate
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => fillCredentials('panitiawisma', 'wismapass2026')}
-                  className="text-left px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-indigo-50/70 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors group"
-                >
-                  <div>
-                    <span className="font-semibold block text-slate-900 group-hover:text-indigo-700">Panitia Akomodasi</span>
-                    <span className="text-xs text-slate-500">Mayor Anita (Penempatan Kamar & Kursi)</span>
-                  </div>
-                  <span className="font-mono text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-                    panitiawisma
-                  </span>
-                </button>
-              </div>
-            </div>
           </Card>
 
           <div className="text-center">

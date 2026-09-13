@@ -47,10 +47,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  const fillCredentials = (u: string, p: string) => {
-    setUsername(u);
-    setPassword(p);
-  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4">
@@ -110,41 +106,6 @@ export default function AdminLoginPage() {
               <span>Masuk Sistem</span>
             </Button>
           </form>
-
-          {/* Testing helper accounts */}
-          <div className="mt-6 pt-5 border-t border-slate-100 space-y-2">
-            <span className="text-xs font-semibold text-slate-500 block">
-              Pilih Akun Demo Cepat:
-            </span>
-            <div className="grid grid-cols-1 gap-1.5 text-xs">
-              <button
-                type="button"
-                onClick={() => fillCredentials('superadmin', 'tni2026prima')}
-                className="text-left px-3 py-2 rounded-xl bg-slate-50 min-h-[44px] py-2.5 px-3.5 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
-              >
-                <span><strong>Super Admin</strong> (Letkol Radityo)</span>
-                <span className="font-mono text-xs font-semibold text-blue-600 font-medium">superadmin</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillCredentials('panitiagate', 'gatepass2026')}
-                className="text-left px-3 py-2 rounded-xl bg-slate-50 min-h-[44px] py-2.5 px-3.5 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
-              >
-                <span><strong>Panitia Gate</strong> (Kapten Hendro)</span>
-                <span className="font-mono text-xs font-semibold text-emerald-600 font-medium">panitiagate</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillCredentials('panitiawisma', 'wismapass2026')}
-                className="text-left px-3 py-2 rounded-xl bg-slate-50 min-h-[44px] py-2.5 px-3.5 hover:bg-slate-100/80 border border-slate-200/80 text-slate-700 flex items-center justify-between text-xs transition-colors"
-              >
-                <span><strong>Panitia Akomodasi</strong> (Mayor Anita)</span>
-                <span className="font-mono text-xs font-semibold text-indigo-600 font-medium">panitiawisma</span>
-              </button>
-            </div>
-          </div>
         </Card>
 
         <div className="text-center">

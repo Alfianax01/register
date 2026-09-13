@@ -368,6 +368,33 @@ class MySQLAdapter {
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
+        // Seed default admins in MySQL if not exists or update password hashes
+        try {
+          const salt = bcrypt.genSaltSync(10);
+          const superPw = process.env.ADMIN_SUPERADMIN_PASSWORD || 'Cilangkap-Perisai-Utama-2026!';
+          const gatePw = process.env.ADMIN_GATE_PASSWORD || 'Hankam-Gerbang-Barat-2026#';
+          const wismaPw = process.env.ADMIN_WISMA_PASSWORD || 'Kartika-Pondok-Aman-2026$';
+
+          const defaultAdmins = [
+            { username: 'superadmin', nama: 'Letkol Chb Radityo (Super Admin IT)', role: 'SUPER_ADMIN', hash: bcrypt.hashSync(superPw, salt) },
+            { username: 'panitiagate', nama: 'Kapten Inf Hendro (Koordinator Gate 1)', role: 'PANITIA_GATE', hash: bcrypt.hashSync(gatePw, salt) },
+            { username: 'panitiawisma', nama: 'Mayor Laut (K) Anita (Koordinator Wisma)', role: 'PANITIA_AKOMODASI', hash: bcrypt.hashSync(wismaPw, salt) },
+          ];
+
+          for (const adm of defaultAdmins) {
+            await connection.query(`
+              INSERT INTO \`admins\` (\`username\`, \`password_hash\`, \`nama\`, \`role\`)
+              VALUES (?, ?, ?, ?)
+              ON DUPLICATE KEY UPDATE 
+                \`nama\` = VALUES(\`nama\`),
+                \`role\` = VALUES(\`role\`),
+                \`password_hash\` = VALUES(\`password_hash\`)
+            `, [adm.username, adm.hash, adm.nama, adm.role]);
+          }
+        } catch (seedAdmErr) {
+          console.warn('[MySQL] Notice: Admin seeding in initSchema:', seedAdmErr);
+        }
+
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`email_logs\` (
             \`id\` INT(11) NOT NULL AUTO_INCREMENT,

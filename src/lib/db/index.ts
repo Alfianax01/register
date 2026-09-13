@@ -506,7 +506,7 @@ function generateDefaultAdmins(): AdminUser[] {
       username: 'superadmin',
       nama: 'Letkol Chb Radityo (Super Admin IT)',
       role: 'SUPER_ADMIN',
-      password_hash: bcrypt.hashSync('tni2026prima', salt),
+      password_hash: bcrypt.hashSync(process.env.ADMIN_SUPERADMIN_PASSWORD || 'Cilangkap-Perisai-Utama-2026!', salt),
       created_at: now
     },
     {
@@ -514,7 +514,7 @@ function generateDefaultAdmins(): AdminUser[] {
       username: 'panitiagate',
       nama: 'Kapten Inf Hendro (Koordinator Gate 1)',
       role: 'PANITIA_GATE',
-      password_hash: bcrypt.hashSync('gatepass2026', salt),
+      password_hash: bcrypt.hashSync(process.env.ADMIN_GATE_PASSWORD || 'Hankam-Gerbang-Barat-2026#', salt),
       created_at: now
     },
     {
@@ -522,7 +522,7 @@ function generateDefaultAdmins(): AdminUser[] {
       username: 'panitiawisma',
       nama: 'Mayor Laut (K) Anita (Koordinator Wisma)',
       role: 'PANITIA_AKOMODASI',
-      password_hash: bcrypt.hashSync('wismapass2026', salt),
+      password_hash: bcrypt.hashSync(process.env.ADMIN_WISMA_PASSWORD || 'Kartika-Pondok-Aman-2026$', salt),
       created_at: now
     }
   ];
@@ -627,8 +627,29 @@ class DatabaseManager {
       modified = true;
     }
 
+    // Invalidate and upgrade legacy exposed admin password hashes
+    if (Array.isArray(this.data.admins)) {
+      const defaultAdmins = generateDefaultAdmins();
+      for (const def of defaultAdmins) {
+        const existing = this.data.admins.find(a => a.username === def.username);
+        if (existing) {
+          if (
+            bcrypt.compareSync('tni2026prima', existing.password_hash) ||
+            bcrypt.compareSync('gatepass2026', existing.password_hash) ||
+            bcrypt.compareSync('wismapass2026', existing.password_hash)
+          ) {
+            existing.password_hash = def.password_hash;
+            modified = true;
+          }
+        } else {
+          this.data.admins.push(def);
+          modified = true;
+        }
+      }
+    }
+
     if (modified) {
-      console.log('[DATABASE] Migrasi status selesai: BELUM_HADIR -> REGISTRASI, HADIR -> CHECK_IN.');
+      console.log('[DATABASE] Migrasi status dan kredensial admin selesai.');
       this.persist();
     }
   }

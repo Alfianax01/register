@@ -65,6 +65,10 @@ async function runTests() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: 'superadmin', password: 'tni2026prima' })
+    body: JSON.stringify({ 
+      username: 'superadmin', 
+      password: process.env.ADMIN_SUPERADMIN_PASSWORD || 'Cilangkap-Perisai-Utama-2026!' 
+    })
   });
   const loginData = await loginRes.json();
   console.log(`   Status: ${loginRes.status}, Message: ${loginData.message}`);
