@@ -21,6 +21,16 @@ export const ModernScanner: React.FC<ModernScannerProps> = ({
   const [lastScanned, setLastScanned] = useState<string | null>(null);
   const scannerInstanceRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const onScanResultRef = useRef(onScanResult);
+  const isProcessingRef = useRef(isProcessing);
+
+  useEffect(() => {
+    onScanResultRef.current = onScanResult;
+  }, [onScanResult]);
+
+  useEffect(() => {
+    isProcessingRef.current = isProcessing;
+  }, [isProcessing]);
 
   // High-precision clean audio feedback using Web Audio API
   const playPing = useCallback((success: boolean = true) => {
@@ -83,11 +93,11 @@ export const ModernScanner: React.FC<ModernScannerProps> = ({
           aspectRatio: 1.0
         },
         (decodedText) => {
-          if (!isProcessing) {
+          if (!isProcessingRef.current) {
             playPing(true);
             setStatus('success');
             setLastScanned(decodedText);
-            onScanResult(decodedText);
+            onScanResultRef.current(decodedText);
 
             // Revert to detecting status after 2 seconds
             setTimeout(() => {
@@ -111,7 +121,7 @@ export const ModernScanner: React.FC<ModernScannerProps> = ({
           : 'Kamera tidak ditemukan pada perangkat ini. Gunakan fitur upload gambar QR sebagai alternatif.'
       );
     }
-  }, [isProcessing, onScanResult, playPing]);
+  }, [playPing]);
 
   const stopScanner = useCallback(async () => {
     if (scannerInstanceRef.current) {
@@ -208,9 +218,9 @@ export const ModernScanner: React.FC<ModernScannerProps> = ({
       </div>
 
       {/* Main Scanner Viewport Frame */}
-      <div className="relative w-full aspect-square bg-slate-900 rounded-xl overflow-hidden border border-slate-200/80 shadow-subtle flex items-center justify-center">
+      <div className="relative w-full min-h-[350px] sm:min-h-[420px] aspect-square bg-slate-900 rounded-xl overflow-hidden border border-slate-200/80 shadow-subtle flex items-center justify-center">
         {/* Real video render div for Html5Qrcode */}
-        <div id="interactive-scanner-viewport" className="w-full h-full object-cover" />
+        <div id="interactive-scanner-viewport" className="w-full h-full min-h-[350px] object-cover" />
 
         {/* Reticle / High-Tech Bounding Box */}
         {(status === 'detecting' || status === 'active' || status === 'success') && (

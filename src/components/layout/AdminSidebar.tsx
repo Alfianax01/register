@@ -70,12 +70,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
     },
     {
-      href: '/admin/checkin',
-      label: 'Log Presensi Check-In',
-      icon: ClipboardCheck,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'admin', 'superadmin']
-    },
-    {
       href: '/admin/website',
       label: 'Manajemen Website',
       icon: Settings,

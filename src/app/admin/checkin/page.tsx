@@ -6,19 +6,10 @@ import { ModernScanner } from '@/components/scanner/ModernScanner';
 import { ManualSearchForm } from '@/components/checkin/ManualSearchForm';
 import { GuestVerifyModal } from '@/components/checkin/GuestVerifyModal';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
-import { formatTimeID } from '@/lib/utils/formatters';
-import { CheckinLog } from '@/types';
 import {
   MapPin,
-  Clock,
   AlertCircle,
-  RotateCw,
-  Users,
-  CheckCircle2,
-  TrendingUp,
   QrCode
 } from 'lucide-react';
 
@@ -29,30 +20,18 @@ export default function CheckinPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [verifyResult, setVerifyResult] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [recentLogs, setRecentLogs] = useState<CheckinLog[]>([]);
-
-  const fetchRecentLogs = async () => {
-    try {
-      const [logsRes, meRes] = await Promise.all([
-        fetch('/api/checkin/logs?limit=15'),
-        fetch('/api/auth/me')
-      ]);
-
-      if (logsRes.ok) {
-        const logsData = await logsRes.json();
-        setRecentLogs(logsData.logs || []);
-      }
-      if (meRes.ok) {
-        const meData = await meRes.json();
-        setCurrentUser(meData.user);
-      }
-    } catch {}
-  };
 
   useEffect(() => {
-    fetchRecentLogs();
-    const interval = setInterval(fetchRecentLogs, 8000);
-    return () => clearInterval(interval);
+    const fetchUser = async () => {
+      try {
+        const meRes = await fetch('/api/auth/me');
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          setCurrentUser(meData.user);
+        }
+      } catch {}
+    };
+    fetchUser();
   }, []);
 
   const handleProcessScan = async (scannedText: string) => {
@@ -89,7 +68,6 @@ export default function CheckinPage() {
 
       setVerifyResult(data);
       setIsModalOpen(true);
-      fetchRecentLogs();
     } catch (err: any) {
       setErrorMsg('Gagal terhubung ke basis data presensi.');
     } finally {
@@ -100,29 +78,29 @@ export default function CheckinPage() {
   const activeCheckpointObj = OFFICIAL_CHECKPOINTS.find(c => c.code === selectedCheckpoint) || OFFICIAL_CHECKPOINTS[0];
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
+    <div className="flex-1 flex flex-col min-h-0 overflow-y-auto overflow-x-hidden">
       <AdminHeader
         user={currentUser}
-        title="Scanner & Presensi Check-In"
-        subtitle="Pemindaian identitas QR Code dan validasi kehadiran per checkpoint"
+        title="Scan QR Gate"
+        subtitle="Pemindaian cepat identitas QR Code prajurit dan validasi kehadiran per gate"
       />
 
-      <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full space-y-5 sm:space-y-6">
-        {/* Checkpoint Dropdown Selector Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-white rounded-xl border border-slate-200/80 shadow-xs">
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="p-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex-shrink-0">
-              <MapPin className="w-4 h-4" />
+      <div className="p-3.5 sm:p-6 max-w-4xl mx-auto w-full space-y-4 sm:space-y-5">
+        {/* A. Lokasi Checkpoint Aktif */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 sm:p-4 bg-white rounded-xl border border-slate-200/90 shadow-xs">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="p-2.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 flex-shrink-0">
+              <MapPin className="w-5 h-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <label htmlFor="checkpoint-select-checkin" className="text-[11px] text-slate-500 font-medium block">
+              <label htmlFor="checkpoint-select-gate" className="text-[11px] text-slate-500 font-semibold block uppercase tracking-wider">
                 Lokasi Checkpoint Aktif:
               </label>
               <select
-                id="checkpoint-select-checkin"
+                id="checkpoint-select-gate"
                 value={selectedCheckpoint}
                 onChange={(e) => setSelectedCheckpoint(e.target.value)}
-                className="bg-white text-slate-900 font-semibold text-xs sm:text-sm border border-slate-200 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer mt-0.5 w-full sm:w-auto"
+                className="bg-white text-slate-900 font-bold text-xs sm:text-sm border border-slate-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer mt-1 w-full truncate"
               >
                 {OFFICIAL_CHECKPOINTS.map(cp => (
                   <option key={cp.code} value={cp.code}>
@@ -132,9 +110,11 @@ export default function CheckinPage() {
               </select>
             </div>
           </div>
-          <p className="text-xs text-slate-500 max-w-xs text-left sm:text-right">
-            {activeCheckpointObj.location}
-          </p>
+          {activeCheckpointObj.location && (
+            <p className="text-[11px] sm:text-xs text-slate-500 sm:text-right px-1 sm:px-0 sm:max-w-xs font-medium">
+              {activeCheckpointObj.location}
+            </p>
+          )}
         </div>
 
         {errorMsg && (
@@ -144,157 +124,34 @@ export default function CheckinPage() {
           </div>
         )}
 
-        {/* 2. Scanner Gate (Kamera + Manual) & 4. Aktivitas */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
-          {/* Left: Camera Scanner & Manual Input */}
-          <div className="lg:col-span-6 space-y-4">
-            <Card className="p-4 sm:p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <QrCode className="w-4 h-4 text-[#1E40AF]" />
-                  <h3 className="text-sm font-semibold text-slate-900">
-                    Pemindai Kamera QR
-                  </h3>
-                </div>
-                <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Sistem Siaga
-                </span>
-              </div>
-              <ModernScanner onScanResult={handleProcessScan} isProcessing={isProcessing} />
-            </Card>
-
-            {/* Manual NRP Search Alternative */}
-            <Card className="p-4 sm:p-5">
-              <h4 className="text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wide">
-                Pencarian Manual (Alternatif Tanpa QR)
-              </h4>
-              <ManualSearchForm onManualCheckin={handleProcessScan} isProcessing={isProcessing} />
-            </Card>
-
-            {/* 3. Hasil Scan: Kartu Verifikasi Tamu Terakhir */}
-            {verifyResult && verifyResult.guest && (
-              <Card className="p-4 sm:p-5 border-2 border-emerald-500/80 bg-emerald-50/40 shadow-sm animate-in fade-in slide-in-from-top-2">
-                <div className="flex items-center justify-between pb-3 border-b border-emerald-200/80">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                    <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-950">
-                        Hasil Scan: {verifyResult.alreadyCheckedIn ? 'Sudah Pernah Hadir' : 'Berhasil Diverifikasi'}
-                      </h3>
-                      <span className="text-[11px] text-emerald-700">
-                        {verifyResult.alreadyCheckedIn
-                          ? `Tamu telah check-in sebelumnya pada ${verifyResult.previousTimestamp ? formatTimeID(verifyResult.previousTimestamp) + ' WIB' : 'hari ini'}`
-                          : 'Kehadiran berhasil dicatat ke sistem database'}
-                      </span>
-                    </div>
-                  </div>
-                  <Badge variant={verifyResult.guest.matra === 'AD' ? 'ad' : verifyResult.guest.matra === 'AL' ? 'al' : verifyResult.guest.matra === 'AU' ? 'au' : 'success'} size="sm">
-                    {verifyResult.guest.matra || 'TNI'}
-                  </Badge>
-                </div>
-
-                <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
-                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Nama Lengkap & Pangkat</span>
-                    <strong className="text-slate-900 font-semibold text-sm block">
-                      {verifyResult.guest.nama}
-                    </strong>
-                    <span className="text-slate-600 text-xs">{verifyResult.guest.pangkat} &bull; NRP {verifyResult.guest.nrp}</span>
-                  </div>
-
-                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
-                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Jabatan & Instansi</span>
-                    <strong className="text-slate-900 font-medium block truncate">
-                      {verifyResult.guest.jabatan}
-                    </strong>
-                    <span className="text-slate-600 text-xs block truncate">{verifyResult.guest.satker || verifyResult.guest.satuan}</span>
-                  </div>
-
-                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
-                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Alokasi Kursi & Wisma</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-emerald-900 text-sm">
-                        Kursi: {verifyResult.guest.seat_assignment || verifyResult.guest.seat_number || 'Belum Ditentukan'}
-                      </span>
-                    </div>
-                    {verifyResult.guest.wisma_assignment && (
-                      <span className="text-slate-600 text-[11px] block mt-0.5">
-                        {verifyResult.guest.wisma_assignment}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="bg-white/80 p-2.5 rounded-lg border border-emerald-100">
-                    <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Status Validasi</span>
-                    <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      CHECK_IN &bull; Checkpoint {selectedCheckpoint}
-                    </span>
-                  </div>
-                </div>
-              </Card>
-            )}
+        {/* B. Area Scanner QR (Full-Width) */}
+        <Card className="p-3.5 sm:p-5 space-y-4 w-full border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <QrCode className="w-4 h-4 text-blue-700" />
+              <h3 className="text-sm font-bold text-slate-900">
+                Area Scanner QR
+              </h3>
+            </div>
+            <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1.5 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Scanner Siaga
+            </span>
           </div>
 
-          {/* Right: Live Log Stream Ticker */}
-          <div className="lg:col-span-6">
-            <Card className="p-5 h-full flex flex-col">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-500" />
-                  <span>Aktivitas Kehadiran Terkini</span>
-                </h3>
-                <Button variant="ghost" size="sm" onClick={fetchRecentLogs} className="text-xs text-slate-500 hover:text-slate-800 h-7 px-2">
-                  <RotateCw className="w-3.5 h-3.5 mr-1" />
-                  <span>Refresh</span>
-                </Button>
-              </div>
+          <ModernScanner onScanResult={handleProcessScan} isProcessing={isProcessing} />
+        </Card>
 
-              <div className="space-y-2 flex-1 overflow-y-auto max-h-[500px] pr-1">
-                {recentLogs.length === 0 ? (
-                  <p className="text-xs text-slate-400 text-center py-16">
-                    Belum ada riwayat check-in yang tercatat hari ini.
-                  </p>
-                ) : (
-                  recentLogs.map((log) => (
-                    <div
-                      key={log.id}
-                      className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 hover:border-slate-300 transition-colors flex items-center justify-between gap-3 text-xs"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <strong className="text-slate-900 font-semibold">{log.guest_nama}</strong>
-                            <Badge variant={log.guest_matra === 'AD' ? 'ad' : log.guest_matra === 'AL' ? 'al' : log.guest_matra === 'AU' ? 'au' : 'slate'} size="sm">
-                              {log.guest_matra}
-                            </Badge>
-                          </div>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            {log.guest_pangkat} &bull; <span className="font-mono">NRP {log.guest_nrp}</span>
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="text-right flex-shrink-0">
-                        <span className="font-mono text-[10px] text-slate-500 block">
-                          {formatTimeID(log.scanned_at)} WIB
-                        </span>
-                        <span className="text-[10px] text-slate-600 font-medium">
-                          {log.checkpoint_code}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </Card>
-          </div>
-        </div>
+        {/* Manual Fallback Option (Alternatif Tanpa Kamera) */}
+        <Card className="p-3.5 sm:p-4 border border-slate-200">
+          <h4 className="text-[11px] font-bold text-slate-600 mb-2 uppercase tracking-wider">
+            Pencarian Manual (Alternatif Tanpa QR)
+          </h4>
+          <ManualSearchForm onManualCheckin={handleProcessScan} isProcessing={isProcessing} />
+        </Card>
       </div>
 
-      {/* Guest Verify Modal Popup */}
+      {/* C. Compact Modal Result (Single Card) */}
       <GuestVerifyModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

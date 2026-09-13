@@ -2,14 +2,18 @@
 
 import React from 'react';
 import { Modal } from '@/components/ui/Modal';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { formatDateTimeID } from '@/lib/utils/formatters';
 import {
   CheckCircle2,
   AlertTriangle,
   Armchair,
-  Bed
+  Building2,
+  Hotel,
+  DoorOpen,
+  User,
+  Shield,
+  Clock,
+  MapPin
 } from 'lucide-react';
 
 interface GuestVerifyModalProps {
@@ -35,24 +39,38 @@ export const GuestVerifyModal: React.FC<GuestVerifyModalProps> = ({
   const { guest, alreadyCheckedIn, previousTimestamp, log } = result;
   const assignment = (result as any).assignment || guest?.assignment;
 
-  const seatCode = assignment?.seat_code || guest?.seat_number || '-';
-  const seatArea = assignment?.seat_area || guest?.building || 'Gedung Ahmad Yani';
-  const wismaName = assignment?.wisma_name || guest?.wisma || 'Wisma Sudirman';
-  const roomCode = assignment?.room_code
-    ? `Kamar ${assignment.room_code}`
-    : guest?.room_number
-    ? (String(guest.room_number).startsWith('Kamar') ? guest.room_number : `Kamar ${guest.room_number}`)
-    : '-';
+  const seatCode = assignment?.seat_code || guest?.seat_assignment || guest?.seat_number || '-';
+  const wismaName = assignment?.wisma_name || guest?.wisma_name || guest?.wisma || 'Tidak Menginap';
+  const roomNumber = assignment?.room_code || guest?.room_number || '-';
 
-  const scanTimeStr = log?.scanned_at
-    ? formatDateTimeID(log.scanned_at)
-    : formatDateTimeID(new Date().toISOString());
+  const rawTimestamp = previousTimestamp || guest?.checkin_time;
+  let prevDateStr = '-';
+  let prevTimeStr = '-';
 
-  const prevTimeStr = previousTimestamp
-    ? formatDateTimeID(previousTimestamp)
-    : guest?.checkin_time
-    ? formatDateTimeID(guest.checkin_time)
-    : '-';
+  if (rawTimestamp) {
+    try {
+      const d = new Date(rawTimestamp);
+      if (!isNaN(d.getTime())) {
+        prevDateStr = new Intl.DateTimeFormat('id-ID', {
+          timeZone: 'Asia/Jakarta',
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }).format(d);
+
+        const timeOnly = new Intl.DateTimeFormat('id-ID', {
+          timeZone: 'Asia/Jakarta',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        }).format(d).replace('.', ':');
+        prevTimeStr = `${timeOnly} WIB`;
+      }
+    } catch {
+      prevDateStr = String(rawTimestamp);
+    }
+  }
 
   const prevGateStr = (result as any).previousGate || guest?.checkin_gate || log?.checkpoint_name || 'Gate Utama';
 
@@ -60,146 +78,141 @@ export const GuestVerifyModal: React.FC<GuestVerifyModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={alreadyCheckedIn ? 'PESERTA SUDAH CHECK-IN' : 'CHECK-IN BERHASIL'}
-      maxWidth="md"
+      maxWidth="sm"
     >
-      <div className="space-y-4">
-        {/* Status Alert Banner */}
-        {alreadyCheckedIn ? (
-          <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2.5">
-            <AlertTriangle className="w-5 h-5 flex-shrink-0 text-amber-600 mt-0.5" />
-            <div>
-              <strong className="block font-bold text-amber-900">PERINGATAN: Peserta Sudah Check-In</strong>
-              <span className="text-amber-700">
-                Peserta ini telah terverifikasi hadir sebelumnya. Pemindaian ulang tidak membuat duplikasi log presensi.
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
-            <div>
-              <strong className="block font-bold text-emerald-950">CHECK-IN BERHASIL</strong>
-              <span className="text-emerald-700">Tamu berhasil diverifikasi dan terdata hadir secara real-time.</span>
-            </div>
-          </div>
-        )}
-
-        {/* Info Box */}
-        {alreadyCheckedIn ? (
-          /* Tampilan Already Checked-In */
-          <div className="space-y-3">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">
-                    Nama Peserta
-                  </span>
-                  <h4 className="text-base font-bold text-slate-900 mt-0.5">
-                    {guest?.nama || '-'}
-                  </h4>
-                  <p className="text-xs text-slate-600 font-medium mt-0.5">
-                    {guest?.pangkat || '-'} &bull; <span className="font-mono text-slate-500">NRP {guest?.nrp || '-'}</span>
-                  </p>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider block mb-1">
-                    Matra
-                  </span>
-                  <Badge variant={guest?.matra === 'AD' ? 'ad' : guest?.matra === 'AL' ? 'al' : guest?.matra === 'AU' ? 'au' : 'slate'} size="sm">
-                    {guest?.matra || '-'}
-                  </Badge>
-                </div>
-              </div>
+      {alreadyCheckedIn ? (
+        /* D. Redesign Modal "Peserta Sudah Check-In" - Compact Single Card */
+        <div className="space-y-4">
+          <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3.5 sm:p-4 text-slate-800 space-y-3">
+            {/* Header Title */}
+            <div className="flex items-center gap-2 pb-2.5 border-b border-amber-200/80">
+              <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              <h3 className="text-sm font-bold text-amber-900 tracking-tight">
+                Peserta Sudah Check-In
+              </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <span className="text-slate-500 block text-[11px] font-medium">Waktu Check-In Sebelumnya</span>
-                <span className="text-slate-900 font-bold font-mono text-xs block mt-1">{prevTimeStr}</span>
-              </div>
-              <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <span className="text-slate-500 block text-[11px] font-medium">Gate Sebelumnya</span>
-                <span className="text-slate-900 font-bold text-xs block mt-1">{prevGateStr}</span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Tampilan Valid Check-In Sukses */
-          <div className="space-y-3">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider block">
-                    Nama Peserta
-                  </span>
-                  <h4 className="text-base font-bold text-slate-900 mt-0.5">
-                    {guest?.nama || '-'}
-                  </h4>
-                  <p className="text-xs text-slate-600 font-medium mt-0.5">
-                    {guest?.pangkat || '-'} &bull; <span className="font-mono text-slate-500">NRP {guest?.nrp || '-'}</span>
-                  </p>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-wider block mb-1">
-                    Matra
-                  </span>
-                  <Badge variant={guest?.matra === 'AD' ? 'ad' : guest?.matra === 'AL' ? 'al' : guest?.matra === 'AU' ? 'au' : 'slate'} size="sm">
-                    {guest?.matra || '-'}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            {/* Grid 4 Kartu Data: No Kursi, Tempat, Nomor Kamar, Waktu Scan */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-              <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-200">
-                <span className="text-blue-700 block text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                  <Armchair className="w-3 h-3" />
-                  Nomor Kursi
+            {/* Content Fields */}
+            <div className="space-y-2.5 text-xs">
+              <div>
+                <span className="text-[11px] text-slate-500 block font-medium">Nama:</span>
+                <span className="text-sm font-bold text-slate-900 block leading-tight">
+                  {guest?.nama || '-'}
                 </span>
-                <span className="text-base font-black font-mono text-blue-950 block mt-1">
+                {guest?.pangkat && (
+                  <span className="text-[11px] text-slate-600 block mt-0.5">
+                    {guest.pangkat} {guest?.nrp ? `• NRP ${guest.nrp}` : ''}
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <span className="text-[11px] text-slate-500 block font-medium">Matra:</span>
+                <span className="text-xs font-semibold text-slate-800 block">
+                  {guest?.matra || '-'}
+                </span>
+              </div>
+
+              <div>
+                <span className="text-[11px] text-slate-500 block font-medium">Check-In Sebelumnya:</span>
+                <span className="text-xs font-semibold text-slate-900 block">
+                  {prevDateStr}
+                </span>
+                {prevTimeStr !== '-' && (
+                  <span className="text-xs font-bold text-amber-800 font-mono block">
+                    {prevTimeStr}
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <span className="text-[11px] text-slate-500 block font-medium">Gate:</span>
+                <span className="text-xs font-semibold text-slate-800 block">
+                  {prevGateStr}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={onClose}
+            className="w-full text-xs font-semibold h-10 border-slate-300 hover:bg-slate-100"
+          >
+            Tutup
+          </Button>
+        </div>
+      ) : (
+        /* E. Modal Scan Berhasil - Green Compact Single Card */
+        <div className="space-y-4">
+          <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-3.5 sm:p-4 text-slate-800 space-y-3">
+            {/* Header Title */}
+            <div className="flex items-center gap-2 pb-2.5 border-b border-emerald-200/80">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <h3 className="text-sm font-bold text-emerald-900 tracking-tight">
+                Check-In Berhasil
+              </h3>
+            </div>
+
+            {/* Content Fields */}
+            <div className="space-y-2.5 text-xs">
+              <div>
+                <span className="text-[11px] text-slate-500 block font-medium">Nama:</span>
+                <span className="text-sm font-bold text-slate-900 block leading-tight">
+                  {guest?.nama || '-'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[11px] text-slate-500 block font-medium">Matra:</span>
+                  <span className="text-xs font-semibold text-slate-800 block">
+                    {guest?.matra || '-'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 block font-medium">Pangkat:</span>
+                  <span className="text-xs font-semibold text-slate-800 block">
+                    {guest?.pangkat || '-'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-emerald-100/60 border border-emerald-200">
+                <span className="text-[11px] text-emerald-800 block font-medium">Nomor Kursi:</span>
+                <span className="text-base font-black font-mono text-emerald-950 block">
                   {seatCode}
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200">
-                <span className="text-emerald-700 block text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                  <Bed className="w-3 h-3" />
-                  Tempat
-                </span>
-                <span className="text-xs font-bold text-emerald-950 block mt-1 truncate" title={seatArea}>
-                  {seatArea}
-                </span>
-              </div>
-
-              <div className="p-3 rounded-xl bg-indigo-50/70 border border-indigo-200">
-                <span className="text-indigo-700 block text-[10px] font-bold uppercase tracking-wider">
-                  Nomor Kamar
-                </span>
-                <span className="text-xs font-black font-mono text-indigo-950 block mt-1">
-                  {roomCode}
-                </span>
-                <span className="text-[10px] text-indigo-700 block truncate">{wismaName}</span>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-100 border border-slate-200">
-                <span className="text-slate-600 block text-[10px] font-bold uppercase tracking-wider">
-                  Waktu Scan
-                </span>
-                <span className="text-[11px] font-bold font-mono text-slate-900 block mt-1">
-                  {scanTimeStr}
-                </span>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[11px] text-slate-500 block font-medium">Wisma:</span>
+                  <span className="text-xs font-semibold text-slate-800 block truncate" title={wismaName}>
+                    {wismaName}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[11px] text-slate-500 block font-medium">Nomor Kamar:</span>
+                  <span className="text-xs font-semibold text-slate-800 block">
+                    {roomNumber}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        )}
 
-        {/* Action button */}
-        <Button variant="primary" size="md" onClick={onClose} className="w-full text-xs font-semibold h-[42px]">
-          <span>Selesai &amp; Scan Tamu Berikutnya</span>
-        </Button>
-      </div>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={onClose}
+            className="w-full text-xs font-semibold h-10 bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            Selesai
+          </Button>
+        </div>
+      )}
     </Modal>
   );
 };

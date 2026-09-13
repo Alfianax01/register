@@ -855,7 +855,6 @@ class MySQLAdapter {
     }
     if (data.status_kehadiran !== undefined) { 
       fields.push('`status_kehadiran` = ?'); 
-      values.push(data.status_kehadiran); 
       values.push(canonicalizeStatusKehadiran(data.status_kehadiran)); 
     }
     if (data.seat_number !== undefined) { fields.push('`seat_number` = ?'); values.push(data.seat_number); }
