@@ -66,7 +66,7 @@ export default async function HomePage() {
               href="/register"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-base font-bold bg-primary text-white hover:bg-primary-hover px-7 py-3.5 min-h-[50px] rounded-xl shadow-card hover:shadow-card-hover transition-all"
             >
-              <span>Daftar Peserta Sekarang</span>
+              <span>Daftar Peserta</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -75,7 +75,7 @@ export default async function HomePage() {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-base font-bold bg-white text-slate-900 hover:bg-slate-50 border border-slate-200 px-6 py-3.5 min-h-[50px] rounded-xl shadow-card hover:shadow-card-hover transition-all"
             >
               <Search className="w-4 h-4 text-slate-500" />
-              <span>Cari E-Ticket Terdaftar</span>
+              <span>Cari E-Ticket</span>
             </Link>
           </div>
 
