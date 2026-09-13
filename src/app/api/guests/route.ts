@@ -60,8 +60,34 @@ export async function GET(req: NextRequest) {
       guests = guests.filter(g => g.seat_group_id === group);
     }
 
+    const total = guests.length;
+    const stats = {
+      total,
+      ad: guests.filter(g => (g.matra as string) === 'AD' || (g.matra as string) === 'TNI_AD').length,
+      al: guests.filter(g => (g.matra as string) === 'AL' || (g.matra as string) === 'TNI_AL').length,
+      au: guests.filter(g => (g.matra as string) === 'AU' || (g.matra as string) === 'TNI_AU').length,
+      mabes: guests.filter(g => (g.matra as string) === 'MABES' || (g.matra as string) === 'MABES_TNI').length,
+      kl: guests.filter(g => (g.matra as string) === 'NON_TNI' || (g.matra as string) === 'SIPIL' || (g.matra as string) === 'KEMENTERIAN').length
+    };
+
+    const pageParam = searchParams.get('page');
+    const limitParam = searchParams.get('limit');
+
+    let pagedGuests = guests;
+    let page = 1;
+    let limit = total;
+    let totalPages = 1;
+
+    if (pageParam !== null || limitParam !== null) {
+      page = Math.max(1, parseInt(pageParam || '1', 10));
+      limit = Math.max(1, parseInt(limitParam || '10', 10));
+      totalPages = Math.ceil(total / limit) || 1;
+      const offset = (page - 1) * limit;
+      pagedGuests = guests.slice(offset, offset + limit);
+    }
+
     // Fast mapping without N+1 database queries
-    const sanitizedGuests = guests.map(g => {
+    const sanitizedGuests = pagedGuests.map(g => {
       const seatBlock = g.seat_block || (g.seat_number ? g.seat_number.split('-')[0] : 'A');
       const building = g.building || 'Gedung Ahmad Yani';
       const room = g.room || g.room_name || (seatBlock === 'A' ? 'Area VVIP' : 'Ruang Sidang Utama');
@@ -103,7 +129,17 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return NextResponse.json({ success: true, guests: sanitizedGuests }, {
+    return NextResponse.json({
+      success: true,
+      guests: sanitizedGuests,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      },
+      stats
+    }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
       }

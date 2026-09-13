@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AdminHeader } from '@/components/layout/AdminHeader';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -32,7 +32,9 @@ import {
   Building,
   ShieldCheck,
   User,
-  Phone
+  Phone,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
 import { canonicalizeStatusKehadiran } from '@/lib/constants/status';
@@ -65,10 +67,15 @@ export default function GuestsPage() {
   const [resendEmail, setResendEmail] = useState('');
   const [resendingLoading, setResendingLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const fetchGuests = async (isBackground: boolean = false) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalGuests, setTotalGuests] = useState(0);
+  const [kpiStats, setKpiStats] = useState({ total: 0, ad: 0, al: 0, au: 0, mabes: 0, kl: 0 });
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+  const fetchGuests = async (isBackground: boolean = false, targetPage: number = currentPage) => {
     try {
       if (!isBackground) setLoading(true);
-      let query = `/api/guests?q=${encodeURIComponent(searchTerm)}`;
+      let query = `/api/guests?q=${encodeURIComponent(searchTerm)}&page=${targetPage}&limit=10`;
       if (filterMatra) query += `&matra=${filterMatra}`;
       if (filterStatus) query += `&status=${filterStatus}`;
 
@@ -80,6 +87,13 @@ export default function GuestsPage() {
       if (res.ok) {
         const data = await res.json();
         setGuests(data.guests || []);
+        if (data.pagination) {
+          setTotalGuests(data.pagination.total);
+          setTotalPages(data.pagination.totalPages);
+        }
+        if (data.stats) {
+          setKpiStats(data.stats);
+        }
         setFetchError(null);
       } else {
         const errData = await res.json().catch(() => ({}));
@@ -104,14 +118,22 @@ export default function GuestsPage() {
   };
 
   useEffect(() => {
-    fetchGuests(false);
+    fetchGuests(false, currentPage);
 
     const interval = setInterval(() => {
-      fetchGuests(true);
+      fetchGuests(true, currentPage);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [filterMatra, filterStatus, searchTerm]);
+  }, [filterMatra, filterStatus, searchTerm, currentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
+    setCurrentPage(newPage);
+    if (tableScrollRef.current) {
+      tableScrollRef.current.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -380,12 +402,12 @@ export default function GuestsPage() {
     );
   };
 
-  const kpiTotal = guests.length;
-  const kpiAD = guests.filter(g => (g.matra as string) === 'AD' || (g.matra as string) === 'TNI_AD').length;
-  const kpiAL = guests.filter(g => (g.matra as string) === 'AL' || (g.matra as string) === 'TNI_AL').length;
-  const kpiAU = guests.filter(g => (g.matra as string) === 'AU' || (g.matra as string) === 'TNI_AU').length;
-  const kpiMabes = guests.filter(g => (g.matra as string) === 'MABES' || (g.matra as string) === 'MABES_TNI').length;
-  const kpiKL = guests.filter(g => (g.matra as string) === 'NON_TNI' || (g.matra as string) === 'SIPIL' || (g.matra as string) === 'KEMENTERIAN').length;
+  const kpiTotal = kpiStats.total || totalGuests || guests.length;
+  const kpiAD = kpiStats.ad;
+  const kpiAL = kpiStats.al;
+  const kpiAU = kpiStats.au;
+  const kpiMabes = kpiStats.mabes;
+  const kpiKL = kpiStats.kl;
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
@@ -496,7 +518,10 @@ export default function GuestsPage() {
             {/* Matra Filter */}
             <select
               value={filterMatra}
-              onChange={(e) => setFilterMatra(e.target.value)}
+              onChange={(e) => {
+                setFilterMatra(e.target.value);
+                setCurrentPage(1);
+              }}
               aria-label="Filter Matra"
               className="bg-white text-slate-700 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer min-h-[38px]"
             >
@@ -511,7 +536,10 @@ export default function GuestsPage() {
             {/* Status Filter */}
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                setCurrentPage(1);
+              }}
               aria-label="Filter Status"
               className="bg-white text-slate-700 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer min-h-[38px]"
             >
@@ -521,43 +549,48 @@ export default function GuestsPage() {
             </select>
 
             <span className="ml-auto text-xs text-slate-500 font-mono font-medium">
-              Total: <strong className="text-slate-900">{guests.length}</strong> Peserta
+              Total: <strong className="text-slate-900">{totalGuests || guests.length}</strong> Peserta
             </span>
           </div>
         </Card>
 
-        {/* Guests Table (8 Kolom Informasi + Aksi) */}
+        {/* Guests Table (10 Kolom Informasi + Aksi) */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-card rounded-2xl">
           {/* Indikator scroll di mobile/tablet */}
           <div className="lg:hidden flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-50 border-b border-slate-200 text-xs font-medium text-slate-500 select-none">
-            <span>← Geser tabel untuk melihat data lainnya →</span>
+            <span>← Geser untuk melihat kolom lainnya →</span>
           </div>
 
-          <div className="w-full overflow-x-auto lg:max-h-[calc(100vh-280px)] lg:overflow-y-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}>
-            <table className="w-full min-w-[1000px] text-left text-xs border-collapse">
+          <div
+            ref={tableScrollRef}
+            className="w-full overflow-x-auto lg:max-h-[calc(100vh-280px)] lg:overflow-y-auto overscroll-x-contain"
+            style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}
+          >
+            <table className="w-full min-w-[1060px] text-left text-xs border-collapse">
               <thead className="lg:sticky lg:top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
-                  <th className="py-2.5 px-3 w-[160px] min-w-[150px] lg:sticky lg:left-0 lg:z-30 lg:bg-slate-100 lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] bg-slate-50">Nama Peserta</th>
-                  <th className="py-2.5 px-2.5 text-center w-[80px]">Matra</th>
-                  <th className="py-2.5 px-2.5 w-[130px]">Pangkat</th>
-                  <th className="py-2.5 px-2.5 text-center w-[95px]">Nomor Kursi</th>
+                  <th className="py-2.5 px-2 text-center w-[50px] min-w-[50px]">NO</th>
+                  <th className="py-2.5 px-3 w-[180px] min-w-[180px] lg:sticky lg:left-0 lg:z-30 lg:bg-slate-100 lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] bg-slate-50">Nama Peserta</th>
+                  <th className="py-2.5 px-2.5 text-center w-[85px]">Matra</th>
+                  <th className="py-2.5 px-2.5 w-[135px]">Pangkat</th>
+                  <th className="py-2.5 px-2.5 text-center w-[100px]">Nomor Kursi</th>
                   <th className="py-2.5 px-2.5 w-[140px]">Ruangan</th>
                   <th className="py-2.5 px-2.5 w-[130px]">Wisma</th>
-                  <th className="py-2.5 px-2.5 text-center w-[125px]">Status Kehadiran</th>
-                  <th className="py-2.5 px-2.5 text-center w-[115px]">Tanggal Registrasi</th>
-                  <th className="py-2.5 px-2.5 text-center w-[95px]">Aksi</th>
+                  <th className="py-2.5 px-2.5 text-center w-[130px]">Status Kehadiran</th>
+                  <th className="py-2.5 px-2.5 text-center w-[120px]">Tanggal Registrasi</th>
+                  <th className="py-2.5 px-2.5 text-center w-[100px]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading && guests.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="p-0">
-                      <TableSkeleton columns={9} rows={8} />
+                    <td colSpan={10} className="p-0">
+                      <TableSkeleton columns={10} rows={10} />
                     </td>
                   </tr>
                 ) : fetchError && guests.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-16 text-center">
+                    <td colSpan={10} className="py-16 text-center">
                       <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
                         <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mb-3">
                           <AlertCircle className="w-6 h-6 text-rose-600" />
@@ -567,7 +600,7 @@ export default function GuestsPage() {
                         <Button
                           variant="primary"
                           size="sm"
-                          onClick={() => fetchGuests(false)}
+                          onClick={() => fetchGuests(false, currentPage)}
                           className="gap-2"
                         >
                           <RotateCw className="w-4 h-4" />
@@ -578,7 +611,7 @@ export default function GuestsPage() {
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-16 text-center">
+                    <td colSpan={10} className="py-16 text-center">
                       <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
                         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
                           <Search className="w-6 h-6 text-slate-400" />
@@ -595,6 +628,7 @@ export default function GuestsPage() {
                               setSearchTerm('');
                               setFilterMatra('');
                               setFilterStatus('');
+                              setCurrentPage(1);
                             }}
                           >
                             Reset Semua Filter
@@ -604,7 +638,8 @@ export default function GuestsPage() {
                     </td>
                   </tr>
                 ) : (
-                  guests.map((g) => {
+                  guests.map((g, idx) => {
+                    const rowNumber = (currentPage - 1) * 10 + idx + 1;
                     const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
                     const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
                     const tempat = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
@@ -614,10 +649,15 @@ export default function GuestsPage() {
                         key={g.id}
                         className="hover:bg-blue-50/40 transition-colors group"
                       >
+                        {/* 0. Kolom NO */}
+                        <td className="py-2.5 px-2 text-center w-[50px] min-w-[50px] font-mono text-slate-500 font-semibold text-xs">
+                          {rowNumber}
+                        </td>
+
                         {/* 1. Nama Peserta */}
-                        <td className="py-2.5 px-3 w-[160px] min-w-[150px] lg:sticky lg:left-0 lg:z-10 bg-white lg:group-hover:bg-blue-50/95 transition-colors lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
+                        <td className="py-2.5 px-3 w-[180px] min-w-[180px] lg:sticky lg:left-0 lg:z-10 bg-white lg:group-hover:bg-blue-50/95 transition-colors lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
                           <span
-                            className="text-slate-900 font-semibold truncate block max-w-[150px]"
+                            className="text-slate-900 font-semibold truncate block max-w-[170px]"
                             title={g.nama}
                           >
                             {g.nama}
@@ -626,44 +666,44 @@ export default function GuestsPage() {
                         </td>
 
                         {/* 2. Matra */}
-                        <td className="py-2.5 px-2.5 text-center">
+                        <td className="py-2.5 px-2.5 text-center w-[85px]">
                           {renderMatraBadge(g.matra)}
                         </td>
 
                         {/* 3. Pangkat */}
-                        <td className="py-2.5 px-2.5 text-slate-800 font-medium truncate" title={g.pangkat}>
+                        <td className="py-2.5 px-2.5 w-[135px] text-slate-800 font-medium truncate" title={g.pangkat}>
                           {g.pangkat}
                         </td>
 
                         {/* 4. Nomor Kursi */}
-                        <td className="py-2.5 px-2.5 text-center">
+                        <td className="py-2.5 px-2.5 text-center w-[100px]">
                           <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
                             {seatNum}
                           </span>
                         </td>
 
                         {/* 5. Ruangan */}
-                        <td className="py-2.5 px-2.5 text-slate-600 truncate" title={ruangan}>
+                        <td className="py-2.5 px-2.5 w-[140px] text-slate-600 truncate" title={ruangan}>
                           {ruangan}
                         </td>
 
                         {/* 6. Wisma */}
-                        <td className="py-2.5 px-2.5 text-slate-700 truncate" title={tempat}>
+                        <td className="py-2.5 px-2.5 w-[130px] text-slate-700 truncate" title={tempat}>
                           {tempat}
                         </td>
 
                         {/* 7. Status Kehadiran */}
-                        <td className="py-2.5 px-2.5 text-center">
+                        <td className="py-2.5 px-2.5 text-center w-[130px]">
                           {renderStatusBadge(g.status_kehadiran)}
                         </td>
 
                         {/* 8. Tanggal Registrasi */}
-                        <td className="py-2.5 px-2.5 text-center font-mono text-xs text-slate-700">
+                        <td className="py-2.5 px-2.5 text-center w-[120px] font-mono text-xs text-slate-700">
                           {formatRegDate(g.created_at).date}
                         </td>
 
                         {/* 9. Aksi */}
-                        <td className="py-2.5 px-2.5 text-center">
+                        <td className="py-2.5 px-2.5 text-center w-[100px]">
                           <div className="flex items-center justify-center gap-1">
                             {/* Lihat Detail */}
                             <button
@@ -706,6 +746,80 @@ export default function GuestsPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Toolbar */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:px-5 bg-slate-50/80 border-t border-slate-200 text-xs">
+              <div className="text-slate-500 text-center sm:text-left font-medium">
+                Menampilkan <strong className="text-slate-900 font-mono">{(currentPage - 1) * 10 + (guests.length > 0 ? 1 : 0)}</strong> - <strong className="text-slate-900 font-mono">{(currentPage - 1) * 10 + guests.length}</strong> dari <strong className="text-slate-900 font-mono">{totalGuests}</strong> peserta
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                {/* Prev Button */}
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage <= 1 || loading}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <span>Prev</span>
+                </button>
+
+                {/* Page Number Buttons */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(p => {
+                      return p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1;
+                    })
+                    .reduce<(number | string)[]>((acc, p, idx, arr) => {
+                      if (idx > 0 && p - arr[idx - 1] > 1) {
+                        acc.push('...');
+                      }
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((item, idx) => {
+                      if (item === '...') {
+                        return (
+                          <span key={`dots-${idx}`} className="px-1.5 text-slate-400 select-none">
+                            ...
+                          </span>
+                        );
+                      }
+                      const p = Number(item);
+                      const isActive = p === currentPage;
+                      return (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => handlePageChange(p)}
+                          disabled={loading}
+                          className={`min-w-[32px] h-8 px-2 flex items-center justify-center rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-blue-600 text-white shadow-xs border border-blue-600'
+                              : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      );
+                    })}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage >= totalPages || loading}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition-colors cursor-pointer"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </Card>
       </div>
 
