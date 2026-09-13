@@ -65,17 +65,6 @@ export default function GuestsPage() {
   const [resendEmail, setResendEmail] = useState('');
   const [resendingLoading, setResendingLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   const fetchGuests = async (isBackground: boolean = false) => {
     try {
       if (!isBackground) setLoading(true);
@@ -537,365 +526,187 @@ export default function GuestsPage() {
           </div>
         </Card>
 
-        {isMobile ? (
-          /* ========================================================== */
-          /* MOBILE VIEW: CARD LIST (< 768px)                           */
-          /* ========================================================== */
-          <div className="space-y-3">
-            {loading && guests.length === 0 ? (
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <Card key={i} className="p-4 bg-white border border-slate-200 rounded-xl space-y-3 animate-pulse">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1.5 w-2/3">
-                        <div className="h-4 bg-slate-200 rounded w-3/4" />
-                        <div className="h-3 bg-slate-100 rounded w-1/2" />
-                      </div>
-                      <div className="h-6 bg-slate-200 rounded-full w-20" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                      <div className="h-10 bg-slate-100/70 rounded-lg" />
-                      <div className="h-10 bg-slate-100/70 rounded-lg" />
-                      <div className="h-10 bg-slate-100/70 rounded-lg" />
-                      <div className="h-10 bg-slate-100/70 rounded-lg" />
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : fetchError && guests.length === 0 ? (
-              <Card className="p-8 text-center bg-white border border-slate-200 rounded-xl">
-                <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                  <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mb-3">
-                    <AlertCircle className="w-6 h-6 text-rose-600" />
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">Gagal Memuat Data</h4>
-                  <p className="text-xs text-slate-500 mb-4">{fetchError}</p>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => fetchGuests(false)}
-                    className="gap-2"
-                  >
-                    <RotateCw className="w-4 h-4" />
-                    <span>Coba Muat Ulang</span>
-                  </Button>
-                </div>
-              </Card>
-            ) : guests.length === 0 ? (
-              <Card className="p-8 text-center bg-white border border-slate-200 rounded-xl">
-                <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
-                    <Search className="w-6 h-6 text-slate-400" />
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-900 mb-1">Tidak Ada Peserta Ditemukan</h4>
-                  <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    Tidak ditemukan data peserta yang cocok dengan kata kunci atau filter yang dipilih.
-                  </p>
-                  {(searchTerm || filterMatra || filterStatus) && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSearchTerm('');
-                        setFilterMatra('');
-                        setFilterStatus('');
-                      }}
-                    >
-                      Reset Semua Filter
-                    </Button>
-                  )}
-                </div>
-              </Card>
-            ) : (
-              guests.map((g) => {
-                const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
-                const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
-                const tempat = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
-
-                return (
-                  <Card
-                    key={g.id}
-                    className="p-4 bg-white border border-slate-200 hover:border-blue-200 shadow-xs rounded-xl space-y-3 transition-colors"
-                  >
-                    {/* Header: Nama, NRP & Status */}
-                    <div className="flex items-start justify-between gap-2.5 pb-2.5 border-b border-slate-100">
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-bold text-sm text-slate-900 leading-snug break-words" title={g.nama}>
-                          {g.nama}
-                        </h3>
-                        <p className="text-xs font-mono text-slate-500 mt-0.5">
-                          NRP: {g.nrp || '-'}
-                        </p>
-                      </div>
-                      <div className="flex-shrink-0 pt-0.5">
-                        {renderStatusBadge(g.status_kehadiran)}
-                      </div>
-                    </div>
-
-                    {/* Info Grid (2 Kolom Vertikal) */}
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="p-2 rounded-lg bg-slate-50/80 border border-slate-100">
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Matra</span>
-                        <div className="mt-1">{renderMatraBadge(g.matra)}</div>
-                      </div>
-
-                      <div className="p-2 rounded-lg bg-slate-50/80 border border-slate-100">
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Pangkat</span>
-                        <span className="text-xs font-semibold text-slate-800 truncate block mt-0.5" title={g.pangkat}>
-                          {g.pangkat || '-'}
-                        </span>
-                      </div>
-
-                      <div className="p-2 rounded-lg bg-blue-50/50 border border-blue-100">
-                        <span className="text-[10px] font-semibold text-blue-700 uppercase tracking-wider block">Nomor Kursi</span>
-                        <span className="inline-block mt-1 px-2 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-white border border-blue-200">
-                          {seatNum}
-                        </span>
-                      </div>
-
-                      <div className="p-2 rounded-lg bg-slate-50/80 border border-slate-100">
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Ruangan</span>
-                        <span className="text-xs font-medium text-slate-700 truncate block mt-0.5" title={ruangan}>
-                          {ruangan}
-                        </span>
-                      </div>
-
-                      <div className="p-2 rounded-lg bg-slate-50/80 border border-slate-100">
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Wisma</span>
-                        <span className="text-xs font-medium text-slate-700 truncate block mt-0.5" title={tempat}>
-                          {tempat}
-                        </span>
-                      </div>
-
-                      <div className="p-2 rounded-lg bg-slate-50/80 border border-slate-100">
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Tgl Registrasi</span>
-                        <span className="text-xs font-mono text-slate-600 truncate block mt-0.5">
-                          {formatRegDate(g.created_at).date}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Footer Actions (Icon Only) */}
-                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                      <button
-                        type="button"
-                        onClick={() => setViewingGuest(g)}
-                        className="w-9 h-9 flex items-center justify-center text-slate-700 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded-lg transition-colors"
-                        title="Lihat Profil & Detail Lengkap"
-                        aria-label="Lihat Detail Peserta"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => openEditModal(g)}
-                        className="w-9 h-9 flex items-center justify-center text-slate-700 hover:text-amber-600 bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-lg transition-colors"
-                        title="Sunting Informasi Peserta"
-                        aria-label="Sunting Peserta"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setDeletingGuest(g)}
-                        className="w-9 h-9 flex items-center justify-center text-slate-700 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-lg transition-colors"
-                        title="Hapus Data Peserta"
-                        aria-label="Hapus Peserta"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </Card>
-                );
-              })
-            )}
+        {/* Guests Table (8 Kolom Informasi + Aksi) */}
+        <Card className="overflow-hidden bg-white border border-slate-200 shadow-card rounded-2xl">
+          {/* Indikator scroll di mobile/tablet */}
+          <div className="lg:hidden flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-50 border-b border-slate-200 text-xs font-medium text-slate-500 select-none">
+            <span>← Geser tabel untuk melihat data lainnya →</span>
           </div>
-        ) : (
-          /* ========================================================== */
-          /* DESKTOP VIEW: TABLE (>= 768px)                             */
-          /* ========================================================== */
-          <Card className="overflow-hidden bg-white border border-slate-200 shadow-card rounded-2xl">
-            {/* Indikator scroll jika pada resolusi tablet/sempit */}
-            <div className="md:hidden flex items-center justify-center gap-1.5 py-1.5 px-3 bg-slate-50 border-b border-slate-200 text-[11px] font-medium text-slate-500">
-              <span>← Geser untuk melihat data lainnya →</span>
-            </div>
-            <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
-                  <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
-                    <th className="py-2.5 px-4 min-w-[200px] md:sticky md:left-0 md:z-30 md:bg-slate-100 md:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Peserta</th>
-                    <th className="py-2.5 px-3 text-center w-[85px]">Matra</th>
-                    <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
-                    <th className="py-2.5 px-3 text-center w-[110px]">Nomor Kursi</th>
-                    <th className="py-2.5 px-3 w-[150px]">Ruangan</th>
-                    <th className="py-2.5 px-3 w-[140px]">Wisma</th>
-                    <th className="py-2.5 px-3 text-center w-[135px]">Status Kehadiran</th>
-                    <th className="py-2.5 px-3 text-center w-[130px]">Tanggal Registrasi</th>
-                    <th className="py-2.5 px-3 text-center w-[105px]">Aksi</th>
+
+          <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+            <table className="w-full min-w-[1150px] text-left text-xs border-collapse">
+              <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
+                <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
+                  <th className="py-2.5 px-4 min-w-[200px] lg:sticky lg:left-0 lg:z-30 lg:bg-slate-100 lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] bg-slate-50">Nama Peserta</th>
+                  <th className="py-2.5 px-3 text-center w-[85px]">Matra</th>
+                  <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
+                  <th className="py-2.5 px-3 text-center w-[110px]">Nomor Kursi</th>
+                  <th className="py-2.5 px-3 w-[150px]">Ruangan</th>
+                  <th className="py-2.5 px-3 w-[140px]">Wisma</th>
+                  <th className="py-2.5 px-3 text-center w-[135px]">Status Kehadiran</th>
+                  <th className="py-2.5 px-3 text-center w-[130px]">Tanggal Registrasi</th>
+                  <th className="py-2.5 px-3 text-center w-[105px]">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
+                {loading && guests.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="p-0">
+                      <TableSkeleton columns={9} rows={8} />
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
-                  {loading && guests.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="p-0">
-                        <TableSkeleton columns={9} rows={8} />
-                      </td>
-                    </tr>
-                  ) : fetchError && guests.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="py-16 text-center">
-                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mb-3">
-                            <AlertCircle className="w-6 h-6 text-rose-600" />
-                          </div>
-                          <h4 className="text-sm font-bold text-slate-900 mb-1">Gagal Memuat Data</h4>
-                          <p className="text-xs text-slate-500 mb-4">{fetchError}</p>
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={() => fetchGuests(false)}
-                            className="gap-2"
-                          >
-                            <RotateCw className="w-4 h-4" />
-                            <span>Coba Muat Ulang</span>
-                          </Button>
+                ) : fetchError && guests.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mb-3">
+                          <AlertCircle className="w-6 h-6 text-rose-600" />
                         </div>
-                      </td>
-                    </tr>
-                  ) : guests.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="py-16 text-center">
-                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
-                            <Search className="w-6 h-6 text-slate-400" />
-                          </div>
-                          <h4 className="text-sm font-bold text-slate-900 mb-1">Tidak Ada Peserta Ditemukan</h4>
-                          <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                            Tidak ditemukan data peserta yang cocok dengan kata kunci atau filter yang dipilih.
-                          </p>
-                          {(searchTerm || filterMatra || filterStatus) && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSearchTerm('');
-                                setFilterMatra('');
-                                setFilterStatus('');
-                              }}
-                            >
-                              Reset Semua Filter
-                            </Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    guests.map((g) => {
-                      const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
-                      const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
-                      const tempat = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
-
-                      return (
-                        <tr
-                          key={g.id}
-                          className="hover:bg-blue-50/40 transition-colors group"
+                        <h4 className="text-sm font-bold text-slate-900 mb-1">Gagal Memuat Data</h4>
+                        <p className="text-xs text-slate-500 mb-4">{fetchError}</p>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => fetchGuests(false)}
+                          className="gap-2"
                         >
-                          {/* 1. Nama Peserta */}
-                          <td className="py-2.5 px-4 md:sticky md:left-0 md:z-10 bg-white md:group-hover:bg-blue-50/95 transition-colors md:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
-                            <span
-                              className="text-slate-900 font-semibold truncate block"
-                              title={g.nama}
+                          <RotateCw className="w-4 h-4" />
+                          <span>Coba Muat Ulang</span>
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : guests.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                          <Search className="w-6 h-6 text-slate-400" />
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-900 mb-1">Tidak Ada Peserta Ditemukan</h4>
+                        <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                          Tidak ditemukan data peserta yang cocok dengan kata kunci atau filter yang dipilih.
+                        </p>
+                        {(searchTerm || filterMatra || filterStatus) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSearchTerm('');
+                              setFilterMatra('');
+                              setFilterStatus('');
+                            }}
+                          >
+                            Reset Semua Filter
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  guests.map((g) => {
+                    const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
+                    const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
+                    const tempat = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
+
+                    return (
+                      <tr
+                        key={g.id}
+                        className="hover:bg-blue-50/40 transition-colors group"
+                      >
+                        {/* 1. Nama Peserta */}
+                        <td className="py-2.5 px-4 lg:sticky lg:left-0 lg:z-10 bg-white lg:group-hover:bg-blue-50/95 transition-colors lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
+                          <span
+                            className="text-slate-900 font-semibold truncate block"
+                            title={g.nama}
+                          >
+                            {g.nama}
+                          </span>
+                          <span className="text-xs text-slate-500 font-mono block">NRP: {g.nrp || '-'}</span>
+                        </td>
+
+                        {/* 2. Matra */}
+                        <td className="py-2.5 px-3 text-center">
+                          {renderMatraBadge(g.matra)}
+                        </td>
+
+                        {/* 3. Pangkat */}
+                        <td className="py-2.5 px-3 text-slate-800 font-medium truncate" title={g.pangkat}>
+                          {g.pangkat}
+                        </td>
+
+                        {/* 4. Nomor Kursi */}
+                        <td className="py-2.5 px-3 text-center">
+                          <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
+                            {seatNum}
+                          </span>
+                        </td>
+
+                        {/* 5. Ruangan */}
+                        <td className="py-2.5 px-3 text-slate-600 truncate" title={ruangan}>
+                          {ruangan}
+                        </td>
+
+                        {/* 6. Wisma */}
+                        <td className="py-2.5 px-3 text-slate-700 truncate" title={tempat}>
+                          {tempat}
+                        </td>
+
+                        {/* 7. Status Kehadiran */}
+                        <td className="py-2.5 px-3 text-center">
+                          {renderStatusBadge(g.status_kehadiran)}
+                        </td>
+
+                        {/* 8. Tanggal Registrasi */}
+                        <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700">
+                          {formatRegDate(g.created_at).date}
+                        </td>
+
+                        {/* 9. Aksi */}
+                        <td className="py-2.5 px-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            {/* Lihat Detail */}
+                            <button
+                              type="button"
+                              onClick={() => setViewingGuest(g)}
+                              className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Lihat Profil & Detail Lengkap"
+                              aria-label="Lihat Profil"
                             >
-                              {g.nama}
-                            </span>
-                            <span className="text-xs text-slate-500 font-mono block">NRP: {g.nrp || '-'}</span>
-                          </td>
+                              <Eye className="w-4 h-4" />
+                            </button>
 
-                          {/* 2. Matra */}
-                          <td className="py-2.5 px-3 text-center">
-                            {renderMatraBadge(g.matra)}
-                          </td>
+                            {/* Edit Profil */}
+                            <button
+                              type="button"
+                              onClick={() => openEditModal(g)}
+                              className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                              title="Sunting Informasi Peserta"
+                              aria-label="Sunting Peserta"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
 
-                          {/* 3. Pangkat */}
-                          <td className="py-2.5 px-3 text-slate-800 font-medium truncate" title={g.pangkat}>
-                            {g.pangkat}
-                          </td>
-
-                          {/* 4. Nomor Kursi */}
-                          <td className="py-2.5 px-3 text-center">
-                            <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
-                              {seatNum}
-                            </span>
-                          </td>
-
-                          {/* 5. Ruangan */}
-                          <td className="py-2.5 px-3 text-slate-600 truncate" title={ruangan}>
-                            {ruangan}
-                          </td>
-
-                          {/* 6. Wisma */}
-                          <td className="py-2.5 px-3 text-slate-700 truncate" title={tempat}>
-                            {tempat}
-                          </td>
-
-                          {/* 7. Status Kehadiran */}
-                          <td className="py-2.5 px-3 text-center">
-                            {renderStatusBadge(g.status_kehadiran)}
-                          </td>
-
-                          {/* 8. Tanggal Registrasi */}
-                          <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700">
-                            {formatRegDate(g.created_at).date}
-                          </td>
-
-                          {/* 9. Aksi */}
-                          <td className="py-2.5 px-3 text-center">
-                            <div className="flex items-center justify-center gap-1">
-                              {/* Lihat Detail */}
-                              <button
-                                type="button"
-                                onClick={() => setViewingGuest(g)}
-                                className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                title="Lihat Profil & Detail Lengkap"
-                                aria-label="Lihat Profil"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </button>
-
-                              {/* Edit Profil */}
-                              <button
-                                type="button"
-                                onClick={() => openEditModal(g)}
-                                className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                                title="Sunting Informasi Peserta"
-                                aria-label="Sunting Peserta"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </button>
-
-                              {/* Hapus Peserta */}
-                              <button
-                                type="button"
-                                onClick={() => setDeletingGuest(g)}
-                                className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                                title="Hapus Data Peserta"
-                                aria-label="Hapus Peserta"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        )}
+                            {/* Hapus Peserta */}
+                            <button
+                              type="button"
+                              onClick={() => setDeletingGuest(g)}
+                              className="w-8 h-8 flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                              title="Hapus Data Peserta"
+                              aria-label="Hapus Peserta"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </div>
 
       {/* ========================================================== */}
