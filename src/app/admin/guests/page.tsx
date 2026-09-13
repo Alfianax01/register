@@ -35,6 +35,7 @@ import {
   Phone
 } from 'lucide-react';
 import Link from 'next/link';
+import { canonicalizeStatusKehadiran } from '@/lib/constants/status';
 import { TableSkeleton } from '@/components/ui/Skeleton';
 
 export default function GuestsPage() {
@@ -356,14 +357,15 @@ export default function GuestsPage() {
   };
 
   const renderStatusBadge = (status: string) => {
-    if (status === 'CHECK_IN' || status === 'CHECK-IN') {
+    const canonical = canonicalizeStatusKehadiran(status);
+    if (canonical === 'CHECK_IN') {
       return (
         <span
           className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-[#16A34A] shadow-xs"
-          title="Peserta telah Check-In di Gate"
+          title="Peserta telah Check In di Gate"
         >
           <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          <span>CHECK-IN</span>
+          <span>Check In</span>
         </span>
       );
     }
@@ -371,10 +373,10 @@ export default function GuestsPage() {
     return (
       <span
         className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-[#D97706] shadow-xs"
-        title="Peserta Teregistrasi (Belum Check-In di Gate)"
+        title="Peserta Terdaftar (Status: Registrasi)"
       >
         <Clock className="w-3.5 h-3.5 stroke-[2.5]" />
-        <span>TEREGISTRASI</span>
+        <span>Registrasi</span>
       </span>
     );
   };
@@ -515,8 +517,8 @@ export default function GuestsPage() {
               className="bg-white text-slate-700 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer min-h-[38px]"
             >
               <option value="">Semua Status Presensi</option>
-              <option value="TEREGISTRASI">Teregistrasi</option>
-              <option value="CHECK-IN">Check-In</option>
+              <option value="REGISTRASI">Registrasi</option>
+              <option value="CHECK_IN">Check In</option>
             </select>
 
             <span className="ml-auto text-xs text-slate-500 font-mono font-medium">

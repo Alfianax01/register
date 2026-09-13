@@ -9,6 +9,7 @@ import {
   MatraType
 } from '@/types';
 import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
+import { canonicalizeStatusKehadiran, StatusKehadiran } from '@/lib/constants/status';
 import bcrypt from 'bcryptjs';
 
 export interface PesertaRow {
@@ -42,7 +43,8 @@ export interface PesertaRow {
 }
 
 function rowToGuest(r: any): Guest {
-  const isCheckIn = r.status_kehadiran === 'CHECK_IN' || r.status_kehadiran === 'CHECK-IN' || r.status === 'CHECK_IN';
+  const isCheckIn = canonicalizeStatusKehadiran(r.status_kehadiran || r.status || r.status_hadir) === 'CHECK_IN';
+  const canonicalStatus: StatusKehadiran = isCheckIn ? 'CHECK_IN' : 'REGISTRASI';
   const matraVal = (r.matra || 'AD') as MatraType;
   const kategori_instansi = getInstansiCategory(matraVal);
   const warna_kursi = getSeatColorAlias(kategori_instansi);
@@ -87,8 +89,8 @@ function rowToGuest(r: any): Guest {
     wisma_assignment: r.wisma_name && r.wisma_name !== 'Tidak Menginap'
       ? `${r.wisma_name} - Kamar ${r.room_number || '-'}${r.bed_number ? ` (Bed ${r.bed_number})` : ''}`
       : 'Tidak Menginap',
-    status_kehadiran: isCheckIn ? 'CHECK-IN' : 'TEREGISTRASI',
-    guest_status: isCheckIn ? 'CHECK-IN' : 'TEREGISTRASI',
+    status_kehadiran: canonicalStatus,
+    guest_status: canonicalStatus,
     checkin_gate: r.checkin_gate || undefined,
     checkin_time: formattedCheckinTime,
     waktu_kehadiran_pertama: formattedCheckinTime,
@@ -226,6 +228,23 @@ class MySQLAdapter {
             KEY \`idx_status\` (\`status_kehadiran\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
+
+        // Migrasi Skema: Pastikan kolom status_kehadiran sesuai target bisnis ('REGISTRASI' & 'CHECK_IN')
+        try {
+          await connection.query(`
+            UPDATE \`guests\` 
+            SET \`status_kehadiran\` = CASE 
+              WHEN \`status_kehadiran\` IN ('CHECK-IN', 'CHECKIN', 'HADIR', 'CHECKED_IN', 'checked_in') THEN 'CHECK_IN'
+              ELSE 'REGISTRASI'
+            END
+          `);
+        } catch {}
+        try {
+          await connection.query(`
+            ALTER TABLE \`guests\` 
+            MODIFY COLUMN \`status_kehadiran\` ENUM('REGISTRASI','CHECK_IN') NOT NULL DEFAULT 'REGISTRASI'
+          `);
+        } catch {}
 
         // 2. Tabel Kompatibilitas phpMyAdmin: peserta (sesuai scripts/schema.sql)
         await connection.query(`
@@ -519,8 +538,8 @@ class MySQLAdapter {
     const jabatan = guest.jabatan || '';
     const instansi = (guest as any).instansi || guest.negara_instansi || guest.kesatuan || guest.satker || 'Indonesia';
     const kesatuan = guest.kesatuan || guest.satker || guest.satuan || instansi;
-    const statusKehadiran = guest.status_kehadiran || (guest as any).status_hadir || 'REGISTRASI';
-    const statusHadir = (guest as any).status_hadir || (statusKehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'TEREGISTRASI');
+    const statusKehadiran: StatusKehadiran = canonicalizeStatusKehadiran(guest.status_kehadiran || (guest as any).status_hadir);
+    const statusHadir = statusKehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'REGISTRASI';
     const pdfPath = (guest as any).pdf_path || `/api/ticket/${qrToken}/pdf`;
     const kategoriTamu = (guest as any).kategori_tamu || (matra === 'NON_TNI' ? 'K/L' : 'TNI');
 
@@ -837,6 +856,7 @@ class MySQLAdapter {
     if (data.status_kehadiran !== undefined) { 
       fields.push('`status_kehadiran` = ?'); 
       values.push(data.status_kehadiran); 
+      values.push(canonicalizeStatusKehadiran(data.status_kehadiran)); 
     }
     if (data.seat_number !== undefined) { fields.push('`seat_number` = ?'); values.push(data.seat_number); }
     if (data.seat_block !== undefined) { fields.push('`seat_block` = ?'); values.push(data.seat_block); }
@@ -911,7 +931,7 @@ class MySQLAdapter {
       return { success: false, error: 'Data peserta tidak ditemukan dengan token atau ID tersebut' };
     }
 
-    const isAlreadyCheckedIn = guest.status_kehadiran === 'CHECK-IN' || guest.status_kehadiran === 'CHECK_IN' || (guest as any).status_kehadiran === 'HADIR';
+    const isAlreadyCheckedIn = canonicalizeStatusKehadiran(guest.status_kehadiran) === 'CHECK_IN';
 
     if (isAlreadyCheckedIn) {
       return {
@@ -933,7 +953,7 @@ class MySQLAdapter {
 
       try {
         await pool.execute(
-          'UPDATE `peserta` SET `status_hadir` = "HADIR" WHERE `qr_token` = ? OR `id` = ?',
+          'UPDATE `peserta` SET `status_hadir` = "CHECK_IN" WHERE `qr_token` = ? OR `id` = ?',
           [guest.qr_token || '', String(guest.id)]
         );
       } catch (pErr) {
@@ -949,7 +969,7 @@ class MySQLAdapter {
       return {
         success: true,
         alreadyCheckedIn: false,
-        guest: updated || { ...guest, status_kehadiran: 'CHECK-IN', checkin_gate: gate, checkin_time: now.toISOString() }
+        guest: updated || { ...guest, status_kehadiran: 'CHECK_IN', checkin_gate: gate, checkin_time: now.toISOString() }
       };
     } catch (err: any) {
       console.error('[MySQL] Gagal recordCheckin:', err);

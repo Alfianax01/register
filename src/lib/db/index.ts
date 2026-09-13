@@ -1169,7 +1169,7 @@ class DatabaseManager {
       ticket_id: ticketId,
       qr_token: token,
       token_hash: token_hash,
-      status_kehadiran: 'TEREGISTRASI',
+      status_kehadiran: 'REGISTRASI',
       email_status: 'PENDING',
       email_retry_count: 0,
       emailSent: false,
@@ -1812,7 +1812,7 @@ class DatabaseManager {
     const cp = this.data!.checkpoints.find(c => c.code === checkpointCode) || this.data!.checkpoints[0];
 
     // Check if previously checked in
-    const isAlreadyCheckedIn = guest.status_kehadiran === 'CHECK-IN' || guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
+    const isAlreadyCheckedIn = guest.status_kehadiran === 'CHECK_IN';
     const existingLog = this.data!.checkin_logs.find(l => l.guest_id === guestId);
     const now = new Date().toISOString();
 
@@ -1835,7 +1835,7 @@ class DatabaseManager {
       this.data!.checkin_logs.unshift(log);
 
       // Update guest presence
-      guest.status_kehadiran = 'CHECK-IN';
+      guest.status_kehadiran = 'CHECK_IN';
       if (!guest.waktu_kehadiran_pertama) {
         guest.waktu_kehadiran_pertama = now;
       }
@@ -1881,7 +1881,7 @@ class DatabaseManager {
     this.ensureInitialized();
     const guests = this.data!.guests;
     const totalGuests = guests.length;
-    const presentGuests = guests.filter(g => g.status_kehadiran === 'CHECK-IN' || g.status_kehadiran === 'CHECK_IN' || (g.status_kehadiran as any) === 'HADIR').length;
+    const presentGuests = guests.filter(g => g.status_kehadiran === 'CHECK_IN').length;
     const absentGuests = totalGuests - presentGuests;
     const percentagePresent = totalGuests > 0 ? Math.round((presentGuests / totalGuests) * 100) : 0;
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Guest } from '@/types';
+import { Guest, StatusKehadiran } from '@/types';
 import { TicketCard } from './TicketCard';
 import { useToast } from '@/components/ui/Toast';
 import { Button } from '@/components/ui/Button';
@@ -144,9 +144,9 @@ export const EticketContainer: React.FC<EticketContainerProps> = ({ initialToken
     );
   }
 
-  const isActualCheckIn = guest.status_kehadiran === 'CHECK_IN' || guest.status_kehadiran === 'CHECK-IN' || (guest as any).status_kehadiran === 'HADIR';
-  const effectiveStatus: 'TEREGISTRASI' | 'CHECK-IN' = isActualCheckIn ? 'CHECK-IN' : 'TEREGISTRASI';
-  const isEffectiveCheckIn = effectiveStatus === 'CHECK-IN';
+  const isActualCheckIn = guest.status_kehadiran === 'CHECK_IN';
+  const effectiveStatus: StatusKehadiran = isActualCheckIn ? 'CHECK_IN' : 'REGISTRASI';
+  const isEffectiveCheckIn = effectiveStatus === 'CHECK_IN';
 
   const effectiveCheckinDetails = checkinDetails || null;
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { AssignmentService } from '@/lib/services/assignment';
+import { canonicalizeStatusKehadiran } from '@/lib/constants/status';
 import QRCode from 'qrcode';
 
 export const dynamic = 'force-dynamic';
@@ -21,7 +22,7 @@ export async function GET(
       return NextResponse.json({ error: 'Data undangan atau e-ticket tidak ditemukan' }, { status: 404 });
     }
 
-    const isCheckIn = guest.status_kehadiran === 'CHECK-IN' || guest.status_kehadiran === 'CHECK_IN' || (guest.status_kehadiran as any) === 'HADIR';
+    const isCheckIn = canonicalizeStatusKehadiran(guest.status_kehadiran) === 'CHECK_IN';
 
     // 1. Assignment Data (ALWAYS available for both REGISTRASI and CHECK_IN)
     let assignment = db.findAssignmentByGuestId(guest.id);
@@ -118,7 +119,7 @@ export async function GET(
         no_hp: guest.no_hp,
         email: guest.email,
         qr_token: guest.qr_token,
-        status_kehadiran: isCheckIn ? 'CHECK-IN' : 'TEREGISTRASI',
+        status_kehadiran: isCheckIn ? 'CHECK_IN' : 'REGISTRASI',
         waktu_kehadiran_pertama: isCheckIn ? guest.waktu_kehadiran_pertama : null,
         registered_at: (guest as any).registered_at || guest.created_at,
         created_at: guest.created_at,

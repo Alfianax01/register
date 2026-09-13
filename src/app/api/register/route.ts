@@ -305,7 +305,7 @@ export async function POST(req: NextRequest) {
           room_number: newGuest.room_number || '-',
           bed_number: newGuest.bed_number || null,
           status_akomodasi: newGuest.status_akomodasi || 'Tidak Menginap',
-          status_hadir: 'TEREGISTRASI',
+          status_hadir: 'REGISTRASI',
           status_kehadiran: 'REGISTRASI',
           pdf_path: pdfPath
         });

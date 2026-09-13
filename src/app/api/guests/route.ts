@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifySessionToken } from '@/lib/security/auth';
+import { canonicalizeStatusKehadiran } from '@/lib/constants/status';
 import { Guest } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -51,14 +52,8 @@ export async function GET(req: NextRequest) {
     }
 
     if (status) {
-      const st = status.toUpperCase();
-      if (st === 'CHECK-IN' || st === 'CHECK_IN' || st === 'HADIR') {
-        guests = guests.filter(g => g.status_kehadiran === 'CHECK-IN' || g.status_kehadiran === 'CHECK_IN');
-      } else if (st === 'TEREGISTRASI' || st === 'REGISTRASI' || st === 'BELUM_HADIR') {
-        guests = guests.filter(g => g.status_kehadiran === 'TEREGISTRASI' || g.status_kehadiran === 'REGISTRASI');
-      } else {
-        guests = guests.filter(g => (g.status_kehadiran as string) === status);
-      }
+      const target = canonicalizeStatusKehadiran(status);
+      guests = guests.filter(g => canonicalizeStatusKehadiran(g.status_kehadiran) === target);
     }
 
     if (group) {
@@ -93,8 +88,11 @@ export async function GET(req: NextRequest) {
         assigned_at: g.created_at || new Date().toISOString()
       } : undefined);
 
+      const canonicalStatus = canonicalizeStatusKehadiran(g.status_kehadiran);
       return {
         ...g,
+        status_kehadiran: canonicalStatus,
+        guest_status: canonicalStatus,
         seat_block: seatBlock,
         building,
         room,
@@ -138,6 +136,10 @@ export async function PUT(req: NextRequest) {
 
     if (!id || !updates) {
       return NextResponse.json({ error: 'Data update tidak lengkap' }, { status: 400 });
+    }
+
+    if (updates.status_kehadiran) {
+      updates.status_kehadiran = canonicalizeStatusKehadiran(updates.status_kehadiran);
     }
 
     const updated = db.updateGuest(id, updates);

@@ -3,6 +3,7 @@ export type MatraType = 'AD' | 'AL' | 'AU' | 'MABES' | 'NON_TNI';
 export type PangkatGolongan = 'PATI' | 'PAMEN' | 'PAMA' | 'BINTARA' | 'TAMTAMA' | 'SIPIL';
 
 export type EmailDeliveryStatus = 'PENDING' | 'SENT' | 'FAILED' | 'BOUNCED';
+export type StatusKehadiran = 'REGISTRASI' | 'CHECK_IN';
 
 export interface PangkatItem {
   id: string;
@@ -51,8 +52,8 @@ export interface Guest {
   room_slot?: 'A' | 'B';
   bed_number?: number | string;
   wisma_assignment?: string;
-  status_kehadiran: 'TEREGISTRASI' | 'CHECK-IN' | 'REGISTRASI' | 'CHECK_IN';
-  guest_status?: 'TEREGISTRASI' | 'CHECK-IN' | 'REGISTRASI' | 'CHECK_IN';
+  status_kehadiran: StatusKehadiran;
+  guest_status?: StatusKehadiran;
   checkin_gate?: string;
   checkin_time?: string;
   waktu_kehadiran_pertama?: string;
