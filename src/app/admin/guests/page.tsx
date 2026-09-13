@@ -533,19 +533,19 @@ export default function GuestsPage() {
             <span>← Geser tabel untuk melihat data lainnya →</span>
           </div>
 
-          <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-            <table className="w-full min-w-[1150px] text-left text-xs border-collapse">
-              <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
+          <div className="w-full overflow-x-auto lg:max-h-[calc(100vh-280px)] lg:overflow-y-auto overscroll-x-contain" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}>
+            <table className="w-full min-w-[1000px] text-left text-xs border-collapse">
+              <thead className="lg:sticky lg:top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
-                  <th className="py-2.5 px-4 min-w-[200px] lg:sticky lg:left-0 lg:z-30 lg:bg-slate-100 lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] bg-slate-50">Nama Peserta</th>
-                  <th className="py-2.5 px-3 text-center w-[85px]">Matra</th>
-                  <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
-                  <th className="py-2.5 px-3 text-center w-[110px]">Nomor Kursi</th>
-                  <th className="py-2.5 px-3 w-[150px]">Ruangan</th>
-                  <th className="py-2.5 px-3 w-[140px]">Wisma</th>
-                  <th className="py-2.5 px-3 text-center w-[135px]">Status Kehadiran</th>
-                  <th className="py-2.5 px-3 text-center w-[130px]">Tanggal Registrasi</th>
-                  <th className="py-2.5 px-3 text-center w-[105px]">Aksi</th>
+                  <th className="py-2.5 px-3 w-[160px] min-w-[150px] lg:sticky lg:left-0 lg:z-30 lg:bg-slate-100 lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] bg-slate-50">Nama Peserta</th>
+                  <th className="py-2.5 px-2.5 text-center w-[80px]">Matra</th>
+                  <th className="py-2.5 px-2.5 w-[130px]">Pangkat</th>
+                  <th className="py-2.5 px-2.5 text-center w-[95px]">Nomor Kursi</th>
+                  <th className="py-2.5 px-2.5 w-[140px]">Ruangan</th>
+                  <th className="py-2.5 px-2.5 w-[130px]">Wisma</th>
+                  <th className="py-2.5 px-2.5 text-center w-[125px]">Status Kehadiran</th>
+                  <th className="py-2.5 px-2.5 text-center w-[115px]">Tanggal Registrasi</th>
+                  <th className="py-2.5 px-2.5 text-center w-[95px]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
@@ -615,9 +615,9 @@ export default function GuestsPage() {
                         className="hover:bg-blue-50/40 transition-colors group"
                       >
                         {/* 1. Nama Peserta */}
-                        <td className="py-2.5 px-4 lg:sticky lg:left-0 lg:z-10 bg-white lg:group-hover:bg-blue-50/95 transition-colors lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
+                        <td className="py-2.5 px-3 w-[160px] min-w-[150px] lg:sticky lg:left-0 lg:z-10 bg-white lg:group-hover:bg-blue-50/95 transition-colors lg:shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
                           <span
-                            className="text-slate-900 font-semibold truncate block"
+                            className="text-slate-900 font-semibold truncate block max-w-[150px]"
                             title={g.nama}
                           >
                             {g.nama}
@@ -626,44 +626,44 @@ export default function GuestsPage() {
                         </td>
 
                         {/* 2. Matra */}
-                        <td className="py-2.5 px-3 text-center">
+                        <td className="py-2.5 px-2.5 text-center">
                           {renderMatraBadge(g.matra)}
                         </td>
 
                         {/* 3. Pangkat */}
-                        <td className="py-2.5 px-3 text-slate-800 font-medium truncate" title={g.pangkat}>
+                        <td className="py-2.5 px-2.5 text-slate-800 font-medium truncate" title={g.pangkat}>
                           {g.pangkat}
                         </td>
 
                         {/* 4. Nomor Kursi */}
-                        <td className="py-2.5 px-3 text-center">
+                        <td className="py-2.5 px-2.5 text-center">
                           <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
                             {seatNum}
                           </span>
                         </td>
 
                         {/* 5. Ruangan */}
-                        <td className="py-2.5 px-3 text-slate-600 truncate" title={ruangan}>
+                        <td className="py-2.5 px-2.5 text-slate-600 truncate" title={ruangan}>
                           {ruangan}
                         </td>
 
                         {/* 6. Wisma */}
-                        <td className="py-2.5 px-3 text-slate-700 truncate" title={tempat}>
+                        <td className="py-2.5 px-2.5 text-slate-700 truncate" title={tempat}>
                           {tempat}
                         </td>
 
                         {/* 7. Status Kehadiran */}
-                        <td className="py-2.5 px-3 text-center">
+                        <td className="py-2.5 px-2.5 text-center">
                           {renderStatusBadge(g.status_kehadiran)}
                         </td>
 
                         {/* 8. Tanggal Registrasi */}
-                        <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700">
+                        <td className="py-2.5 px-2.5 text-center font-mono text-xs text-slate-700">
                           {formatRegDate(g.created_at).date}
                         </td>
 
                         {/* 9. Aksi */}
-                        <td className="py-2.5 px-3 text-center">
+                        <td className="py-2.5 px-2.5 text-center">
                           <div className="flex items-center justify-center gap-1">
                             {/* Lihat Detail */}
                             <button
