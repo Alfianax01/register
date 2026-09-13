@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { mysqlAdapter } from '@/lib/db/mysql';
 import { verifySessionToken } from '@/lib/security/auth';
 
 export const dynamic = 'force-dynamic';
@@ -10,7 +11,13 @@ export async function POST(req: NextRequest) {
     const session = sessionCookie ? verifySessionToken(sessionCookie) : null;
     const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
 
+    let assignedCount = 0;
+    if (mysqlAdapter.isConfigured()) {
+      const myRes = await mysqlAdapter.autoAssignSeats();
+      assignedCount = myRes.assignedCount;
+    }
     const result = db.autoAssignSeats();
+    if (!assignedCount) assignedCount = result.assignedCount;
 
     db.recordAuditLog(
       session?.userId || 'admin',

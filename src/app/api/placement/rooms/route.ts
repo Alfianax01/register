@@ -33,6 +33,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: res.message }, { status: 400 });
     }
 
+    if (mysqlAdapter.isConfigured()) {
+      await mysqlAdapter.assignRoom(room_id, slot, guest_id || null);
+    }
+
     db.recordAuditLog(
       session?.userId || 'admin',
       session?.username || 'admin',

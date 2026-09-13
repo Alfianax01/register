@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const groups = db.getSeatGroups();
+    const groups = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getSeatGroups() : null) || db.getSeatGroups();
     const seats = (mysqlAdapter.isConfigured() ? await mysqlAdapter.getAllSeats() : null) || db.getSeats();
     return NextResponse.json({ success: true, groups, seats });
   } catch (err) {
@@ -32,6 +32,10 @@ export async function POST(req: NextRequest) {
     const res = db.assignSeat(seat_number, guest_id || null);
     if (!res.success) {
       return NextResponse.json({ error: res.message }, { status: 400 });
+    }
+
+    if (mysqlAdapter.isConfigured()) {
+      await mysqlAdapter.assignSeat(seat_number, guest_id || null);
     }
 
     db.recordAuditLog(

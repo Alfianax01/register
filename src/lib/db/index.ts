@@ -649,7 +649,7 @@ class DatabaseManager {
     }
 
     if (modified) {
-      console.log('[DATABASE] Migrasi status dan kredensial admin selesai.');
+      console.log('[DATABASE] Migrasi database dan kredensial admin selesai.');
       this.persist();
     }
   }

@@ -2,6 +2,7 @@ import mysql from 'mysql2/promise';
 import {
   Guest,
   Seat,
+  SeatGroup,
   AccommodationRoom,
   CheckinLog,
   AdminUser,
@@ -290,16 +291,40 @@ class MySQLAdapter {
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
+        // 3. Tabel Seat Groups & Seats
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS \`seat_groups\` (
+            \`id\` VARCHAR(50) NOT NULL,
+            \`code\` VARCHAR(10) NOT NULL,
+            \`name\` VARCHAR(255) NOT NULL,
+            \`description\` VARCHAR(255) DEFAULT NULL,
+            \`capacity\` INT NOT NULL,
+            \`color_code\` VARCHAR(50) DEFAULT NULL,
+            \`sort_order\` INT NOT NULL,
+            PRIMARY KEY (\`id\`),
+            UNIQUE KEY \`idx_group_code\` (\`code\`)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        `);
+
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`seats\` (
             \`id\` INT(11) NOT NULL AUTO_INCREMENT,
             \`seat_number\` VARCHAR(50) NOT NULL,
             \`seat_block\` VARCHAR(50) NOT NULL,
+            \`group_code\` VARCHAR(10) DEFAULT NULL,
             \`building\` VARCHAR(100) DEFAULT 'Gedung Ahmad Yani',
+            \`row_num\` INT DEFAULT 1,
+            \`col_num\` INT DEFAULT 1,
             \`status\` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
             \`guest_id\` INT(11) DEFAULT NULL,
+            \`is_reserved\` TINYINT(1) NOT NULL DEFAULT 0,
+            \`guest_id\` VARCHAR(100) DEFAULT NULL,
             \`guest_name\` VARCHAR(255) DEFAULT NULL,
+            \`guest_rank\` VARCHAR(100) DEFAULT NULL,
             \`guest_matra\` VARCHAR(50) DEFAULT NULL,
+            \`guest_status\` VARCHAR(50) DEFAULT NULL,
+            \`kategori_instansi\` VARCHAR(50) DEFAULT NULL,
+            \`color_alias\` VARCHAR(50) DEFAULT NULL,
             \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (\`id\`),
             UNIQUE KEY \`idx_seat_number\` (\`seat_number\`)
@@ -307,6 +332,7 @@ class MySQLAdapter {
         `);
 
         // 4. Tabel Akomodasi
+        // 4. Tabel Akomodasi Wisma
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`accommodations\` (
             \`id\` INT(11) NOT NULL AUTO_INCREMENT,
@@ -314,13 +340,44 @@ class MySQLAdapter {
             \`room_number\` VARCHAR(50) NOT NULL,
             \`floor\` INT DEFAULT 1,
             \`capacity\` INT DEFAULT 2,
+            \`notes\` VARCHAR(255) DEFAULT NULL,
             \`status\` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
             \`guest_id\` INT(11) DEFAULT NULL,
+            \`guest_id\` VARCHAR(100) DEFAULT NULL,
             \`guest_name\` VARCHAR(255) DEFAULT NULL,
+            \`slot_a_guest_id\` VARCHAR(100) DEFAULT NULL,
+            \`slot_a_guest_name\` VARCHAR(255) DEFAULT NULL,
+            \`slot_a_guest_rank\` VARCHAR(100) DEFAULT NULL,
+            \`slot_a_guest_matra\` VARCHAR(50) DEFAULT NULL,
+            \`slot_b_guest_id\` VARCHAR(100) DEFAULT NULL,
+            \`slot_b_guest_name\` VARCHAR(255) DEFAULT NULL,
+            \`slot_b_guest_rank\` VARCHAR(100) DEFAULT NULL,
+            \`slot_b_guest_matra\` VARCHAR(50) DEFAULT NULL,
             \`updated_at\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (\`id\`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
+
+        // Toleransi migrasi kolom untuk tabel lama
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `group_code` VARCHAR(10) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `row_num` INT DEFAULT 1'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `col_num` INT DEFAULT 1'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `guest_rank` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `guest_status` VARCHAR(50) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `kategori_instansi` VARCHAR(50) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` ADD COLUMN `color_alias` VARCHAR(50) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `seats` MODIFY COLUMN `guest_id` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
+
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `notes` VARCHAR(255) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_a_guest_id` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_a_guest_name` VARCHAR(255) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_a_guest_rank` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_a_guest_matra` VARCHAR(50) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_b_guest_id` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_b_guest_name` VARCHAR(255) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_b_guest_rank` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` ADD COLUMN `slot_b_guest_matra` VARCHAR(50) DEFAULT NULL'); } catch (_) {}
+        try { await connection.query('ALTER TABLE `accommodations` MODIFY COLUMN `guest_id` VARCHAR(100) DEFAULT NULL'); } catch (_) {}
 
         // 5. Tabel Log Checkin
         await connection.query(`
@@ -1006,27 +1063,130 @@ class MySQLAdapter {
   // ==========================================================
   // SEATS & ACCOMMODATIONS
   // ==========================================================
+  public async getSeatGroups(): Promise<SeatGroup[]> {
+    const pool = this.getPool();
+    if (!pool) return [];
+    await this.initSchema();
+
+    try {
+      const [rows]: any = await pool.execute('SELECT * FROM `seat_groups` ORDER BY `sort_order` ASC').catch(() => [[]]);
+      if (rows && rows.length > 0) {
+        return rows.map((r: any) => ({
+          id: r.id,
+          code: r.code,
+          name: r.name,
+          description: r.description,
+          capacity: Number(r.capacity),
+          color_code: r.color_code,
+          sort_order: Number(r.sort_order)
+        }));
+      }
+    } catch (_) {}
+
+    // Default Seat Groups fallback
+    return [
+      { id: 'grp_a', code: 'A', name: 'Grup A - VVIP (Bintang 4 & Tamu Negara)', description: 'Baris paling depan ruang sidang pleno', capacity: 16, color_code: '#D4AF37', sort_order: 1 },
+      { id: 'grp_b', code: 'B', name: 'Grup B - VIP (Pati Bintang 3 & 2)', description: 'Baris kehormatan tengah depan', capacity: 24, color_code: '#B89325', sort_order: 2 },
+      { id: 'grp_c', code: 'C', name: 'Grup C - Pati Bintang 1 (Brigjen/Laksma/Marsma)', description: 'Sektor tengah ruang sidang', capacity: 32, color_code: '#2B8754', sort_order: 3 },
+      { id: 'grp_d', code: 'D', name: 'Grup D - Pamen Kolonel', description: 'Sayap kiri dan kanan sektor perwira menengah', capacity: 40, color_code: '#2058A3', sort_order: 4 },
+      { id: 'grp_e', code: 'E', name: 'Grup E - Pamen Letkol & Mayor', description: 'Sektor belakang perwira menengah', capacity: 40, color_code: '#288FC4', sort_order: 5 },
+      { id: 'grp_f', code: 'F', name: 'Grup F - Pama, Tamtama & Tamu Undangan', description: 'Area pendukung & atase', capacity: 40, color_code: '#700B15', sort_order: 6 },
+    ];
+  }
+
   public async getAllSeats(): Promise<Seat[]> {
     const pool = this.getPool();
     if (!pool) return [];
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `seats` ORDER BY `seat_number` ASC');
-      return (rows || []).map((r: any) => ({
-        id: r.id,
-        group_id: `grp_${r.group_code.toLowerCase()}`,
-        group_code: r.group_code,
-        seat_number: r.seat_number,
-        row_num: 1,
-        col_num: 1,
-        is_reserved: 0,
-        status: r.status,
-        colorAlias: null,
-        peserta_id: r.guest_id ? String(r.guest_id) : null,
-        nama_lengkap: r.guest_name || undefined,
-        matra: r.guest_matra || undefined
-      }));
+      // 1. Ambil data tamu yang memiliki alokasi seat_number dari tabel guests
+      const [guestRows]: any = await pool.execute(
+        'SELECT id, registration_id, nama, pangkat, matra, status_kehadiran, seat_number, seat_block FROM `guests` WHERE seat_number IS NOT NULL AND seat_number != ""'
+      ).catch(() => [[]]);
+      
+      const guestSeatMap = new Map<string, any>();
+      for (const g of (guestRows || [])) {
+        if (g.seat_number) {
+          guestSeatMap.set(g.seat_number.trim(), g);
+        }
+      }
+
+      // 2. Ambil data dari tabel seats jika ada
+      let [rows]: any = await pool.execute('SELECT * FROM `seats` ORDER BY `seat_number` ASC').catch(() => [[]]);
+
+      // Fallback: Jika tabel seats kosong, bangun 192 kursi standar secara otomatis dari data guests
+      if (!rows || rows.length === 0) {
+        const generatedSeats: Seat[] = [];
+        const seatGroups = [
+          { code: 'A', count: 16 },
+          { code: 'B', count: 24 },
+          { code: 'C', count: 32 },
+          { code: 'D', count: 40 },
+          { code: 'E', count: 40 },
+          { code: 'F', count: 40 }
+        ];
+
+        for (const grp of seatGroups) {
+          const cols = 8;
+          for (let i = 1; i <= grp.count; i++) {
+            const seatNum = `${grp.code}-${String(i).padStart(2, '0')}`;
+            const g = guestSeatMap.get(seatNum);
+            const katInstansi = g ? getInstansiCategory(g.matra) : undefined;
+            const colorAlias = katInstansi ? getSeatColorAlias(katInstansi) : null;
+
+            generatedSeats.push({
+              id: `seat_${grp.code.toLowerCase()}_${i}`,
+              group_id: `grp_${grp.code.toLowerCase()}`,
+              group_code: grp.code,
+              seat_number: seatNum,
+              row_num: Math.ceil(i / cols),
+              col_num: ((i - 1) % cols) + 1,
+              is_reserved: 0,
+              status: g ? (g.status_kehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'ASSIGNED') : 'KOSONG',
+              colorAlias: colorAlias,
+              peserta_id: g ? String(g.id || g.registration_id) : null,
+              guest_id: g ? String(g.id || g.registration_id) : undefined,
+              guest_name: g?.nama || undefined,
+              guest_rank: g?.pangkat || undefined,
+              guest_matra: g?.matra || undefined,
+              guest_status: g?.status_kehadiran || undefined
+            });
+          }
+        }
+        return generatedSeats;
+      }
+
+      return (rows || []).map((r: any) => {
+        const groupCode = (r.group_code || r.seat_block || (r.seat_number ? r.seat_number.split('-')[0] : 'A')).toUpperCase();
+        const g = guestSeatMap.get(r.seat_number);
+        const guestId = r.guest_id || (g ? String(g.id || g.registration_id) : undefined);
+        const guestName = r.guest_name || g?.nama;
+        const guestMatra = r.guest_matra || g?.matra;
+        const guestRank = r.guest_rank || g?.pangkat;
+        const guestStatus = r.guest_status || g?.status_kehadiran;
+        const status = guestId ? (guestStatus === 'CHECK_IN' ? 'CHECK_IN' : 'ASSIGNED') : (r.status || 'KOSONG');
+        const katInstansi = guestMatra ? getInstansiCategory(guestMatra) : undefined;
+        const colorAlias = r.color_alias || (katInstansi ? getSeatColorAlias(katInstansi) : null);
+
+        return {
+          id: String(r.id),
+          group_id: `grp_${groupCode.toLowerCase()}`,
+          group_code: groupCode,
+          seat_number: r.seat_number,
+          row_num: r.row_num || 1,
+          col_num: r.col_num || 1,
+          is_reserved: r.is_reserved ? 1 : 0,
+          status: status,
+          colorAlias: colorAlias,
+          peserta_id: guestId ? String(guestId) : null,
+          guest_id: guestId ? String(guestId) : undefined,
+          guest_name: guestName || undefined,
+          guest_rank: guestRank || undefined,
+          guest_matra: guestMatra || undefined,
+          guest_status: guestStatus || undefined
+        };
+      });
     } catch (err) {
       console.error('[MySQL] Gagal getAllSeats:', err);
       return [];
@@ -1039,32 +1199,122 @@ class MySQLAdapter {
     await this.initSchema();
 
     try {
-      const [rows]: any = await pool.execute('SELECT * FROM `accommodations` ORDER BY `wisma_name` ASC, `room_number` ASC');
+      // 1. Ambil data guests yang memiliki penempatan wisma & kamar
+      const [guestRows]: any = await pool.execute(
+        'SELECT id, registration_id, nama, pangkat, matra, wisma_name, room_number, bed_number FROM `guests` WHERE wisma_name IS NOT NULL AND wisma_name != "" AND wisma_name != "Tidak Menginap" AND room_number IS NOT NULL AND room_number != "-"'
+      ).catch(() => [[]]);
+
+      const guestRoomMap = new Map<string, { a?: any; b?: any }>();
+      for (const g of (guestRows || [])) {
+        const normWisma = g.wisma_name.includes('Soedirman') ? 'Wisma Soedirman (VVIP)' : g.wisma_name;
+        const key = `${normWisma}_${String(g.room_number).trim()}`;
+        if (!guestRoomMap.has(key)) guestRoomMap.set(key, {});
+        const entry = guestRoomMap.get(key)!;
+        if (g.bed_number === '2' || g.bed_number === 2) {
+          entry.b = g;
+        } else {
+          if (!entry.a) entry.a = g;
+          else entry.b = g;
+        }
+      }
+
+      // 2. Ambil data dari tabel accommodations jika ada
+      const [rows]: any = await pool.execute('SELECT * FROM `accommodations` ORDER BY `wisma_name` ASC, `room_number` ASC').catch(() => [[]]);
+
+      // Buat daftar kamar standar
+      const defaultRoomTemplates: AccommodationRoom[] = [];
+      
+      // Wisma Soedirman (VVIP)
+      for (let f = 1; f <= 2; f++) {
+        for (let r = 1; r <= 6; r++) {
+          const roomNum = `${f}0${r}`;
+          defaultRoomTemplates.push({
+            id: `room_soedirman_${roomNum}`,
+            wisma_name: 'Wisma Soedirman (VVIP)',
+            floor: f,
+            room_number: roomNum,
+            capacity: f === 1 ? 1 : 2,
+            notes: f === 1 ? 'Suite VVIP Bintang 4' : 'Deluxe Twin Pati'
+          });
+        }
+      }
+      // Wisma Kartika
+      for (let f = 1; f <= 2; f++) {
+        for (let r = 1; r <= 8; r++) {
+          const roomNum = `${f}0${r}`;
+          defaultRoomTemplates.push({
+            id: `room_kartika_${roomNum}`,
+            wisma_name: 'Wisma Kartika',
+            floor: f,
+            room_number: roomNum,
+            capacity: 2,
+            notes: 'Twin Bed Pamen Kolonel / Letkol'
+          });
+        }
+      }
+      // Wisma Gatot Subroto
+      for (let f = 1; f <= 3; f++) {
+        for (let r = 1; r <= 8; r++) {
+          const roomNum = `${f}0${r}`;
+          defaultRoomTemplates.push({
+            id: `room_gatot_${roomNum}`,
+            wisma_name: 'Wisma Gatot Subroto',
+            floor: f,
+            room_number: roomNum,
+            capacity: 2,
+            notes: 'Twin Bed Reguler'
+          });
+        }
+      }
+
       const roomMap = new Map<string, AccommodationRoom>();
 
-      for (const r of rows) {
-        const key = `${r.wisma_name}_${r.room_number}`;
-        if (!roomMap.has(key)) {
+      // Inisialisasi dari template
+      for (const t of defaultRoomTemplates) {
+        const key = `${t.wisma_name}_${t.room_number}`;
+        const guestsInRoom = guestRoomMap.get(key) || guestRoomMap.get(`${t.wisma_name.replace(' (VVIP)', '')}_${t.room_number}`);
+        roomMap.set(key, {
+          ...t,
+          slot_a_guest_id: guestsInRoom?.a ? String(guestsInRoom.a.id || guestsInRoom.a.registration_id) : undefined,
+          slot_a_guest_name: guestsInRoom?.a?.nama || undefined,
+          slot_a_guest_rank: guestsInRoom?.a?.pangkat || undefined,
+          slot_a_guest_matra: guestsInRoom?.a?.matra || undefined,
+          slot_b_guest_id: guestsInRoom?.b ? String(guestsInRoom.b.id || guestsInRoom.b.registration_id) : undefined,
+          slot_b_guest_name: guestsInRoom?.b?.nama || undefined,
+          slot_b_guest_rank: guestsInRoom?.b?.pangkat || undefined,
+          slot_b_guest_matra: guestsInRoom?.b?.matra || undefined,
+        });
+      }
+
+      // Jika ada data riil di tabel accommodations, gabungkan
+      if (rows && rows.length > 0) {
+        for (const r of rows) {
+          const normWisma = r.wisma_name.includes('Soedirman') ? 'Wisma Soedirman (VVIP)' : r.wisma_name;
+          const key = `${normWisma}_${r.room_number}`;
+          const existing = roomMap.get(key);
+          const guestsInRoom = guestRoomMap.get(key) || guestRoomMap.get(`${r.wisma_name.replace(' (VVIP)', '')}_${r.room_number}`);
+
+          const slotAId = r.slot_a_guest_id || (r.bed_slot === 'A' ? r.guest_id : undefined) || (guestsInRoom?.a ? String(guestsInRoom.a.id || guestsInRoom.a.registration_id) : undefined);
+          const slotAName = r.slot_a_guest_name || (r.bed_slot === 'A' ? r.guest_name : undefined) || guestsInRoom?.a?.nama;
+          const slotBId = r.slot_b_guest_id || (r.bed_slot === 'B' ? r.guest_id : undefined) || (guestsInRoom?.b ? String(guestsInRoom.b.id || guestsInRoom.b.registration_id) : undefined);
+          const slotBName = r.slot_b_guest_name || (r.bed_slot === 'B' ? r.guest_name : undefined) || guestsInRoom?.b?.nama;
+
           roomMap.set(key, {
-            id: r.id,
-            wisma_name: r.wisma_name,
-            room_number: r.room_number,
-            floor: 1,
-            capacity: 2,
-            slot_a_guest_id: r.bed_slot === 'A' && r.guest_id ? String(r.guest_id) : undefined,
-            slot_a_guest_name: r.bed_slot === 'A' ? (r.guest_name || undefined) : undefined,
-            slot_b_guest_id: r.bed_slot === 'B' && r.guest_id ? String(r.guest_id) : undefined,
-            slot_b_guest_name: r.bed_slot === 'B' ? (r.guest_name || undefined) : undefined
+            id: String(r.id || existing?.id || `room_${r.room_number}`),
+            wisma_name: normWisma,
+            floor: Number(r.floor) || existing?.floor || 1,
+            room_number: String(r.room_number),
+            capacity: Number(r.capacity) || existing?.capacity || 2,
+            notes: r.notes || existing?.notes || undefined,
+            slot_a_guest_id: slotAId ? String(slotAId) : undefined,
+            slot_a_guest_name: slotAName || undefined,
+            slot_a_guest_rank: r.slot_a_guest_rank || guestsInRoom?.a?.pangkat || undefined,
+            slot_a_guest_matra: r.slot_a_guest_matra || guestsInRoom?.a?.matra || undefined,
+            slot_b_guest_id: slotBId ? String(slotBId) : undefined,
+            slot_b_guest_name: slotBName || undefined,
+            slot_b_guest_rank: r.slot_b_guest_rank || guestsInRoom?.b?.pangkat || undefined,
+            slot_b_guest_matra: r.slot_b_guest_matra || guestsInRoom?.b?.matra || undefined,
           });
-        } else {
-          const rm = roomMap.get(key)!;
-          if (r.bed_slot === 'B') {
-            rm.slot_b_guest_id = r.guest_id ? String(r.guest_id) : undefined;
-            rm.slot_b_guest_name = r.guest_name || undefined;
-          } else {
-            rm.slot_a_guest_id = r.guest_id ? String(r.guest_id) : undefined;
-            rm.slot_a_guest_name = r.guest_name || undefined;
-          }
         }
       }
 
@@ -1072,6 +1322,143 @@ class MySQLAdapter {
     } catch (err) {
       console.error('[MySQL] Gagal getAllRooms:', err);
       return [];
+    }
+  }
+
+  public async assignSeat(seatNumber: string, guestId: string | null): Promise<{ success: boolean; message: string }> {
+    const pool = this.getPool();
+    if (!pool) return { success: false, message: 'Database MySQL tidak terhubung' };
+    await this.initSchema();
+
+    try {
+      if (guestId) {
+        const [gRows]: any = await pool.execute('SELECT * FROM `guests` WHERE `id` = ? OR `registration_id` = ? LIMIT 1', [guestId, guestId]);
+        if (!gRows || gRows.length === 0) return { success: false, message: 'Data tamu tidak ditemukan di MySQL' };
+        const g = gRows[0];
+        const block = seatNumber.split('-')[0] || 'A';
+
+        // Lepas kursi sebelumnya
+        await pool.execute('UPDATE `seats` SET `status` = "KOSONG", `guest_id` = NULL, `guest_name` = NULL, `guest_matra` = NULL WHERE `guest_id` = ? OR `guest_id` = ?', [String(g.id), g.registration_id]).catch(() => null);
+        await pool.execute('UPDATE `guests` SET `seat_number` = NULL, `seat_block` = NULL WHERE `seat_number` = ? AND `id` != ?', [seatNumber, g.id]).catch(() => null);
+
+        // Update kursi tujuan
+        await pool.execute(
+          'UPDATE `seats` SET `status` = ?, `guest_id` = ?, `guest_name` = ?, `guest_matra` = ? WHERE `seat_number` = ?',
+          [g.status_kehadiran === 'CHECK_IN' ? 'CHECK_IN' : 'ASSIGNED', String(g.id), g.nama, g.matra, seatNumber]
+        ).catch(() => null);
+
+        // Update guests table
+        await pool.execute(
+          'UPDATE `guests` SET `seat_number` = ?, `seat_block` = ? WHERE `id` = ?',
+          [seatNumber, block, g.id]
+        );
+      } else {
+        const [sRows]: any = await pool.execute('SELECT * FROM `seats` WHERE `seat_number` = ? LIMIT 1', [seatNumber]).catch(() => [[]]);
+        if (sRows && sRows.length > 0 && sRows[0].guest_id) {
+          await pool.execute('UPDATE `guests` SET `seat_number` = NULL, `seat_block` = NULL WHERE `id` = ? OR `registration_id` = ?', [sRows[0].guest_id, sRows[0].guest_id]).catch(() => null);
+        }
+        await pool.execute('UPDATE `seats` SET `status` = "KOSONG", `guest_id` = NULL, `guest_name` = NULL, `guest_matra` = NULL WHERE `seat_number` = ?', [seatNumber]).catch(() => null);
+        await pool.execute('UPDATE `guests` SET `seat_number` = NULL, `seat_block` = NULL WHERE `seat_number` = ?', [seatNumber]).catch(() => null);
+      }
+
+      return { success: true, message: 'Alokasi kursi berhasil disimpan di MySQL' };
+    } catch (err: any) {
+      console.error('[MySQL] Gagal assignSeat:', err);
+      return { success: false, message: err.message || 'Gagal menyimpan kursi di MySQL' };
+    }
+  }
+
+  public async assignRoom(roomId: string, slot: 'A' | 'B', guestId: string | null): Promise<{ success: boolean; message: string }> {
+    const pool = this.getPool();
+    if (!pool) return { success: false, message: 'Database MySQL tidak terhubung' };
+    await this.initSchema();
+
+    try {
+      let wismaName = 'Wisma Kartika';
+      let roomNumber = '101';
+      if (roomId.includes('soedirman')) {
+        wismaName = 'Wisma Soedirman (VVIP)';
+        roomNumber = roomId.replace('room_soedirman_', '');
+      } else if (roomId.includes('kartika')) {
+        wismaName = 'Wisma Kartika';
+        roomNumber = roomId.replace('room_kartika_', '');
+      } else if (roomId.includes('gatot')) {
+        wismaName = 'Wisma Gatot Subroto';
+        roomNumber = roomId.replace('room_gatot_', '');
+      }
+
+      const bedNum = slot === 'B' ? '2' : '1';
+
+      if (guestId) {
+        const [gRows]: any = await pool.execute('SELECT * FROM `guests` WHERE `id` = ? OR `registration_id` = ? LIMIT 1', [guestId, guestId]);
+        if (!gRows || gRows.length === 0) return { success: false, message: 'Data tamu tidak ditemukan di MySQL' };
+        const g = gRows[0];
+
+        // Kosongkan tamu lain di kamar & slot ini
+        await pool.execute(
+          'UPDATE `guests` SET `wisma_name` = "Tidak Menginap", `room_number` = "-", `bed_number` = NULL WHERE (`wisma_name` = ? OR `wisma_name` = ?) AND `room_number` = ? AND `bed_number` = ? AND `id` != ?',
+          [wismaName, wismaName.replace(' (VVIP)', ''), roomNumber, bedNum, g.id]
+        ).catch(() => null);
+
+        // Update guest terpilih
+        await pool.execute(
+          'UPDATE `guests` SET `wisma_name` = ?, `room_number` = ?, `bed_number` = ?, `status_akomodasi` = "MENGINAP" WHERE `id` = ?',
+          [wismaName, roomNumber, bedNum, g.id]
+        );
+
+        // Update accommodations table jika ada
+        const colId = slot === 'A' ? 'slot_a_guest_id' : 'slot_b_guest_id';
+        const colName = slot === 'A' ? 'slot_a_guest_name' : 'slot_b_guest_name';
+        await pool.execute(
+          `UPDATE \`accommodations\` SET \`${colId}\` = ?, \`${colName}\` = ?, \`status\` = "TERISI" WHERE (\`wisma_name\` = ? OR \`wisma_name\` = ?) AND \`room_number\` = ?`,
+          [String(g.id), g.nama, wismaName, wismaName.replace(' (VVIP)', ''), roomNumber]
+        ).catch(() => null);
+      } else {
+        // Kosongkan slot
+        await pool.execute(
+          'UPDATE `guests` SET `wisma_name` = "Tidak Menginap", `room_number` = "-", `bed_number` = NULL WHERE (`wisma_name` = ? OR `wisma_name` = ?) AND `room_number` = ? AND `bed_number` = ?',
+          [wismaName, wismaName.replace(' (VVIP)', ''), roomNumber, bedNum]
+        ).catch(() => null);
+
+        const colId = slot === 'A' ? 'slot_a_guest_id' : 'slot_b_guest_id';
+        const colName = slot === 'A' ? 'slot_a_guest_name' : 'slot_b_guest_name';
+        await pool.execute(
+          `UPDATE \`accommodations\` SET \`${colId}\` = NULL, \`${colName}\` = NULL WHERE (\`wisma_name\` = ? OR \`wisma_name\` = ?) AND \`room_number\` = ?`,
+          [wismaName, wismaName.replace(' (VVIP)', ''), roomNumber]
+        ).catch(() => null);
+      }
+
+      return { success: true, message: 'Alokasi wisma berhasil disimpan di MySQL' };
+    } catch (err: any) {
+      console.error('[MySQL] Gagal assignRoom:', err);
+      return { success: false, message: err.message || 'Gagal menyimpan kamar di MySQL' };
+    }
+  }
+
+  public async autoAssignSeats(): Promise<{ assignedCount: number }> {
+    const pool = this.getPool();
+    if (!pool) return { assignedCount: 0 };
+    await this.initSchema();
+
+    try {
+      const seats = await this.getAllSeats();
+      const [guests]: any = await pool.execute('SELECT * FROM `guests` WHERE `seat_number` IS NULL OR `seat_number` = ""');
+      
+      let count = 0;
+      for (const g of (guests || [])) {
+        // Cari kursi kosong
+        const emptySeat = seats.find(s => !s.guest_id && !s.is_reserved && s.status === 'KOSONG');
+        if (emptySeat) {
+          await this.assignSeat(emptySeat.seat_number, String(g.id));
+          emptySeat.guest_id = String(g.id);
+          emptySeat.status = 'ASSIGNED';
+          count++;
+        }
+      }
+      return { assignedCount: count };
+    } catch (err) {
+      console.error('[MySQL] Gagal autoAssignSeats:', err);
+      return { assignedCount: 0 };
     }
   }
 

@@ -157,3 +157,437 @@ INSERT INTO `guests` (`registration_id`, `nama`, `email`, `phone`, `matra`, `pan
 INSERT INTO `guests` (`registration_id`, `nama`, `email`, `phone`, `matra`, `pangkat`, `nrp`, `jabatan`, `kesatuan`, `status_kehadiran`, `seat_number`, `seat_block`, `building`, `room_name`, `wisma_name`, `room_number`, `bed_number`, `status_akomodasi`, `email_status`, `qr_token`) VALUES ('REG-2026-535307', 'Dr. Tri Nugroho, S.T., M.Si.', 'tri.nugroho@tni.mil.id', '081233445566', 'AD', 'Kolonel (AD)', '1105999', 'Dandim 0501/Jakarta Pusat', 'Makodam Jaya', 'CHECK_IN', 'D-02', 'D', 'Gedung Ahmad Yani', 'Ruang Sidang Utama', 'Wisma Kartika', '101', '1', 'MENGINAP', 'PENDING', 'd19b9cc9-e35e-42f4-ad6e-7b969f64f030') ON DUPLICATE KEY UPDATE `status_kehadiran` = VALUES(`status_kehadiran`);
 INSERT INTO `guests` (`registration_id`, `nama`, `email`, `phone`, `matra`, `pangkat`, `nrp`, `jabatan`, `kesatuan`, `status_kehadiran`, `seat_number`, `seat_block`, `building`, `room_name`, `wisma_name`, `room_number`, `bed_number`, `status_akomodasi`, `email_status`, `qr_token`) VALUES ('REG-2026-919769', 'Jenderal TNI Agus Subiyanto, S.E., M.Si.', 'panglima@tni.mil.id', '08111945001', 'AD', 'Jenderal TNI', '519284', 'Panglima Tentara Nasional Indonesia', 'Mabes TNI', 'CHECK_IN', 'A-01', 'A', 'Gedung Ahmad Yani', 'Ruang Sidang Utama', 'Tidak Menginap', NULL, NULL, 'Tidak Menginap', 'PENDING', 'f0a7b0ab-6140-48f2-854a-df59501ee113') ON DUPLICATE KEY UPDATE `status_kehadiran` = VALUES(`status_kehadiran`);
 INSERT INTO `guests` (`registration_id`, `nama`, `email`, `phone`, `matra`, `pangkat`, `nrp`, `jabatan`, `kesatuan`, `status_kehadiran`, `seat_number`, `seat_block`, `building`, `room_name`, `wisma_name`, `room_number`, `bed_number`, `status_akomodasi`, `email_status`, `qr_token`) VALUES ('REG-2026-634907', 'Jenderal TNI Maruli Simanjuntak, M.Sc.', 'kasad@tni-ad.mil.id', '08129876002', 'AD', 'Jenderal TNI', '520193', 'Kepala Staf Angkatan Darat (Kasad)', 'Staf Umum Kasad', 'CHECK_IN', 'A-02', 'A', 'Gedung Ahmad Yani', 'Ruang Sidang Utama', 'Tidak Menginap', NULL, NULL, 'Tidak Menginap', 'PENDING', '00396ce4-b56f-4feb-bd52-167e16b91af5') ON DUPLICATE KEY UPDATE `status_kehadiran` = VALUES(`status_kehadiran`);
+
+
+-- =========================================================================
+-- 3. TABEL SEAT GROUPS & DENAH KURSI (SEATS)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS `seat_groups` (
+  `id` VARCHAR(50) NOT NULL,
+  `code` VARCHAR(10) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `description` VARCHAR(255) DEFAULT NULL,
+  `capacity` INT NOT NULL,
+  `color_code` VARCHAR(50) DEFAULT NULL,
+  `sort_order` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_group_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `seats` (
+  `id` VARCHAR(64) NOT NULL,
+  `group_id` VARCHAR(50) NOT NULL,
+  `group_code` VARCHAR(10) NOT NULL,
+  `seat_block` VARCHAR(50) NOT NULL,
+  `seat_number` VARCHAR(50) NOT NULL,
+  `building` VARCHAR(100) DEFAULT 'Gedung Ahmad Yani',
+  `row_num` INT DEFAULT 1,
+  `col_num` INT DEFAULT 1,
+  `status` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
+  `is_reserved` TINYINT(1) NOT NULL DEFAULT 0,
+  `guest_id` VARCHAR(100) DEFAULT NULL,
+  `guest_name` VARCHAR(255) DEFAULT NULL,
+  `guest_rank` VARCHAR(100) DEFAULT NULL,
+  `guest_matra` VARCHAR(50) DEFAULT NULL,
+  `guest_status` VARCHAR(50) DEFAULT NULL,
+  `kategori_instansi` VARCHAR(50) DEFAULT NULL,
+  `color_alias` VARCHAR(50) DEFAULT NULL,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_seat_number` (`seat_number`),
+  KEY `idx_seat_group` (`group_code`),
+  KEY `idx_seat_guest` (`guest_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `seat_groups` (`id`, `code`, `name`, `description`, `capacity`, `color_code`, `sort_order`) VALUES ('grp_a', 'A', 'Grup A - VVIP (Bintang 4 & Tamu Negara)', 'Baris paling depan ruang sidang pleno', 16, '#D4AF37', 1) ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `capacity` = VALUES(`capacity`);
+INSERT INTO `seat_groups` (`id`, `code`, `name`, `description`, `capacity`, `color_code`, `sort_order`) VALUES ('grp_b', 'B', 'Grup B - VIP (Pati Bintang 3 & 2)', 'Baris kehormatan tengah depan', 24, '#B89325', 2) ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `capacity` = VALUES(`capacity`);
+INSERT INTO `seat_groups` (`id`, `code`, `name`, `description`, `capacity`, `color_code`, `sort_order`) VALUES ('grp_c', 'C', 'Grup C - Pati Bintang 1 (Brigjen/Laksma/Marsma)', 'Sektor tengah ruang sidang', 32, '#2B8754', 3) ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `capacity` = VALUES(`capacity`);
+INSERT INTO `seat_groups` (`id`, `code`, `name`, `description`, `capacity`, `color_code`, `sort_order`) VALUES ('grp_d', 'D', 'Grup D - Pamen Kolonel', 'Sayap kiri dan kanan sektor perwira menengah', 40, '#2058A3', 4) ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `capacity` = VALUES(`capacity`);
+INSERT INTO `seat_groups` (`id`, `code`, `name`, `description`, `capacity`, `color_code`, `sort_order`) VALUES ('grp_e', 'E', 'Grup E - Pamen Letkol & Mayor', 'Sektor belakang perwira menengah', 40, '#288FC4', 5) ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `capacity` = VALUES(`capacity`);
+INSERT INTO `seat_groups` (`id`, `code`, `name`, `description`, `capacity`, `color_code`, `sort_order`) VALUES ('grp_f', 'F', 'Grup F - Pama, Tamtama & Tamu Undangan', 'Area pendukung & atase', 40, '#700B15', 6) ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `capacity` = VALUES(`capacity`);
+
+-- Inisialisasi 192 Kursi Standar (Grup A - F)
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_1', 'grp_a', 'A', 'A', 'A-01', 1, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_2', 'grp_a', 'A', 'A', 'A-02', 1, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_3', 'grp_a', 'A', 'A', 'A-03', 1, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_4', 'grp_a', 'A', 'A', 'A-04', 1, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_5', 'grp_a', 'A', 'A', 'A-05', 1, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_6', 'grp_a', 'A', 'A', 'A-06', 1, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_7', 'grp_a', 'A', 'A', 'A-07', 1, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_8', 'grp_a', 'A', 'A', 'A-08', 1, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_9', 'grp_a', 'A', 'A', 'A-09', 2, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_10', 'grp_a', 'A', 'A', 'A-10', 2, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_11', 'grp_a', 'A', 'A', 'A-11', 2, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_12', 'grp_a', 'A', 'A', 'A-12', 2, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_13', 'grp_a', 'A', 'A', 'A-13', 2, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_14', 'grp_a', 'A', 'A', 'A-14', 2, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_15', 'grp_a', 'A', 'A', 'A-15', 2, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_a_16', 'grp_a', 'A', 'A', 'A-16', 2, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_1', 'grp_b', 'B', 'B', 'B-01', 1, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_2', 'grp_b', 'B', 'B', 'B-02', 1, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_3', 'grp_b', 'B', 'B', 'B-03', 1, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_4', 'grp_b', 'B', 'B', 'B-04', 1, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_5', 'grp_b', 'B', 'B', 'B-05', 1, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_6', 'grp_b', 'B', 'B', 'B-06', 1, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_7', 'grp_b', 'B', 'B', 'B-07', 1, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_8', 'grp_b', 'B', 'B', 'B-08', 1, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_9', 'grp_b', 'B', 'B', 'B-09', 2, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_10', 'grp_b', 'B', 'B', 'B-10', 2, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_11', 'grp_b', 'B', 'B', 'B-11', 2, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_12', 'grp_b', 'B', 'B', 'B-12', 2, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_13', 'grp_b', 'B', 'B', 'B-13', 2, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_14', 'grp_b', 'B', 'B', 'B-14', 2, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_15', 'grp_b', 'B', 'B', 'B-15', 2, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_16', 'grp_b', 'B', 'B', 'B-16', 2, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_17', 'grp_b', 'B', 'B', 'B-17', 3, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_18', 'grp_b', 'B', 'B', 'B-18', 3, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_19', 'grp_b', 'B', 'B', 'B-19', 3, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_20', 'grp_b', 'B', 'B', 'B-20', 3, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_21', 'grp_b', 'B', 'B', 'B-21', 3, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_22', 'grp_b', 'B', 'B', 'B-22', 3, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_23', 'grp_b', 'B', 'B', 'B-23', 3, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_b_24', 'grp_b', 'B', 'B', 'B-24', 3, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_1', 'grp_c', 'C', 'C', 'C-01', 1, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_2', 'grp_c', 'C', 'C', 'C-02', 1, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_3', 'grp_c', 'C', 'C', 'C-03', 1, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_4', 'grp_c', 'C', 'C', 'C-04', 1, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_5', 'grp_c', 'C', 'C', 'C-05', 1, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_6', 'grp_c', 'C', 'C', 'C-06', 1, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_7', 'grp_c', 'C', 'C', 'C-07', 1, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_8', 'grp_c', 'C', 'C', 'C-08', 1, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_9', 'grp_c', 'C', 'C', 'C-09', 2, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_10', 'grp_c', 'C', 'C', 'C-10', 2, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_11', 'grp_c', 'C', 'C', 'C-11', 2, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_12', 'grp_c', 'C', 'C', 'C-12', 2, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_13', 'grp_c', 'C', 'C', 'C-13', 2, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_14', 'grp_c', 'C', 'C', 'C-14', 2, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_15', 'grp_c', 'C', 'C', 'C-15', 2, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_16', 'grp_c', 'C', 'C', 'C-16', 2, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_17', 'grp_c', 'C', 'C', 'C-17', 3, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_18', 'grp_c', 'C', 'C', 'C-18', 3, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_19', 'grp_c', 'C', 'C', 'C-19', 3, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_20', 'grp_c', 'C', 'C', 'C-20', 3, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_21', 'grp_c', 'C', 'C', 'C-21', 3, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_22', 'grp_c', 'C', 'C', 'C-22', 3, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_23', 'grp_c', 'C', 'C', 'C-23', 3, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_24', 'grp_c', 'C', 'C', 'C-24', 3, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_25', 'grp_c', 'C', 'C', 'C-25', 4, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_26', 'grp_c', 'C', 'C', 'C-26', 4, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_27', 'grp_c', 'C', 'C', 'C-27', 4, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_28', 'grp_c', 'C', 'C', 'C-28', 4, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_29', 'grp_c', 'C', 'C', 'C-29', 4, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_30', 'grp_c', 'C', 'C', 'C-30', 4, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_31', 'grp_c', 'C', 'C', 'C-31', 4, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_c_32', 'grp_c', 'C', 'C', 'C-32', 4, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_1', 'grp_d', 'D', 'D', 'D-01', 1, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_2', 'grp_d', 'D', 'D', 'D-02', 1, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_3', 'grp_d', 'D', 'D', 'D-03', 1, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_4', 'grp_d', 'D', 'D', 'D-04', 1, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_5', 'grp_d', 'D', 'D', 'D-05', 1, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_6', 'grp_d', 'D', 'D', 'D-06', 1, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_7', 'grp_d', 'D', 'D', 'D-07', 1, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_8', 'grp_d', 'D', 'D', 'D-08', 1, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_9', 'grp_d', 'D', 'D', 'D-09', 2, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_10', 'grp_d', 'D', 'D', 'D-10', 2, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_11', 'grp_d', 'D', 'D', 'D-11', 2, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_12', 'grp_d', 'D', 'D', 'D-12', 2, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_13', 'grp_d', 'D', 'D', 'D-13', 2, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_14', 'grp_d', 'D', 'D', 'D-14', 2, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_15', 'grp_d', 'D', 'D', 'D-15', 2, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_16', 'grp_d', 'D', 'D', 'D-16', 2, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_17', 'grp_d', 'D', 'D', 'D-17', 3, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_18', 'grp_d', 'D', 'D', 'D-18', 3, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_19', 'grp_d', 'D', 'D', 'D-19', 3, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_20', 'grp_d', 'D', 'D', 'D-20', 3, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_21', 'grp_d', 'D', 'D', 'D-21', 3, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_22', 'grp_d', 'D', 'D', 'D-22', 3, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_23', 'grp_d', 'D', 'D', 'D-23', 3, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_24', 'grp_d', 'D', 'D', 'D-24', 3, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_25', 'grp_d', 'D', 'D', 'D-25', 4, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_26', 'grp_d', 'D', 'D', 'D-26', 4, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_27', 'grp_d', 'D', 'D', 'D-27', 4, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_28', 'grp_d', 'D', 'D', 'D-28', 4, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_29', 'grp_d', 'D', 'D', 'D-29', 4, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_30', 'grp_d', 'D', 'D', 'D-30', 4, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_31', 'grp_d', 'D', 'D', 'D-31', 4, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_32', 'grp_d', 'D', 'D', 'D-32', 4, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_33', 'grp_d', 'D', 'D', 'D-33', 5, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_34', 'grp_d', 'D', 'D', 'D-34', 5, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_35', 'grp_d', 'D', 'D', 'D-35', 5, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_36', 'grp_d', 'D', 'D', 'D-36', 5, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_37', 'grp_d', 'D', 'D', 'D-37', 5, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_38', 'grp_d', 'D', 'D', 'D-38', 5, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_39', 'grp_d', 'D', 'D', 'D-39', 5, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_d_40', 'grp_d', 'D', 'D', 'D-40', 5, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_1', 'grp_e', 'E', 'E', 'E-01', 1, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_2', 'grp_e', 'E', 'E', 'E-02', 1, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_3', 'grp_e', 'E', 'E', 'E-03', 1, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_4', 'grp_e', 'E', 'E', 'E-04', 1, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_5', 'grp_e', 'E', 'E', 'E-05', 1, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_6', 'grp_e', 'E', 'E', 'E-06', 1, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_7', 'grp_e', 'E', 'E', 'E-07', 1, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_8', 'grp_e', 'E', 'E', 'E-08', 1, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_9', 'grp_e', 'E', 'E', 'E-09', 2, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_10', 'grp_e', 'E', 'E', 'E-10', 2, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_11', 'grp_e', 'E', 'E', 'E-11', 2, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_12', 'grp_e', 'E', 'E', 'E-12', 2, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_13', 'grp_e', 'E', 'E', 'E-13', 2, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_14', 'grp_e', 'E', 'E', 'E-14', 2, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_15', 'grp_e', 'E', 'E', 'E-15', 2, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_16', 'grp_e', 'E', 'E', 'E-16', 2, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_17', 'grp_e', 'E', 'E', 'E-17', 3, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_18', 'grp_e', 'E', 'E', 'E-18', 3, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_19', 'grp_e', 'E', 'E', 'E-19', 3, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_20', 'grp_e', 'E', 'E', 'E-20', 3, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_21', 'grp_e', 'E', 'E', 'E-21', 3, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_22', 'grp_e', 'E', 'E', 'E-22', 3, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_23', 'grp_e', 'E', 'E', 'E-23', 3, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_24', 'grp_e', 'E', 'E', 'E-24', 3, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_25', 'grp_e', 'E', 'E', 'E-25', 4, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_26', 'grp_e', 'E', 'E', 'E-26', 4, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_27', 'grp_e', 'E', 'E', 'E-27', 4, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_28', 'grp_e', 'E', 'E', 'E-28', 4, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_29', 'grp_e', 'E', 'E', 'E-29', 4, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_30', 'grp_e', 'E', 'E', 'E-30', 4, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_31', 'grp_e', 'E', 'E', 'E-31', 4, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_32', 'grp_e', 'E', 'E', 'E-32', 4, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_33', 'grp_e', 'E', 'E', 'E-33', 5, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_34', 'grp_e', 'E', 'E', 'E-34', 5, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_35', 'grp_e', 'E', 'E', 'E-35', 5, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_36', 'grp_e', 'E', 'E', 'E-36', 5, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_37', 'grp_e', 'E', 'E', 'E-37', 5, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_38', 'grp_e', 'E', 'E', 'E-38', 5, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_39', 'grp_e', 'E', 'E', 'E-39', 5, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_e_40', 'grp_e', 'E', 'E', 'E-40', 5, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_1', 'grp_f', 'F', 'F', 'F-01', 1, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_2', 'grp_f', 'F', 'F', 'F-02', 1, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_3', 'grp_f', 'F', 'F', 'F-03', 1, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_4', 'grp_f', 'F', 'F', 'F-04', 1, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_5', 'grp_f', 'F', 'F', 'F-05', 1, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_6', 'grp_f', 'F', 'F', 'F-06', 1, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_7', 'grp_f', 'F', 'F', 'F-07', 1, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_8', 'grp_f', 'F', 'F', 'F-08', 1, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_9', 'grp_f', 'F', 'F', 'F-09', 2, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_10', 'grp_f', 'F', 'F', 'F-10', 2, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_11', 'grp_f', 'F', 'F', 'F-11', 2, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_12', 'grp_f', 'F', 'F', 'F-12', 2, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_13', 'grp_f', 'F', 'F', 'F-13', 2, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_14', 'grp_f', 'F', 'F', 'F-14', 2, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_15', 'grp_f', 'F', 'F', 'F-15', 2, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_16', 'grp_f', 'F', 'F', 'F-16', 2, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_17', 'grp_f', 'F', 'F', 'F-17', 3, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_18', 'grp_f', 'F', 'F', 'F-18', 3, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_19', 'grp_f', 'F', 'F', 'F-19', 3, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_20', 'grp_f', 'F', 'F', 'F-20', 3, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_21', 'grp_f', 'F', 'F', 'F-21', 3, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_22', 'grp_f', 'F', 'F', 'F-22', 3, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_23', 'grp_f', 'F', 'F', 'F-23', 3, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_24', 'grp_f', 'F', 'F', 'F-24', 3, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_25', 'grp_f', 'F', 'F', 'F-25', 4, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_26', 'grp_f', 'F', 'F', 'F-26', 4, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_27', 'grp_f', 'F', 'F', 'F-27', 4, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_28', 'grp_f', 'F', 'F', 'F-28', 4, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_29', 'grp_f', 'F', 'F', 'F-29', 4, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_30', 'grp_f', 'F', 'F', 'F-30', 4, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_31', 'grp_f', 'F', 'F', 'F-31', 4, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_32', 'grp_f', 'F', 'F', 'F-32', 4, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_33', 'grp_f', 'F', 'F', 'F-33', 5, 1, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_34', 'grp_f', 'F', 'F', 'F-34', 5, 2, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_35', 'grp_f', 'F', 'F', 'F-35', 5, 3, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_36', 'grp_f', 'F', 'F', 'F-36', 5, 4, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_37', 'grp_f', 'F', 'F', 'F-37', 5, 5, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_38', 'grp_f', 'F', 'F', 'F-38', 5, 6, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_39', 'grp_f', 'F', 'F', 'F-39', 5, 7, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+INSERT INTO `seats` (`id`, `group_id`, `group_code`, `seat_block`, `seat_number`, `row_num`, `col_num`, `status`) VALUES ('seat_f_40', 'grp_f', 'F', 'F', 'F-40', 5, 8, 'KOSONG') ON DUPLICATE KEY UPDATE `group_code` = VALUES(`group_code`);
+
+
+-- =========================================================================
+-- 4. TABEL AKOMODASI WISMA & KAMAR (ACCOMMODATIONS)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS `accommodations` (
+  `id` VARCHAR(64) NOT NULL,
+  `wisma_name` VARCHAR(100) NOT NULL,
+  `floor` INT NOT NULL DEFAULT 1,
+  `room_number` VARCHAR(50) NOT NULL,
+  `capacity` INT NOT NULL DEFAULT 2,
+  `notes` VARCHAR(255) DEFAULT NULL,
+  `status` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
+  `slot_a_guest_id` VARCHAR(100) DEFAULT NULL,
+  `slot_a_guest_name` VARCHAR(255) DEFAULT NULL,
+  `slot_a_guest_rank` VARCHAR(100) DEFAULT NULL,
+  `slot_a_guest_matra` VARCHAR(50) DEFAULT NULL,
+  `slot_b_guest_id` VARCHAR(100) DEFAULT NULL,
+  `slot_b_guest_name` VARCHAR(255) DEFAULT NULL,
+  `slot_b_guest_rank` VARCHAR(100) DEFAULT NULL,
+  `slot_b_guest_matra` VARCHAR(50) DEFAULT NULL,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_wisma_room` (`wisma_name`, `room_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Inisialisasi 38 Kamar Wisma (Soedirman, Kartika, Gatot Subroto)
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_101', 'Wisma Soedirman (VVIP)', 1, '101', 1, 'Suite VVIP Bintang 4', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_102', 'Wisma Soedirman (VVIP)', 1, '102', 1, 'Suite VVIP Bintang 4', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_103', 'Wisma Soedirman (VVIP)', 1, '103', 1, 'Suite VVIP Bintang 4', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_104', 'Wisma Soedirman (VVIP)', 1, '104', 1, 'Suite VVIP Bintang 4', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_105', 'Wisma Soedirman (VVIP)', 1, '105', 1, 'Suite VVIP Bintang 4', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_106', 'Wisma Soedirman (VVIP)', 1, '106', 1, 'Suite VVIP Bintang 4', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_201', 'Wisma Soedirman (VVIP)', 2, '201', 2, 'Deluxe Twin Pati', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_202', 'Wisma Soedirman (VVIP)', 2, '202', 2, 'Deluxe Twin Pati', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_203', 'Wisma Soedirman (VVIP)', 2, '203', 2, 'Deluxe Twin Pati', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_204', 'Wisma Soedirman (VVIP)', 2, '204', 2, 'Deluxe Twin Pati', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_205', 'Wisma Soedirman (VVIP)', 2, '205', 2, 'Deluxe Twin Pati', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_soedirman_206', 'Wisma Soedirman (VVIP)', 2, '206', 2, 'Deluxe Twin Pati', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_101', 'Wisma Kartika', 1, '101', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_102', 'Wisma Kartika', 1, '102', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_103', 'Wisma Kartika', 1, '103', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_104', 'Wisma Kartika', 1, '104', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_105', 'Wisma Kartika', 1, '105', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_106', 'Wisma Kartika', 1, '106', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_107', 'Wisma Kartika', 1, '107', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_108', 'Wisma Kartika', 1, '108', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_201', 'Wisma Kartika', 2, '201', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_202', 'Wisma Kartika', 2, '202', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_203', 'Wisma Kartika', 2, '203', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_204', 'Wisma Kartika', 2, '204', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_205', 'Wisma Kartika', 2, '205', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_206', 'Wisma Kartika', 2, '206', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_207', 'Wisma Kartika', 2, '207', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_kartika_208', 'Wisma Kartika', 2, '208', 2, 'Twin Bed Pamen Kolonel / Letkol', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_101', 'Wisma Gatot Subroto', 1, '101', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_102', 'Wisma Gatot Subroto', 1, '102', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_103', 'Wisma Gatot Subroto', 1, '103', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_104', 'Wisma Gatot Subroto', 1, '104', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_105', 'Wisma Gatot Subroto', 1, '105', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_106', 'Wisma Gatot Subroto', 1, '106', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_107', 'Wisma Gatot Subroto', 1, '107', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_108', 'Wisma Gatot Subroto', 1, '108', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_201', 'Wisma Gatot Subroto', 2, '201', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_202', 'Wisma Gatot Subroto', 2, '202', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_203', 'Wisma Gatot Subroto', 2, '203', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_204', 'Wisma Gatot Subroto', 2, '204', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_205', 'Wisma Gatot Subroto', 2, '205', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_206', 'Wisma Gatot Subroto', 2, '206', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_207', 'Wisma Gatot Subroto', 2, '207', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_208', 'Wisma Gatot Subroto', 2, '208', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_301', 'Wisma Gatot Subroto', 3, '301', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_302', 'Wisma Gatot Subroto', 3, '302', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_303', 'Wisma Gatot Subroto', 3, '303', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_304', 'Wisma Gatot Subroto', 3, '304', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_305', 'Wisma Gatot Subroto', 3, '305', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_306', 'Wisma Gatot Subroto', 3, '306', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_307', 'Wisma Gatot Subroto', 3, '307', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+INSERT INTO `accommodations` (`id`, `wisma_name`, `floor`, `room_number`, `capacity`, `notes`, `status`) VALUES ('room_gatot_308', 'Wisma Gatot Subroto', 3, '308', 2, 'Twin Bed Reguler', 'KOSONG') ON DUPLICATE KEY UPDATE `capacity` = VALUES(`capacity`), `notes` = VALUES(`notes`);
+
+
+-- =========================================================================
+-- 5. SINKRONISASI OTOMATIS DATA PENEMPATAN DARI TABEL GUESTS KE DENAH
+-- =========================================================================
+
+-- Hubungkan kursi dengan data tamu yang sudah memiliki seat_number
+UPDATE `seats` s
+JOIN `guests` g ON s.seat_number = g.seat_number
+SET 
+  s.status = CASE WHEN g.status_kehadiran = 'CHECK_IN' THEN 'CHECK_IN' ELSE 'ASSIGNED' END,
+  s.guest_id = COALESCE(g.registration_id, CAST(g.id AS CHAR)),
+  s.guest_name = g.nama,
+  s.guest_rank = g.pangkat,
+  s.guest_matra = g.matra,
+  s.guest_status = g.status_kehadiran;
+
+-- Hubungkan kamar Wisma Slot A (Bed 1 / Slot Utama)
+UPDATE `accommodations` a
+JOIN `guests` g ON (
+  a.wisma_name = g.wisma_name OR 
+  (a.wisma_name = 'Wisma Soedirman (VVIP)' AND g.wisma_name = 'Wisma Soedirman')
+) 
+AND a.room_number = g.room_number 
+AND (g.bed_number = '1' OR g.bed_number IS NULL OR g.bed_number = '' OR g.bed_number = '-')
+SET 
+  a.slot_a_guest_id = COALESCE(g.registration_id, CAST(g.id AS CHAR)),
+  a.slot_a_guest_name = g.nama,
+  a.slot_a_guest_rank = g.pangkat,
+  a.slot_a_guest_matra = g.matra,
+  a.status = 'TERISI';
+
+-- Hubungkan kamar Wisma Slot B (Bed 2)
+UPDATE `accommodations` a
+JOIN `guests` g ON (
+  a.wisma_name = g.wisma_name OR 
+  (a.wisma_name = 'Wisma Soedirman (VVIP)' AND g.wisma_name = 'Wisma Soedirman')
+) 
+AND a.room_number = g.room_number 
+AND g.bed_number = '2'
+SET 
+  a.slot_b_guest_id = COALESCE(g.registration_id, CAST(g.id AS CHAR)),
+  a.slot_b_guest_name = g.nama,
+  a.slot_b_guest_rank = g.pangkat,
+  a.slot_b_guest_matra = g.matra,
+  a.status = 'TERISI';
+
+-- =========================================================================
+-- 6. TABEL ADMIN DINAS & SITE SETTINGS (SECURITY HARDENED BCRYPT)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS `admins` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(100) NOT NULL,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `nama` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(50) NOT NULL DEFAULT 'ADMIN',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_admin_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `site_settings` (
+  `setting_key` VARCHAR(100) NOT NULL,
+  `setting_value` LONGTEXT DEFAULT NULL,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `checkin_logs` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `guest_id` VARCHAR(100) DEFAULT NULL,
+  `registration_id` VARCHAR(100) DEFAULT NULL,
+  `guest_name` VARCHAR(255) NOT NULL,
+  `nrp` VARCHAR(100) DEFAULT NULL,
+  `seat_number` VARCHAR(50) DEFAULT NULL,
+  `gate` VARCHAR(100) NOT NULL,
+  `petugas` VARCHAR(100) NOT NULL,
+  `checkin_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_checkin_guest_id` (`guest_id`),
+  KEY `idx_checkin_time` (`checkin_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `email_logs` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `recipient` VARCHAR(255) NOT NULL,
+  `subject` VARCHAR(255) NOT NULL,
+  `status` VARCHAR(50) NOT NULL,
+  `error_message` TEXT DEFAULT NULL,
+  `sent_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_email_logs_recipient` (`recipient`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Seed Default Dinas Admins (Bcrypt)
+INSERT INTO `admins` (`username`, `password_hash`, `nama`, `role`) VALUES
+  ('superadmin', '$2a$10$x0rDk5D3R.DtB/pfxkFN.upEcDC2dn.nXYLsxfkev23xiogoWpU9q', 'Letkol Chb Radityo (Super Admin IT)', 'SUPER_ADMIN'),
+  ('panitiagate', '$2a$10$x0rDk5D3R.DtB/pfxkFN.uQYXck5R9tHwAQqu.C4hzQfd6KFmA1f.', 'Kapten Inf Hendro (Koordinator Gate 1)', 'PANITIA_GATE'),
+  ('panitiawisma', '$2a$10$x0rDk5D3R.DtB/pfxkFN.uVyZLei0eIjRoZwRwYe26LMLUtyhwhqy', 'Mayor Laut (K) Anita (Koordinator Wisma)', 'PANITIA_AKOMODASI')
+ON DUPLICATE KEY UPDATE `password_hash` = VALUES(`password_hash`), `nama` = VALUES(`nama`);
+
+-- Seed Default Site Settings
+INSERT INTO `site_settings` (`setting_key`, `setting_value`) VALUES
+  ('site_title', 'Portal Registrasi RAPIM TNI 2026'),
+  ('event_name', 'Rapat Pimpinan Tentara Nasional Indonesia (RAPIM TNI 2026)'),
+  ('event_date', '2026-09-04 s/d 2026-09-06'),
+  ('event_location', 'Gedung Ahmad Yani Mabes TNI Cilangkap, Jakarta Timur'),
+  ('contact_support', '0812-3456-7890 (Sekretariat Panitia)'),
+  ('brand_config', '{"event_short_title":"RAPIM TNI 2026","event_theme":"TNI PRIMA: Profesional, Responsif, Integratif, Modern & Adaptif"}')
+ON DUPLICATE KEY UPDATE `setting_value` = VALUES(`setting_value`);
