@@ -527,36 +527,33 @@ export default function GuestsPage() {
           </div>
         </Card>
 
-        {/* Guests Table (11 Kolom Sesuai Spesifikasi) */}
+        {/* Guests Table (8 Kolom Informasi + Aksi) */}
         <Card className="overflow-hidden bg-white border border-slate-200 shadow-card rounded-2xl">
           <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="sticky top-0 z-20 bg-slate-50 border-b border-slate-200 shadow-xs">
                 <tr className="text-slate-600 uppercase font-bold text-xs tracking-wider bg-slate-50/95">
-                  <th className="py-2.5 px-4 min-w-[200px]">Nama Peserta</th>
                   <th className="py-2.5 px-4 min-w-[200px] sticky left-0 z-30 bg-slate-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Peserta</th>
                   <th className="py-2.5 px-3 text-center w-[85px]">Matra</th>
                   <th className="py-2.5 px-3 w-[140px]">Pangkat</th>
-                  <th className="py-2.5 px-3 text-center w-[95px]">No Kursi</th>
+                  <th className="py-2.5 px-3 text-center w-[110px]">Nomor Kursi</th>
                   <th className="py-2.5 px-3 w-[150px]">Ruangan</th>
-                  <th className="py-2.5 px-3 w-[140px]">Tempat</th>
-                  <th className="py-2.5 px-3 text-center w-[90px]">No Kamar</th>
-                  <th className="py-2.5 px-3 text-center w-[130px]">Status Alokasi</th>
-                  <th className="py-2.5 px-3 text-center w-[125px]">Status Kehadiran</th>
-                  <th className="py-2.5 px-3 text-center w-[110px]">Tgl Registrasi</th>
+                  <th className="py-2.5 px-3 w-[140px]">Wisma</th>
+                  <th className="py-2.5 px-3 text-center w-[135px]">Status Kehadiran</th>
+                  <th className="py-2.5 px-3 text-center w-[130px]">Tanggal Registrasi</th>
                   <th className="py-2.5 px-3 text-center w-[105px]">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50/60">
                 {loading && guests.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="p-0">
-                      <TableSkeleton columns={11} rows={8} />
+                    <td colSpan={9} className="p-0">
+                      <TableSkeleton columns={9} rows={8} />
                     </td>
                   </tr>
                 ) : fetchError && guests.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-16 text-center">
+                    <td colSpan={9} className="py-16 text-center">
                       <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
                         <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mb-3">
                           <AlertCircle className="w-6 h-6 text-rose-600" />
@@ -577,7 +574,7 @@ export default function GuestsPage() {
                   </tr>
                 ) : guests.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-16 text-center">
+                    <td colSpan={9} className="py-16 text-center">
                       <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
                         <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
                           <Search className="w-6 h-6 text-slate-400" />
@@ -604,11 +601,9 @@ export default function GuestsPage() {
                   </tr>
                 ) : (
                   guests.map((g) => {
-                    const alokasi = getStatusAlokasi(g);
                     const seatNum = g.seat_number || g.seat_assignment || g.assignment?.seat_code || '-';
                     const ruangan = g.room || g.assignment?.seat_area || g.assignment?.room || 'Ruang Sidang Utama';
                     const tempat = g.butuh_akomodasi === 0 ? 'Tidak Menginap' : (g.wisma_name || g.assignment?.wisma_name || g.wisma_assignment || '-');
-                    const kamar = g.butuh_akomodasi === 0 ? '-' : (g.room_number || g.assignment?.room_code || '-');
 
                     return (
                       <tr
@@ -617,38 +612,12 @@ export default function GuestsPage() {
                       >
                         {/* 1. Nama Peserta */}
                         <td className="py-2.5 px-4 sticky left-0 z-10 bg-white group-hover:bg-blue-50/95 transition-colors shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className="text-slate-900 font-semibold truncate block"
-                              title={g.nama}
-                            >
-                              {g.nama}
-                            </span>
-                            {g.email_status === 'BOUNCED' ? (
-                              <span
-                                className="inline-flex items-center px-1.5 py-0.5 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded flex-shrink-0 gap-0.5"
-                                title={`Email Bounced: ${g.last_email_error || 'Alamat ditolak server tujuan'}`}
-                              >
-                                <AlertCircle className="w-2.5 h-2.5 text-rose-500" />
-                                <span>Bounced</span>
-                              </span>
-                            ) : g.email_status === 'FAILED' ? (
-                              <span
-                                className="inline-flex items-center px-1.5 py-0.5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded flex-shrink-0 gap-0.5"
-                                title={`Email Gagal Terkirim: ${g.last_email_error || 'Gagal via SMTP'}`}
-                              >
-                                <AlertCircle className="w-2.5 h-2.5 text-amber-500" />
-                                <span>Gagal</span>
-                              </span>
-                            ) : (g.email_status === 'SENT' || g.emailSent) ? (
-                              <span
-                                className="inline-flex items-center text-xs text-emerald-600 flex-shrink-0"
-                                title="E-Ticket telah terkirim via email"
-                              >
-                                <Mail className="w-3 h-3" />
-                              </span>
-                            ) : null}
-                          </div>
+                          <span
+                            className="text-slate-900 font-semibold truncate block"
+                            title={g.nama}
+                          >
+                            {g.nama}
+                          </span>
                           <span className="text-xs text-slate-500 font-mono block">NRP: {g.nrp || '-'}</span>
                         </td>
 
@@ -662,7 +631,7 @@ export default function GuestsPage() {
                           {g.pangkat}
                         </td>
 
-                        {/* 4. No Kursi */}
+                        {/* 4. Nomor Kursi */}
                         <td className="py-2.5 px-3 text-center">
                           <span className="inline-block px-2.5 py-0.5 rounded font-mono font-bold text-xs text-blue-900 bg-blue-50 border border-blue-200">
                             {seatNum}
@@ -674,34 +643,22 @@ export default function GuestsPage() {
                           {ruangan}
                         </td>
 
-                        {/* 6. Tempat */}
+                        {/* 6. Wisma */}
                         <td className="py-2.5 px-3 text-slate-700 truncate" title={tempat}>
                           {tempat}
                         </td>
 
-                        {/* 7. No Kamar */}
-                        <td className="py-2.5 px-3 text-center font-mono text-xs font-semibold text-slate-800">
-                          {kamar}
-                        </td>
-
-                        {/* 8. Status Alokasi */}
-                        <td className="py-2.5 px-3 text-center">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs border ${alokasi.badgeClass}`}>
-                            {alokasi.status}
-                          </span>
-                        </td>
-
-                        {/* 9. Status Kehadiran */}
+                        {/* 7. Status Kehadiran */}
                         <td className="py-2.5 px-3 text-center">
                           {renderStatusBadge(g.status_kehadiran)}
                         </td>
 
-                        {/* 10. Tgl Registrasi */}
+                        {/* 8. Tanggal Registrasi */}
                         <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700">
                           {formatRegDate(g.created_at).date}
                         </td>
 
-                        {/* 11. Aksi */}
+                        {/* 9. Aksi */}
                         <td className="py-2.5 px-3 text-center">
                           <div className="flex items-center justify-center gap-1">
                             {/* Lihat Detail */}

@@ -61,7 +61,7 @@ export default async function HomePage() {
           </div>
 
           {/* Primary Action Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
             <Link
               href="/register"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 text-base font-bold bg-primary text-white hover:bg-primary-hover px-7 py-3.5 min-h-[50px] rounded-xl shadow-card hover:shadow-card-hover transition-all"
