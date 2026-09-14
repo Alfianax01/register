@@ -425,9 +425,6 @@ class MySQLAdapter {
         // Seed default admins in MySQL if not exists or update password hashes
         try {
           const salt = bcrypt.genSaltSync(10);
-          const superPw = process.env.ADMIN_SUPERADMIN_PASSWORD || 'Cilangkap-Perisai-Utama-2026!';
-          const gatePw = process.env.ADMIN_GATE_PASSWORD || 'Hankam-Gerbang-Barat-2026#';
-          const wismaPw = process.env.ADMIN_WISMA_PASSWORD || 'Kartika-Pondok-Aman-2026$';
           const superPw = process.env.ADMIN_SUPERADMIN_PASSWORD || 'admin123';
           const gatePw = process.env.ADMIN_GATE_PASSWORD || 'panitiagate123';
           const wismaPw = process.env.ADMIN_WISMA_PASSWORD || 'panitiawisma123';

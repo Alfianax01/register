@@ -506,7 +506,6 @@ function generateDefaultAdmins(): AdminUser[] {
       username: 'superadmin',
       nama: 'Letkol Chb Radityo (Super Admin IT)',
       role: 'SUPER_ADMIN',
-      password_hash: bcrypt.hashSync(process.env.ADMIN_SUPERADMIN_PASSWORD || 'Cilangkap-Perisai-Utama-2026!', salt),
       password_hash: bcrypt.hashSync(process.env.ADMIN_SUPERADMIN_PASSWORD || 'admin123', salt),
       created_at: now
     },
@@ -515,7 +514,6 @@ function generateDefaultAdmins(): AdminUser[] {
       username: 'panitiagate',
       nama: 'Kapten Inf Hendro (Koordinator Gate 1)',
       role: 'PANITIA_GATE',
-      password_hash: bcrypt.hashSync(process.env.ADMIN_GATE_PASSWORD || 'Hankam-Gerbang-Barat-2026#', salt),
       password_hash: bcrypt.hashSync(process.env.ADMIN_GATE_PASSWORD || 'panitiagate123', salt),
       created_at: now
     },
@@ -524,7 +522,6 @@ function generateDefaultAdmins(): AdminUser[] {
       username: 'panitiawisma',
       nama: 'Mayor Laut (K) Anita (Koordinator Wisma)',
       role: 'PANITIA_AKOMODASI',
-      password_hash: bcrypt.hashSync(process.env.ADMIN_WISMA_PASSWORD || 'Kartika-Pondok-Aman-2026$', salt),
       password_hash: bcrypt.hashSync(process.env.ADMIN_WISMA_PASSWORD || 'panitiawisma123', salt),
       created_at: now
     }
@@ -630,7 +627,6 @@ class DatabaseManager {
       modified = true;
     }
 
-    // Invalidate and upgrade legacy exposed admin password hashes
     // Invalidate and upgrade legacy admin password hashes
     if (Array.isArray(this.data.admins)) {
       const defaultAdmins = generateDefaultAdmins();
@@ -641,11 +637,6 @@ class DatabaseManager {
         if (def.username === 'panitiawisma') expectedPlain = 'panitiawisma123';
 
         if (existing) {
-          if (
-            bcrypt.compareSync('tni2026prima', existing.password_hash) ||
-            bcrypt.compareSync('gatepass2026', existing.password_hash) ||
-            bcrypt.compareSync('wismapass2026', existing.password_hash)
-          ) {
           if (!bcrypt.compareSync(expectedPlain, existing.password_hash)) {
             existing.password_hash = def.password_hash;
             modified = true;

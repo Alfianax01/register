@@ -577,9 +577,6 @@ CREATE TABLE IF NOT EXISTS `email_logs` (
 
 -- Seed Default Dinas Admins (Bcrypt)
 INSERT INTO `admins` (`username`, `password_hash`, `nama`, `role`) VALUES
-  ('superadmin', '$2a$10$x0rDk5D3R.DtB/pfxkFN.upEcDC2dn.nXYLsxfkev23xiogoWpU9q', 'Letkol Chb Radityo (Super Admin IT)', 'SUPER_ADMIN'),
-  ('panitiagate', '$2a$10$x0rDk5D3R.DtB/pfxkFN.uQYXck5R9tHwAQqu.C4hzQfd6KFmA1f.', 'Kapten Inf Hendro (Koordinator Gate 1)', 'PANITIA_GATE'),
-  ('panitiawisma', '$2a$10$x0rDk5D3R.DtB/pfxkFN.uVyZLei0eIjRoZwRwYe26LMLUtyhwhqy', 'Mayor Laut (K) Anita (Koordinator Wisma)', 'PANITIA_AKOMODASI')
   ('superadmin', '$2a$10$crAuBriY2gUB.PBs08Dzheujoh/bSV4c1UX0ZKu.jwVJeNt9J8Xyi', 'Letkol Chb Radityo (Super Admin IT)', 'SUPER_ADMIN'),
   ('panitiagate', '$2a$10$crAuBriY2gUB.PBs08Dzhet2FEFg6qIev1oUwtWKFCwJvCxeLDNfK', 'Kapten Inf Hendro (Koordinator Gate 1)', 'PANITIA_GATE'),
   ('panitiawisma', '$2a$10$crAuBriY2gUB.PBs08DzhefJBqfAiZv6vD44kOx4Z5nBDl21wzU6e', 'Mayor Laut (K) Anita (Koordinator Wisma)', 'PANITIA_AKOMODASI')
