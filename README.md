@@ -71,6 +71,11 @@ register/
 
 | Role | Username | Password | Hak Akses |
 Kredensial dinas panitia diatur melalui *Environment Variables* atau dikonfigurasi saat inisialisasi database secara aman (password ter-hash dengan algoritma bcrypt + salt):
+| Role | Username | Password | Variabel Environment | Hak Akses |
+|---|---|---|---|---|
+| **Super Admin** | `superadmin` | `admin123` | `ADMIN_SUPERADMIN_PASSWORD` | Akses penuh ke seluruh modul sistem |
+| **Panitia Gate** | `panitiagate` | `panitiagate123` | `ADMIN_GATE_PASSWORD` | Scanner Check-In & Pencarian Tamu |
+| **Panitia Akomodasi** | `panitiawisma` | `panitiawisma123` | `ADMIN_WISMA_PASSWORD` | Penempatan Kamar Wisma Penginapan |
 
 | Role | Username | Variabel Environment | Hak Akses |
 |---|---|---|---|

@@ -428,6 +428,9 @@ class MySQLAdapter {
           const superPw = process.env.ADMIN_SUPERADMIN_PASSWORD || 'Cilangkap-Perisai-Utama-2026!';
           const gatePw = process.env.ADMIN_GATE_PASSWORD || 'Hankam-Gerbang-Barat-2026#';
           const wismaPw = process.env.ADMIN_WISMA_PASSWORD || 'Kartika-Pondok-Aman-2026$';
+          const superPw = process.env.ADMIN_SUPERADMIN_PASSWORD || 'admin123';
+          const gatePw = process.env.ADMIN_GATE_PASSWORD || 'panitiagate123';
+          const wismaPw = process.env.ADMIN_WISMA_PASSWORD || 'panitiawisma123';
 
           const defaultAdmins = [
             { username: 'superadmin', nama: 'Letkol Chb Radityo (Super Admin IT)', role: 'SUPER_ADMIN', hash: bcrypt.hashSync(superPw, salt) },
