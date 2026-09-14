@@ -251,8 +251,8 @@
       "qr_token": "00f6b6e0-dcf4-44e2-b71a-ac00ceb0302e",
       "token": "00f6b6e0-dcf4-44e2-b71a-ac00ceb0302e",
       "token_hash": "",
-      "seat_number": "C-22",
-      "seat_assignment": "C-22",
+      "seat_number": "C-23",
+      "seat_assignment": "C-23",
       "seat_block": "C",
       "building": "Gedung Ahmad Yani",
       "room": "Ruang Sidang Utama",
@@ -7435,7 +7435,13 @@
       "seat_number": "C-22",
       "row_num": 3,
       "col_num": 6,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "103",
+      "peserta_id": "103",
+      "guest_name": "Budi Hartono, M.Tr.Han.",
+      "guest_rank": "Letnan Kolonel (AL)",
+      "guest_matra": "AL",
+      "status": "ASSIGNED"
     },
     {
       "id": "seat_c_23",
@@ -7444,7 +7450,13 @@
       "seat_number": "C-23",
       "row_num": 3,
       "col_num": 7,
-      "is_reserved": 0
+      "is_reserved": 0,
+      "guest_id": "108",
+      "peserta_id": "108",
+      "guest_name": "Mayor Laut Hendro AL Test",
+      "guest_rank": "Mayor (AL)",
+      "guest_matra": "AL",
+      "status": "ASSIGNED"
     },
     {
       "id": "seat_c_24",

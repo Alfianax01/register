@@ -648,6 +648,25 @@ class DatabaseManager {
       }
     }
 
+    // Otomatis deduplikasi kursi ganda jika ditemukan saat inisialisasi data
+    if (Array.isArray(this.data.guests)) {
+      const seenSeats = new Set<string>();
+      for (const g of this.data.guests) {
+        if (g.seat_number && g.seat_number.trim() !== '') {
+          const s = g.seat_number.trim();
+          if (seenSeats.has(s)) {
+            console.log(`[DATABASE] Mendeteksi duplikasi nomor kursi ${s} untuk ${g.nama}, membersihkan nomor kursi bentrok.`);
+            g.seat_number = undefined;
+            g.seat_assignment = undefined;
+            g.seat_group_id = undefined;
+            modified = true;
+          } else {
+            seenSeats.add(s);
+          }
+        }
+      }
+    }
+
     if (modified) {
       console.log('[DATABASE] Migrasi database dan kredensial admin selesai.');
       this.persist();
@@ -1576,16 +1595,28 @@ class DatabaseManager {
     }
 
     // If seat already occupied by someone else, clear their seat assignment
+    // STRICT COLLISION PREVENTION:
+    // Any other guest currently holding this seat_number in guests array must be cleared
+    for (const otherGuest of this.data!.guests) {
+      if (otherGuest.id !== guestId && otherGuest.registration_id !== guestId && otherGuest.seat_number === seatNumber) {
+        otherGuest.seat_group_id = undefined;
+        otherGuest.seat_number = undefined;
+        otherGuest.seat_assignment = undefined;
+      }
+    }
+
+    // If seat already occupied by someone else in seats array, clear their seat assignment
     if (seat.guest_id && seat.guest_id !== guestId) {
-      const prevGuest = this.data!.guests.find(g => g.id === seat.guest_id);
+      const prevGuest = this.data!.guests.find(g => g.id === seat.guest_id || g.registration_id === seat.guest_id);
       if (prevGuest) {
         prevGuest.seat_group_id = undefined;
         prevGuest.seat_number = undefined;
+        prevGuest.seat_assignment = undefined;
       }
     }
 
     if (guestId) {
-      const guest = this.data!.guests.find(g => g.id === guestId);
+      const guest = this.data!.guests.find(g => g.id === guestId || g.registration_id === guestId);
       if (!guest) return { success: false, message: 'Data tamu tidak ditemukan' };
 
       const katInstansi = guest.kategori_instansi || getInstansiCategory(guest.matra || guest.satker);
@@ -1633,33 +1664,34 @@ class DatabaseManager {
   // AUTO ASSIGN SEATS
   public autoAssignSeats(): { assignedCount: number } {
     this.ensureInitialized();
+    // Only unseated guests who do not have a seat_number
     const unseatedGuests = this.data!.guests
-      .filter(g => !g.seat_number)
+      .filter(g => !g.seat_number || g.seat_number.trim() === '')
       .sort((a, b) => (a.pangkat_level || 99) - (b.pangkat_level || 99));
 
     let count = 0;
     for (const g of unseatedGuests) {
-      // Find suitable group by level
-      let targetCode = 'F';
-      if (g.pangkat_level === 1) targetCode = 'A';
-      else if (g.pangkat_level <= 3) targetCode = 'B';
-      else if (g.pangkat_level === 4) targetCode = 'C';
-      else if (g.pangkat_level === 5) targetCode = 'D';
-      else if (g.pangkat_level <= 7) targetCode = 'E';
-
-      // Find first empty seat in target group, or any empty seat
-      let emptySeat = this.data!.seats.find(s => s.group_code === targetCode && !s.guest_id && !s.is_reserved);
-      if (!emptySeat) {
-        emptySeat = this.data!.seats.find(s => !s.guest_id && !s.is_reserved);
-      }
-
-      if (emptySeat) {
-        this.assignSeat(emptySeat.seat_number, g.id);
+      const alloc = AssignmentService.allocateSeat(g);
+      if (alloc && alloc.seatNumber) {
+        this.assignSeat(alloc.seatNumber, g.id);
         count++;
       }
     }
 
     return { assignedCount: count };
+  }
+
+  // AUDIT & DEDUPLICATION SEATS
+  public auditSeats() {
+    this.ensureInitialized();
+    return AssignmentService.auditSeating();
+  }
+
+  public deduplicateSeats() {
+    this.ensureInitialized();
+    const res = AssignmentService.deduplicateSeats();
+    this.persist();
+    return res;
   }
 
   // ACCOMMODATION

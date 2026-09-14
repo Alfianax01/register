@@ -101,6 +101,7 @@ export class AssignmentService {
    * Allocate Seat automatically on Registration:
    * Finds next available seat in the target block (A, B, C, D, or E)
    * Numbers sequentially: A-01, A-02, ... B-01, B-02, ...
+   * Enforces 1-to-1 strict uniqueness: NO duplicate seats allowed!
    */
   public static allocateSeat(guest: Partial<Guest>): {
     seatNumber: string;
@@ -113,18 +114,41 @@ export class AssignmentService {
     const building = 'Gedung Ahmad Yani';
     const room = this.getSeatRoom(seatBlock);
 
-    // If guest already has a valid seat in the matching block, retain it
+    const seats = db.getSeats();
+    const guests = db.getGuests();
+
+    // Check if guest already has a valid seat that is NOT occupied by someone else
     if (guest.seat_number && guest.seat_number.startsWith(`${seatBlock}-`)) {
-      return {
-        seatNumber: guest.seat_number,
-        seatBlock,
-        building,
-        room,
-        seatGroupId: guest.seat_group_id
-      };
+      const currentSeatNum = guest.seat_number;
+      const isOccupiedByOther = guests.some(
+        g => g.id !== guest.id && g.registration_id !== guest.registration_id && g.seat_number === currentSeatNum
+      ) || seats.some(
+        s => s.seat_number === currentSeatNum && s.guest_id && s.guest_id !== guest.id && s.guest_id !== guest.registration_id
+      );
+
+      if (!isOccupiedByOther) {
+        return {
+          seatNumber: currentSeatNum,
+          seatBlock,
+          building,
+          room,
+          seatGroupId: guest.seat_group_id || `grp_${seatBlock.toLowerCase()}`
+        };
+      }
     }
 
-    const seats = db.getSeats();
+    // Collect all occupied seat numbers across seats and guests (excluding current guest)
+    const occupiedSet = new Set<string>();
+    for (const s of seats) {
+      if ((s.guest_id || s.peserta_id) && s.guest_id !== guest.id && s.guest_id !== guest.registration_id) {
+        occupiedSet.add(s.seat_number.trim());
+      }
+    }
+    for (const g of guests) {
+      if (g.seat_number && g.id !== guest.id && g.registration_id !== guest.registration_id) {
+        occupiedSet.add(g.seat_number.trim());
+      }
+    }
 
     // Look for first unoccupied, unreserved seat in the target block
     const availableSeat = seats.find(
@@ -133,6 +157,7 @@ export class AssignmentService {
            !s.peserta_id &&
            !s.is_reserved &&
            s.status !== 'ASSIGNED' &&
+           !occupiedSet.has(s.seat_number) &&
            s.status !== 'CHECK_IN'
     );
 
@@ -146,30 +171,31 @@ export class AssignmentService {
       };
     }
 
-    // If all existing configured seats are occupied, generate next sequential number
-    const blockSeats = seats.filter(s => s.seat_number.startsWith(`${seatBlock}-`));
-    let maxNum = 0;
-    for (const s of blockSeats) {
-      const parts = s.seat_number.split('-');
-      const n = parseInt(parts[1], 10);
-      if (!isNaN(n) && n > maxNum) maxNum = n;
+    // Fallback if configured block seats are full: find any empty seat across other blocks
+    const fallbackAnySeat = seats.find(
+      s => !s.guest_id && !s.peserta_id && !s.is_reserved && !occupiedSet.has(s.seat_number) && s.status !== 'CHECK_IN'
+    );
+    if (fallbackAnySeat) {
+      const fbBlock = (fallbackAnySeat.group_code || fallbackAnySeat.seat_number.split('-')[0] || seatBlock) as any;
+      return {
+        seatNumber: fallbackAnySeat.seat_number,
+        seatBlock: fbBlock,
+        building,
+        room: this.getSeatRoom(fbBlock),
+        seatGroupId: fallbackAnySeat.group_id
+      };
     }
 
-    // Also check guests already in DB for that block
-    const guests = db.getGuests();
-    for (const g of guests) {
-      if (g.seat_number && g.seat_number.startsWith(`${seatBlock}-`)) {
-        const parts = g.seat_number.split('-');
-        const n = parseInt(parts[1], 10);
-        if (!isNaN(n) && n > maxNum) maxNum = n;
-      }
+    // If all configured seats are occupied, generate next sequential number strictly not in occupiedSet
+    let candidateNum = 1;
+    let candidateSeat = `${seatBlock}-${String(candidateNum).padStart(2, '0')}`;
+    while (occupiedSet.has(candidateSeat)) {
+      candidateNum++;
+      candidateSeat = `${seatBlock}-${String(candidateNum).padStart(2, '0')}`;
     }
-
-    const nextNum = maxNum + 1;
-    const seatNumber = `${seatBlock}-${String(nextNum).padStart(2, '0')}`;
 
     return {
-      seatNumber,
+      seatNumber: candidateSeat,
       seatBlock,
       building,
       room,
@@ -439,5 +465,140 @@ export class AssignmentService {
       }
     }
     return { updatedCount: count };
+  }
+
+  /**
+   * Comprehensive Audit of Seating Allocation
+   */
+  public static auditSeating(): {
+    totalSeats: number;
+    occupiedSeats: number;
+    emptySeats: number;
+    hasDuplicates: boolean;
+    duplicateSeats: Array<{
+      seatNumber: string;
+      count: number;
+      guests: Array<{
+        id: string;
+        registration_id?: string;
+        nama: string;
+        pangkat?: string;
+        matra?: string;
+        nrp?: string;
+        status_kehadiran?: string;
+      }>;
+    }>;
+    unseatedGuests: Array<{
+      id: string;
+      registration_id?: string;
+      nama: string;
+      pangkat?: string;
+      matra?: string;
+      nrp?: string;
+      status_kehadiran?: string;
+    }>;
+  } {
+    const seats = db.getSeats();
+    const guests = db.getGuests();
+
+    const seatToGuests = new Map<string, any[]>();
+    const unseated: any[] = [];
+
+    for (const g of guests) {
+      if (!g.seat_number || g.seat_number.trim() === '') {
+        unseated.push({
+          id: g.id,
+          registration_id: g.registration_id,
+          nama: g.nama,
+          pangkat: g.pangkat,
+          matra: g.matra,
+          nrp: g.nrp,
+          status_kehadiran: g.status_kehadiran
+        });
+      } else {
+        const s = g.seat_number.trim();
+        if (!seatToGuests.has(s)) seatToGuests.set(s, []);
+        seatToGuests.get(s)!.push({
+          id: g.id,
+          registration_id: g.registration_id,
+          nama: g.nama,
+          pangkat: g.pangkat,
+          matra: g.matra,
+          nrp: g.nrp,
+          status_kehadiran: g.status_kehadiran
+        });
+      }
+    }
+
+    const duplicateSeats: Array<{ seatNumber: string; count: number; guests: any[] }> = [];
+    seatToGuests.forEach((list, seatNum) => {
+      if (list.length > 1) {
+        duplicateSeats.push({
+          seatNumber: seatNum,
+          count: list.length,
+          guests: list
+        });
+      }
+    });
+
+    const occupiedSeatsCount = seatToGuests.size;
+    const totalSeatsCount = Math.max(seats.length, occupiedSeatsCount);
+    const emptySeatsCount = Math.max(0, seats.filter(s => !s.guest_id && !s.peserta_id && !seatToGuests.has(s.seat_number)).length);
+
+    return {
+      totalSeats: totalSeatsCount,
+      occupiedSeats: occupiedSeatsCount,
+      emptySeats: emptySeatsCount,
+      hasDuplicates: duplicateSeats.length > 0,
+      duplicateSeats,
+      unseatedGuests: unseated
+    };
+  }
+
+  /**
+   * Automatic Deduplication: Resolves all conflicting seats
+   */
+  public static deduplicateSeats(): {
+    resolvedCount: number;
+    details: Array<{ guestId: string; guestName: string; oldSeat: string; newSeat: string }>;
+  } {
+    const audit = this.auditSeating();
+    const details: Array<{ guestId: string; guestName: string; oldSeat: string; newSeat: string }> = [];
+
+    for (const dup of audit.duplicateSeats) {
+      // Sort conflicting guests: keep the one who checked in first, or has higher rank / earlier ID
+      const sorted = [...dup.guests].sort((a, b) => {
+        if (a.status_kehadiran === 'CHECK_IN' && b.status_kehadiran !== 'CHECK_IN') return -1;
+        if (b.status_kehadiran === 'CHECK_IN' && a.status_kehadiran !== 'CHECK_IN') return 1;
+        return (Number(a.id) || 999999) - (Number(b.id) || 999999);
+      });
+
+      // Keep index 0 with current seat. Re-allocate remaining guests (index 1..n)
+      for (let i = 1; i < sorted.length; i++) {
+        const guestToMove = sorted[i];
+        const fullGuest = db.findGuestById(guestToMove.id);
+        if (!fullGuest) continue;
+
+        // Temporarily clear seat so allocateSeat finds a fresh vacant seat
+        fullGuest.seat_number = undefined;
+        fullGuest.seat_assignment = undefined;
+        fullGuest.seat_block = undefined;
+
+        const newAlloc = this.allocateSeat(fullGuest);
+        db.assignSeat(newAlloc.seatNumber, fullGuest.id);
+
+        details.push({
+          guestId: fullGuest.id,
+          guestName: fullGuest.nama,
+          oldSeat: dup.seatNumber,
+          newSeat: newAlloc.seatNumber
+        });
+      }
+    }
+
+    return {
+      resolvedCount: details.length,
+      details
+    };
   }
 }

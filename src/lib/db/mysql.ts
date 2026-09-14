@@ -316,7 +316,6 @@ class MySQLAdapter {
             \`row_num\` INT DEFAULT 1,
             \`col_num\` INT DEFAULT 1,
             \`status\` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
-            \`guest_id\` INT(11) DEFAULT NULL,
             \`is_reserved\` TINYINT(1) NOT NULL DEFAULT 0,
             \`guest_id\` VARCHAR(100) DEFAULT NULL,
             \`guest_name\` VARCHAR(255) DEFAULT NULL,
@@ -331,7 +330,6 @@ class MySQLAdapter {
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
 
-        // 4. Tabel Akomodasi
         // 4. Tabel Akomodasi Wisma
         await connection.query(`
           CREATE TABLE IF NOT EXISTS \`accommodations\` (
@@ -342,7 +340,6 @@ class MySQLAdapter {
             \`capacity\` INT DEFAULT 2,
             \`notes\` VARCHAR(255) DEFAULT NULL,
             \`status\` VARCHAR(50) NOT NULL DEFAULT 'KOSONG',
-            \`guest_id\` INT(11) DEFAULT NULL,
             \`guest_id\` VARCHAR(100) DEFAULT NULL,
             \`guest_name\` VARCHAR(255) DEFAULT NULL,
             \`slot_a_guest_id\` VARCHAR(100) DEFAULT NULL,
@@ -1444,22 +1441,185 @@ class MySQLAdapter {
       const seats = await this.getAllSeats();
       const [guests]: any = await pool.execute('SELECT * FROM `guests` WHERE `seat_number` IS NULL OR `seat_number` = ""');
       
+      // Kumpulkan kursi yang sudah terpakai
+      const occupiedSet = new Set<string>();
+      seats.forEach(s => { if (s.guest_id) occupiedSet.add(s.seat_number.trim()); });
+      const [allOccRows]: any = await pool.execute('SELECT `seat_number` FROM `guests` WHERE `seat_number` IS NOT NULL AND `seat_number` != ""');
+      (allOccRows || []).forEach((r: any) => { if (r.seat_number) occupiedSet.add(r.seat_number.trim()); });
+
       let count = 0;
       for (const g of (guests || [])) {
-        // Cari kursi kosong
-        const emptySeat = seats.find(s => !s.guest_id && !s.is_reserved && s.status === 'KOSONG');
-        if (emptySeat) {
-          await this.assignSeat(emptySeat.seat_number, String(g.id));
-          emptySeat.guest_id = String(g.id);
-          emptySeat.status = 'ASSIGNED';
-          count++;
+        const matra = String(g.matra || '').toUpperCase();
+        const block = (matra === 'AD' ? 'B' : matra === 'AL' ? 'C' : matra === 'AU' ? 'D' : 'E') as string;
+
+        // Cari kursi di blok yang sesuai dan belum ada di occupiedSet
+        let emptySeat = seats.find(s => (s.seat_number.startsWith(`${block}-`) || s.group_code === block) && !s.is_reserved && !occupiedSet.has(s.seat_number));
+        if (!emptySeat) {
+          emptySeat = seats.find(s => !s.is_reserved && !occupiedSet.has(s.seat_number));
         }
+
+        let chosenSeatNumber = emptySeat?.seat_number;
+        if (!chosenSeatNumber) {
+          let candidateNum = 1;
+          let candidateSeat = `${block}-${String(candidateNum).padStart(2, '0')}`;
+          while (occupiedSet.has(candidateSeat)) {
+            candidateNum++;
+            candidateSeat = `${block}-${String(candidateNum).padStart(2, '0')}`;
+          }
+          chosenSeatNumber = candidateSeat;
+        }
+
+        occupiedSet.add(chosenSeatNumber);
+        await this.assignSeat(chosenSeatNumber, String(g.id));
+        count++;
       }
       return { assignedCount: count };
     } catch (err) {
       console.error('[MySQL] Gagal autoAssignSeats:', err);
       return { assignedCount: 0 };
     }
+  }
+
+  public async auditSeats(): Promise<{
+    totalSeats: number;
+    occupiedSeats: number;
+    emptySeats: number;
+    hasDuplicates: boolean;
+    duplicateSeats: Array<{
+      seatNumber: string;
+      count: number;
+      guests: any[];
+    }>;
+    unseatedGuests: any[];
+  }> {
+    const pool = this.getPool();
+    if (!pool) {
+      return {
+        totalSeats: 0,
+        occupiedSeats: 0,
+        emptySeats: 0,
+        hasDuplicates: false,
+        duplicateSeats: [],
+        unseatedGuests: []
+      };
+    }
+    await this.initSchema();
+
+    try {
+      const seats = await this.getAllSeats();
+      const allGuests = await this.getAllGuests();
+
+      const seatToGuests = new Map<string, any[]>();
+      const unseated: any[] = [];
+
+      for (const g of allGuests) {
+        if (!g.seat_number || g.seat_number.trim() === '') {
+          unseated.push({
+            id: g.id,
+            registration_id: g.registration_id,
+            nama: g.nama,
+            pangkat: g.pangkat,
+            matra: g.matra,
+            nrp: g.nrp,
+            status_kehadiran: g.status_kehadiran
+          });
+        } else {
+          const s = g.seat_number.trim();
+          if (!seatToGuests.has(s)) seatToGuests.set(s, []);
+          seatToGuests.get(s)!.push({
+            id: g.id,
+            registration_id: g.registration_id,
+            nama: g.nama,
+            pangkat: g.pangkat,
+            matra: g.matra,
+            nrp: g.nrp,
+            status_kehadiran: g.status_kehadiran
+          });
+        }
+      }
+
+      const duplicateSeats: Array<{ seatNumber: string; count: number; guests: any[] }> = [];
+      seatToGuests.forEach((list, seatNum) => {
+        if (list.length > 1) {
+          duplicateSeats.push({
+            seatNumber: seatNum,
+            count: list.length,
+            guests: list
+          });
+        }
+      });
+
+      const occupiedSeatsCount = seatToGuests.size;
+      const totalSeatsCount = Math.max(seats.length, occupiedSeatsCount);
+      const emptySeatsCount = Math.max(0, seats.filter(s => !s.guest_id && !seatToGuests.has(s.seat_number)).length);
+
+      return {
+        totalSeats: totalSeatsCount,
+        occupiedSeats: occupiedSeatsCount,
+        emptySeats: emptySeatsCount,
+        hasDuplicates: duplicateSeats.length > 0,
+        duplicateSeats,
+        unseatedGuests: unseated
+      };
+    } catch (err) {
+      console.error('[MySQL] Gagal auditSeats:', err);
+      return {
+        totalSeats: 0,
+        occupiedSeats: 0,
+        emptySeats: 0,
+        hasDuplicates: false,
+        duplicateSeats: [],
+        unseatedGuests: []
+      };
+    }
+  }
+
+  public async deduplicateSeats(): Promise<{
+    resolvedCount: number;
+    details: Array<{ guestId: string; guestName: string; oldSeat: string; newSeat: string }>;
+  }> {
+    const audit = await this.auditSeats();
+    const details: Array<{ guestId: string; guestName: string; oldSeat: string; newSeat: string }> = [];
+
+    for (const dup of audit.duplicateSeats) {
+      const sorted = [...dup.guests].sort((a, b) => {
+        if (a.status_kehadiran === 'CHECK_IN' && b.status_kehadiran !== 'CHECK_IN') return -1;
+        if (b.status_kehadiran === 'CHECK_IN' && a.status_kehadiran !== 'CHECK_IN') return 1;
+        return (Number(a.id) || 999999) - (Number(b.id) || 999999);
+      });
+
+      for (let i = 1; i < sorted.length; i++) {
+        const guestToMove = sorted[i];
+        const g = await this.getGuestById(guestToMove.id);
+        if (!g) continue;
+
+        const matra = String(g.matra || '').toUpperCase();
+        const block = (matra === 'AD' ? 'B' : matra === 'AL' ? 'C' : matra === 'AU' ? 'D' : 'E') as any;
+
+        const allSeats = await this.getAllSeats();
+        const allG = await this.getAllGuests();
+        const occupied = new Set<string>();
+        allSeats.forEach(s => { if (s.guest_id) occupied.add(s.seat_number.trim()); });
+        allG.forEach(item => { if (item.seat_number && item.id !== g.id) occupied.add(item.seat_number.trim()); });
+
+        let candidateNum = 1;
+        let newSeatNum = `${block}-${String(candidateNum).padStart(2, '0')}`;
+        while (occupied.has(newSeatNum)) {
+          candidateNum++;
+          newSeatNum = `${block}-${String(candidateNum).padStart(2, '0')}`;
+        }
+
+        await this.assignSeat(newSeatNum, g.id);
+        details.push({
+          guestId: g.id,
+          guestName: g.nama,
+          oldSeat: dup.seatNumber,
+          newSeat: newSeatNum
+        });
+      }
+    }
+
+    return { resolvedCount: details.length, details };
   }
 
   public async getCheckinLogs(limit: number = 50): Promise<CheckinLog[]> {
