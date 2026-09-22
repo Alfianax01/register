@@ -1,0 +1,17 @@
+# ========================================================
+# PENGATURAN APACHE / LITESPEED UNTUK PORTAL RAPIM TNI 2026
+# ========================================================
+
+DirectoryIndex index.php index.html
+
+# Lindungi file sensitif agar tidak bisa diunduh langsung dari browser
+<FilesMatch "^(database\.sql|config\.php|\.env)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Matikan directory listing (mencegah muncul Index of /)
+Options -Indexes
+
+# Set karakter default UTF-8
+AddDefaultCharset UTF-8
