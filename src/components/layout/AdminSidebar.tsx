@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -13,8 +13,13 @@ import {
   ExternalLink,
   Shield,
   X,
-  ClipboardCheck,
-  Settings
+  Settings,
+  ChevronDown,
+  UserCheck,
+  FileSpreadsheet,
+  FileText,
+  SlidersHorizontal,
+  Layers
 } from 'lucide-react';
 import { useAdmin } from './AdminContext';
 
@@ -23,6 +28,20 @@ interface AdminSidebarProps {
   onLogout?: () => void;
   isOpen?: boolean;
   onClose?: () => void;
+}
+
+interface SubMenuItem {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  isExternal?: boolean;
+}
+
+interface MenuGroup {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  items: SubMenuItem[];
 }
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({
@@ -37,79 +56,117 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const isOpen = propIsOpen !== undefined ? propIsOpen : adminCtx?.isDrawerOpen ?? false;
   const handleClose = propOnClose || adminCtx?.closeDrawer || (() => {});
   const effectiveRole = userRole || adminCtx?.currentUser?.role;
-  const [imgError, setImgError] = React.useState(false);
-  const logoUrl = adminCtx?.siteSettings?.navbar_logo || adminCtx?.siteSettings?.hero_logo;
+  const [imgError, setImgError] = useState(false);
 
-  React.useEffect(() => {
+  // Logo & Titles from Site Settings
+  const logoUrl =
+    adminCtx?.siteSettings?.logo_sidebar ||
+    adminCtx?.siteSettings?.navbar_logo ||
+    adminCtx?.siteSettings?.hero_logo ||
+    '/images/logo-tni-rapim.png';
+
+  const namaSistem = adminCtx?.siteSettings?.nama_sistem || 'PORTAL RAPIM TNI 2026';
+  const sidebarColor = adminCtx?.siteSettings?.sidebar_color || '#6B0000';
+
+  useEffect(() => {
     setImgError(false);
   }, [logoUrl]);
 
-  const menuItems = [
+  // Accordion open states
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    peserta: true,
+    auth: pathname.startsWith('/admin/users') || pathname.startsWith('/admin/roles'),
+    laporan: false
+  });
+
+  // Keep accordion group open when navigating to child pages
+  useEffect(() => {
+    if (
+      pathname.startsWith('/admin/guests') ||
+      pathname.startsWith('/admin/allocation') ||
+      pathname.startsWith('/admin/scanner') ||
+      pathname.startsWith('/admin/monitoring')
+    ) {
+      setOpenGroups(prev => ({ ...prev, peserta: true }));
+    }
+    if (pathname.startsWith('/admin/users') || pathname.startsWith('/admin/roles')) {
+      setOpenGroups(prev => ({ ...prev, auth: true }));
+    }
+  }, [pathname]);
+
+  const toggleGroup = (groupId: string) => {
+    setOpenGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }));
+  };
+
+  const menuGroups: MenuGroup[] = [
     {
-      href: '/admin/dashboard',
-      label: 'Dashboard Utama',
-      icon: LayoutDashboard,
-      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin', 'PANITIA_GATE', 'PANITIA_AKOMODASI']
-    },
-    {
-      href: '/admin/guests',
-      label: 'Data Peserta',
+      id: 'peserta',
+      label: 'Manajemen Peserta',
       icon: Users,
-      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
+      items: [
+        { href: '/admin/guests', label: 'Data Peserta', icon: Users },
+        { href: '/admin/allocation', label: 'Penempatan Kursi & Wisma', icon: Armchair },
+        { href: '/admin/scanner', label: 'Scan QR Gate', icon: QrCode },
+        { href: '/admin/monitoring', label: 'Monitoring Presensi', icon: BarChart3 }
+      ]
     },
     {
-      href: '/admin/allocation',
-      label: 'Penempatan Kursi & Wisma',
-      icon: Armchair,
-      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin', 'PANITIA_AKOMODASI']
+      id: 'auth',
+      label: 'User Authorization',
+      icon: Shield,
+      items: [
+        { href: '/admin/roles', label: 'User Group / Peran', icon: Layers },
+        { href: '/admin/users', label: 'Daftar Pengguna', icon: UserCheck }
+      ]
     },
     {
-      href: '/admin/scanner',
-      label: 'Scan QR Gate',
-      icon: QrCode,
-      allowedRoles: ['SUPER_ADMIN', 'PANITIA_GATE', 'admin', 'superadmin']
-    },
-    {
-      href: '/admin/monitoring',
-      label: 'Monitoring Presensi',
-      icon: BarChart3,
-      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
-    },
-    {
-      href: '/admin/website',
-      label: 'Manajemen Website',
-      icon: Settings,
-      allowedRoles: ['SUPER_ADMIN', 'admin', 'superadmin']
+      id: 'laporan',
+      label: 'Laporan & Ekspor',
+      icon: FileText,
+      items: [
+        { href: '/api/export/pdf', label: 'Export Rekap PDF', icon: FileText, isExternal: true },
+        { href: '/api/export/excel', label: 'Export Rekap Excel', icon: FileSpreadsheet, isExternal: true }
+      ]
     }
   ];
 
+  const isLinkActive = (href: string) => {
+    if (href === '/admin/dashboard') {
+      return pathname === '/admin/dashboard' || pathname === '/admin';
+    }
+    return pathname === href || pathname.startsWith(href + '/');
+  };
+
   const renderSidebarContent = (isMobile: boolean) => (
-    <div className="flex flex-col h-full">
+    <div
+      className="flex flex-col h-full text-white select-none"
+      style={{ backgroundColor: sidebarColor }}
+    >
       {/* Brand Header */}
-      <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+      <div className="p-4 border-b border-white/10 flex items-center justify-between bg-black/15">
         <div className="flex items-center gap-3 min-w-0">
-          {logoUrl && !imgError ? (
+          {!imgError ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={logoUrl}
-              alt="Logo"
+              alt="Logo TNI"
               onError={() => setImgError(true)}
-              className="w-10 h-10 rounded-xl object-contain bg-white border border-slate-200 p-0.5 flex-shrink-0 select-none"
+              className="w-10 h-10 rounded-full object-contain bg-white/10 border border-[#D4AF37]/50 p-1 flex-shrink-0 shadow-sm"
             />
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-2xs flex-shrink-0">
-              <Shield className="w-5 h-5 stroke-[2.2]" />
+            <div className="w-10 h-10 rounded-full bg-[#8B0000] border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] flex-shrink-0 shadow-sm">
+              <Shield className="w-5 h-5" />
             </div>
           )}
           <div className="min-w-0">
-            <span className="text-sm font-bold text-slate-900 block leading-tight truncate">
-              Portal Panitia
+            <span className="text-[10px] font-extrabold text-[#D4AF37] tracking-widest uppercase block leading-none truncate">
+              PUSINFOLAHTA TNI
             </span>
             <span
-              className="text-xs text-slate-500 font-medium truncate block max-w-[170px]"
-              title={adminCtx?.siteSettings?.hero_title || 'RAPIM TNI 2026'}
+              className="text-xs font-bold text-white block truncate mt-1"
+              title={namaSistem}
             >
-              {adminCtx?.siteSettings?.hero_title || 'RAPIM TNI 2026'}
+              {namaSistem}
             </span>
           </div>
         </div>
@@ -118,7 +175,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           <button
             type="button"
             onClick={handleClose}
-            className="w-10 h-10 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-lg text-white/70 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
             aria-label="Tutup menu sidebar"
           >
             <X className="w-5 h-5" />
@@ -126,67 +183,181 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         )}
       </div>
 
-      {/* Navigation */}
-      <nav aria-label="Menu Admin" className="p-3 space-y-1.5 flex-1 overflow-y-auto">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-3 pt-2 pb-1.5 block">
-          Menu Operasional
-        </span>
+      {/* Navigation Links */}
+      <nav aria-label="Menu Admin" className="p-3 space-y-1.5 flex-1 overflow-y-auto custom-scrollbar">
+        {/* 1. Dashboard Utama (Direct Link) */}
+        <Link
+          href="/admin/dashboard"
+          onClick={() => {
+            if (isMobile) handleClose();
+          }}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all ${
+            isLinkActive('/admin/dashboard')
+              ? 'bg-[#B8860B] text-white shadow-md border-l-4 border-white'
+              : 'text-white/80 hover:bg-white/10 hover:text-white'
+          }`}
+        >
+          <LayoutDashboard className="w-4 h-4 text-[#D4AF37]" />
+          <span>Dashboard Utama</span>
+        </Link>
 
-        {menuItems.map(item => {
-          const Icon = item.icon;
-          const active =
-            item.href === '/admin'
-              ? pathname === '/admin' || pathname === '/admin/dashboard'
-              : pathname === item.href ||
-                (item.href === '/admin/guests' && pathname === '/admin/peserta') ||
-                (item.href === '/admin/allocation' && (pathname === '/admin/allocation' || pathname === '/admin/placement' || pathname === '/admin/kursi')) ||
-                (item.href === '/admin/monitoring' && pathname === '/admin/laporan');
-
-          const isAllowed = !effectiveRole || item.allowedRoles.includes(effectiveRole);
-          if (!isAllowed) return null;
+        {/* 2. Accordion Groups (Manajemen Peserta & User Authorization) */}
+        {menuGroups.slice(0, 2).map((group) => {
+          const GroupIcon = group.icon;
+          const isOpenState = !!openGroups[group.id];
+          const hasActiveChild = group.items.some(item => isLinkActive(item.href));
 
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => {
-                if (isMobile) handleClose();
-              }}
-              className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold min-h-[44px] transition-colors ${
-                active
-                  ? 'bg-blue-50 text-primary border border-blue-200/80 shadow-2xs'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-              }`}
-            >
-              <Icon className={`w-5 h-5 ${active ? 'text-primary' : 'text-slate-400'}`} />
-              <span>{item.label}</span>
-            </Link>
+            <div key={group.id} className="pt-1">
+              <button
+                type="button"
+                onClick={() => toggleGroup(group.id)}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-bold transition-colors ${
+                  hasActiveChild
+                    ? 'text-[#D4AF37] bg-black/20'
+                    : 'text-white/85 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <GroupIcon className="w-4 h-4 text-[#D4AF37]" />
+                  <span>{group.label}</span>
+                </div>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-white/60 transition-transform duration-200 ${
+                    isOpenState ? 'rotate-180 text-[#D4AF37]' : ''
+                  }`}
+                />
+              </button>
+
+              {isOpenState && (
+                <div className="mt-1 pl-4 pr-1 space-y-1 border-l-2 border-[#B8860B]/30 ml-3">
+                  {group.items.map((subItem) => {
+                    const SubIcon = subItem.icon;
+                    const active = isLinkActive(subItem.href);
+
+                    return (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        onClick={() => {
+                          if (isMobile) handleClose();
+                        }}
+                        className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-xs font-medium transition-all ${
+                          active
+                            ? 'bg-[#B8860B] text-white font-bold shadow-sm'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                        }`}
+                      >
+                        <SubIcon className={`w-3.5 h-3.5 ${active ? 'text-white' : 'text-[#D4AF37]/80'}`} />
+                        <span className="truncate">{subItem.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* 3. Pengaturan Website (Direct Link) */}
+        <div className="pt-1">
+          <Link
+            href="/admin/website"
+            onClick={() => {
+              if (isMobile) handleClose();
+            }}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all ${
+              isLinkActive('/admin/website')
+                ? 'bg-[#B8860B] text-white shadow-md border-l-4 border-white'
+                : 'text-white/80 hover:bg-white/10 hover:text-white'
+            }`}
+          >
+            <SlidersHorizontal className="w-4 h-4 text-[#D4AF37]" />
+            <span>Pengaturan Website</span>
+          </Link>
+        </div>
+
+        {/* 4. Laporan (Accordion) */}
+        {menuGroups.slice(2, 3).map((group) => {
+          const GroupIcon = group.icon;
+          const isOpenState = !!openGroups[group.id];
+
+          return (
+            <div key={group.id} className="pt-1">
+              <button
+                type="button"
+                onClick={() => toggleGroup(group.id)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-bold text-white/85 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <GroupIcon className="w-4 h-4 text-[#D4AF37]" />
+                  <span>{group.label}</span>
+                </div>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-white/60 transition-transform duration-200 ${
+                    isOpenState ? 'rotate-180 text-[#D4AF37]' : ''
+                  }`}
+                />
+              </button>
+
+              {isOpenState && (
+                <div className="mt-1 pl-4 pr-1 space-y-1 border-l-2 border-[#B8860B]/30 ml-3">
+                  {group.items.map((subItem) => {
+                    const SubIcon = subItem.icon;
+                    return (
+                      <a
+                        key={subItem.href}
+                        href={subItem.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-xs font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all"
+                      >
+                        <SubIcon className="w-3.5 h-3.5 text-[#D4AF37]/80" />
+                        <span className="truncate">{subItem.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
 
-      {/* Bottom Footer Actions */}
-      <div className="p-3 border-t border-slate-100 space-y-1.5">
+      {/* User Info & Footer Actions */}
+      <div className="p-3 border-t border-white/10 space-y-1.5 bg-black/20 text-xs">
+        {effectiveRole && (
+          <div className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 mb-1">
+            <span className="text-[10px] text-white/60 uppercase tracking-wider block">
+              Peran Aktif
+            </span>
+            <span className="font-bold text-[#D4AF37] truncate block">
+              {effectiveRole}
+            </span>
+          </div>
+        )}
+
         <Link
           href="/"
           target="_blank"
-          className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 min-h-[44px] transition-colors"
+          className="flex items-center justify-between px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors"
         >
-          <span className="flex items-center gap-2.5">
-            <ExternalLink className="w-4 h-4 text-slate-400" />
+          <span className="flex items-center gap-2">
+            <ExternalLink className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>Portal Publik</span>
           </span>
         </Link>
 
         {onLogout && (
           <button
+            type="button"
             onClick={() => {
               if (isMobile) handleClose();
               onLogout();
             }}
-            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 min-h-[44px] transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-200 hover:bg-red-500/20 hover:text-white transition-colors text-left"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3.5 h-3.5 text-red-400" />
             <span>Keluar Sistem</span>
           </button>
         )}
@@ -196,8 +367,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   return (
     <>
-      {/* Desktop Sidebar: Fixed 280px */}
-      <aside className="hidden lg:flex w-[280px] bg-white border-r border-slate-200 flex-col flex-shrink-0 fixed inset-y-0 left-0 h-screen z-40 overflow-y-auto">
+      {/* Desktop Sidebar: Fixed 260px */}
+      <aside className="hidden lg:flex w-[260px] flex-col flex-shrink-0 fixed inset-y-0 left-0 h-screen z-40 shadow-xl overflow-hidden border-r border-[#B8860B]/30">
         {renderSidebarContent(false)}
       </aside>
 
@@ -205,11 +376,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {isOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={handleClose}
             aria-hidden="true"
           />
-          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
+          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
             {renderSidebarContent(true)}
           </aside>
         </div>

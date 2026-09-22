@@ -8,9 +8,23 @@
   --primary: #1E40AF;
   --dark: #0F172A;
   --accent: #2563EB;
+  --bg-main: #F5F6F8;
+  --surface: #FFFFFF;
+  --primary: #8B0000;
+  --primary-dark: #6B0000;
+  --gold-accent: #B8860B;
+  --gold-light: #D4AF37;
+  --btn-action: #9B6A35;
+  --btn-action-hover: #7B532A;
+  --sidebar-bg: #6B0000;
+  --navbar-bg: #8B0000;
+  --dark: #1F2937;
+  --accent: #B8860B;
   --success: #16A34A;
   --neutral: #64748B;
   --border-color: #e2e8f0;
+  --neutral: #6B7280;
+  --border-color: #E5E7EB;
 }
 
 @layer base {
@@ -31,6 +45,8 @@
     font-family: 'IBM Plex Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 15px;
     line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -38,41 +54,67 @@
   }
 
   /* Strict Typography Scale */
+  /* Formal Government Typography Scale */
   h1, .text-h1 {
     font-size: clamp(32px, 4vw, 44px);
     line-height: 1.18;
     letter-spacing: -0.025em;
+    font-size: clamp(28px, 3.5vw, 38px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     font-weight: 700;
     color: var(--dark);
   }
 
   h2, .text-h2 {
     font-size: clamp(24px, 3vw, 32px);
+    font-size: clamp(22px, 2.5vw, 28px);
     line-height: 1.25;
     letter-spacing: -0.02em;
     font-weight: 600;
+    letter-spacing: -0.015em;
+    font-weight: 700;
     color: var(--dark);
   }
 
   h3, .text-h3 {
     font-size: 24px;
+    font-size: 20px;
     line-height: 1.3;
     letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
     font-weight: 600;
     color: var(--dark);
   }
 
   p, .text-body {
     font-size: 15px;
+    font-size: 14px;
     line-height: 1.6;
     color: #334155;
+    color: #374151;
   }
 
   .text-small {
     font-size: 13px;
+    font-size: 12px;
     line-height: 1.5;
     color: var(--neutral);
   }
+}
+
+/* Hexagon Military Pattern */
+.bg-military-hexagon {
+  background-color: #6B0000;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px),
+    radial-gradient(rgba(212, 175, 55, 0.1) 1px, #6B0000 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+.bg-pattern-hex {
+  background-color: #8B0000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hex-grid' fill='%23d4af37' fill-opacity='0.08'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l11 6.35 11-6.35V17.9l-11-6.35L3 17.9zM0 49l12.98-7.5v-15L0 19v30zm28 0V19l-12.98 7.5v15L28 49zM0 0v15l12.98-7.5L0 0zm28 0L15.02 7.5 28 15V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* Micro-transitions */

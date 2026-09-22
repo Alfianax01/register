@@ -9,12 +9,18 @@ import {
   Checkpoint,
   CheckinLog,
   AdminUser,
+  AdminRole,
   AuditLog,
   MatraType,
   Assignment,
   EmailLog,
-  EmailDeliveryStatus
+  EmailDeliveryStatus,
+  Role,
+  Permission,
+  PermissionCode,
+  UserAccount
 } from '@/types';
+import { DEFAULT_ROLES, ALL_PERMISSIONS } from '@/lib/security/roles';
 import { OFFICIAL_CHECKPOINTS } from '@/lib/constants/checkpoints';
 import { hashToken, generateSecureToken } from '@/lib/security/tokens';
 import { getInstansiCategory, getSeatColorAlias } from '@/lib/constants/matra-colors';
@@ -52,6 +58,9 @@ interface DatabaseSchema {
   audit_logs: AuditLog[];
   assignments?: Assignment[];
   email_logs?: EmailLog[];
+  roles?: Role[];
+  permissions?: Permission[];
+  users?: UserAccount[];
 }
 
 // Initial Groups
@@ -646,6 +655,43 @@ class DatabaseManager {
           modified = true;
         }
       }
+    }
+
+    // Inisialisasi Roles & Permissions jika belum ada
+    if (!Array.isArray(this.data.roles) || this.data.roles.length === 0) {
+      this.data.roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+      modified = true;
+    }
+    if (!Array.isArray(this.data.permissions) || this.data.permissions.length === 0) {
+      this.data.permissions = JSON.parse(JSON.stringify(ALL_PERMISSIONS));
+      modified = true;
+    }
+
+    // Inisialisasi Users RBAC tersinkronisasi dengan admins
+    if (!Array.isArray(this.data.users) || this.data.users.length === 0) {
+      this.data.users = [];
+      const roleMap: Record<string, { id: string; name: string }> = {
+        superadmin: { id: 'role_superadmin', name: 'Super Admin' },
+        panitiagate: { id: 'role_checkin', name: 'Admin Check-In' },
+        panitiawisma: { id: 'role_event', name: 'Admin Event' }
+      };
+
+      for (const adm of this.data.admins) {
+        const roleInfo = roleMap[adm.username] || { id: 'role_viewer', name: 'Viewer' };
+        this.data.users.push({
+          id: adm.id || `usr_${adm.username}`,
+          nama: adm.nama,
+          username: adm.username,
+          email: `${adm.username}@tni.mil.id`,
+          password_hash: adm.password_hash,
+          role_id: roleInfo.id,
+          role_name: roleInfo.name,
+          is_active: true,
+          created_at: adm.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+      }
+      modified = true;
     }
 
     // Otomatis deduplikasi kursi ganda jika ditemukan saat inisialisasi data
@@ -1996,7 +2042,209 @@ class DatabaseManager {
   // ADMINS & AUTH
   public findAdminByUsername(username: string): AdminUser | undefined {
     this.ensureInitialized();
-    return this.data!.admins.find(a => a.username === username);
+    const clean = username.trim().toLowerCase();
+    if (this.data!.users) {
+      const u = this.data!.users.find(usr => usr.username.toLowerCase() === clean);
+      if (u) {
+        return {
+          id: u.id,
+          username: u.username,
+          nama: u.nama,
+          email: u.email,
+          role: (u.role_name || u.role_id) as AdminRole,
+          role_id: u.role_id,
+          is_active: u.is_active,
+          password_hash: u.password_hash,
+          created_at: u.created_at,
+          updated_at: u.updated_at
+        };
+      }
+    }
+    return this.data!.admins.find(a => a.username.toLowerCase() === clean);
+  }
+
+  // USER AUTHORIZATION & RBAC METHODS
+  public getRoles(): Role[] {
+    this.ensureInitialized();
+    return (this.data && this.data.roles) ? this.data.roles : DEFAULT_ROLES;
+  }
+
+  public getRoleById(id: string): Role | undefined {
+    this.ensureInitialized();
+    return ((this.data && this.data.roles) ? this.data.roles : DEFAULT_ROLES).find(r => r.id === id);
+  }
+
+  public updateRolePermissions(roleId: string, permissions: PermissionCode[]): Role | null {
+    this.ensureInitialized();
+    if (!this.data!.roles) {
+      this.data!.roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+    }
+    const role = (this.data?.roles || []).find(r => r.id === roleId);
+    if (!role) return null;
+    role.permissions = permissions;
+    this.persist();
+    return role;
+  }
+
+  public createRole(data: { name: string; description: string; permissions: PermissionCode[] }): Role {
+    this.ensureInitialized();
+    if (!this.data) this.ensureInitialized();
+    if (!this.data!.roles) {
+      this.data!.roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+    }
+    const newRole: Role = {
+      id: `role_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      name: data.name,
+      description: data.description,
+      is_system: false,
+      permissions: data.permissions,
+      created_at: new Date().toISOString()
+    };
+    this.data!.roles!.push(newRole);
+    this.persist();
+    return newRole;
+  }
+
+  public getPermissions(): Permission[] {
+    this.ensureInitialized();
+    return this.data!.permissions || ALL_PERMISSIONS;
+  }
+
+  public getUsers(): UserAccount[] {
+    this.ensureInitialized();
+    return this.data!.users || [];
+  }
+
+  public getUserById(id: string): UserAccount | undefined {
+    this.ensureInitialized();
+    return (this.data!.users || []).find(u => u.id === id);
+  }
+
+  public getUserByUsername(username: string): UserAccount | undefined {
+    this.ensureInitialized();
+    const clean = username.trim().toLowerCase();
+    return (this.data!.users || []).find(u => u.username.toLowerCase() === clean);
+  }
+
+  public createUser(userData: {
+    nama: string;
+    username: string;
+    email: string;
+    password_hash: string;
+    role_id: string;
+    is_active?: boolean;
+  }): UserAccount {
+    this.ensureInitialized();
+    if (!this.data!.users) {
+      this.data!.users = [];
+    }
+
+    const cleanUsername = userData.username.trim().toLowerCase();
+    const existing = this.getUserByUsername(cleanUsername);
+    if (existing) {
+      throw new Error(`Username "${cleanUsername}" sudah digunakan oleh akun lain.`);
+    }
+
+    const role = this.getRoleById(userData.role_id);
+    const now = new Date().toISOString();
+
+    const newUser: UserAccount = {
+      id: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      nama: userData.nama.trim(),
+      username: cleanUsername,
+      email: userData.email.trim(),
+      password_hash: userData.password_hash,
+      role_id: userData.role_id,
+      role_name: role ? role.name : userData.role_id,
+      is_active: userData.is_active !== undefined ? userData.is_active : true,
+      created_at: now,
+      updated_at: now
+    };
+
+    this.data!.users.push(newUser);
+
+    // Sync to admins
+    if (!this.data!.admins) this.data!.admins = [];
+    const admIndex = this.data!.admins.findIndex(a => a.username.toLowerCase() === cleanUsername);
+    const admObj: AdminUser = {
+      id: newUser.id,
+      username: newUser.username,
+      nama: newUser.nama,
+      email: newUser.email,
+      role: (newUser.role_name || 'PANITIA_GATE') as AdminRole,
+      role_id: newUser.role_id,
+      is_active: newUser.is_active,
+      password_hash: newUser.password_hash,
+      created_at: newUser.created_at,
+      updated_at: newUser.updated_at
+    };
+    if (admIndex >= 0) {
+      this.data!.admins[admIndex] = admObj;
+    } else {
+      this.data!.admins.push(admObj);
+    }
+
+    this.persist();
+    return newUser;
+  }
+
+  public updateUser(
+    id: string,
+    updates: Partial<Omit<UserAccount, 'id' | 'created_at'>>
+  ): UserAccount | null {
+    this.ensureInitialized();
+    if (!this.data!.users) return null;
+    const user = this.data!.users.find(u => u.id === id);
+    if (!user) return null;
+
+    if (updates.nama !== undefined) user.nama = updates.nama.trim();
+    if (updates.email !== undefined) user.email = updates.email.trim();
+    if (updates.role_id !== undefined) {
+      user.role_id = updates.role_id;
+      const role = this.getRoleById(updates.role_id);
+      if (role) user.role_name = role.name;
+    }
+    if (updates.is_active !== undefined) user.is_active = updates.is_active;
+    if (updates.password_hash !== undefined) user.password_hash = updates.password_hash;
+    user.updated_at = new Date().toISOString();
+
+    // Sync to admins
+    if (this.data!.admins) {
+      const adm = this.data!.admins.find(a => a.id === id || a.username.toLowerCase() === user.username.toLowerCase());
+      if (adm) {
+        adm.nama = user.nama;
+        adm.email = user.email;
+        adm.role = (user.role_name || adm.role) as AdminRole;
+        adm.role_id = user.role_id;
+        adm.is_active = user.is_active;
+        if (updates.password_hash) adm.password_hash = user.password_hash;
+        adm.updated_at = user.updated_at;
+      }
+    }
+
+    this.persist();
+    return user;
+  }
+
+  public deleteUser(id: string): boolean {
+    this.ensureInitialized();
+    if (!this.data!.users) return false;
+    const idx = this.data!.users.findIndex(u => u.id === id);
+    if (idx < 0) return false;
+
+    const user = this.data!.users[idx];
+    if (user.username === 'superadmin') {
+      throw new Error('Akun Super Admin utama tidak boleh dihapus.');
+    }
+
+    this.data!.users.splice(idx, 1);
+    if (this.data!.admins) {
+      const admIdx = this.data!.admins.findIndex(a => a.id === id || a.username.toLowerCase() === user.username.toLowerCase());
+      if (admIdx >= 0) this.data!.admins.splice(admIdx, 1);
+    }
+
+    this.persist();
+    return true;
   }
 
   public recordAuditLog(adminId: string, username: string, action: string, details?: string, ip?: string) {

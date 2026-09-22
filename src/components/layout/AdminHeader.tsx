@@ -13,6 +13,7 @@ interface AdminHeaderProps {
   } | null;
   title: string;
   subtitle?: string;
+  badge?: string;
   onToggleDrawer?: () => void;
   children?: React.ReactNode;
 }
@@ -21,6 +22,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   user: propUser,
   title,
   subtitle,
+  badge,
   onToggleDrawer,
   children
 }) => {
@@ -59,6 +61,16 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight truncate">
             {title}
           </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight truncate">
+              {title}
+            </h1>
+            {badge && (
+              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-[#8B0000]/10 text-[#8B0000] border border-[#8B0000]/20 hidden sm:inline-block">
+                {badge}
+              </span>
+            )}
+          </div>
           {subtitle && (
             <p className="text-xs text-slate-500 font-medium leading-none mt-1 truncate hidden sm:block">
               {subtitle}

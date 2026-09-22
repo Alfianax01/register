@@ -591,3 +591,46 @@ INSERT INTO `site_settings` (`setting_key`, `setting_value`) VALUES
   ('contact_support', '0812-3456-7890 (Sekretariat Panitia)'),
   ('brand_config', '{"event_short_title":"RAPIM TNI 2026","event_theme":"TNI PRIMA: Profesional, Responsif, Integratif, Modern & Adaptif"}')
 ON DUPLICATE KEY UPDATE `setting_value` = VALUES(`setting_value`);
+
+-- Table: roles
+CREATE TABLE IF NOT EXISTS `roles` (
+  `id` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `description` TEXT,
+  `is_system` TINYINT(1) NOT NULL DEFAULT 0,
+  `permissions` TEXT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: users
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` VARCHAR(50) NOT NULL,
+  `nama` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(150),
+  `password_hash` VARCHAR(255) NOT NULL,
+  `role_id` VARCHAR(50) NOT NULL DEFAULT 'role_viewer',
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_users_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Seed Default Roles
+INSERT INTO `roles` (`id`, `name`, `description`, `is_system`, `permissions`) VALUES
+  ('role_superadmin', 'Super Admin', 'Akses penuh ke seluruh sistem, tata kelola website, laporan, dan otorisasi pengguna.', 1, '["DASHBOARD","GUESTS","SEATS","SCANNER","MONITORING","CMS","AUTH","EXPORT_PDF","EXPORT_EXCEL"]'),
+  ('role_event', 'Admin Event', 'Koordinator acara utama dengan wewenang mengelola data peserta, denah kursi, akomodasi, serta unduhan laporan.', 1, '["DASHBOARD","GUESTS","SEATS","MONITORING","EXPORT_PDF","EXPORT_EXCEL"]'),
+  ('role_registrasi', 'Admin Registrasi', 'Petugas sekretariat yang mengelola pendaftaran peserta, validasi data, dan rekap data.', 1, '["DASHBOARD","GUESTS","EXPORT_PDF","EXPORT_EXCEL"]'),
+  ('role_checkin', 'Admin Check-In', 'Penanggung jawab pos gerbang dan registrasi ulang di lokasi kegiatan.', 1, '["DASHBOARD","SCANNER","MONITORING"]'),
+  ('role_scanner', 'Operator Scanner', 'Petugas teknis di pintu gerbang yang melakukan pemindaian barcode e-ticket tamu.', 1, '["SCANNER"]'),
+  ('role_viewer', 'Viewer', 'Akses khusus pimpinan atau tamu kehormatan untuk memantau ringkasan statistik dan kehadiran.', 1, '["DASHBOARD","MONITORING"]')
+ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `permissions` = VALUES(`permissions`);
+
+-- Seed Default Users
+INSERT INTO `users` (`id`, `nama`, `username`, `email`, `password_hash`, `role_id`, `is_active`) VALUES
+  ('usr_superadmin', 'Letkol Chb Radityo (Super Admin IT)', 'superadmin', 'superadmin@tni.mil.id', '$2a$10$crAuBriY2gUB.PBs08Dzheujoh/bSV4c1UX0ZKu.jwVJeNt9J8Xyi', 'role_superadmin', 1),
+  ('usr_panitiagate', 'Kapten Inf Hendro (Koordinator Gate 1)', 'panitiagate', 'gate@tni.mil.id', '$2a$10$crAuBriY2gUB.PBs08Dzhet2FEFg6qIev1oUwtWKFCwJvCxeLDNfK', 'role_checkin', 1),
+  ('usr_panitiawisma', 'Mayor Laut (K) Anita (Koordinator Wisma)', 'panitiawisma', 'wisma@tni.mil.id', '$2a$10$crAuBriY2gUB.PBs08DzhefJBqfAiZv6vD44kOx4Z5nBDl21wzU6e', 'role_event', 1)
+ON DUPLICATE KEY UPDATE `password_hash` = VALUES(`password_hash`), `nama` = VALUES(`nama`), `role_id` = VALUES(`role_id`);

@@ -70,6 +70,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Kombinasi akun atau kata sandi dinas tidak valid' }, { status: 401 });
     }
 
+    // 5.1 Check active status
+    if (admin.is_active === false) {
+      db.recordAuditLog(admin.id, cleanUsername, 'LOGIN_BLOCKED', 'Percobaan login ke akun dinas yang dinonaktifkan', ip);
+      return NextResponse.json(
+        { error: 'Akun dinas Anda telah dinonaktifkan oleh administrator. Silakan hubungi Super Admin.' },
+        { status: 403 }
+      );
+    }
+
     // 6. Successful login: reset lockout counters
     resetFailedLogin(`ip_${ip}`);
     resetFailedLogin(`user_${cleanUsername}`);

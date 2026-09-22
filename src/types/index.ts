@@ -159,15 +159,69 @@ export interface CheckinLog {
   ip_address?: string;
 }
 
-export type AdminRole = 'SUPER_ADMIN' | 'PANITIA_GATE' | 'PANITIA_AKOMODASI';
+export type AdminRole = 
+  | 'SUPER_ADMIN' 
+  | 'PANITIA_GATE' 
+  | 'PANITIA_AKOMODASI' 
+  | 'ADMIN_EVENT' 
+  | 'ADMIN_REGISTRASI' 
+  | 'ADMIN_CHECKIN' 
+  | 'OPERATOR_SCANNER' 
+  | 'VIEWER' 
+  | string;
+
+export type PermissionCode =
+  | 'DASHBOARD'
+  | 'GUESTS'
+  | 'SEATS'
+  | 'SCANNER'
+  | 'MONITORING'
+  | 'CMS'
+  | 'AUTH'
+  | 'EXPORT_PDF'
+  | 'EXPORT_EXCEL';
+
+export interface Permission {
+  id: string;
+  code: PermissionCode;
+  name: string;
+  category: string;
+  description?: string;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  description: string;
+  is_system?: boolean;
+  permissions: PermissionCode[];
+  created_at: string;
+}
+
+export interface UserAccount {
+  id: string;
+  nama: string;
+  username: string;
+  email: string;
+  password_hash: string;
+  role_id: string;
+  role_name?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface AdminUser {
   id: string;
   username: string;
   nama: string;
   role: AdminRole;
+  email?: string;
+  role_id?: string;
+  is_active?: boolean;
   password_hash: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface AuditLog {

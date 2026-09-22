@@ -36,7 +36,6 @@ export async function middleware(req: NextRequest) {
     });
   }
 
-  // 5. Proteksi Seluruh Rute Admin (/admin/*)
   // 5. Proteksi API Routes yang sensitif (/api/guests, /api/export, /api/checkin, /api/stats)
   const isProtectedApi =
     pathname.startsWith('/api/guests') ||
@@ -45,8 +44,7 @@ export async function middleware(req: NextRequest) {
     pathname === '/api/stats';
 
   if (isProtectedApi) {
-    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI'];
-    if (!session || !validRoles.includes(session.role)) {
+    if (!session || !session.role) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized: Sesi panitia tidak valid atau telah berakhir.' },
         { status: 401 }
@@ -57,7 +55,6 @@ export async function middleware(req: NextRequest) {
 
   // 6. Proteksi Seluruh Rute Admin (/admin/*)
   if (pathname.startsWith('/admin/')) {
-    // /admin/scanner, /admin/guests, /admin/monitoring, /admin/checkin, /admin/allocation, /admin/placement
     const allowedAdminRoutes = [
       '/admin/scanner',
       '/admin/guests',
@@ -66,7 +63,9 @@ export async function middleware(req: NextRequest) {
       '/admin/allocation',
       '/admin/placement',
       '/admin/dashboard',
-      '/admin/website'
+      '/admin/website',
+      '/admin/users',
+      '/admin/roles'
     ];
 
     const isAllowed = allowedAdminRoutes.some(
@@ -80,8 +79,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // Role validation: Hanya role panitia resmi yang diizinkan
-    const validRoles = ['admin', 'superadmin', 'SUPER_ADMIN', 'PANITIA_GATE', 'PANITIA_AKOMODASI'];
-    if (!session || !validRoles.includes(session.role)) {
+    if (!session || !session.role) {
       return NextResponse.rewrite(new URL('/not-found', req.url), {
         status: 404
       });
@@ -103,4 +101,3 @@ export const config = {
     '/api/stats'
   ]
 };
-
